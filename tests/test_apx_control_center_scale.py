@@ -71,7 +71,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertNotIn("onPressed: button.activated()", bar_button)
         self.assertNotIn("HoverHandler {", bar_button)
         self.assertNotIn("TapHandler {", bar_button)
-        self.assertIn("scale: pointer.pressed ? 0.96 : 1", bar_button)
+        self.assertIn("scale: pointer.pressed || button.animateActivation || button.animateDeactivation ? 0.96 : 1", bar_button)
         self.assertIn('color: visuallyActive ? activeSurface : "transparent"', bar_button)
         self.assertIn("border.width: visuallyActive ? button.activeBorderWidth : 0", bar_button)
         self.assertIn("border.color: accentColor", bar_button)

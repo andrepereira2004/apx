@@ -78,7 +78,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/bin/apx-shortcuts-v1": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
     "local/bin/apx-notification-focus-v1": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
     "local/bin/apx-shell-v1": "861c705550466f0ecdf8467424e9c0a7b73e795ee8121bf5551a527a69a2f336",
-    "quickshell/apx/BarButton.qml": "1278a2015868db876a784e5982ece2f01bb2161391d5fbc4aefcf035de48de0b",
+    "quickshell/apx/BarButton.qml": "7cf927645864a644e88ec44142823d070e1a2caec65fb5a168b378fa07c6bbeb",
     "quickshell/apx/BounceMouseArea.qml": "7bd6f1a76ee42a94253d1e7ee9578426e6beaca4f5cb9e0c885007eb1f6efd37",
     "quickshell/apx/ControlIcon.qml": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",

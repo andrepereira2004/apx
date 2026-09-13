@@ -18,7 +18,7 @@ Rectangle {
 
     implicitWidth: Math.max(buttonText.implicitWidth, alternateButtonText.implicitWidth) + 22
     implicitHeight: 32
-    scale: pointer.pressed ? 0.96 : 1
+    scale: pointer.pressed || button.animateActivation || button.animateDeactivation ? 0.96 : 1
     radius: 7
     color: visuallyActive ? activeSurface : "transparent"
     border.width: visuallyActive ? button.activeBorderWidth : 0

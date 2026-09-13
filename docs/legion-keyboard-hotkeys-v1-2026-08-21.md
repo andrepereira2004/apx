@@ -76,3 +76,55 @@ To roll back, restore the prior `hyprland.lua`, remove
 `~/.local/bin/apx-laptop-action-v1`, and reload or restart the Environment's
 Hyprland session. This does not alter firmware, the physical FnLock setting, or
 the normal application-level navigation keys.
+
+## 2026-09-13 discovery follow-up
+
+The current boot exposes the internal i8042 keyboard as `AT Raw Set 2 keyboard`,
+while the August capture exposed `AT Translated Set 2 keyboard`. Requiring only
+the latter stopped the whole bridge. Both exact aliases now normalize to one
+AT role; two matching devices still fail closed. The repaired bridge is running
+in the Hub. A brightness IPC probe changed and restored the physical backlight;
+owner acceptance of Fn key presses remains pending. See `CURRENT_HANDOFF.md`
+for the backup, tests and remaining calculator limitation.
+
+The owner rejected that first repair as insufficient. Subsequent physical
+capture proved Fn+F5/F6 arrives on ACPI Video Bus rather than ITE. Both that
+channel and Ideapad extra buttons now receive read-only leases to the observer.
+The observed Fn+F9 scan 0x10d plus KEY_UNKNOWN is mapped to the application
+launcher. See `legion-acpi-hotkey-routing-2026-09-13.md` for the authoritative
+current routing evidence and rollout; earlier ITE-only descriptions are
+superseded. Post-rollout physical acceptance remains pending.
+
+## Remaining row follow-up
+
+The next physical capture identified the ACPI microphone and touchpad codes,
+Super+P for Fn+F7 and the existing calculator code. These actions are installed;
+Super+Shift+P is now the file shortcut. Fn+F8 already changed all radio soft
+states and now also triggers explicit read-only OSD feedback. Galculator was
+added only to Hub. Alt+Tab/Super+Tab now open the window list; physical Fn+F11
+confirmation remains pending because that chord was not captured unambiguously.
+See the ACPI routing document and current handoff for exact evidence and rollback.
+
+## Conclusive isolated Fn+F9/F11 capture
+
+Three isolated presses of each key supersede the earlier ambiguous attribution:
+Fn+F9 is Ideapad scan 0x101 with KEY_FAVORITES/364, not 0x10d/KEY_UNKNOWN.
+Fn+F11 is ITE Ctrl+Alt+Tab. The exact observer mapping and compositor binding
+are installed; 0x10d is no longer assigned. The real radio test also observed
+Wi-Fi down and Bluetooth Powered:no / off-blocked for about 12 seconds, then
+both recovering after the second Fn+F8 press. No second radio toggle is added.
+
+The calculator remains removed and Super+P remains the role-aware file shortcut.
+All 1146 tests pass (11 skips). Installed Fn+F9 event replay opened applications;
+a Wayland virtual keyboard sending Ctrl+Alt+Tab opened the real window list.
+Backup/evidence: `/var/lib/apx/backups/20260913T083035Z-fn9-fn11-confirmed`.
+These automated post-install checks remain distinct from owner key acceptance.
+
+## Super+P Hub correction (2026-09-13)
+
+The restored binding alone still failed because QuickShell excluded Hub and no
+file manager was installed there. Hub now has Thunar, and the files helper opens
+/home/apx as desktop UID 1000 or focuses its existing window. Two simulated
+Super+P presses through the compositor verified opening and refocusing without
+a duplicate window. The calculator remains absent. Evidence and rollback files:
+`/var/lib/apx/backups/20260913T083721Z-hub-file-manager`.

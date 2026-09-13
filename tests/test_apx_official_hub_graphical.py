@@ -22,6 +22,25 @@ def load_launcher():
 
 
 class OfficialHubGraphicalTests(unittest.TestCase):
+    def test_firmware_device_leases_are_read_only(self) -> None:
+        subject = load_launcher()
+        inputs = {"keyboard_ite": "/dev/input/event5", "hotkeys_video": "/dev/input/event4",
+                  "hotkeys_ideapad": "/dev/input/event8"}
+        read_only = subject.read_only_inputs(inputs)
+        self.assertEqual(read_only, frozenset(("/dev/input/event4", "/dev/input/event8")))
+        leases = [{"node": node, "proxy": f"/tmp/device-{i}", "major": 13, "minor": 64 + i}
+                  for i, node in enumerate(inputs.values())]
+        metadata = [SimpleNamespace(st_mode=stat.S_IFCHR, st_rdev=os.makedev(13, 64 + i))
+                    for i in range(len(leases))]
+        with mock.patch.object(subject, "_device_lease_state", return_value=leases), \
+             mock.patch.object(Path, "stat", side_effect=metadata), \
+             mock.patch.object(Path, "is_socket", return_value=True), \
+             mock.patch.object(subject.os, "chown"), \
+             mock.patch.object(subject.os, "chmod") as chmod:
+            subject.activate_device_leases(100000, read_only)
+        self.assertEqual([call.args[1] for call in chmod.call_args_list],
+                         [0o660, 0o440, 0o440, 0o660])
+
     def test_recovery_runs_workload_hook_before_publishing_stopped(self) -> None:
         source = LAUNCHER.read_text()
         self.assertIn("def before_publish_stopped()", source)

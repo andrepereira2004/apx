@@ -1,8 +1,118 @@
 from pathlib import Path
+import importlib.util
+import os
+import stat
 import unittest
+from unittest.mock import MagicMock, patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+class LegionKeyboardDiscoveryTests(unittest.TestCase):
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location(
+            "legion_keys", ROOT / "scripts/physical-pilot/apx-legion-brightness-keys-v1.py"
+        )
+        self.bridge = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.bridge)
+
+    def discover(self, names):
+        nodes = [MagicMock() for _ in names]
+        for index, node in enumerate(nodes):
+            node.__lt__.side_effect = lambda other: False
+            node.stat.return_value.st_mode = stat.S_IFCHR | 0o600
+            node.stat.return_value.st_rdev = os.makedev(13, index)
+        with patch.object(self.bridge.Path, "glob", return_value=nodes), \
+             patch.object(self.bridge.os, "open", side_effect=range(20, 20 + len(names))), \
+             patch.object(self.bridge, "_device_name", side_effect=names), \
+             patch.object(self.bridge.os, "close") as close:
+            try:
+                return self.bridge.open_exact_keyboards()
+            finally:
+                self.closed = [call.args[0] for call in close.call_args_list]
+
+    def test_both_physical_translation_modes_are_the_same_role(self):
+        for name in self.bridge.AT_NAMES:
+            with self.subTest(name=name):
+                self.assertEqual(self.discover([self.bridge.ITE_NAME, name]),
+                                 {20: self.bridge.ITE_NAME, 21: self.bridge.AT_NAME})
+
+    def test_missing_external_and_ambiguous_devices_are_rejected(self):
+        for names in (
+            [self.bridge.ITE_NAME],
+            [self.bridge.ITE_NAME, "USB Keyboard"],
+            [self.bridge.ITE_NAME, *sorted(self.bridge.AT_NAMES)],
+            [self.bridge.ITE_NAME, self.bridge.ITE_NAME, self.bridge.AT_NAME],
+        ):
+            with self.subTest(names=names):
+                with self.assertRaisesRegex(RuntimeError, "absent or ambiguous"):
+                    self.discover(names)
+                self.assertCountEqual(self.closed, range(20, 20 + len(names)))
+
+    def test_firmware_channels_are_optional_and_unique(self):
+        names = [self.bridge.ITE_NAME, self.bridge.AT_NAME,
+                 self.bridge.VIDEO_NAME, self.bridge.IDEAPAD_NAME]
+        self.assertEqual(self.discover(names), dict(enumerate(names, 20)))
+        with self.assertRaises(RuntimeError):
+            self.discover(names + [self.bridge.VIDEO_NAME])
+
+    def test_captured_plain_and_fn_brightness_sequence(self):
+        # Physical sequence: F5 on ITE, Fn+F5 on ACPI, F6 on ITE, Fn+F6
+        # on ACPI. Release events must not cause a second brightness step.
+        with patch.object(self.bridge, "call_shell") as call, \
+             patch.object(self.bridge, "launch_action") as action:
+            for name, code in ((self.bridge.ITE_NAME, 63),
+                               (self.bridge.VIDEO_NAME, 224),
+                               (self.bridge.ITE_NAME, 64),
+                               (self.bridge.VIDEO_NAME, 225)):
+                for value in (1, 0):
+                    self.bridge.handle_key(name, code, value)
+            self.assertEqual([c.args for c in call.call_args_list],
+                             [("brightnessDown",), ("brightnessUp",)])
+            action.assert_not_called()
+
+    def test_unrecognized_sources_and_raw_keys_have_no_action(self):
+        with patch.object(self.bridge, "call_shell") as call, \
+             patch.object(self.bridge, "launch_action") as action:
+            for name in (self.bridge.ITE_NAME, self.bridge.AT_NAME,
+                         self.bridge.VIDEO_NAME, self.bridge.IDEAPAD_NAME):
+                for code in (*range(59, 69), 87, 88):
+                    self.bridge.handle_key(name, code, 1)
+            self.bridge.handle_key(self.bridge.ITE_NAME, 247, 1)
+            self.bridge.handle_key(self.bridge.ITE_NAME, 248, 1)
+            self.bridge.handle_key("USB Keyboard", 224, 1)
+            self.bridge.handle_key(self.bridge.AT_NAME, 224, 1)
+            call.assert_not_called()
+            action.assert_not_called()
+
+    def test_captured_microphone_radio_and_touchpad_states(self):
+        scans = {}
+        with patch.object(self.bridge, "call_shell") as call, \
+             patch.object(self.bridge, "launch_action") as action:
+            for scan, key in ((0x8, 248), (0xD, 247), (0x42, 532), (0x43, 531)):
+                for event in ((4, 4, scan), (1, key, 1), (0, 0, 0),
+                              (1, key, 0), (0, 0, 0)):
+                    self.bridge.handle_event(self.bridge.IDEAPAD_NAME, *event, scans)
+            call.assert_called_once_with("microphoneMute")
+            self.assertEqual([c.args for c in action.call_args_list],
+                             [("airplane-status",), ("touchpad-off",), ("touchpad-on",)])
+
+    def test_lenovo_application_scan_is_bound_to_its_frame_and_device(self):
+        scans = {}
+        with patch.object(self.bridge, "launch_action") as action:
+            for event in ((4, 4, 0x101), (1, 364, 1), (0, 0, 0),
+                          (1, 364, 0), (0, 0, 0), (1, 364, 1)):
+                self.bridge.handle_event(self.bridge.IDEAPAD_NAME, *event, scans)
+            action.assert_called_once_with("apps")
+            action.reset_mock()
+            for event in ((4, 4, 0x101), (0, 3, 0), (1, 364, 1),
+                          (4, 4, 0x10D), (1, 240, 1),
+                          (4, 4, 0x10C), (1, 240, 1)):
+                self.bridge.handle_event(self.bridge.IDEAPAD_NAME, *event, scans)
+            for event in ((4, 4, 0x101), (1, 364, 1)):
+                self.bridge.handle_event(self.bridge.ITE_NAME, *event, scans)
+            action.assert_not_called()
 
 
 class LegionHardwareProfileSourceTests(unittest.TestCase):
@@ -49,8 +159,8 @@ class LegionHardwareProfileSourceTests(unittest.TestCase):
             "apx-legion-brightness-keys-v1.lock", "fcntl.LOCK_EX | fcntl.LOCK_NB",
             "KEY_PRINT = 99",
             "KEY_BRIGHTNESSDOWN = 224", "KEY_BRIGHTNESSUP = 225",
-            'name == ITE_NAME and code == KEY_BRIGHTNESSDOWN',
-            'name == ITE_NAME and code == KEY_BRIGHTNESSUP',
+            'name in (ITE_NAME, VIDEO_NAME) and code == KEY_BRIGHTNESSDOWN',
+            'name in (ITE_NAME, VIDEO_NAME) and code == KEY_BRIGHTNESSUP',
             'call_shell("brightnessDown")', 'call_shell("brightnessUp")',
             'name == AT_NAME and code == KEY_PRINT',
         ):

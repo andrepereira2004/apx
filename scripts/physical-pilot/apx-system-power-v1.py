@@ -189,12 +189,17 @@ def _hardware_record() -> dict[str, object]:
         return {}
 
 
-def hardware_profile_status() -> dict[str, object]:
+def platform_profile_status() -> dict[str, object]:
     choices = PLATFORM_CHOICES.read_text(encoding="ascii").split()
     required = {"low-power", "balanced", "performance"}
     if not required.issubset(choices):
         raise RuntimeError("required Lenovo platform profiles are unavailable")
     platform = _read_bounded(PLATFORM_PROFILE, set(choices))
+    return {"schema": 1, "platform_profile": platform,
+            "platform_profiles": ["low-power", "balanced", "performance"]}
+
+
+def gpu_profile_status() -> dict[str, object]:
     hybrid_supported = int(_read_bounded(GPU_BRIDGE / "hybrid_supported", {"0", "1", "2"}))
     igpu_supported = int(_read_bounded(GPU_BRIDGE / "igpu_supported", {"0", "1", "2"}))
     hybrid = _read_bounded(GPU_BRIDGE / "hybrid_mode", {"0", "1"}) == "1"
@@ -218,15 +223,27 @@ def hardware_profile_status() -> dict[str, object]:
         active = "hybrid" if hybrid else "nvidia"
         mismatch = active != requested
     return {
-        "schema": 1, "platform_profile": platform,
-        "platform_profiles": ["low-power", "balanced", "performance"],
         "gpu_profile": active, "requested_gpu_profile": requested,
         "gpu_profiles": ["hybrid", "nvidia"],
         "gpu_backend": "lenovo-wmi", "hybrid_supported": hybrid_supported,
         "igpu_firmware_supported": bool(igpu_supported),
         "reboot_required": reboot_required, "profile_mismatch": mismatch,
-        **hardware_control_status(),
     }
+
+
+def hardware_profile_status() -> dict[str, object]:
+    # Independent devices must not prevent ACPI power-mode changes. Report
+    # optional GPU/backlight failures explicitly without inventing their state.
+    result = platform_profile_status()
+    try:
+        result.update(gpu_profile_status())
+    except (OSError, RuntimeError, ValueError) as error:
+        result.update({"gpu_profiles": [], "gpu_error": str(error)})
+    try:
+        result.update(hardware_control_status())
+    except (OSError, RuntimeError, ValueError) as error:
+        result["controls_error"] = str(error)
+    return result
 
 
 def set_display_brightness(percent: int) -> dict[str, object]:
@@ -256,20 +273,20 @@ def cycle_keyboard_brightness() -> dict[str, object]:
 def set_platform_profile(profile: str) -> dict[str, object]:
     if profile not in {"low-power", "balanced", "performance"}:
         raise ValueError("unsupported platform profile")
-    status = hardware_profile_status()
+    status = platform_profile_status()
     if profile not in status["platform_profiles"]:
         raise RuntimeError("requested platform profile is unavailable")
     PLATFORM_PROFILE.write_text(profile + "\n", encoding="ascii")
     observed = _read_bounded(PLATFORM_PROFILE, set(status["platform_profiles"]))
     if observed != profile:
         raise RuntimeError("Lenovo firmware did not apply the platform profile")
-    return hardware_profile_status()
+    return platform_profile_status()
 
 
 def set_gpu_profile(profile: str) -> dict[str, object]:
     if profile not in {"hybrid", "nvidia"}:
         raise ValueError("unsupported GPU profile")
-    before = hardware_profile_status()
+    before = gpu_profile_status()
     if not before["hybrid_supported"]:
         raise RuntimeError("Lenovo Hybrid Graphics control is unavailable")
     wanted_hybrid = profile != "nvidia"

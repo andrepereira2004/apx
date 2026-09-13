@@ -16,8 +16,9 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("forced SVG icons through an intermediate texture", source)
         self.assertIn("340 * root.controlCenterScale", source)
         self.assertIn("(root.isHub ? 440 : 394) * root.controlCenterScale", source)
-        self.assertIn("parent.width / root.controlCenterScale", source)
-        self.assertIn("parent.height / root.controlCenterScale", source)
+        self.assertIn("popup.menuWidth / root.controlCenterScale", source)
+        self.assertIn("Math.min(popup.menuHeight, popup.height - y - 8,", source)
+        self.assertIn("menuContent.implicitHeight + 20", source)
         self.assertIn('property real popupReveal: 1', source)
         self.assertIn('* (0.96 + 0.04 * root.popupReveal)', source)
         self.assertIn('opacity: root.popupReveal', source)
@@ -72,7 +73,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertNotIn("TapHandler {", bar_button)
         self.assertIn("scale: pointer.pressed ? 0.96 : 1", bar_button)
         self.assertIn('color: visuallyActive ? activeSurface : "transparent"', bar_button)
-        self.assertIn("border.width: visuallyActive ? 1 : 0", bar_button)
+        self.assertIn("border.width: visuallyActive ? button.activeBorderWidth : 0", bar_button)
         self.assertIn("border.color: accentColor", bar_button)
         self.assertNotIn("mouse.containsMouse", bar_button)
         self.assertEqual(
@@ -124,8 +125,8 @@ class ControlCenterScaleTests(unittest.TestCase):
 
         # Every instance supplies the shell palette explicitly; the extracted
         # primitive has no dependency on the root singleton's object id.
-        self.assertEqual(source.count("activeSurface: root.cyanDim"), 6)
-        self.assertEqual(source.count("accentColor: root.cyan"), 6)
+        self.assertEqual(source.count('activeSurface: "#18343e"'), 0)
+        self.assertEqual(source.count("accentColor: root.textMain"), 6)
         self.assertEqual(source.count("textColor: root.textMain"), 6)
 
         close = source.split("function closePopup()", 1)[1].split(
@@ -148,7 +149,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("id: popupHover", popup)
         self.assertIn("property bool open: false", popup)
         self.assertIn("visible: true", popup)
-        self.assertIn("focusable: open", popup)
+        self.assertNotIn("focusable: open", popup)
         self.assertIn("mask: Region { item: popupInputRegion }", popup)
         self.assertIn("id: popupInputRegion", popup)
         self.assertIn("width: popup.open ? parent.width : 0", popup)
@@ -176,7 +177,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("onClicked: root.closePopup()", dismiss)
 
         bar_window = source.split("id: bar", 1)[1].split("id: hotkeyOsdWindow", 1)[0]
-        self.assertIn("WlrLayershell.layer: WlrLayer.Overlay", bar_window)
+        self.assertIn("WlrLayershell.layer: WlrLayer.Top", bar_window)
         self.assertIn("WlrLayershell.keyboardFocus: WlrKeyboardFocus.None", bar_window)
         self.assertNotIn("popupBarInputLayer", source)
         self.assertNotIn("PopupBarButtonShield", source)
@@ -186,7 +187,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("color: root.popupPanel", popup_frame)
         self.assertIn('property color popupPanel: "#d90a1014"', source)
         self.assertIn('property color panel: "#d90a1014"', source)
-        self.assertIn('border.color: "#26343a"', popup_frame)
+        self.assertIn('border.color: root.controlButtonOutline', popup_frame)
         self.assertNotIn("color: root.card", popup_frame)
         self.assertNotIn("border.color: root.cyanDim", popup_frame)
 
@@ -272,7 +273,7 @@ class ControlCenterScaleTests(unittest.TestCase):
             "id: calendarMonthGrid", 1
         )[0]
         self.assertIn("color: root.card", month_surface)
-        self.assertIn('border.color: "#26343a"', month_surface)
+        self.assertIn('border.color: root.controlButtonOutline', month_surface)
         self.assertIn('property var calendarFocusAction:', source)
         self.assertIn("function calendarKeyboardGroups()", source)
         self.assertIn("function calendarKeyboardActions()", source)

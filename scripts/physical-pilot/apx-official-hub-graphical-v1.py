@@ -106,6 +106,13 @@ INPUT_IDENTITIES = {
         "ID_INPUT_TOUCHPAD": "1",
     },
 }
+# These ACPI channels carry firmware hotkeys, not ordinary typing. They are
+# optional for desktop startup, uniquely identified, and leased read-only to
+# the observer. Seatd/compositor input remains on the existing four devices.
+HOTKEY_IDENTITIES = {
+    "hotkeys_video": ("Video Bus", "pci-0000:00:08.1"),
+    "hotkeys_ideapad": ("Ideapad extra buttons", "pci-0000:00:14.3-platform-VPC2004:00"),
+}
 AUDIO_ID_PATH = "pci-0000:05:00.6"
 CAMERA_IDENTITY = {
     "ID_PATH": "pci-0000:05:00.3-usb-0:3:1.0",
@@ -187,6 +194,7 @@ def machine_running() -> bool:
 
 def resolve_input_devices() -> dict[str, str]:
     matches: dict[str, list[str]] = {label: [] for label in INPUT_IDENTITIES}
+    hotkeys: dict[str, list[str]] = {label: [] for label in HOTKEY_IDENTITIES}
     for node in sorted(Path("/dev/input").glob("event*")):
         result = run(("udevadm", "info", "--query=property", f"--name={node}"), False)
         if result.returncode:
@@ -197,12 +205,26 @@ def resolve_input_devices() -> dict[str, str]:
                 properties.get(key) == expected for key, expected in identity.items()
             ):
                 matches[label].append(str(node))
+        for label, (name, path) in HOTKEY_IDENTITIES.items():
+            if properties.get("DEVNAME") == str(node) \
+                    and properties.get("ID_PATH") == path \
+                    and properties.get("ID_INPUT_KEY") == "1" \
+                    and properties.get("ID_INTEGRATION") == "internal" \
+                    and (Path("/sys/class/input") / node.name / "device/name").read_text().strip() == name:
+                hotkeys[label].append(str(node))
     if any(len(nodes) != 1 for nodes in matches.values()):
         raise OfficialHubGraphicalError("an admitted internal input identity is absent or ambiguous")
     resolved = {label: nodes[0] for label, nodes in matches.items()}
+    if any(len(nodes) > 1 for nodes in hotkeys.values()):
+        raise OfficialHubGraphicalError("an admitted firmware hotkey identity is ambiguous")
+    resolved.update({label: nodes[0] for label, nodes in hotkeys.items() if nodes})
     if len(set(resolved.values())) != len(resolved):
         raise OfficialHubGraphicalError("admitted internal input identities overlap")
     return resolved
+
+
+def read_only_inputs(inputs: dict[str, str]) -> frozenset[str]:
+    return frozenset(node for label, node in inputs.items() if label in HOTKEY_IDENTITIES)
 
 
 def resolve_audio_devices() -> dict[str, str]:
@@ -773,7 +795,7 @@ def _device_lease_state() -> tuple[dict[str, object], ...]:
     if type(value) is not dict:
         raise OfficialHubGraphicalError("graphical device lease state is not an object")
     leases = value.get("leases")
-    if value.get("schema") != 1 or type(leases) is not list or not 1 <= len(leases) <= 21:
+    if value.get("schema") != 1 or type(leases) is not list or not 1 <= len(leases) <= 23:
         raise OfficialHubGraphicalError("graphical device lease state is malformed")
     for index, lease in enumerate(leases):
         if type(lease) is not dict or set(lease) != {"node", "proxy", "major", "minor"} \
@@ -786,7 +808,7 @@ def _device_lease_state() -> tuple[dict[str, object], ...]:
     return tuple(leases)
 
 
-def activate_device_leases(uid_base: int) -> None:
+def activate_device_leases(uid_base: int, read_only_nodes: frozenset[str] = frozenset()) -> None:
     for lease in _device_lease_state():
         proxy = Path(str(lease["proxy"]))
         metadata = proxy.stat()
@@ -797,7 +819,7 @@ def activate_device_leases(uid_base: int) -> None:
         # Bind-mounted device nodes are not idmapped by nspawn. Give the proxy
         # directly to the translated Environment user, not translated root.
         os.chown(proxy, uid_base + 1000, uid_base + 1000)
-        os.chmod(proxy, 0o660)
+        os.chmod(proxy, 0o440 if lease["node"] in read_only_nodes else 0o660)
     if not SEATD_SOCKET.is_socket():
         raise OfficialHubGraphicalError("Host seatd broker socket disappeared")
     os.chown(SEATD_SOCKET, uid_base + 1000, uid_base + 1000)
@@ -932,7 +954,7 @@ def arm_health_watchdog() -> None:
 def start_host_seatd(inputs: dict[str, str], graphics: dict[str, str]) -> None:
     run(("systemctl", "stop", SEATD_UNIT + ".service"), False)
     unlink_if_present(SEATD_SOCKET)
-    nodes = (*inputs.values(), graphics["display_card"],
+    nodes = (*(node for label, node in inputs.items() if label not in HOTKEY_IDENTITIES), graphics["display_card"],
              *((graphics["offload_card"],) if "offload_card" in graphics else ()),
              "/dev/tty2")
     command = (
@@ -955,6 +977,7 @@ def start_outer(
     inputs: dict[str, str], audio: dict[str, str], graphics: dict[str, str],
     bindings: dict[str, str], authenticated_handoff: bool = False,
 ) -> None:
+    read_only_nodes = read_only_inputs(inputs)
     input_nodes = tuple(inputs[label] for label in (
         "keyboard_i8042", "keyboard_ite", "elan_mouse", "elan_touchpad"
     ))
@@ -996,7 +1019,7 @@ def start_outer(
         f"--property=MemoryMax={HUB_MEMORY_MAX}", f"--property=TasksMax={HUB_TASKS_MAX}",
         *((f"--property=LimitMEMLOCK={VFIO_MEMLOCK_LIMIT}",) if VFIO_GUEST_MODE else ()),
         "--property=DevicePolicy=closed",
-        *(f"--property=DeviceAllow={node} rw" for node in bindings),
+        *(f"--property=DeviceAllow={node} {'r' if node in read_only_nodes else 'rw'}" for node in bindings),
         "--", "systemd-nspawn", "--quiet",
         "--keep-unit", "--boot", f"--directory={ROOT}", f"--machine={MACHINE}",
         f"--hostname={MACHINE}", "--register=yes", "--settings=no", "--private-network",
@@ -1051,7 +1074,7 @@ def start_outer(
         # subtree; do not expose the Host module catalogue or module loader.
         *(("--bind-ro=/sys/module/nvidia:/sys/module/nvidia",)
           if not VFIO_GUEST_MODE else ()),
-        *(f"--bind={proxy}:{node}" for node, proxy in bindings.items()),
+        *(f"--bind{'-ro' if node in read_only_nodes else ''}={proxy}:{node}" for node, proxy in bindings.items()),
     )
     run(command)
     deadline = time.monotonic() + 20
@@ -1580,7 +1603,7 @@ def launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, ob
         arm_test_expiry(75) if test_mode else arm_health_watchdog()
         start_outer(inputs, audio, graphics, bindings, authenticated_handoff)
         uid_base = resolve_user_namespace()
-        activate_device_leases(uid_base)
+        activate_device_leases(uid_base, read_only_inputs(inputs))
         activate_service_sockets(uid_base)
         start_inner(inputs, audio, graphics)
         print("APX: a mudar para tty2. Super+Q abre Kitty; Super+M volta à recuperação Host.", flush=True)

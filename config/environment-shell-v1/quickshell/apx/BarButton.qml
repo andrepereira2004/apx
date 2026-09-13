@@ -11,6 +11,7 @@ Rectangle {
     property color activeSurface
     property color accentColor
     property color textColor
+    property int activeBorderWidth: 1
     readonly property bool visuallyActive: pointer.containsMouse || alternateActive
 
     signal activated()
@@ -20,7 +21,7 @@ Rectangle {
     scale: pointer.pressed ? 0.96 : 1
     radius: 7
     color: visuallyActive ? activeSurface : "transparent"
-    border.width: visuallyActive ? 1 : 0
+    border.width: visuallyActive ? button.activeBorderWidth : 0
     border.color: accentColor
 
     Behavior on scale {

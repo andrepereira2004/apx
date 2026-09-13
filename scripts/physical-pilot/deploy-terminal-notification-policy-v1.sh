@@ -101,7 +101,7 @@ trap rollback ERR
 /usr/bin/install -d -o 1000 -g 1000 -m 0700 "$hub_home/.config/mako"
 /usr/bin/install -o 1000 -g 1000 -m 0600 "$source_config" "$live_config"
 /usr/bin/install -o 1000 -g 1000 -m 0700 "$source_watcher" "$live_watcher"
-/usr/bin/install -o 1000 -g 1000 -m 0600 "$source_launcher" "$live_launcher"
+/usr/bin/install -o 1000 -g 1000 -m 0700 "$source_launcher" "$live_launcher"
 
 stop_live_services
 start_live_service "$mako_unit" /usr/bin/mako

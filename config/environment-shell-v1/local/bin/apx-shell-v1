@@ -39,13 +39,13 @@ if [[ ! -e $login_marker ]]; then
         /usr/bin/install -m 0600 /dev/null "$login_marker"
     elif [[ ! -x /usr/bin/hyprlock || ! -r $lock_config ]]; then
         printf 'APX: login inicial indisponível; a sessão gráfica será encerrada.\n' >>"$log"
-        /usr/bin/hyprctl dispatch exit >/dev/null 2>&1 || true
+        /usr/bin/hyprctl dispatch 'hl.dsp.exit()' >/dev/null 2>&1 || true
         exit 1
     else
         printf '\n=== APX initial login %(%Y-%m-%dT%H:%M:%S%z)T ===\n' -1 >>"$log"
         if ! /usr/bin/hyprlock --immediate-render --no-fade-in --config "$lock_config" >>"$log" 2>&1; then
             printf 'APX: hyprlock terminou sem autenticação; a sessão gráfica será encerrada.\n' >>"$log"
-            /usr/bin/hyprctl dispatch exit >/dev/null 2>&1 || true
+            /usr/bin/hyprctl dispatch 'hl.dsp.exit()' >/dev/null 2>&1 || true
             exit 1
         fi
         /usr/bin/install -m 0600 /dev/null "$login_marker"

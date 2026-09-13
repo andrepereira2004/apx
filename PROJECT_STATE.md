@@ -27,6 +27,13 @@ Privileged lifecycle effects belong to typed, independently validating Host
 executors. The CLI and graphical menus are clients of the same bounded
 protocols.
 
+The owner-requested Super+P file action also works in Hub: Thunar runs as the
+Hub desktop user and opens /home/apx, or focuses its existing window. Thunar is
+installed only in Hub; this grants no Host administration capability. The
+calculator remains removed and its shortcut displays the unavailable message.
+The installed repair and two-press compositor verification are recorded in
+CURRENT_HANDOFF.md (2026-09-13).
+
 ## Confirmed architecture
 
 - One Arch Linux Host and one Host kernel.
@@ -57,7 +64,12 @@ scripts from `config/environment-shell-v1`. Its important current behavior is:
 - the bar and menus use the same dark 85%-alpha surface (`#d90a1014`);
 - the Calendar grid uses a more opaque card for legibility;
 - every menu opening requests keyboard focus and supports keyboard navigation;
-- an application-area dismissal layer closes a menu on the first outside click;
+- the fullscreen popup input surface closes a menu on the first outside click,
+  including the bar and application windows, while its card retains inside clicks;
+- the bar uses the Top layer so fullscreen application windows cover it;
+- the bar has 20px horizontal margins aligned with tiled windows, 10px corners
+  and a persistent muted 1px outline matching the window surface style; Fn-key
+  OSD messages use the same outline (installed 2026-09-13);
 - popup and dismissal layer-shell surfaces remain mapped for the QuickShell
   lifetime, with zero-sized input regions while closed;
 - bar actions activate on completed clicks, preserving a stationary pointer
@@ -65,6 +77,10 @@ scripts from `config/environment-shell-v1`. Its important current behavior is:
 - Wi-Fi, Bluetooth, audio, display, battery, power and Environment actions use
   bounded Host-service or APX intents rather than shell text supplied by UI;
 - Hyprland supplies a plain black fallback behind QuickShell;
+- Hub shows white active and dark-gray inactive 2px borders only when a
+  workspace has at least two windows; a single window has no border. White
+  was owner-accepted; the count-based rule passed compositor 1→2→1 checks
+  on 2026-09-13 and awaits owner visual acceptance;
 - terminal notifications are dismissed on terminal focus and have an 8-second
   fallback timeout.
 
@@ -73,9 +89,57 @@ The owner physically accepted the stationary same-button second-click fix on
 `2c6b39f50f2228d88320759ee770203c7913549fe32ec35f65616767b79b7f20`
 and rollback directory
 `/var/lib/apx/backups/20260901T012510Z-quickshell-popup-interaction-v1/`.
-The repository subsequently extracted only three stateless visual primitives
-from `shell.qml`; that maintenance-only seed candidate has not been installed
-on the physical Hub.
+On 2026-09-12, the owner requested keyboard, outside-click, battery-menu and
+fullscreen repairs. The updated componentized shell is now installed on Hub,
+with automated compositor checks; owner acceptance of these latest changes is
+pending. Its SHA-256 is
+`b0eeeca3010f8a4d76fcb81037ad24961da96159478576019c679d4ca8b34fcc`
+(including the subsequent compact-layout correction requested by the owner).
+The immediate predecessor is preserved at
+`/var/lib/apx/backups/20260912-popup-navigation-v2/`.
+
+The owner requested installation on 2026-09-13. The latest shell and Host power
+service changes are now deployed, including neutral shared button surfaces,
+compact Battery with expandable details, volume percentage, three keyboard
+states, direct bar-menu switching and consistent Control Centre capitalization.
+Calendar/Environment handlers and Host authority/confirmation boundaries are
+preserved. The shell hash is
+`c6982b1afd9d29e785cc7b63b5564658289537a3cc2277097a911897300f6546`.
+A subsequent owner-requested adjustment restores blue focus/selection outlines
+inside menus while keeping neutral fills and text.
+The latest follow-up adds subtle blue active bar fills with neutral text, edge-aligned Calendar
+and Control Centre, an unlit keyboard border and deferred keyboard focus.
+Microphone uses Keyboard-style state fills for muted, enabled and in-use states.
+All 1134 tests pass (11 skips); Control Centre and Battery were inspected in
+compositor screenshots. Physical action acceptance remains pending. See the
+latest installed entry in `CURRENT_HANDOFF.md` for backup and exact scope.
+
+The 2026-09-13 Fn follow-up proved that brightness events originate on an ACPI
+channel previously absent from the Hub. The installed graphical adapter now
+leases two exact optional internal ACPI hotkey channels read-only to the existing
+observer. Live activation used equivalent ephemeral device nodes; future starts
+use read-only proxy binds. Plain F keys and Host-owned radio handling remain
+unchanged. Installed-handler replays pass; physical acceptance is pending.
+See `docs/legion-acpi-hotkey-routing-2026-09-13.md` and `CURRENT_HANDOFF.md`.
+
+The subsequent Fn-row follow-up wires the observed ACPI microphone and touchpad
+states, adds immediate read-only feedback for the already functioning kernel
+radio toggle, and maps the firmware's Super+P chord to display switching.
+File launching moves to Super+Shift+P; Alt+Tab/Super+Tab open the window list.
+A small calculator is installed only in Hub for its existing Fn+F12 binding.
+All 1146 source tests pass (11 skips); installed replays and OSD/window-list
+screenshots pass. Remaining physical acceptance and external-display limits
+are recorded in `CURRENT_HANDOFF.md`.
+
+The owner subsequently rejected the added Hub calculator and the Super+P display
+assignment. Galculator is now removed from Hub and the existing unavailable
+message is retained. Super+P again invokes the role-aware file action; there is
+no added Super+Shift+P binding. The follow-up isolated capture now proves Fn+F9 is Ideapad 0x101/364 and
+Fn+F11 is Ctrl+Alt+Tab; both exact mappings are installed and their action paths
+pass replay/compositor-keyboard tests. Airplane mode physically disconnected
+Wi-Fi and powered Bluetooth off until the second key press restored both.
+The earlier 0x10d attribution was incorrect and is removed. See the latest
+exact-mapping entry in `CURRENT_HANDOFF.md` for evidence and rollback.
 
 ## Current repository baseline
 
@@ -89,13 +153,14 @@ physically accepted pre-refactor baseline. At that checkpoint:
 - all 1126 tests passed with 11 expected skips;
 - shell syntax, Python compilation and diff whitespace checks passed.
 
-The maintainability pass after that commit is repository-only. Its componentized
+The original maintainability pass after that commit was repository-only. Its componentized
 `shell.qml` is SHA-256
 `77bab37b1dd1c853f1fa26998c50fa81f6883150178b9a7be76e10ad119e4bbc`.
 All 1127 tests pass with 11 expected skips, along with tracked shell syntax,
 Python compilation, seed digest and diff whitespace checks. The accepted live
-Hub remains unchanged at the pre-refactor hash. This candidate must not be
-described as physically accepted until separately installed and observed.
+Hub remained unchanged at that checkpoint. The 2026-09-12 installation above
+supersedes it; detailed keyboard and pointer evidence is in
+`docs/hub-menu-interaction-2026-09-12.md`.
 
 ## System VM v2
 

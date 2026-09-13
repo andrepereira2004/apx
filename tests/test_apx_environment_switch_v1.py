@@ -517,7 +517,7 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('PanelWindow {\n        id: popup', source)
         self.assertIn('sequence: "Escape"', source)
         self.assertIn('property bool open: false', source)
-        self.assertIn('focusable: open', source)
+        self.assertNotIn('focusable: open', source)
         self.assertIn('mask: Region { item: popupInputRegion }', source)
         self.assertIn('ScrollBar.vertical: ScrollBar', source)
         self.assertIn('menuContent.implicitHeight > popupBackground.height - 20', source)

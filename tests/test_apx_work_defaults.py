@@ -71,6 +71,18 @@ class WorkDefaultsTests(unittest.TestCase):
         self.assertEqual(mako.count("default-timeout=8000"), 3)
         self.assertEqual(mako.count("ignore-timeout=1"), 3)
 
+    def test_terminal_notification_deploy_keeps_shell_launcher_executable(self) -> None:
+        deploy = (
+            ROOT / "scripts/physical-pilot/deploy-terminal-notification-policy-v1.sh"
+        ).read_text()
+        executable_install = (
+            '/usr/bin/install -o 1000 -g 1000 -m 0700 '
+            '"$source_launcher" "$live_launcher"'
+        )
+        non_executable_install = executable_install.replace("-m 0700", "-m 0600")
+        self.assertIn(executable_install, deploy)
+        self.assertNotIn(non_executable_install, deploy)
+
     def test_wallpapers_rotate_on_a_noninteractive_background_layer(self) -> None:
         source = (SHELL / "quickshell/apx/shell.qml").read_text()
         for wallpaper in ("atlantic-coast.png", "alpine-lake.png", "rainforest-stream.png"):
@@ -102,24 +114,23 @@ class WorkDefaultsTests(unittest.TestCase):
         # OSD; the control-centre cards contain text only.
         self.assertEqual(source.count("ControlIcon {"), 1)
         self.assertNotIn("WifiSecurityIcon", source)
-        for label in ('text: "WI-FI"', 'text: "BLUETOOTH"', 'text: "VOLUME"',
-                      'text: "MICROFONE"', 'text: "TECLADO"'):
+        for label in ('text: "Wi-Fi"', 'text: "Bluetooth"', 'text: "Volume"',
+                      'text: "Microfone"', 'text: "Teclado"'):
             self.assertIn(label, source)
         controls = source.split('visible: root.popupKind === "controls"', 1)[1]
         self.assertIn("height: visible ? 46 : 0", controls)
         # Interactive cards share the dark menu-button palette. Microphone and
-        # keyboard retain state through a restrained active surface/outline,
-        # rather than a large blue fill.
+        # keyboard retain state through distinct surfaces.
         for palette_entry in (
-            'controlButtonSurface: "#101920"',
-            'controlButtonHover: "#17242b"',
-            'controlButtonActive: "#142c34"',
-            'controlButtonOutline: "#26343a"',
+            'controlButtonSurface: "#191d22"',
+            'controlButtonHover: "#272c33"',
+            'controlButtonActive: "#30353b"',
+            'controlButtonOutline: "#343a41"',
         ):
             self.assertIn(palette_entry, source)
         for state_color in (
-            '!root.microphoneActive || root.microphoneMuted ? root.controlButtonSurface : root.controlButtonActive',
-            'root.keyboardBrightness === 0 ? root.controlButtonSurface : root.controlButtonActive',
+            'microphoneState <= 0 ? root.controlButtonSurface : (microphoneState === 1 ? "#3b4850" : "#b8d8dc")',
+            'lightState === 0 ? root.controlButtonSurface : (lightState === 1 ? "#3b4850" : "#b8d8dc")',
         ):
             self.assertIn(state_color, source)
         brightness_card = source.split('text: "Brilho do ecrã"', 1)[0].rsplit(
@@ -146,8 +157,8 @@ class WorkDefaultsTests(unittest.TestCase):
             "keyboardBrightnessSummaryButton", "LUZ OFF", "LUZ MÉD", "LUZ MAX",
         ):
             self.assertNotIn(forbidden, source)
-        actions = source.split('text: "AÇÕES DA SESSÃO"', 1)[1]
-        before_actions = source.split('text: "AÇÕES DA SESSÃO"', 1)[0]
+        actions = source.split('text: "Ações da sessão"', 1)[1]
+        before_actions = source.split('text: "Ações da sessão"', 1)[0]
         self.assertIn("width: parent.width; height: visible ? 9 : 0", before_actions[-400:])
         self.assertIn("height: visible ? 85 : 0", actions)
         self.assertGreaterEqual(actions.count("height: 40; radius: 10"), 4)
@@ -156,7 +167,8 @@ class WorkDefaultsTests(unittest.TestCase):
         self.assertLess(actions.index('id: rebootMouse'), actions.index('id: updateMouse'))
         self.assertLess(actions.index('id: updateMouse'), actions.index('id: poweroffMouse'))
         self.assertIn("function openFiles(): void", source)
-        self.assertIn("if (!root.isHub && !environmentFilesProcess.running)", source)
+        self.assertIn("if (!fileShortcutProcess.running)", source)
+        self.assertNotIn("if (!root.isHub && !environmentFilesProcess.running)", source)
 
     def test_lock_enter_retries_face_or_submits_password(self) -> None:
         lock = (SHELL / "hypr/hyprlock.conf").read_text()
@@ -185,28 +197,28 @@ class WorkDefaultsTests(unittest.TestCase):
         self.assertNotIn("sufficient      pam_howdy.so", pam)
         self.assertIn("pam_howdy runs first", lock)
 
-    def test_bar_has_small_symmetric_horizontal_margins(self) -> None:
+    def test_bar_matches_window_horizontal_margins(self) -> None:
         source = (SHELL / "quickshell/apx/shell.qml").read_text()
         bar = source.split("id: bar", 1)[1].split("id: hotkeyOsdWindow", 1)[0]
         self.assertIn("anchors { top: true; left: true; right: true }", bar)
-        self.assertIn("margins { left: 5; right: 5 }", bar)
-        self.assertIn("anchors.left: parent.left\n                anchors.leftMargin: 5", bar)
-        self.assertIn("anchors.right: parent.right\n                anchors.rightMargin: 5", bar)
+        self.assertIn("margins { left: 20; right: 20 }", bar)
+        self.assertIn("anchors.left: parent.left\n                anchors.leftMargin: 2", bar)
+        self.assertIn("anchors.right: parent.right\n                anchors.rightMargin: 2", bar)
 
-    def test_window_border_matches_the_quickshell_bar(self) -> None:
+    def test_window_border_distinguishes_keyboard_focus(self) -> None:
         lua = (SHELL / "hypr/hyprland.lua").read_text()
         fallback = (SHELL / "hyprland/hyprland.conf").read_text()
         defaults = (DEFAULTS / "hyprland.conf").read_text()
 
-        self.assertIn("border_size = 1,", lua)
-        self.assertEqual(lua.count('= "rgba(26343aff)"'), 2)
+        self.assertIn("border_size = 2,", lua)
+        self.assertIn('active_border   = "rgba(ffffffff)"', lua)
+        self.assertIn('inactive_border = "rgba(26343aff)"', lua)
         self.assertNotIn("rgba(33ccffee)", lua)
         self.assertNotIn("rgba(00ff99ee)", lua)
         for source in (fallback, defaults):
-            self.assertIn("border_size = 1", source)
-            self.assertIn("col.active_border = rgba(26343aff)", source)
+            self.assertIn("border_size = 2", source)
+            self.assertIn("col.active_border = rgba(ffffffff)", source)
             self.assertIn("col.inactive_border = rgba(26343aff)", source)
-            self.assertNotIn("col.active_border = rgba(55e6ffff)", source)
 
     def test_laptop_keys_keep_actions_inside_the_environment(self) -> None:
         source = (SHELL / "hypr/hyprland.lua").read_text()

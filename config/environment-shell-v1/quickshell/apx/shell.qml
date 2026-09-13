@@ -15,15 +15,15 @@ ShellRoot {
     // amount of the background through both surfaces.
     property color panel: "#d90a1014"
     property color popupPanel: "#d90a1014"
-    property color card: "#f2162027"
-    property color textMain: "#e8f7fa"
-    property color textDim: "#8aa3aa"
+    property color card: "#f21b1e22"
+    property color textMain: "#eceef0"
+    property color textDim: "#9ba3ac"
     // Control-centre actions use the same near-background surfaces as the
     // other menus. Cyan is reserved for state and emphasis, not large fills.
-    readonly property color controlButtonSurface: "#101920"
-    readonly property color controlButtonHover: "#17242b"
-    readonly property color controlButtonActive: "#142c34"
-    readonly property color controlButtonOutline: "#26343a"
+    readonly property color controlButtonSurface: "#191d22"
+    readonly property color controlButtonHover: "#272c33"
+    readonly property color controlButtonActive: "#30353b"
+    readonly property color controlButtonOutline: "#343a41"
     readonly property var wallpaperSources: [
         "file:///home/apx/.config/apx/wallpapers/atlantic-coast.png",
         "file:///home/apx/.config/apx/wallpapers/alpine-lake.png",
@@ -114,14 +114,18 @@ ShellRoot {
     property Item popupTarget: null
     property real popupReveal: 1
     property bool popupKeyboardRequested: false
+    property bool menuKeyboardNavigation: false
     property string animatedBarOpenKind: ""
     property string animatedBarCloseKind: ""
     readonly property int popupLeftMargin: {
-        if (!popupTarget || !bar) return 8
+        var left = bar.margins.left
+        var right = left + bar.width - popup.menuWidth
+        if (popupKind === "calendar") return left
+        if (popupKind === "controls") return Math.max(left, right)
+        if (!popupTarget || !bar) return left
         var targetRect = popupTarget.mapToItem(bar.contentItem, 0, 0)
-        var targetCenter = targetRect.x + popupTarget.width / 2
-        return Math.max(8, Math.min(bar.width - popup.implicitWidth - 8,
-                                    Math.round(targetCenter - popup.implicitWidth / 2)))
+        var targetCenter = left + targetRect.x + popupTarget.width / 2
+        return Math.max(left, Math.min(right, Math.round(targetCenter - popup.menuWidth / 2)))
     }
     property var hostState: ({})
     property string clockText: ""
@@ -133,8 +137,77 @@ ShellRoot {
     property bool volumeMuted: false
     property bool apxShortcutsEnabled: true
     property string batteryText: "--"
+    property string batteryStatus: "Desconhecido"
+    property real batteryWatts: -1
+    property real batteryHealth: -1
+    property int batteryMinutes: -1
+
+    function applyBatteryReport(report) {
+        var fields = report.trim().split("\n")
+        var capacity = Number(fields[0])
+        batteryText = fields[0] && isFinite(capacity) && capacity >= 0 && capacity <= 100 ? capacity + "%" : "--"
+        var status = fields[1] || "Unknown"
+        batteryStatus = status === "Charging" ? "A carregar" : status === "Discharging" ? "A utilizar bateria"
+                      : status === "Full" ? "Carga completa" : status === "Not charging" ? "Ligada à corrente" : "Estado indisponível"
+        var power = Number(fields[2])
+        var energy = Number(fields[3])
+        var full = Number(fields[4])
+        var design = Number(fields[5])
+        batteryWatts = fields[2] && isFinite(power) && power >= 0 ? power / 1000000 : -1
+        batteryHealth = full > 0 && design > 0 ? Math.round(full / design * 100) : -1
+        batteryMinutes = status === "Discharging" && energy > 0 && power > 0 ? Math.round(energy / power * 60) : -1
+    }
+
+    function genericMenuItems() {
+        var result = []
+        function visit(item) {
+            if (!item.visible || !item.enabled) return
+            if (item.activeFocusOnTab && item.width > 0 && item.height > 0) {
+                result.push(item)
+                return
+            }
+            for (var i = 0; i < item.children.length; ++i) visit(item.children[i])
+        }
+        visit(menuContent)
+        return result
+    }
+
+    function focusMenuItem(item) {
+        item.forceActiveFocus(Qt.TabFocusReason)
+        var point = item.mapToItem(menuFlick.contentItem, 0, 0)
+        if (point.y < menuFlick.contentY) menuFlick.contentY = Math.max(0, point.y - 4)
+        else if (point.y + item.height > menuFlick.contentY + menuFlick.height)
+            menuFlick.contentY = Math.min(Math.max(0, menuFlick.contentHeight - menuFlick.height), point.y + item.height - menuFlick.height + 4)
+    }
+
+    function navigateGenericMenu(event) {
+        if (popupKind === "calendar" || popupKind === "environments") return
+        var backward = event.key === Qt.Key_Backtab || event.key === Qt.Key_Up || event.key === Qt.Key_Left
+        var forward = event.key === Qt.Key_Tab || event.key === Qt.Key_Down || event.key === Qt.Key_Right
+        if (!backward && !forward) return
+        menuKeyboardNavigation = true
+        var items = genericMenuItems()
+        if (!items.length) return
+        var current = -1
+        for (var i = 0; i < items.length; ++i) if (items[i].activeFocus) current = i
+        focusMenuItem(items[current < 0 ? (backward ? items.length - 1 : 0) : (current + (backward ? -1 : 1) + items.length) % items.length])
+        event.accepted = true
+    }
+
+    Timer {
+        interval: 100
+        repeat: true
+        running: popup.open && root.menuKeyboardNavigation && root.popupKind !== "calendar" && root.popupKind !== "environments"
+        onTriggered: {
+            var items = root.genericMenuItems()
+            for (var i = 0; i < items.length; ++i) if (items[i].activeFocus) return
+            if (items.length) root.focusMenuItem(items[0])
+        }
+    }
     property var hardwareProfile: ({ platform_profile: "unknown", gpu_profile: "unknown", requested_gpu_profile: "unknown", reboot_required: false })
+    property bool batteryDetailsOpen: false
     property bool hardwareBusy: false
+    property string platformProfileTarget: ""
     property bool hardwareConfirmOpen: false
     property bool hardwareApplied: false
     property string hardwareToken: ""
@@ -409,9 +482,9 @@ ShellRoot {
         controlsAudioOpen = section === "audio" && !wasOpen
         controlsMicrophoneOpen = section === "microphone" && !wasOpen
         if (controlsAudioOpen)
-            Qt.callLater(function() { volumeSlider.forceActiveFocus() })
+            Qt.callLater(function() { if (root.menuKeyboardNavigation) volumeSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
         else if (controlsMicrophoneOpen)
-            Qt.callLater(function() { microphoneSlider.forceActiveFocus() })
+            Qt.callLater(function() { if (root.menuKeyboardNavigation) microphoneSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
     }
 
     function controlsAllClosed() {
@@ -773,7 +846,7 @@ ShellRoot {
     }
 
     function calendarActionIsFocused(kind, key) {
-        return calendarFocusAction.kind === kind
+        return menuKeyboardNavigation && calendarFocusAction.kind === kind
                 && calendarFocusAction.key === String(key)
     }
 
@@ -900,6 +973,7 @@ ShellRoot {
     }
 
     function handleCalendarKey(event) {
+        if (event.key !== Qt.Key_Escape) menuKeyboardNavigation = true
         if (event.key === Qt.Key_Left) {
             moveCalendarHorizontal(-1)
             event.accepted = true
@@ -976,8 +1050,25 @@ ShellRoot {
     function showPopup() {
         popupOpenAnimation.stop()
         popupReveal = 0
+        menuKeyboardNavigation = false
+        environmentKeyboardFocus = false
+        popupBackground.forceActiveFocus()
         popup.open = true
         popupOpenAnimation.restart()
+    }
+
+    function popupBarTargetAt(x, y) {
+        if (popup.screen !== bar.screen || y < 0 || y >= bar.implicitHeight) return null
+        var buttons = [calendarButton, environmentButton, modelStoreButton, batteryButton, controlCenterButton]
+        for (var i = 0; i < buttons.length; ++i) {
+            var button = buttons[i]
+            if (!button.visible || !button.enabled) continue
+            var point = button.mapToItem(bar.contentItem, 0, 0)
+            var left = point.x + bar.margins.left
+            if (x >= left && x < left + button.width && y >= point.y && y < point.y + button.height)
+                return button
+        }
+        return null
     }
 
     function togglePopup(kind, target, keyboardRequested) {
@@ -1004,11 +1095,16 @@ ShellRoot {
             controlsMicrophoneOpen = false
             cancelWifiPassword()
         }
+        menuFlick.contentY = 0
         popupKind = kind
         popupTarget = target
         showPopup()
         if (kind === "controls")
             hostAction("wifi-scan")
+        if (kind === "battery") {
+            batteryDetailsOpen = hardwareConfirmOpen || hardwareProfile.reboot_required === true
+            if (root.isHub) loadHardwareProfile()
+        }
         if (kind === "model" && !modelStoreStatusProcess.running)
             modelStoreStatusProcess.running = true
         if (kind === "environments" && root.isHub) {
@@ -1025,12 +1121,17 @@ ShellRoot {
         }
         if (kind === "calendar")
             focusCalendarMenuAfterOpen(true)
+        else if (kind !== "environments")
+            Qt.callLater(function() {
+                var items = root.genericMenuItems()
+                if (popup.open) popupBackground.forceActiveFocus()
+            })
     }
 
     function focusEnvironmentMenuAfterOpen() {
         Qt.callLater(function() {
             if (root.popupKind !== "environments" || !popup.open) return
-            root.environmentKeyboardFocus = true
+            root.environmentKeyboardFocus = false
             root.environmentFocusIndex = -1
             environmentMenu.forceActiveFocus()
         })
@@ -1814,6 +1915,7 @@ ShellRoot {
     function setPlatformProfile(profile) {
         if (hardwareBusy) return
         hardwareBusy = true
+        platformProfileTarget = profile
         platformProfileError = ""
         hardwareMessage = "A aplicar modo " + platformLabel(profile) + "..."
         platformProfileProcess.command = ["/home/apx/.local/libexec/apx-system-power-client-v1.py", "platform-set", profile]
@@ -2153,44 +2255,55 @@ ShellRoot {
 
     Process {
         id: batteryProcess
-        command: ["/usr/bin/bash", "-lc", "for f in /sys/class/power_supply/BAT*/capacity; do test -r \"$f\" && { tr -d '\\n' < \"$f\"; printf '%%'; exit; }; done; printf -- '--'"]
-        stdout: StdioCollector { onStreamFinished: root.batteryText = text.trim() }
+        command: ["/usr/bin/bash", "-lc", "for d in /sys/class/power_supply/BAT*; do test -r \"$d/capacity\" || continue; for field in capacity status power_now energy_now energy_full energy_full_design; do if test -r \"$d/$field\"; then tr -d '\\n' < \"$d/$field\"; fi; printf '\\n'; done; exit; done; printf -- '--\\n'"]
+        stdout: StdioCollector { onStreamFinished: root.applyBatteryReport(text) }
     }
 
     Process {
         id: hardwareProfileProcess
         command: ["/home/apx/.local/libexec/apx-system-power-client-v1.py", "hardware-status"]
+        property string response: ""
+        onStarted: { response = ""; root.hardwareStatusError = "" }
         stderr: StdioCollector { onStreamFinished: root.hardwareStatusError = text.trim() }
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    root.hardwareProfile = JSON.parse(text)
-                    root.applyHardwareControls(root.hardwareProfile)
-                    root.hardwareStatusError = ""
-                } catch (error) {
-                    root.hardwareMessage = root.hardwareStatusError.length
-                            ? root.hardwareStatusError : "Perfis do Host indisponíveis."
-                }
+        stdout: StdioCollector { onStreamFinished: hardwareProfileProcess.response = text }
+        onExited: (exitCode, exitStatus) => {
+            // A status request started before a mutation must not undo its UI.
+            if (root.hardwareBusy) return
+            try {
+                if (exitCode !== 0) throw new Error("status failed")
+                var result = JSON.parse(response)
+                if (!Array.isArray(result.platform_profiles)) throw new Error("invalid status")
+                root.hardwareProfile = result
+                root.applyHardwareControls(result)
+                root.hardwareStatusError = ""
+            } catch (error) {
+                root.hardwareStatusError = root.hardwareStatusError || "Não foi possível consultar os perfis do Host."
+                root.hardwareProfile = ({})
             }
         }
     }
 
     Process {
         id: platformProfileProcess
+        property string response: ""
+        onStarted: response = ""
         stderr: StdioCollector { onStreamFinished: root.platformProfileError = text.trim() }
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    root.hardwareProfile = JSON.parse(text)
-                    root.applyHardwareControls(root.hardwareProfile)
-                    root.hardwareMessage = "Modo " + root.platformLabel(root.hardwareProfile.platform_profile) + " ativo."
-                } catch (error) {
-                    root.hardwareMessage = root.platformProfileError.length
-                            ? root.platformProfileError : "O Host recusou o modo de energia."
-                }
+        stdout: StdioCollector { onStreamFinished: platformProfileProcess.response = text }
+        onExited: (exitCode, exitStatus) => {
+            root.hardwareBusy = false
+            try {
+                if (exitCode !== 0) throw new Error("command failed")
+                var result = JSON.parse(response)
+                if (result.platform_profile !== root.platformProfileTarget) throw new Error("profile not applied")
+                root.hardwareProfile = Object.assign({}, root.hardwareProfile, result)
+                root.applyHardwareControls(result)
+                root.hardwareMessage = "Modo " + root.platformLabel(result.platform_profile) + " ativo."
+            } catch (error) {
+                root.platformProfileError = root.platformProfileError || "Não foi possível aplicar o modo de energia."
+                root.hardwareMessage = root.platformProfileError
             }
+            root.platformProfileTarget = ""
         }
-        onExited: root.hardwareBusy = false
     }
 
     Process {
@@ -2217,22 +2330,28 @@ ShellRoot {
         id: gpuConfirmProcess
         command: ["/home/apx/.local/libexec/apx-system-power-client-v1.py", "gpu-confirm", "--token-stdin"]
         stdinEnabled: true
-        onStarted: gpuConfirmProcess.write(root.hardwareToken + "\n")
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    root.hardwareProfile = JSON.parse(text)
-                    root.applyHardwareControls(root.hardwareProfile)
-                    root.hardwareToken = ""
-                    root.hardwareApplied = true
-                    root.hardwareMessage = "Perfil " + root.gpuLabel(root.hardwareTarget)
-                            + " preparado. Reinicie agora ou mais tarde para o aplicar."
-                } catch (error) {
-                    root.hardwareMessage = "Não foi possível preparar o perfil de GPU."
-                }
+        property string response: ""
+        onStarted: { response = ""; root.gpuProfileError = ""; gpuConfirmProcess.write(root.hardwareToken + "\n") }
+        stderr: StdioCollector { onStreamFinished: root.gpuProfileError = text.trim() }
+        stdout: StdioCollector { onStreamFinished: gpuConfirmProcess.response = text }
+        onExited: (exitCode, exitStatus) => {
+            root.hardwareBusy = false
+            try {
+                if (exitCode !== 0) throw new Error("GPU command failed")
+                var result = JSON.parse(response)
+                if (result.requested_gpu_profile !== root.hardwareTarget || result.reboot_required !== true)
+                    throw new Error("GPU profile not staged")
+                root.hardwareProfile = result
+                root.applyHardwareControls(result)
+                root.hardwareToken = ""
+                root.hardwareApplied = true
+                root.hardwareMessage = "Perfil " + root.gpuLabel(root.hardwareTarget)
+                        + " preparado. Reinicie agora ou mais tarde para o aplicar."
+            } catch (error) {
+                root.hardwareApplied = false
+                root.hardwareMessage = root.gpuProfileError || "Não foi possível preparar o perfil de GPU."
             }
         }
-        onExited: root.hardwareBusy = false
     }
 
     Process {
@@ -2462,6 +2581,7 @@ ShellRoot {
         }
     }
     Process { id: environmentFilesProcess; command: ["/usr/bin/thunar"] }
+    Process { id: fileShortcutProcess; command: ["/home/apx/.local/bin/apx-laptop-action-v1", "files"] }
     Process { id: environmentAppsProcess; command: ["/usr/bin/rofi", "-show", "drun"] }
     Process { id: updateUiProcess; command: ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/run/apx/coordinated-update-client-v1.py", "ui"] }
     Process {
@@ -2503,8 +2623,8 @@ ShellRoot {
         }
 
         function openFiles(): void {
-            if (!root.isHub && !environmentFilesProcess.running)
-                environmentFilesProcess.running = true
+            if (!fileShortcutProcess.running)
+                fileShortcutProcess.running = true
         }
 
         function openEnvironments(): void {
@@ -2523,7 +2643,9 @@ ShellRoot {
 
         function popupStatus(): string {
             return JSON.stringify({ kind: root.popupKind, visible: popup.open,
-                                    width: popup.implicitWidth, height: popup.implicitHeight,
+                                    width: popup.menuWidth, height: popup.menuHeight,
+                                    keyboard_items: root.genericMenuItems().length,
+                                    keyboard_index: root.genericMenuItems().findIndex(function(item) { return item.activeFocus }),
                                     calendar_focus_kind: root.calendarFocusAction.kind,
                                     calendar_focus_key: root.calendarFocusAction.key,
                                     environment_focus_index: root.environmentFocusIndex,
@@ -2578,7 +2700,7 @@ ShellRoot {
             root.controlsBluetoothOpen = false
             root.controlsAudioOpen = true
             root.controlsMicrophoneOpen = false
-            Qt.callLater(function() { volumeSlider.forceActiveFocus() })
+            Qt.callLater(function() { if (root.menuKeyboardNavigation) volumeSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
         }
 
         function openMicrophoneControls(): void {
@@ -2587,7 +2709,7 @@ ShellRoot {
             root.controlsBluetoothOpen = false
             root.controlsAudioOpen = false
             root.controlsMicrophoneOpen = true
-            Qt.callLater(function() { microphoneSlider.forceActiveFocus() })
+            Qt.callLater(function() { if (root.menuKeyboardNavigation) microphoneSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
         }
 
         function openCalendar(): void {
@@ -2828,15 +2950,18 @@ ShellRoot {
         height: 34
         opacity: enabled ? 1 : 0.42
         radius: 6
-        color: keyboardFocused ? "#244b55" : (menuMouse.containsMouse ? root.cyanDim : (accent ? "#1c3941" : "#101920"))
-        border.width: accent || keyboardFocused ? 1 : 0
-        border.color: keyboardFocused ? "#a6f3ff" : root.cyan
+        color: keyboardFocused ? root.controlButtonActive : (menuMouse.containsMouse ? root.controlButtonHover : (accent ? root.controlButtonActive : root.controlButtonSurface))
+        border.width: keyboardFocused ? 1 : 0
+        border.color: keyboardFocused ? root.cyan : root.cyan
         Text {
             anchors.left: parent.left
             anchors.leftMargin: 11
+            anchors.right: parent.right
+            anchors.rightMargin: 11
+            elide: Text.ElideRight
             anchors.verticalCenter: parent.verticalCenter
             text: menuButton.label
-            color: menuButton.accent ? root.cyan : root.textMain
+            color: root.textMain
             font.family: "Adwaita Mono"
             font.pixelSize: root.menuBodySize
         }
@@ -2858,7 +2983,7 @@ ShellRoot {
         width: parent ? parent.width : 300
         height: 34
         radius: 6
-        color: "#101920"
+        color: root.controlButtonSurface
         border.width: input.activeFocus ? 1 : 0
         border.color: root.cyan
         TextInput {
@@ -2869,7 +2994,7 @@ ShellRoot {
             anchors.rightMargin: 10
             verticalAlignment: TextInput.AlignVCenter
             color: root.textMain
-            selectionColor: root.cyanDim
+            selectionColor: root.controlButtonOutline
             font.family: "Adwaita Mono"
             font.pixelSize: 12
             clip: true
@@ -2892,9 +3017,9 @@ ShellRoot {
         activeFocusOnTab: true
         height: 30
         radius: 6
-        color: keyboardFocused ? "#1d4650" : (checked ? root.cyanDim : "#101920")
-        border.width: checked || keyboardFocused || activeFocus ? 1 : 0
-        border.color: keyboardFocused || activeFocus ? "#a6f3ff" : root.cyan
+        color: keyboardFocused ? root.controlButtonActive : (checked ? root.controlButtonActive : root.controlButtonSurface)
+        border.width: keyboardFocused || activeFocus ? 1 : 0
+        border.color: keyboardFocused || activeFocus ? root.cyan : root.cyan
         Keys.onPressed: function(event) {
             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                 toggle.activated()
@@ -2906,7 +3031,7 @@ ShellRoot {
             anchors.leftMargin: 12
             anchors.verticalCenter: parent.verticalCenter
             text: (toggle.checked ? "[✓] " : "[ ] ") + toggle.label
-            color: toggle.checked ? root.cyan : root.textDim
+            color: toggle.checked ? root.textMain : root.textDim
             font.family: "Adwaita Mono"
             font.pixelSize: 10
             font.bold: true
@@ -2924,14 +3049,14 @@ ShellRoot {
         signal activated()
         opacity: enabled ? 1 : 0.42
         radius: 8
-        color: keyboardFocused ? "#244b55" : (presetMouse.containsMouse ? "#203b46" : (selected ? "#1c3941" : "#101920"))
-        border.width: selected || keyboardFocused ? 1 : 0
-        border.color: keyboardFocused ? "#a6f3ff" : root.cyan
+        color: keyboardFocused ? root.controlButtonActive : (presetMouse.containsMouse ? root.controlButtonHover : (selected ? root.controlButtonActive : root.controlButtonSurface))
+        border.width: keyboardFocused ? 1 : 0
+        border.color: keyboardFocused ? root.cyan : root.cyan
         Column {
             anchors.fill: parent; anchors.margins: 9; spacing: 3
-            Text { width: parent.width; text: presetCard.title; color: presetCard.selected ? root.cyan : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+            Text { width: parent.width; text: presetCard.title; color: presetCard.selected ? root.textMain : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
             Text { width: parent.width; text: presetCard.description; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; wrapMode: Text.WordWrap; maximumLineCount: 2; elide: Text.ElideRight }
-            Text { width: parent.width; text: presetCard.additions; color: presetCard.selected ? root.cyan : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true; elide: Text.ElideRight }
+            Text { width: parent.width; text: presetCard.additions; color: presetCard.selected ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true; elide: Text.ElideRight }
         }
         BounceMouseArea { id: presetMouse; anchors.fill: parent; enabled: presetCard.enabled; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: presetCard.activated() }
     }
@@ -2948,19 +3073,19 @@ ShellRoot {
         signal infoRequested()
         height: infoVisible ? 72 : 34
         radius: 7
-        color: keyboardFocused ? "#1d4650" : (featureMouse.containsMouse ? "#18313a" : (checked ? "#142c34" : "#101920"))
+        color: keyboardFocused ? root.controlButtonActive : (featureMouse.containsMouse ? root.controlButtonHover : (checked ? root.controlButtonActive : root.controlButtonSurface))
         border.width: checked || keyboardFocused ? 1 : 0
-        border.color: keyboardFocused ? "#a6f3ff" : root.cyanDim
+        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
         Rectangle {
             anchors.left: parent.left; anchors.leftMargin: 10; anchors.top: parent.top; anchors.topMargin: 8
             width: 18; height: 18; radius: 5
-            color: featureCard.checked ? root.cyanDim : "#182731"
+            color: featureCard.checked ? root.controlButtonActive : root.controlButtonSurface
             border.width: 1; border.color: featureCard.checked ? root.cyan : "#52656d"
-            Text { anchors.centerIn: parent; text: featureCard.checked ? "✓" : ""; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: 11; font.bold: true }
+            Text { anchors.centerIn: parent; text: featureCard.checked ? "✓" : ""; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: 11; font.bold: true }
         }
-        Text { anchors.left: parent.left; anchors.leftMargin: 36; anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: parent.top; anchors.topMargin: 9; text: featureCard.label; color: featureCard.checked ? root.cyan : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; elide: Text.ElideRight }
+        Text { anchors.left: parent.left; anchors.leftMargin: 36; anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: parent.top; anchors.topMargin: 9; text: featureCard.label; color: featureCard.checked ? root.textMain : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; elide: Text.ElideRight }
         Text { visible: featureCard.infoVisible; anchors.left: parent.left; anchors.leftMargin: 10; anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: parent.top; anchors.topMargin: 31; text: featureCard.detail; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; elide: Text.ElideRight }
-        Text { visible: featureCard.infoVisible; anchors.left: parent.left; anchors.leftMargin: 10; anchors.right: parent.right; anchors.rightMargin: 10; anchors.bottom: parent.bottom; anchors.bottomMargin: 8; text: featureCard.programs; color: featureCard.programs.indexOf("INSTALA") === 0 ? root.cyan : "#73929a"; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true; elide: Text.ElideRight }
+        Text { visible: featureCard.infoVisible; anchors.left: parent.left; anchors.leftMargin: 10; anchors.right: parent.right; anchors.rightMargin: 10; anchors.bottom: parent.bottom; anchors.bottomMargin: 8; text: featureCard.programs; color: featureCard.programs.indexOf("INSTALA") === 0 ? root.textMain : "#73929a"; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true; elide: Text.ElideRight }
         BounceMouseArea { id: featureMouse; anchors.fill: parent; acceptedButtons: Qt.LeftButton; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: featureCard.activated() }
         MouseArea { anchors.fill: parent; acceptedButtons: Qt.RightButton; cursorShape: Qt.WhatsThisCursor; onClicked: featureCard.infoRequested() }
     }
@@ -3003,21 +3128,22 @@ ShellRoot {
     PanelWindow {
         id: bar
         anchors { top: true; left: true; right: true }
-        margins { left: 5; right: 5 }
+        margins { left: 20; right: 20 }
         implicitHeight: 46
         exclusiveZone: 46
         color: "transparent"
-        WlrLayershell.layer: WlrLayer.Overlay
+        // Top panels are covered by fullscreen clients; Overlay is not.
+        WlrLayershell.layer: WlrLayer.Top
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
         Rectangle {
             anchors.fill: parent
             anchors.topMargin: 5
             anchors.bottomMargin: 5
-            radius: 9
+            radius: 10
             color: root.panel
             border.width: 1
-            border.color: "#26343a"
+            border.color: root.controlButtonOutline
 
             MouseArea {
                 anchors.fill: parent
@@ -3027,14 +3153,15 @@ ShellRoot {
 
             Row {
                 anchors.left: parent.left
-                anchors.leftMargin: 5
+                anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 4
                 BarButton {
                     id: calendarButton
-                    activeSurface: root.cyanDim
-                    accentColor: root.cyan
+                    activeSurface: root.controlButtonHover
+                    accentColor: root.textMain
                     textColor: root.textMain
+                    activeBorderWidth: 1
                     label: "[ " + root.clockText + " ]"
                     alternateLabel: calendarButton.label
                     alternateActive: popup.open && root.popupKind === "calendar"
@@ -3046,8 +3173,8 @@ ShellRoot {
 
             BarButton {
                 id: environmentButton
-                activeSurface: root.cyanDim
-                accentColor: root.cyan
+                activeSurface: root.controlButtonHover
+                accentColor: root.textMain
                 textColor: root.textMain
                 anchors.centerIn: parent
                 label: root.isHub ? "[ HUB · ENVIRONMENTS ]" : "[ " + root.environmentLabel + " · VOLTAR AO HUB ]"
@@ -3063,13 +3190,13 @@ ShellRoot {
 
             Row {
                 anchors.right: parent.right
-                anchors.rightMargin: 5
+                anchors.rightMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 2
                 BarButton {
                     id: modelStoreButton
-                    activeSurface: root.cyanDim
-                    accentColor: root.cyan
+                activeSurface: root.controlButtonHover
+                    accentColor: root.textMain
                     textColor: root.textMain
                     visible: root.isHub
                     label: root.modelStoreState.state === "active" ? "[ IA ON ]" : (root.modelStoreState.state === "safe-to-remove" ? "[ SSD OK ]" : "[ IA OFF ]")
@@ -3080,16 +3207,16 @@ ShellRoot {
                     onActivated: root.togglePopup("model", this, true)
                 }
                 BarButton {
-                    activeSurface: root.cyanDim
-                    accentColor: root.cyan
+                activeSurface: root.controlButtonHover
+                    accentColor: root.textMain
                     textColor: root.textMain
                     visible: root.microphoneActive
                     label: "[ MIC ATIVO ]"
                 }
                 BarButton {
                     id: batteryButton
-                    activeSurface: root.cyanDim
-                    accentColor: root.cyan
+                activeSurface: root.controlButtonHover
+                    accentColor: root.textMain
                     textColor: root.textMain
                     label: "[ BAT " + root.batteryText + " ]"
                     alternateLabel: batteryButton.label
@@ -3100,9 +3227,10 @@ ShellRoot {
                 }
                 BarButton {
                     id: controlCenterButton
-                    activeSurface: root.cyanDim
-                    accentColor: root.cyan
+                    activeSurface: root.controlButtonHover
+                    accentColor: root.textMain
                     textColor: root.textMain
+                    activeBorderWidth: 1
                     label: "[|]"
                     alternateLabel: "[A]"
                     alternateActive: popup.open && root.popupKind === "controls"
@@ -3133,7 +3261,7 @@ ShellRoot {
             radius: 22
             color: "#dc10181e"
             border.width: 1
-            border.color: "#6b55e6ff"
+            border.color: root.controlButtonOutline
 
             Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
@@ -3144,7 +3272,7 @@ ShellRoot {
                 width: 38
                 height: 38
                 source: root.hotkeyOsdIcon
-                tint: root.cyan
+                tint: root.textMain
             }
 
             Text {
@@ -3184,7 +3312,7 @@ ShellRoot {
                     width: parent.width * Math.max(0, Math.min(100, root.hotkeyOsdProgress)) / 100
                     height: parent.height
                     radius: 3
-                    color: root.cyan
+                    color: root.textMain
                     Behavior on width { NumberAnimation { duration: 90; easing.type: Easing.OutCubic } }
                 }
             }
@@ -3202,11 +3330,11 @@ ShellRoot {
             anchors.centerIn: parent
             width: Math.min(520, parent.width - 80)
             spacing: 18
-            Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: "APX ENVIRONMENTS"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: 18; font.bold: true }
+            Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: "APX ENVIRONMENTS"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: 18; font.bold: true }
             Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: root.isHub ? "A ABRIR " + root.selectedEnvironmentName.toUpperCase() : "A REGRESSAR AO HUB"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: 14; font.bold: true }
             Rectangle {
-                width: parent.width; height: 8; radius: 4; color: "#263941"
-                Rectangle { width: parent.width * root.environmentSwitchProgress / 100; height: parent.height; radius: 4; color: root.cyan; Behavior on width { NumberAnimation { duration: 110 } } }
+                width: parent.width; height: 8; radius: 4; color: root.controlButtonOutline
+                Rectangle { width: parent.width * root.environmentSwitchProgress / 100; height: parent.height; radius: 4; color: root.textMain; Behavior on width { NumberAnimation { duration: 110 } } }
             }
             Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: "A preparar a tua sessão…"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize }
         }
@@ -3254,22 +3382,23 @@ ShellRoot {
     PanelWindow {
         id: popup
         property bool open: false
-        anchors { top: true; left: true }
-        margins { top: 6; left: root.popupLeftMargin }
+        anchors { top: true; bottom: true; left: true; right: true }
+        exclusionMode: ExclusionMode.Ignore
         exclusiveZone: 0
         // The window itself never unmaps. Only its visual and input mask open,
         // so the bar keeps the compositor's pointer focus after activation.
         visible: true
-        focusable: open
+        // keyboardFocus owns interactivity. focusable would overwrite Exclusive
+        // with OnDemand when the popup opens.
         mask: Region { item: popupInputRegion }
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.keyboardFocus: open && root.popupKeyboardRequested
                                      ? WlrKeyboardFocus.Exclusive
                                      : WlrKeyboardFocus.None
-        implicitWidth: root.popupKind === "calendar" ? 480
+        property real menuWidth: root.popupKind === "calendar" ? 480
                                                      : (root.popupKind === "environments" ? (root.environmentCreateOpen ? 620 : 430)
-                                                        : (root.popupKind === "controls" ? 340 * root.controlCenterScale : 300))
-        implicitHeight: root.popupKind === "calendar"
+                                                        : (root.popupKind === "controls" ? 340 * root.controlCenterScale : (root.popupKind === "battery" ? 340 : 300)))
+        property real menuHeight: root.popupKind === "calendar"
                         ? (root.calendarEditor ? 500
                            : (root.calendarView === "day"
                               ? 185 + Math.min(4, root.eventsForDate(root.calendarDate).length) * 50
@@ -3278,7 +3407,7 @@ ShellRoot {
                                                           ? (root.controlsAllClosed() ? (root.isHub ? 440 : 394) * root.controlCenterScale
                                                              : ((root.controlsAudioOpen || root.controlsMicrophoneOpen) ? 232
                                                                 : (root.controlsBluetoothOpen ? 320 : 480)) * root.controlCenterScale)
-                                                          : (root.popupKind === "model" ? 370 : (root.popupKind === "environments" ? root.environmentPopupHeight : 330)))
+                                                          : (root.popupKind === "model" ? 370 : (root.popupKind === "environments" ? root.environmentPopupHeight : (root.popupKind === "battery" ? 650 : 440))))
         color: "transparent"
         // A layer-shell surface can accept both pointer and keyboard input
         // even when opened by an IPC shortcut, which avoids the xdg_popup
@@ -3286,9 +3415,11 @@ ShellRoot {
 
         Shortcut {
             sequence: "Escape"
-            enabled: popup.open && !root.wifiPasswordVisible
+            enabled: popup.open
             onActivated: {
-                if (root.popupKind === "calendar" && root.calendarEditor)
+                if (root.wifiPasswordVisible)
+                    root.cancelWifiPassword()
+                else if (root.popupKind === "calendar" && root.calendarEditor)
                     root.cancelCalendarEditor()
                 else
                     root.closePopup()
@@ -3301,13 +3432,38 @@ ShellRoot {
             height: popup.open ? parent.height : 0
         }
 
+        // The exclusive popup receives clicks over the bar too. Dispatch the
+        // existing button action on a completed click without closing first.
+        MouseArea {
+            anchors.fill: parent
+            enabled: popup.open
+            acceptedButtons: Qt.AllButtons
+            hoverEnabled: true
+            property var pressedBarTarget: null
+            cursorShape: root.popupBarTargetAt(mouseX, mouseY) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onPressed: (mouse) => { pressedBarTarget = root.popupBarTargetAt(mouse.x, mouse.y) }
+            onCanceled: pressedBarTarget = null
+            onClicked: (mouse) => {
+                var target = root.popupBarTargetAt(mouse.x, mouse.y)
+                if (mouse.button === Qt.LeftButton && target && target === pressedBarTarget)
+                    target.activated()
+                else
+                    root.closePopup()
+                pressedBarTarget = null
+            }
+        }
+
         Rectangle {
             id: popupBackground
             visible: popup.open
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: root.popupKind === "controls" ? parent.width / root.controlCenterScale : parent.width
-            height: root.popupKind === "controls" ? parent.height / root.controlCenterScale : parent.height
+            x: root.popupLeftMargin
+            y: bar.implicitHeight + 6
+            width: root.popupKind === "controls" ? popup.menuWidth / root.controlCenterScale : popup.menuWidth
+            height: Math.min(popup.menuHeight, popup.height - y - 8,
+                             root.popupKind === "calendar" || root.popupKind === "environments"
+                             ? popup.menuHeight : menuContent.implicitHeight + 20)
+                    / (root.popupKind === "controls" ? root.controlCenterScale : 1)
+            Keys.onPressed: function(event) { root.navigateGenericMenu(event) }
             scale: (root.popupKind === "controls" ? root.controlCenterScale : 1)
                    * (0.96 + 0.04 * root.popupReveal)
             opacity: root.popupReveal
@@ -3315,7 +3471,10 @@ ShellRoot {
             radius: 10
             color: root.popupPanel
             border.width: 1
-            border.color: "#26343a"
+            border.color: root.controlButtonOutline
+
+            // Blank space inside the card must not fall through to dismissal.
+            MouseArea { anchors.fill: parent; acceptedButtons: Qt.AllButtons }
 
             HoverHandler {
                 id: popupHover
@@ -3342,6 +3501,7 @@ ShellRoot {
             }
 
             Flickable {
+                id: menuFlick
                 anchors.fill: parent
                 anchors.margins: 10
                 contentWidth: width
@@ -3371,9 +3531,9 @@ ShellRoot {
                             spacing: 4
                             Rectangle {
                                     width: 32; height: 28; radius: 6
-                                    color: root.calendarActionIsFocused("previous", "previous") ? "#244b55" : (previousMouse.containsMouse ? root.cyanDim : "#101920")
-                                    border.width: root.calendarActionIsFocused("previous", "previous") ? 1 : 0; border.color: "#a6f3ff"
-                                Text { anchors.centerIn: parent; text: "‹"; color: root.cyan; font.pixelSize: 22 }
+                                    color: root.calendarActionIsFocused("previous", "previous") ? root.controlButtonActive : (previousMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                    border.width: root.calendarActionIsFocused("previous", "previous") ? 1 : 0; border.color: root.cyan
+                                Text { anchors.centerIn: parent; text: "‹"; color: root.textMain; font.pixelSize: 22 }
                                 BounceMouseArea { id: previousMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.moveCalendar(-1) }
                             }
                             Text {
@@ -3383,9 +3543,9 @@ ShellRoot {
                             }
                             Rectangle {
                                     width: 32; height: 28; radius: 6
-                                    color: root.calendarActionIsFocused("next", "next") ? "#244b55" : (nextMouse.containsMouse ? root.cyanDim : "#101920")
-                                    border.width: root.calendarActionIsFocused("next", "next") ? 1 : 0; border.color: "#a6f3ff"
-                                Text { anchors.centerIn: parent; text: "›"; color: root.cyan; font.pixelSize: 22 }
+                                    color: root.calendarActionIsFocused("next", "next") ? root.controlButtonActive : (nextMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                    border.width: root.calendarActionIsFocused("next", "next") ? 1 : 0; border.color: root.cyan
+                                Text { anchors.centerIn: parent; text: "›"; color: root.textMain; font.pixelSize: 22 }
                                 BounceMouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.moveCalendar(1) }
                             }
                         }
@@ -3398,10 +3558,10 @@ ShellRoot {
                                 Rectangle {
                                     required property var modelData
                                     width: (menuContent.width - 10) / 3; height: 25; radius: 6
-                                    color: root.calendarActionIsFocused("view", modelData.key) ? "#244b55" : (root.calendarView === modelData.key ? "#15343d" : "#080d11")
-                                    border.width: root.calendarView === modelData.key || root.calendarActionIsFocused("view", modelData.key) ? 1 : 0
-                                    border.color: root.calendarActionIsFocused("view", modelData.key) ? "#a6f3ff" : root.cyan
-                                    Text { anchors.centerIn: parent; text: modelData.label; color: root.calendarView === modelData.key ? root.cyan : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                    color: root.calendarActionIsFocused("view", modelData.key) ? root.controlButtonActive : (root.calendarView === modelData.key ? root.controlButtonActive : root.controlButtonSurface)
+                                    border.width: root.calendarActionIsFocused("view", modelData.key) ? 1 : 0
+                                    border.color: root.calendarActionIsFocused("view", modelData.key) ? root.cyan : root.cyan
+                                    Text { anchors.centerIn: parent; text: modelData.label; color: root.calendarView === modelData.key ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                     BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.calendarView = modelData.key }
                                 }
                             }
@@ -3415,7 +3575,7 @@ ShellRoot {
                             radius: 8
                             color: root.card
                             border.width: 1
-                            border.color: "#26343a"
+                            border.color: root.controlButtonOutline
 
                             Grid {
                                 id: calendarMonthGrid
@@ -3438,9 +3598,9 @@ ShellRoot {
                                         property bool today: modelData !== null && root.sameDay(modelData, root.currentDate)
                                         property bool selected: modelData !== null && root.sameDay(modelData, root.calendarDate)
                                         width: (calendarMonthGrid.width - 18) / 7; height: 30; radius: 6
-                                        color: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? "#244b55" : (selected ? "#15343d" : (dayMouse.containsMouse && modelData !== null ? "#20313a" : "transparent"))
-                                        border.width: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? 2 : (selected ? 2 : 0)
-                                        border.color: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? "#a6f3ff" : root.cyan
+                                        color: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? root.controlButtonActive : (selected ? root.controlButtonActive : (dayMouse.containsMouse && modelData !== null ? root.controlButtonHover : "transparent"))
+                                        border.width: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? 1 : 0
+                                        border.color: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? root.cyan : root.cyan
                                         Rectangle {
                                             visible: parent.today && !parent.selected
                                             anchors.fill: parent; anchors.margins: parent.selected ? 4 : 2
@@ -3450,14 +3610,14 @@ ShellRoot {
                                         Text {
                                             anchors.centerIn: parent
                                             text: modelData === null ? "" : modelData.getDate()
-                                            color: parent.selected ? root.cyan : (parent.today ? "#ffc36b" : root.textMain)
+                                            color: parent.selected ? root.textMain : (parent.today ? "#ffc36b" : root.textMain)
                                             font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                                             font.bold: parent.today || parent.selected
                                         }
                                         Rectangle {
                                             visible: modelData !== null && root.eventsForDate(modelData).length > 0
                                             anchors.bottom: parent.bottom; anchors.bottomMargin: 3; anchors.horizontalCenter: parent.horizontalCenter
-                                            width: 4; height: 4; radius: 2; color: root.cyan
+                                            width: 4; height: 4; radius: 2; color: root.textMain
                                         }
                                         BounceMouseArea {
                                             id: dayMouse; anchors.fill: parent; enabled: modelData !== null; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -3478,10 +3638,10 @@ ShellRoot {
                                     required property int index
                                     property bool currentMonth: index === root.currentDate.getMonth() && root.calendarDate.getFullYear() === root.currentDate.getFullYear()
                                     width: (menuContent.width - 8) / 3; height: 44; radius: 7
-                                    color: root.calendarActionIsFocused("month", index) ? "#244b55" : (currentMonth ? root.cyanDim : (monthMouse.containsMouse ? "#20313a" : "#101920"))
-                                    border.width: currentMonth || root.calendarActionIsFocused("month", index) ? 1 : 0
-                                    border.color: root.calendarActionIsFocused("month", index) ? "#a6f3ff" : root.cyan
-                                    Text { anchors.centerIn: parent; text: modelData.slice(0, 3); color: parent.currentMonth ? root.cyan : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                    color: root.calendarActionIsFocused("month", index) ? root.controlButtonActive : (currentMonth ? root.controlButtonActive : (monthMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface))
+                                    border.width: root.calendarActionIsFocused("month", index) ? 1 : 0
+                                    border.color: root.calendarActionIsFocused("month", index) ? root.cyan : root.cyan
+                                    Text { anchors.centerIn: parent; text: modelData.slice(0, 3); color: parent.currentMonth ? root.textMain : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                     BounceMouseArea {
                                         id: monthMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: { root.calendarDate = new Date(root.calendarDate.getFullYear(), index, 1); root.calendarView = "month" }
@@ -3519,23 +3679,23 @@ ShellRoot {
                                     Text {
                                         width: 52; anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter
                                         text: modelData.time
-                                        color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true
+                                        color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true
                                         horizontalAlignment: Text.AlignRight
                                     }
                                     Rectangle {
                                         anchors.left: parent.left; anchors.leftMargin: 65
                                         anchors.top: parent.top; anchors.bottom: parent.bottom
-                                        width: 1; color: root.cyanDim
+                                        width: 1; color: root.controlButtonOutline
                                     }
                                     Rectangle {
                                         anchors.left: parent.left; anchors.leftMargin: 61
                                         anchors.verticalCenter: parent.verticalCenter
-                                        width: 9; height: 9; radius: 5; color: root.cyan
+                                        width: 9; height: 9; radius: 5; color: root.textMain
                                     }
                                     Rectangle {
                                         anchors.left: parent.left; anchors.leftMargin: 80
                                         anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                                        height: 44; radius: 7; color: "#101920"
+                                        height: 44; radius: 7; color: root.controlButtonSurface
                                         Text {
                                             anchors.left: parent.left; anchors.leftMargin: 11; anchors.top: parent.top; anchors.topMargin: 7
                                             width: parent.width - 112
@@ -3554,16 +3714,16 @@ ShellRoot {
                                             id: timelineEdit
                                             anchors.right: timelineRemove.left; anchors.rightMargin: 5; anchors.verticalCenter: parent.verticalCenter
                                             width: 54; height: 28; radius: 5
-                                            color: root.calendarActionIsFocused("edit", modelData.id) ? "#244b55" : (timelineEditMouse.containsMouse ? root.cyanDim : "#18242b")
-                                            border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: "#a6f3ff"
-                                            Text { anchors.centerIn: parent; text: "EDITAR"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                            color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (timelineEditMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                            border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: root.cyan
+                                            Text { anchors.centerIn: parent; text: "EDITAR"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                             BounceMouseArea { id: timelineEditMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEditEvent(modelData) }
                                         }
                                         Rectangle {
                                             id: timelineRemove
                                             anchors.right: parent.right; anchors.rightMargin: 7; anchors.verticalCenter: parent.verticalCenter
                                             width: 28; height: 28; radius: 5
-                                            color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (timelineRemoveMouse.containsMouse ? "#743541" : "#18242b")
+                                            color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (timelineRemoveMouse.containsMouse ? "#743541" : root.controlButtonSurface)
                                             border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffd3da"
                                             Text { anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 16 }
                                             BounceMouseArea { id: timelineRemoveMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.deleteEvent(modelData.id) }
@@ -3578,15 +3738,15 @@ ShellRoot {
                             spacing: 6
                             Rectangle {
                                 width: (parent.width - 6) / 2; height: 34; radius: 6
-                                color: root.calendarActionIsFocused("today", "today") ? "#244b55" : (todayMouse.containsMouse ? root.cyanDim : "#101920")
-                                border.width: root.calendarActionIsFocused("today", "today") ? 1 : 0; border.color: "#a6f3ff"
+                                color: root.calendarActionIsFocused("today", "today") ? root.controlButtonActive : (todayMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                border.width: root.calendarActionIsFocused("today", "today") ? 1 : 0; border.color: root.cyan
                                 Text { anchors.centerIn: parent; text: "[ HOJE ]"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                 BounceMouseArea { id: todayMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.calendarDate = new Date(root.currentDate.getFullYear(), root.currentDate.getMonth(), root.currentDate.getDate()) }
                             }
                             Rectangle {
                                 width: (parent.width - 6) / 2; height: 34; radius: 6
-                                color: root.calendarActionIsFocused("new", "new") ? "#244b55" : (addMouse.containsMouse ? root.cyanDim : "#101920")
-                                border.width: root.calendarActionIsFocused("new", "new") ? 1 : 0; border.color: "#a6f3ff"
+                                color: root.calendarActionIsFocused("new", "new") ? root.controlButtonActive : (addMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                border.width: root.calendarActionIsFocused("new", "new") ? 1 : 0; border.color: root.cyan
                                 Text { anchors.centerIn: parent; text: "[ + ] NOVO EVENTO"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                 BounceMouseArea { id: addMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEvent() }
                             }
@@ -3617,8 +3777,8 @@ ShellRoot {
                             delegate: Rectangle {
                                 required property var modelData
                                 width: menuContent.width; height: 42; radius: 6
-                                color: "#101920"; opacity: modelData.active ? 1 : 0.55
-                                Rectangle { width: 4; height: parent.height; radius: 2; color: root.cyan }
+                                color: root.controlButtonSurface; opacity: modelData.active ? 1 : 0.55
+                                Rectangle { width: 4; height: parent.height; radius: 2; color: root.textMain }
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width - 108
@@ -3629,16 +3789,16 @@ ShellRoot {
                                     id: editEvent
                                     anchors.right: removeEvent.left; anchors.rightMargin: 5; anchors.verticalCenter: parent.verticalCenter
                                     width: 54; height: 28; radius: 5
-                                    color: root.calendarActionIsFocused("edit", modelData.id) ? "#244b55" : (editMouse.containsMouse ? root.cyanDim : "#18242b")
-                                    border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: "#a6f3ff"
-                                    Text { anchors.centerIn: parent; text: "EDITAR"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                    color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (editMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                    border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: root.cyan
+                                    Text { anchors.centerIn: parent; text: "EDITAR"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                     BounceMouseArea { id: editMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEditEvent(modelData) }
                                 }
                                 Rectangle {
                                     id: removeEvent
                                     anchors.right: parent.right; anchors.rightMargin: 6; anchors.verticalCenter: parent.verticalCenter
                                     width: 28; height: 28; radius: 5
-                                    color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (removeMouse.containsMouse ? "#743541" : "#18242b")
+                                    color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (removeMouse.containsMouse ? "#743541" : root.controlButtonSurface)
                                     border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffd3da"
                                     Text { anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 16 }
                                     BounceMouseArea { id: removeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.deleteEvent(modelData.id) }
@@ -3657,10 +3817,10 @@ ShellRoot {
                             Text {
                                 width: parent.width - 42; height: 30; verticalAlignment: Text.AlignVCenter
                                 text: root.editingEventId ? "[ EDITAR EVENTO ]" : "[ + ] NOVO EVENTO"
-                                color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuTitleSize; font.bold: true
+                                color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuTitleSize; font.bold: true
                             }
                             Rectangle {
-                                width: 34; height: 30; radius: 6; color: cancelTopMouse.containsMouse ? "#743541" : "#101920"
+                                width: 34; height: 30; radius: 6; color: cancelTopMouse.containsMouse ? "#743541" : root.controlButtonSurface
                                 Text { anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 18 }
                                 BounceMouseArea { id: cancelTopMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.cancelCalendarEditor() }
                             }
@@ -3687,8 +3847,8 @@ ShellRoot {
                             id: categoryButton
                             width: parent.width; height: 34; radius: 6
                             activeFocusOnTab: true
-                            color: activeFocus ? "#244b55" : (categoryButtonMouse.containsMouse ? root.cyanDim : "#101920")
-                            border.width: root.categoryPickerOpen || activeFocus ? 1 : 0; border.color: activeFocus ? "#a6f3ff" : root.cyan
+                            color: activeFocus ? root.controlButtonActive : (categoryButtonMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                            border.width: root.categoryPickerOpen || activeFocus ? 1 : 0; border.color: activeFocus ? root.cyan : root.controlButtonOutline
                             Keys.onPressed: function(event) {
                                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                     root.categoryPickerOpen = !root.categoryPickerOpen
@@ -3700,7 +3860,7 @@ ShellRoot {
                                 text: root.draftCategory || "ESCOLHER CATEGORIA"
                                 color: root.draftCategory ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                             }
-                            Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: root.categoryPickerOpen ? "▴" : "▾"; color: root.cyan }
+                            Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: root.categoryPickerOpen ? "▴" : "▾"; color: root.textMain }
                             BounceMouseArea { id: categoryButtonMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.categoryPickerOpen = !root.categoryPickerOpen }
                         }
                         Column {
@@ -3719,8 +3879,8 @@ ShellRoot {
                                     required property string modelData
                                     width: ListView.view.width; height: 27; radius: 5
                                     activeFocusOnTab: true
-                                    color: activeFocus ? "#244b55" : (root.draftCategory === modelData ? root.cyanDim : "#101920")
-                                    border.width: activeFocus ? 1 : 0; border.color: "#a6f3ff"
+                                    color: activeFocus ? root.controlButtonActive : (root.draftCategory === modelData ? root.controlButtonOutline : root.controlButtonSurface)
+                                    border.width: activeFocus ? 1 : 0; border.color: root.cyan
                                     Keys.onPressed: function(event) {
                                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                             root.draftCategory = modelData
@@ -3737,15 +3897,15 @@ ShellRoot {
                             }
                             Rectangle {
                                 width: parent.width; height: 30; radius: 5; activeFocusOnTab: true
-                                color: activeFocus ? "#244b55" : (newCategoryMouse.containsMouse ? root.cyanDim : "#101920")
-                                border.width: activeFocus ? 1 : 0; border.color: "#a6f3ff"
+                                color: activeFocus ? root.controlButtonActive : (newCategoryMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                border.width: activeFocus ? 1 : 0; border.color: root.cyan
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                         root.newCategoryOpen = true
                                         event.accepted = true
                                     }
                                 }
-                                Text { anchors.centerIn: parent; text: "[ + ] CRIAR NOVA CATEGORIA"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                Text { anchors.centerIn: parent; text: "[ + ] CRIAR NOVA CATEGORIA"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                 BounceMouseArea { id: newCategoryMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.newCategoryOpen = true }
                             }
                         }
@@ -3754,15 +3914,15 @@ ShellRoot {
                             EventField { id: newCategoryField; width: parent.width - 86; text: root.newCategoryName; placeholder: "NOME DA CATEGORIA"; onTextChanged: root.newCategoryName = text }
                             Rectangle {
                                 width: 80; height: 34; radius: 6; activeFocusOnTab: true
-                                color: activeFocus ? "#317f91" : (createCategoryMouse.containsMouse ? "#317f91" : root.cyanDim)
-                                border.width: activeFocus ? 1 : 0; border.color: "#a6f3ff"
+                                color: activeFocus ? root.controlButtonHover : (createCategoryMouse.containsMouse ? root.controlButtonHover : root.controlButtonOutline)
+                                border.width: activeFocus ? 1 : 0; border.color: root.cyan
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                         root.createCategory()
                                         event.accepted = true
                                     }
                                 }
-                                Text { anchors.centerIn: parent; text: "CRIAR"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                Text { anchors.centerIn: parent; text: "CRIAR"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                 BounceMouseArea { id: createCategoryMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.createCategory() }
                             }
                         }
@@ -3793,8 +3953,8 @@ ShellRoot {
                                     required property string modelData
                                     width: (menuContent.width - 73) / 4; height: 34; radius: 5
                                     activeFocusOnTab: true
-                                    color: activeFocus ? "#244b55" : (root.draftReminderUnit === modelData ? root.cyanDim : "#101920")
-                                    border.width: root.draftReminderUnit === modelData || activeFocus ? 1 : 0; border.color: activeFocus ? "#a6f3ff" : root.cyan
+                                    color: activeFocus ? root.controlButtonActive : (root.draftReminderUnit === modelData ? root.controlButtonOutline : root.controlButtonSurface)
+                                    border.width: root.draftReminderUnit === modelData || activeFocus ? 1 : 0; border.color: activeFocus ? root.cyan : root.controlButtonOutline
                                     Keys.onPressed: function(event) {
                                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                             root.draftReminderUnit = modelData
@@ -3803,7 +3963,7 @@ ShellRoot {
                                     }
                                     Text {
                                         anchors.centerIn: parent; text: modelData
-                                        color: root.draftReminderUnit === modelData ? root.cyan : root.textDim
+                                        color: root.draftReminderUnit === modelData ? root.textMain : root.textDim
                                         font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true
                                     }
                                     BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.draftReminderUnit = modelData }
@@ -3812,8 +3972,8 @@ ShellRoot {
                         }
                         Rectangle {
                             width: parent.width; height: 34; radius: 6; activeFocusOnTab: true
-                            color: activeFocus ? "#317f91" : (addReminderMouse.containsMouse ? "#317f91" : root.cyanDim)
-                            border.width: 1; border.color: activeFocus ? "#a6f3ff" : root.cyan
+                            color: activeFocus ? root.controlButtonHover : (addReminderMouse.containsMouse ? root.controlButtonHover : root.controlButtonOutline)
+                            border.width: 1; border.color: activeFocus ? root.cyan : root.controlButtonOutline
                             Keys.onPressed: function(event) {
                                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                     root.addDraftReminder()
@@ -3823,7 +3983,7 @@ ShellRoot {
                             Text {
                                 anchors.centerIn: parent
                                 text: "[ + ] ADICIONAR LEMBRETE"
-                                color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true
+                                color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true
                             }
                             BounceMouseArea {
                                 id: addReminderMouse
@@ -3845,9 +4005,9 @@ ShellRoot {
                                     required property int modelData
                                     height: 30
                                     width: reminderText.implicitWidth + 42
-                                    radius: 6; color: activeFocus ? "#49242c" : "#101920"
+                                    radius: 6; color: activeFocus ? "#49242c" : root.controlButtonSurface
                                     activeFocusOnTab: true
-                                    border.width: 1; border.color: activeFocus ? "#ffd3da" : root.cyanDim
+                                    border.width: 1; border.color: activeFocus ? "#ffd3da" : root.controlButtonOutline
                                     Keys.onPressed: function(event) {
                                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space || event.key === Qt.Key_Delete) {
                                             root.removeDraftReminder(modelData)
@@ -3880,8 +4040,8 @@ ShellRoot {
                             width: parent.width; spacing: 6
                             Rectangle {
                                 width: (parent.width - 6) / 2; height: 36; radius: 6; activeFocusOnTab: true
-                                color: activeFocus ? "#244b55" : (cancelMouse.containsMouse ? "#293840" : "#101920")
-                                border.width: activeFocus ? 1 : 0; border.color: "#a6f3ff"
+                                color: activeFocus ? root.controlButtonActive : (cancelMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                border.width: activeFocus ? 1 : 0; border.color: root.cyan
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                         root.cancelCalendarEditor()
@@ -3893,15 +4053,15 @@ ShellRoot {
                             }
                             Rectangle {
                                 width: (parent.width - 6) / 2; height: 36; radius: 6; activeFocusOnTab: true
-                                color: activeFocus ? "#317f91" : (saveMouse.containsMouse ? "#317f91" : root.cyanDim)
-                                border.width: 1; border.color: activeFocus ? "#a6f3ff" : root.cyan
+                                color: activeFocus ? root.controlButtonHover : (saveMouse.containsMouse ? root.controlButtonHover : root.controlButtonOutline)
+                                border.width: 1; border.color: activeFocus ? root.cyan : root.controlButtonOutline
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                                         root.saveDraftEvent()
                                         event.accepted = true
                                     }
                                 }
-                                Text { anchors.centerIn: parent; text: root.editingEventId ? "GUARDAR ALTERAÇÕES" : "GUARDAR EVENTO"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                Text { anchors.centerIn: parent; text: root.editingEventId ? "GUARDAR ALTERAÇÕES" : "GUARDAR EVENTO"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                 BounceMouseArea { id: saveMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.saveDraftEvent() }
                             }
                         }
@@ -3909,49 +4069,50 @@ ShellRoot {
 
                 Text {
                     visible: root.popupKind !== "calendar"
-                    text: root.popupKind === "controls" ? "CENTRO DE CONTROLO" : (root.popupKind === "model" ? "MODELO LOCAL" : (root.popupKind === "environments" ? "ENVIRONMENTS" : "[ " + root.popupKind.toUpperCase() + " CONTROL ]"))
-                    color: root.cyan
+                    text: root.popupKind === "battery" ? "BATERIA E ENERGIA" : (root.popupKind === "controls" ? "Centro de controlo" : (root.popupKind === "model" ? "MODELO LOCAL" : (root.popupKind === "environments" ? "ENVIRONMENTS" : "[ " + root.popupKind.toUpperCase() + " CONTROL ]")))
+                    color: root.textMain
                     font.family: "Adwaita Mono"
                     font.pixelSize: root.menuTitleSize
                     font.bold: true
                 }
-                Rectangle { visible: root.popupKind !== "calendar" && root.popupKind !== "controls"; width: parent.width; height: 1; color: root.cyanDim }
+                Rectangle { visible: root.popupKind !== "calendar" && root.popupKind !== "controls"; width: parent.width; height: 1; color: root.controlButtonOutline }
 
                 Column {
                     width: parent.width; spacing: 10; visible: root.popupKind === "model"
                     Rectangle {
-                        width: parent.width; height: 76; radius: 9; color: "#13252c"; border.width: 1; border.color: root.modelStoreState.state === "active" ? root.cyan : "#31505d"
-                        Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 11; text: root.modelStoreState.model || "Qwen2.5-Coder 3B Fast"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
-                        Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.bottom: parent.bottom; anchors.bottomMargin: 11; text: root.modelStoreState.state === "active" ? "● MODELO ATIVO · SSD RO" : (root.modelStoreState.state === "model-stopped" ? "○ MODELO OFF · SSD MONTADO" : (root.modelStoreState.state === "safe-to-remove" ? "● PODE REMOVER O SSD" : "○ SSD AUSENTE")); color: root.modelStoreState.state === "active" ? root.cyan : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                        width: parent.width; height: 82; radius: 11; color: root.controlButtonSurface
+                        Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 14; anchors.right: parent.right; anchors.rightMargin: 12; elide: Text.ElideRight; text: root.modelStoreState.model || "Qwen2.5-Coder 3B Fast"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                        Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.bottom: parent.bottom; anchors.bottomMargin: 11; text: root.modelStoreState.state === "active" ? "● IA ativa" : (root.modelStoreState.state === "model-stopped" ? "○ IA desligada · SSD ligado" : (root.modelStoreState.state === "safe-to-remove" ? "● SSD pronto a remover" : "○ SSD não ligado")); color: root.modelStoreState.state === "active" ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
                     }
                     Text { width: parent.width; text: "SELECIONAR MODELO"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
                     Row {
                         id: modelSelectorRow
                         property real cellWidth: (width - 8) / 3
-                        width: parent.width; height: 38; spacing: 4
+                        width: parent.width; height: 36; spacing: 4
                         Repeater {
                             model: root.modelStoreState.models || []
                             delegate: MenuButton {
                                 required property var modelData
                                 width: modelSelectorRow.cellWidth; height: modelSelectorRow.height
-                                label: (root.modelStoreState.selected_profile === modelData.profile ? "● " : "") + (modelData.profile === "fast" ? "3B FAST" : (modelData.profile === "balanced" ? "7B" : "30B"))
+                                enabled: !root.modelStoreBusy && root.modelStoreState.mounted === true
+                                label: (root.modelStoreState.selected_profile === modelData.profile ? "● " : "") + (modelData.profile === "fast" ? "3B" : (modelData.profile === "balanced" ? "7B" : "30B"))
                                 accent: root.modelStoreState.selected_profile === modelData.profile
                                 onActivated: if (!root.modelStoreBusy && root.modelStoreState.mounted === true && root.modelStoreState.selected_profile !== modelData.profile) root.modelStoreAction("model-select", modelData.profile)
                             }
                         }
                     }
                     Rectangle {
-                        width: parent.width; height: 48; radius: 7; color: root.modelSwitchActive ? "#101f25" : "transparent"; border.width: root.modelSwitchActive ? 1 : 0; border.color: root.cyanDim
-                        Text { visible: !root.modelSwitchActive; anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: root.modelStoreState.model_detail || ""; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize }
-                        Text { visible: root.modelSwitchActive; anchors.left: parent.left; anchors.leftMargin: 9; anchors.right: parent.right; anchors.rightMargin: 9; anchors.top: parent.top; anchors.topMargin: 7; text: "A LIGAR AO NOVO MODELO · " + root.modelSwitchProgress + "%"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                        width: parent.width; height: root.modelSwitchActive ? 52 : modelDetail.implicitHeight + 8; radius: 8; color: root.modelSwitchActive ? root.controlButtonSurface : "transparent"
+                        Text { id: modelDetail; visible: !root.modelSwitchActive; anchors.left: parent.left; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; wrapMode: Text.WordWrap; text: root.modelStoreState.model_detail || ""; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize }
+                        Text { visible: root.modelSwitchActive; anchors.left: parent.left; anchors.leftMargin: 9; anchors.right: parent.right; anchors.rightMargin: 9; anchors.top: parent.top; anchors.topMargin: 7; text: "A LIGAR AO NOVO MODELO · " + root.modelSwitchProgress + "%"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                         Text { visible: root.modelSwitchActive; anchors.left: parent.left; anchors.leftMargin: 9; anchors.right: parent.right; anchors.rightMargin: 9; anchors.top: parent.top; anchors.topMargin: 23; elide: Text.ElideRight; text: root.modelSwitchLabel; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize }
-                        Rectangle { visible: root.modelSwitchActive; anchors.left: parent.left; anchors.leftMargin: 9; anchors.right: parent.right; anchors.rightMargin: 9; anchors.bottom: parent.bottom; anchors.bottomMargin: 5; height: 4; radius: 2; color: "#263941"; Rectangle { width: parent.width * Math.max(0, Math.min(100, root.modelSwitchProgress)) / 100; height: parent.height; radius: 2; color: root.cyan } }
+                        Rectangle { visible: root.modelSwitchActive; anchors.left: parent.left; anchors.leftMargin: 9; anchors.right: parent.right; anchors.rightMargin: 9; anchors.bottom: parent.bottom; anchors.bottomMargin: 5; height: 4; radius: 2; color: root.controlButtonOutline; Rectangle { width: parent.width * Math.max(0, Math.min(100, root.modelSwitchProgress)) / 100; height: parent.height; radius: 2; color: root.textMain } }
                     }
                     Text { width: parent.width; wrapMode: Text.WordWrap; text: root.modelStoreError.length ? root.modelStoreError : (root.modelStoreState.message || "A verificar…"); color: root.modelStoreError.length ? "#ff91a4" : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
-                    Row {
-                        width: parent.width; height: 42; spacing: 6
-                        MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: root.modelStoreState.server_active ? "DESATIVAR MODELO" : "ATIVAR MODELO"; accent: true; onActivated: if (!root.modelStoreBusy && root.modelStoreState.mounted === true) root.modelStoreAction(root.modelStoreState.server_active ? "model-stop" : "model-start") }
-                        MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: root.modelStoreState.mounted ? (root.modelStoreConfirmDetach ? "CONFIRMAR DESMONTAR" : "DESMONTAR SSD") : "MONTAR SSD"; onActivated: { if (!root.modelStoreBusy && root.modelStoreState.device_present === true) { if (!root.modelStoreState.mounted) root.modelStoreAction("storage-activate"); else if (root.modelStoreConfirmDetach) root.modelStoreAction("safe-detach"); else root.modelStoreConfirmDetach = true } } }
+                    Column {
+                        width: parent.width; spacing: 6
+                        MenuButton { width: parent.width; height: 36; enabled: !root.modelStoreBusy && root.modelStoreState.mounted === true; label: root.modelStoreState.server_active ? "Desativar IA" : "Ativar IA"; accent: true; onActivated: if (!root.modelStoreBusy && root.modelStoreState.mounted === true) root.modelStoreAction(root.modelStoreState.server_active ? "model-stop" : "model-start") }
+                        MenuButton { width: parent.width; height: 36; enabled: !root.modelStoreBusy && root.modelStoreState.device_present === true; label: root.modelStoreState.mounted ? (root.modelStoreConfirmDetach ? "Confirmar remoção do SSD" : "Remover SSD em segurança") : "Ligar SSD"; onActivated: { if (!root.modelStoreBusy && root.modelStoreState.device_present === true) { if (!root.modelStoreState.mounted) root.modelStoreAction("storage-activate"); else if (root.modelStoreConfirmDetach) root.modelStoreAction("safe-detach"); else root.modelStoreConfirmDetach = true } } }
                     }
                     Text { visible: root.modelStoreConfirmDetach; width: parent.width; wrapMode: Text.WordWrap; text: "Segundo toque: para a IA, sincroniza, desmonta e fecha a cifra."; color: "#ffd09a"; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize }
                 }
@@ -3962,6 +4123,12 @@ ShellRoot {
                     visible: root.popupKind === "environments"
                     focus: visible
                     Keys.onPressed: function(event) {
+                        if (!root.environmentKeyboardFocus && [Qt.Key_Tab, Qt.Key_Backtab, Qt.Key_Left, Qt.Key_Right, Qt.Key_Up, Qt.Key_Down, Qt.Key_Return, Qt.Key_Enter].indexOf(event.key) >= 0) {
+                            root.environmentKeyboardFocus = true
+                            root.menuKeyboardNavigation = true
+                            event.accepted = true
+                            return
+                        }
                         if (root.environmentEditOpen) {
                             root.handleEnvironmentEditKey(event)
                             return
@@ -4017,10 +4184,10 @@ ShellRoot {
                         id: hubEnvironmentCard
                         property bool keyboardFocused: root.isHub && root.environmentKeyboardFocus && root.environmentFocusIndex === -1
                         width: parent.width; height: 62; radius: 9
-                        color: keyboardFocused ? "#1d4650" : "#13252c"
+                        color: keyboardFocused ? root.controlButtonActive : root.controlButtonSurface
                         border.width: 1
-                        border.color: keyboardFocused ? "#a6f3ff" : "#31505d"
-                        Rectangle { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 9; height: 9; radius: 5; color: root.cyan }
+                        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
+                        Rectangle { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 9; height: 9; radius: 5; color: root.textMain }
                         Column {
                             anchors.left: parent.left; anchors.leftMargin: 34; anchors.right: activeEnvironmentBadge.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
                             Text { width: parent.width; text: root.environmentLabel; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuTitleSize; font.bold: true; elide: Text.ElideRight }
@@ -4029,8 +4196,8 @@ ShellRoot {
                         Rectangle {
                             id: activeEnvironmentBadge
                             anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
-                            width: 58; height: 24; radius: 12; color: "#173b42"
-                            Text { anchors.centerIn: parent; text: "ATIVO"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                            width: 58; height: 24; radius: 12; color: root.controlButtonActive
+                            Text { anchors.centerIn: parent; text: "ATIVO"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                         }
                         BounceMouseArea {
                             anchors.fill: parent
@@ -4060,9 +4227,9 @@ ShellRoot {
                                 width: parent ? parent.width : 400; height: 59; radius: 9
                                 property bool selected: modelData.name.length > 0 && root.selectedEnvironmentName === modelData.name
                                 property bool keyboardFocused: root.environmentIsOpenable(modelData) && root.environmentKeyboardFocus && root.environmentFocusIndex === index
-                                color: keyboardFocused ? "#1d4650" : (selected ? "#17363e" : (environmentChoiceMouse.containsMouse ? "#172a31" : "#111d23"))
-                                border.width: 1; border.color: keyboardFocused ? "#a6f3ff" : (selected ? root.cyan : "#263941")
-                                Rectangle { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 8; height: 8; radius: 4; color: root.environmentIsOpenable(modelData) ? (parent.selected ? root.cyan : "#5d7b82") : "#79505a" }
+                                color: keyboardFocused ? root.controlButtonActive : (selected ? root.controlButtonActive : (environmentChoiceMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface))
+                                border.width: 1; border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
+                                Rectangle { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 8; height: 8; radius: 4; color: root.environmentIsOpenable(modelData) ? (parent.selected ? root.textMain : "#5d7b82") : "#79505a" }
                                 Column {
                                     anchors.left: parent.left; anchors.leftMargin: 32; anchors.right: environmentRowStatus.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
                                     Text { width: parent.width; text: String(modelData.display_name || modelData.name) + root.environmentSizeSuffix(modelData); color: modelData.state === "empty" ? root.textDim : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true; elide: Text.ElideRight }
@@ -4071,13 +4238,13 @@ ShellRoot {
                                         Rectangle {
                                             visible: !!modelData.system_kind && modelData.system_kind !== "arch"
                                             width: visible ? systemTagText.implicitWidth + 10 : 0; height: 16; radius: 5
-                                            color: "#173b42"; border.width: 1; border.color: root.cyanDim
-                                            Text { id: systemTagText; anchors.centerIn: parent; text: String(modelData.system_label || "SISTEMA"); color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: 8; font.bold: true }
+                                            color: root.controlButtonActive; border.width: 1; border.color: root.controlButtonOutline
+                                            Text { id: systemTagText; anchors.centerIn: parent; text: String(modelData.system_label || "SISTEMA"); color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: 8; font.bold: true }
                                         }
                                         Text { width: parent.width - (modelData.system_kind && modelData.system_kind !== "arch" ? systemTagText.implicitWidth + 16 : 0); text: root.environmentMeta(modelData); color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; elide: Text.ElideRight }
                                     }
                                 }
-                                Text { id: environmentRowStatus; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: root.environmentIsOpenable(modelData) ? (parent.selected ? "SELECIONADO" : "PRONTO") : (modelData.state === "preparing" ? "A PREPARAR" : (modelData.state === "empty" ? "" : "INDISPONÍVEL")); color: parent.selected ? root.cyan : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                                Text { id: environmentRowStatus; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: root.environmentIsOpenable(modelData) ? (parent.selected ? "SELECIONADO" : "PRONTO") : (modelData.state === "preparing" ? "A PREPARAR" : (modelData.state === "empty" ? "" : "INDISPONÍVEL")); color: parent.selected ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                                 BounceMouseArea {
                                     id: environmentChoiceMouse
                                     anchors.fill: parent
@@ -4110,7 +4277,7 @@ ShellRoot {
                                 Text { width: parent.width; text: root.environmentIsNative(root.environmentSelection()) ? "Apaga a partição e devolve todo o espaço ao APX após reiniciar." : "Purga total: dados, VM, cópias e metadados."; color: "#b98992"; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; elide: Text.ElideRight }
                             }
                             Row { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; spacing: 5
-                                Rectangle { width: 62; height: 31; radius: 6; color: root.environmentDeleteFocusIndex === 0 ? "#244b55" : "#21161a"; border.width: root.environmentDeleteFocusIndex === 0 ? 1 : 0; border.color: "#a6f3ff"
+                                Rectangle { width: 62; height: 31; radius: 6; color: root.environmentDeleteFocusIndex === 0 ? root.controlButtonActive : "#21161a"; border.width: root.environmentDeleteFocusIndex === 0 ? 1 : 0; border.color: root.cyan
                                     Text { anchors.centerIn: parent; text: "CANCELAR"; color: root.environmentDeleteFocusIndex === 0 ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                                     BounceMouseArea { id: cancelDeleteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.environmentDeleteFocusIndex = 0; root.cancelEnvironmentDelete() } }
                                 }
@@ -4129,9 +4296,9 @@ ShellRoot {
                             width: parent.width; height: 32; spacing: 8
                             Rectangle {
                                 width: 92; height: parent.height; radius: 6
-                                color: root.environmentEditFocusIndex === 0 ? "#1d4650" : (environmentEditBackMouse.containsMouse ? root.cyanDim : "#101920")
+                                color: root.environmentEditFocusIndex === 0 ? root.controlButtonActive : (environmentEditBackMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
                                 border.width: root.environmentEditFocusIndex === 0 ? 1 : 0
-                                border.color: "#a6f3ff"
+                                border.color: root.cyan
                                 Text { anchors.centerIn: parent; text: "‹  VOLTAR"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                                 BounceMouseArea { id: environmentEditBackMouse; anchors.fill: parent; enabled: !root.environmentMetadataBusy; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: { root.environmentEditFocusIndex = 0; root.cancelEnvironmentEdit() } }
                             }
@@ -4139,11 +4306,11 @@ ShellRoot {
                         }
                         Text { width: parent.width; text: "O identificador interno “" + root.selectedEnvironmentName + "” não muda."; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; elide: Text.ElideRight }
                         Rectangle {
-                            width: parent.width; height: 42; radius: 7; color: "#0b151a"; border.width: 1; border.color: environmentEditTitleInput.activeFocus || root.environmentEditFocusIndex === 1 ? root.cyan : "#31505d"
+                            width: parent.width; height: 42; radius: 7; color: root.controlButtonSurface; border.width: 1; border.color: environmentEditTitleInput.activeFocus || root.environmentEditFocusIndex === 1 ? root.cyan : root.controlButtonOutline
                             TextInput {
                                 id: environmentEditTitleInput; anchors.fill: parent; anchors.leftMargin: 11; anchors.rightMargin: 11; verticalAlignment: TextInput.AlignVCenter
                                 text: root.environmentEditTitle; onTextChanged: root.environmentEditTitle = text; maximumLength: 64; enabled: !root.environmentMetadataBusy
-                                color: root.textMain; selectionColor: root.cyanDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
+                                color: root.textMain; selectionColor: root.controlButtonOutline; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                                 onActiveFocusChanged: if (activeFocus) root.environmentEditFocusIndex = 1
                                 onAccepted: { root.environmentEditFocusIndex = 2; environmentEditDescriptionInput.forceActiveFocus() }
                                 Keys.priority: Keys.BeforeItem
@@ -4156,11 +4323,11 @@ ShellRoot {
                             Text { anchors.left: parent.left; anchors.leftMargin: 11; anchors.verticalCenter: parent.verticalCenter; visible: !environmentEditTitleInput.text.length; text: "Título do Environment"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize }
                         }
                         Rectangle {
-                            width: parent.width; height: 42; radius: 7; color: "#0b151a"; border.width: 1; border.color: environmentEditDescriptionInput.activeFocus || root.environmentEditFocusIndex === 2 ? root.cyan : "#31505d"
+                            width: parent.width; height: 42; radius: 7; color: root.controlButtonSurface; border.width: 1; border.color: environmentEditDescriptionInput.activeFocus || root.environmentEditFocusIndex === 2 ? root.cyan : root.controlButtonOutline
                             TextInput {
                                 id: environmentEditDescriptionInput; anchors.fill: parent; anchors.leftMargin: 11; anchors.rightMargin: 11; verticalAlignment: TextInput.AlignVCenter
                                 text: root.environmentEditDescription; onTextChanged: root.environmentEditDescription = text; maximumLength: 120; enabled: !root.environmentMetadataBusy
-                                color: root.textMain; selectionColor: root.cyanDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
+                                color: root.textMain; selectionColor: root.controlButtonOutline; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                                 onActiveFocusChanged: if (activeFocus) root.environmentEditFocusIndex = 2
                                 onAccepted: { root.environmentEditFocusIndex = 3; environmentMenu.forceActiveFocus() }
                                 Keys.priority: Keys.BeforeItem
@@ -4189,20 +4356,20 @@ ShellRoot {
                             width: parent.width; height: 32; spacing: 8
                             Rectangle {
                                 width: 92; height: parent.height; radius: 6
-                                color: root.environmentCreateFocusIndex === 0 ? "#1d4650" : (environmentBackMouse.containsMouse ? root.cyanDim : "#101920")
+                                color: root.environmentCreateFocusIndex === 0 ? root.controlButtonActive : (environmentBackMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
                                 border.width: root.environmentCreateFocusIndex === 0 ? 1 : 0
-                                border.color: "#a6f3ff"
+                                border.color: root.cyan
                                 Text { anchors.centerIn: parent; text: "‹  VOLTAR"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                                 BounceMouseArea { id: environmentBackMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.environmentCreateFocusIndex = 0; root.cancelEnvironmentCreate() } }
                             }
                             Text { width: parent.width - 100; anchors.verticalCenter: parent.verticalCenter; text: "NOVO ENVIRONMENT"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                         }
                         Rectangle {
-                            width: parent.width; height: 42; radius: 7; color: "#0b151a"; border.width: 1; border.color: environmentNameInput.activeFocus || root.environmentCreateFocusIndex === 1 ? root.cyan : "#31505d"
+                            width: parent.width; height: 42; radius: 7; color: root.controlButtonSurface; border.width: 1; border.color: environmentNameInput.activeFocus || root.environmentCreateFocusIndex === 1 ? root.cyan : root.controlButtonOutline
                             TextInput {
                                 id: environmentNameInput; anchors.fill: parent; anchors.leftMargin: 11; anchors.rightMargin: 11; verticalAlignment: TextInput.AlignVCenter
                                 text: root.environmentDraftName; onTextChanged: root.environmentDraftName = text; maximumLength: 27
-                                color: root.textMain; selectionColor: root.cyanDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
+                                color: root.textMain; selectionColor: root.controlButtonOutline; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                                 onActiveFocusChanged: if (activeFocus) root.environmentCreateFocusIndex = 1
                                 onAccepted: { root.environmentCreateFocusIndex = 2; environmentDescriptionInput.forceActiveFocus() }
                                 Keys.priority: Keys.BeforeItem
@@ -4221,11 +4388,11 @@ ShellRoot {
                             Text { anchors.left: parent.left; anchors.leftMargin: 11; anchors.verticalCenter: parent.verticalCenter; visible: !environmentNameInput.text.length; text: "nome-do-environment"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize }
                         }
                         Rectangle {
-                            width: parent.width; height: 42; radius: 7; color: "#0b151a"; border.width: 1; border.color: environmentDescriptionInput.activeFocus || root.environmentCreateFocusIndex === 2 ? root.cyan : "#31505d"
+                            width: parent.width; height: 42; radius: 7; color: root.controlButtonSurface; border.width: 1; border.color: environmentDescriptionInput.activeFocus || root.environmentCreateFocusIndex === 2 ? root.cyan : root.controlButtonOutline
                             TextInput {
                                 id: environmentDescriptionInput; anchors.fill: parent; anchors.leftMargin: 11; anchors.rightMargin: 11; verticalAlignment: TextInput.AlignVCenter
                                 text: root.environmentDraftDescription; onTextChanged: root.environmentDraftDescription = text; maximumLength: 120
-                                color: root.textMain; selectionColor: root.cyanDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
+                                color: root.textMain; selectionColor: root.controlButtonOutline; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                                 onActiveFocusChanged: if (activeFocus) root.environmentCreateFocusIndex = 2
                                 onAccepted: { root.environmentCreateFocusIndex = 3; environmentMenu.forceActiveFocus() }
                                 Keys.priority: Keys.BeforeItem
@@ -4269,7 +4436,7 @@ ShellRoot {
                             visible: root.environmentSystemKind === "arch"; height: visible ? 20 : 0
                             width: parent.width
                             Text { width: parent.width * 0.65; text: "FUNCIONALIDADES"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
-                            Text { width: parent.width * 0.35; horizontalAlignment: Text.AlignRight; text: root.selectedEnvironmentModuleKeys().length + "/18  ·  ~" + root.environmentEstimatedMib() + " MiB"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
+                            Text { width: parent.width * 0.35; horizontalAlignment: Text.AlignRight; text: root.selectedEnvironmentModuleKeys().length + "/18  ·  ~" + root.environmentEstimatedMib() + " MiB"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
                         }
                         Column {
                             visible: root.environmentSystemKind === "arch"; height: visible ? implicitHeight : 0
@@ -4284,10 +4451,10 @@ ShellRoot {
                                     Rectangle {
                                         width: parent.width; height: 34; radius: 7
                                         property bool keyboardFocused: root.environmentCreateFocusIndex === 9 + index
-                                        color: keyboardFocused ? "#1d4650" : (featureDrawerMouse.containsMouse ? "#20343d" : "#13252c")
+                                        color: keyboardFocused ? root.controlButtonActive : (featureDrawerMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
                                         border.width: keyboardFocused || root.environmentFeatureDrawer === modelData.key ? 1 : 0
-                                        border.color: keyboardFocused ? "#a6f3ff" : root.cyanDim
-                                        Text { anchors.left: parent.left; anchors.leftMargin: 11; anchors.right: parent.right; anchors.rightMargin: 34; anchors.verticalCenter: parent.verticalCenter; text: modelData.label; color: root.environmentFeatureDrawer === modelData.key ? root.cyan : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; elide: Text.ElideRight }
+                                        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
+                                        Text { anchors.left: parent.left; anchors.leftMargin: 11; anchors.right: parent.right; anchors.rightMargin: 34; anchors.verticalCenter: parent.verticalCenter; text: modelData.label; color: root.environmentFeatureDrawer === modelData.key ? root.textMain : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; elide: Text.ElideRight }
                                         Text { anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter; text: root.environmentFeatureDrawer === modelData.key ? "▴" : "▾"; color: root.textDim; font.pixelSize: 14 }
                                         BounceMouseArea { id: featureDrawerMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.environmentCreateFocusIndex = 9 + featureGroup.index; root.environmentFeatureDrawer = root.environmentFeatureDrawer === modelData.key ? "" : modelData.key; root.environmentFeatureInfo = "" } }
                                     }
@@ -4321,9 +4488,9 @@ ShellRoot {
 
                     Rectangle {
                         visible: root.environmentManagementBusy
-                        width: parent.width; height: visible ? 34 : 0; radius: 7; color: "#101f25"
-                        Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.top: parent.top; anchors.topMargin: 5; text: root.environmentManagementState.message || "A preparar…"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
-                        Rectangle { anchors.left: parent.left; anchors.leftMargin: 9; anchors.right: parent.right; anchors.rightMargin: 9; anchors.bottom: parent.bottom; anchors.bottomMargin: 6; height: 4; radius: 2; color: "#263941"; Rectangle { width: parent.width * Math.max(2, Math.min(100, root.environmentManagementState.progress || 2)) / 100; height: parent.height; radius: 2; color: root.cyan } }
+                        width: parent.width; height: visible ? 34 : 0; radius: 7; color: root.controlButtonSurface
+                        Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.top: parent.top; anchors.topMargin: 5; text: root.environmentManagementState.message || "A preparar…"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
+                        Rectangle { anchors.left: parent.left; anchors.leftMargin: 9; anchors.right: parent.right; anchors.rightMargin: 9; anchors.bottom: parent.bottom; anchors.bottomMargin: 6; height: 4; radius: 2; color: root.controlButtonOutline; Rectangle { width: parent.width * Math.max(2, Math.min(100, root.environmentManagementState.progress || 2)) / 100; height: parent.height; radius: 2; color: root.textMain } }
                     }
 
                     Rectangle {
@@ -4368,7 +4535,7 @@ ShellRoot {
                             border.width: 1; border.color: root.controlButtonOutline
                             Text {
                                 anchors.centerIn: parent
-                                text: "WI-FI"; color: root.textMain
+                                text: "Wi-Fi"; color: root.textMain
                                 font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true
                             }
                             BounceMouseArea { id: wifiSummaryMouse; anchors.fill: parent; z: 1; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("wifi") }
@@ -4380,7 +4547,7 @@ ShellRoot {
                             border.width: 1; border.color: root.controlButtonOutline
                             Text {
                                 anchors.centerIn: parent
-                                text: "BLUETOOTH"; color: root.textMain
+                                text: "Bluetooth"; color: root.textMain
                                 font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true
                             }
                             BounceMouseArea { id: bluetoothSummaryMouse; anchors.fill: parent; z: 1; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("bluetooth") }
@@ -4390,13 +4557,13 @@ ShellRoot {
                     Rectangle {
                         visible: root.controlsWifiOpen
                         width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: "#182731"
-                        border.width: 1; border.color: "#31505d"
+                        color: root.controlButtonSurface
+                        border.width: 1; border.color: root.controlButtonOutline
                         Rectangle {
                             anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                             width: 62; height: 28; radius: 8
                             color: wifiHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: wifiHeaderMouse.containsMouse ? "#ffffff" : root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: wifiHeaderMouse.containsMouse ? "#ffffff" : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                             BounceMouseArea { id: wifiHeaderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("wifi") }
                         }
                         Text {
@@ -4406,21 +4573,21 @@ ShellRoot {
                         }
                         Text {
                             anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter
-                            text: root.wifiTogglePhase === "connecting" ? "A LIGAR…" : (root.wifiDisplayActive() ? "LIGADO" : "SEM LIGAÇÃO")
-                            color: root.wifiDisplayActive() ? root.cyan : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize
+                            text: root.wifiTogglePhase === "connecting" ? "A ligar…" : (root.wifiDisplayActive() ? "Ligado" : "Sem ligação")
+                            color: root.wifiDisplayActive() ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize
                         }
                     }
                     Column {
                         width: parent.width; spacing: 4; visible: root.controlsWifiOpen
                         Rectangle {
                             width: parent.width; height: 56; radius: 11
-                            color: root.wifiDisplayActive() ? "#18343e" : "#182731"
-                            border.width: 1; border.color: root.wifiDisplayActive() ? root.cyanDim : "#31505d"
+                            color: root.wifiDisplayActive() ? root.controlButtonActive : root.controlButtonSurface
+                            border.width: 1; border.color: root.wifiDisplayActive() ? root.controlButtonOutline : root.controlButtonOutline
                             Text {
                                 anchors.left: parent.left; anchors.leftMargin: 14; anchors.top: parent.top; anchors.topMargin: 8
                                 width: parent.width - 130; elide: Text.ElideRight
-                                text: root.wifiDisplayActive() ? root.hostState.network_name : (root.wifiTogglePhase === "connecting" ? "A ligar a " + root.wifiLastNetwork : "SEM LIGAÇÃO")
-                                color: root.wifiDisplayActive() ? root.cyan : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuTitleSize; font.bold: true
+                                text: root.wifiDisplayActive() ? root.hostState.network_name : (root.wifiTogglePhase === "connecting" ? "A ligar a " + root.wifiLastNetwork : "Sem ligação")
+                                color: root.wifiDisplayActive() ? root.textMain : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuTitleSize; font.bold: true
                             }
                             Text {
                                 anchors.left: parent.left; anchors.leftMargin: 14; anchors.bottom: parent.bottom; anchors.bottomMargin: 8
@@ -4433,7 +4600,7 @@ ShellRoot {
                                 visible: root.wifiDisplayActive() && root.wifiTogglePhase !== "connecting"
                                 anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                 width: 84; height: 28; radius: 8
-                                color: disconnectMouse.containsMouse ? "#743541" : "#18242b"
+                                color: disconnectMouse.containsMouse ? "#743541" : root.controlButtonSurface
                                 Text { anchors.centerIn: parent; text: "Desligar"; color: "#ffb0bd"; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
                                 BounceMouseArea { id: disconnectMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.cancelWifiPassword(); root.toggleWifiConnection() } }
                             }
@@ -4450,7 +4617,7 @@ ShellRoot {
                             BounceMouseArea { anchors.fill: parent; onClicked: root.cancelWifiPassword() }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "REDES PRÓXIMAS  ·  " + (root.hostState.available_networks || []).length
+                                text: "Redes próximas  ·  " + (root.hostState.available_networks || []).length
                                 color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true
                             }
                         }
@@ -4460,17 +4627,18 @@ ShellRoot {
                             width: parent.width
                             height: visible ? ((!root.wifiIsKnown(root.wifiSelectedSsid) && !root.wifiIsOpen(root.wifiSelectedSsid)) ? 86 : 50) : 0
                             radius: 11
-                            color: "#182731"; border.width: 1; border.color: "#31505d"
+                            color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                             Column {
                                 anchors.fill: parent; anchors.margins: 8; spacing: 5
-                                Text { text: "Ligar a " + root.wifiSelectedSsid; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true; elide: Text.ElideRight; width: parent.width }
+                                Text { text: "Ligar a " + root.wifiSelectedSsid; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true; elide: Text.ElideRight; width: parent.width }
                                 Rectangle {
                                     visible: !root.wifiIsKnown(root.wifiSelectedSsid) && !root.wifiIsOpen(root.wifiSelectedSsid)
-                                    width: parent.width; height: visible ? 30 : 0; radius: 5; color: "#0b1216"; border.width: wifiPasswordInput.activeFocus ? 1 : 0; border.color: root.cyan
+                                    width: parent.width; height: visible ? 30 : 0; radius: 5; color: root.controlButtonSurface; border.width: wifiPasswordInput.activeFocus ? 1 : 0; border.color: root.cyan
                                     TextInput {
                                         id: wifiPasswordInput; anchors.fill: parent; anchors.leftMargin: 9; anchors.rightMargin: 9; verticalAlignment: TextInput.AlignVCenter
+                                        activeFocusOnTab: true
                                         text: root.wifiPassword; onTextChanged: root.wifiPassword = text; echoMode: TextInput.Password; passwordCharacter: "•"
-                                        color: root.textMain; selectionColor: root.cyanDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
+                                        color: root.textMain; selectionColor: root.controlButtonOutline; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                                         onAccepted: root.submitWifiPassword()
                                     }
                                     Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; visible: !wifiPasswordInput.text.length; text: "Palavra-passe"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
@@ -4478,7 +4646,7 @@ ShellRoot {
                                 Row {
                                     spacing: 14
                                     Text { text: "Cancelar"; color: cancelWifiMouse.containsMouse ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; BounceMouseArea { id: cancelWifiMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.cancelWifiPassword() } }
-                                    Text { text: wifiCredentialProcess.running ? "A ligar…" : (root.wifiSelectedSsid === root.hostState.network_name ? "Já ligada" : "Ligar"); color: connectWifiMouse.containsMouse ? "#ffffff" : root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; BounceMouseArea { id: connectWifiMouse; anchors.fill: parent; enabled: root.wifiSelectedSsid !== root.hostState.network_name; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.submitWifiPassword() } }
+                                    Text { text: wifiCredentialProcess.running ? "A ligar…" : (root.wifiSelectedSsid === root.hostState.network_name ? "Já ligada" : "Ligar"); color: connectWifiMouse.containsMouse ? "#ffffff" : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; BounceMouseArea { id: connectWifiMouse; anchors.fill: parent; enabled: root.wifiSelectedSsid !== root.hostState.network_name; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.submitWifiPassword() } }
                                 }
                             }
                         }
@@ -4490,8 +4658,8 @@ ShellRoot {
                                 visible: modelData !== root.hostState.network_name
                                       && (!root.wifiPasswordVisible || modelData !== root.wifiSelectedSsid)
                                 width: parent ? parent.width : 300; height: visible ? 40 : 0; radius: 10
-                                color: nearbyWifiMouse.containsMouse ? "#20323c" : "#182731"
-                                border.width: nearbyWifiMouse.containsMouse ? 1 : 0; border.color: "#31505d"
+                                color: nearbyWifiMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
+                                border.width: nearbyWifiMouse.containsMouse ? 1 : 0; border.color: root.controlButtonOutline
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 6
                                     width: parent.width - 145; elide: Text.ElideRight
@@ -4527,13 +4695,13 @@ ShellRoot {
                     Rectangle {
                         visible: root.controlsBluetoothOpen
                         width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: "#182731"
-                        border.width: 1; border.color: "#31505d"
+                        color: root.controlButtonSurface
+                        border.width: 1; border.color: root.controlButtonOutline
                         Rectangle {
                             anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                             width: 62; height: 28; radius: 8
-                            color: bluetoothHeaderMouse.containsMouse ? root.cyanDim : "#101920"
-                            Text { anchors.centerIn: parent; z: 2; text: "‹ Voltar"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                            color: bluetoothHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
+                            Text { anchors.centerIn: parent; z: 2; text: "‹ Voltar"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                             BounceMouseArea { id: bluetoothHeaderMouse; anchors.fill: parent; z: 1; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("bluetooth") }
                         }
                         Text {
@@ -4543,8 +4711,8 @@ ShellRoot {
                         }
                         Text {
                             anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter
-                            text: root.bluetoothPowerPhase === "turning-on" ? "A LIGAR…" : (root.bluetoothDisplayPowered() ? "LIGADO" : "DESLIGADO")
-                            color: root.bluetoothDisplayPowered() ? root.cyan : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize
+                            text: root.bluetoothPowerPhase === "turning-on" ? "A ligar…" : (root.bluetoothDisplayPowered() ? "Ligado" : "Desligado")
+                            color: root.bluetoothDisplayPowered() ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize
                         }
                     }
                     Flickable {
@@ -4560,7 +4728,7 @@ ShellRoot {
 
                             Rectangle {
                                 width: parent.width; height: 56; radius: 11
-                                color: "#182731"; border.width: 1; border.color: "#31505d"
+                                color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 14; anchors.top: parent.top; anchors.topMargin: 8
                                     text: root.bluetoothPowerPhase === "turning-on" ? "A ligar Bluetooth…" : (root.bluetoothDisplayPowered() ? "Bluetooth ativo" : "Bluetooth desligado")
@@ -4576,8 +4744,8 @@ ShellRoot {
                                     anchors.right: parent.right; anchors.rightMargin: 9; anchors.verticalCenter: parent.verticalCenter
                                     width: 84; height: 28; radius: 8
                                     color: bluetoothPowerMouse.containsMouse ? (root.bluetoothDisplayPowered() ? "#743541" : root.controlButtonHover) : root.controlButtonSurface
-                                    border.width: root.bluetoothDisplayPowered() ? 0 : 1; border.color: root.cyanDim
-                                    Text { anchors.centerIn: parent; text: root.bluetoothPowerPhase === "turning-on" ? "A ligar…" : (root.bluetoothDisplayPowered() ? "Desligar" : "Ligar"); color: root.bluetoothDisplayPowered() ? "#ffb0bd" : root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                                    border.width: root.bluetoothDisplayPowered() ? 0 : 1; border.color: root.controlButtonOutline
+                                    Text { anchors.centerIn: parent; text: root.bluetoothPowerPhase === "turning-on" ? "A ligar…" : (root.bluetoothDisplayPowered() ? "Desligar" : "Ligar"); color: root.bluetoothDisplayPowered() ? "#ffb0bd" : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                                     BounceMouseArea { id: bluetoothPowerMouse; anchors.fill: parent; enabled: !root.bluetoothPowerPhase.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.toggleBluetoothPower() }
                                 }
                             }
@@ -4587,7 +4755,7 @@ ShellRoot {
                                 width: parent.width; height: visible ? 30 : 0; radius: 8
                                 color: bluetoothScanMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
                                 border.width: 1; border.color: root.controlButtonOutline
-                                Text { anchors.centerIn: parent; text: bluetoothScanProcess.running ? "A PROCURAR…" : "PROCURAR DISPOSITIVOS"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                                Text { anchors.centerIn: parent; text: bluetoothScanProcess.running ? "A procurar…" : "Procurar dispositivos"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                                 BounceMouseArea { id: bluetoothScanMouse; anchors.fill: parent; enabled: !bluetoothScanProcess.running; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: bluetoothScanProcess.running = true }
                             }
 
@@ -4595,10 +4763,10 @@ ShellRoot {
                                 visible: root.bluetoothPairSessionId.length > 0
                                 width: parent.width
                                 height: visible ? (root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin" ? 108 : 78) : 0
-                                radius: 10; color: "#18343e"; border.width: 1; border.color: root.cyanDim
+                                radius: 10; color: root.controlButtonActive; border.width: 1; border.color: root.controlButtonOutline
                                 Column {
                                     anchors.fill: parent; anchors.margins: 9; spacing: 5
-                                    Text { width: parent.width; elide: Text.ElideRight; text: "Emparelhar " + root.bluetoothPairName; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                    Text { width: parent.width; elide: Text.ElideRight; text: "Emparelhar " + root.bluetoothPairName; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                                     Text {
                                         width: parent.width; wrapMode: Text.Wrap
                                         text: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "confirm"
@@ -4612,11 +4780,12 @@ ShellRoot {
                                     }
                                     Rectangle {
                                         visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin"
-                                        width: parent.width; height: visible ? 28 : 0; radius: 5; color: "#0b1216"; border.width: bluetoothPinInput.activeFocus ? 1 : 0; border.color: root.cyan
+                                        width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface; border.width: bluetoothPinInput.activeFocus ? 1 : 0; border.color: root.cyan
                                         TextInput {
                                             id: bluetoothPinInput; anchors.fill: parent; anchors.leftMargin: 9; anchors.rightMargin: 9; verticalAlignment: TextInput.AlignVCenter
+                                            activeFocusOnTab: true
                                             text: root.bluetoothPairPin; onTextChanged: root.bluetoothPairPin = text; echoMode: TextInput.Password; maximumLength: 16
-                                            color: root.textMain; selectionColor: root.cyanDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
+                                            color: root.textMain; selectionColor: root.controlButtonOutline; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
                                             onAccepted: if (text.length) root.respondBluetoothPair(true, text)
                                         }
                                         Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; visible: !bluetoothPinInput.text.length; text: "PIN"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
@@ -4624,8 +4793,8 @@ ShellRoot {
                                     Row {
                                         spacing: 12
                                         Text { text: root.bluetoothPairPhase === "completed" || root.bluetoothPairPhase === "failed" ? "Fechar" : "Cancelar"; color: pairCancelMouse.containsMouse ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; BounceMouseArea { id: pairCancelMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.bluetoothPairPhase === "completed" || root.bluetoothPairPhase === "failed" ? root.dismissBluetoothPairing() : root.cancelBluetoothPairing() } }
-                                        Text { visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "confirm"; text: "Confirmar"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.respondBluetoothPair(true, "") } }
-                                        Text { visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin"; text: "Emparelhar"; color: root.bluetoothPairPin.length ? root.cyan : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; BounceMouseArea { anchors.fill: parent; enabled: root.bluetoothPairPin.length > 0; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.respondBluetoothPair(true, root.bluetoothPairPin) } }
+                                        Text { visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "confirm"; text: "Confirmar"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.respondBluetoothPair(true, "") } }
+                                        Text { visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin"; text: "Emparelhar"; color: root.bluetoothPairPin.length ? root.textMain : root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true; BounceMouseArea { anchors.fill: parent; enabled: root.bluetoothPairPin.length > 0; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.respondBluetoothPair(true, root.bluetoothPairPin) } }
                                     }
                                 }
                             }
@@ -4644,28 +4813,28 @@ ShellRoot {
 
                             Text { visible: root.bluetoothMessage.length > 0 && root.bluetoothPairSessionId.length === 0; width: parent.width; wrapMode: Text.Wrap; text: root.bluetoothMessage; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
 
-                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "DISPOSITIVOS LIGADOS  ·  " + root.bluetoothConnectedDevices().length; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true } }
+                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "Dispositivos ligados  ·  " + root.bluetoothConnectedDevices().length; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true } }
                             Repeater {
                                 model: root.bluetoothConnectedDevices()
                                 Rectangle {
                                     required property var modelData
                                     width: parent ? parent.width : 300; height: 36; radius: 10
-                                    color: connectedBtMouse.containsMouse ? "#20434e" : "#18343e"; border.width: 1; border.color: root.cyanDim
-                                    Rectangle { width: 8; height: 8; radius: 4; color: root.cyan; anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { anchors.left: parent.left; anchors.leftMargin: 32; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 130; elide: Text.ElideRight; text: modelData.name || modelData.address; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
-                                    Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: "DESLIGAR"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
+                                    color: connectedBtMouse.containsMouse ? root.controlButtonHover : root.controlButtonActive; border.width: 1; border.color: root.controlButtonOutline
+                                    Rectangle { width: 8; height: 8; radius: 4; color: root.textMain; anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter }
+                                    Text { anchors.left: parent.left; anchors.leftMargin: 32; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 130; elide: Text.ElideRight; text: modelData.name || modelData.address; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                                    Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: "Desligar"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
                                     BounceMouseArea { id: connectedBtMouse; anchors.fill: parent; enabled: !root.bluetoothDevicePendingAddress.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.bluetoothDeviceAction("bluetooth-disconnect", modelData) }
                                 }
                             }
                             Text { visible: root.bluetoothConnectedDevices().length === 0; text: "-- nenhum dispositivo ligado --"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
 
                             Item { width: parent.width; height: 4 }
-                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "DISPOSITIVOS ANTERIORES  ·  " + root.bluetoothKnownDevices().length; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true } }
+                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "Dispositivos anteriores  ·  " + root.bluetoothKnownDevices().length; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true } }
                             Repeater {
                                 model: root.bluetoothKnownDevices()
                                 Rectangle {
                                     required property var modelData
-                                    width: parent ? parent.width : 300; height: 36; radius: 10; color: "#182731"; border.width: 1; border.color: "#31505d"
+                                    width: parent ? parent.width : 300; height: 36; radius: 10; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                                     Rectangle { width: 8; height: 8; radius: 4; color: "#405058"; anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter }
                                     Text { anchors.left: parent.left; anchors.leftMargin: 32; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 148; elide: Text.ElideRight; text: modelData.name || modelData.address; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize }
                                     Row {
@@ -4675,8 +4844,8 @@ ShellRoot {
                                             height: 24; radius: 6; color: knownConnectMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
                                             Text {
                                                 anchors.centerIn: parent
-                                                text: root.bluetoothDevicePendingAction === "bluetooth-connect" && root.bluetoothDevicePendingAddress === modelData.address ? "A LIGAR…" : "LIGAR"
-                                                color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true
+                                                text: root.bluetoothDevicePendingAction === "bluetooth-connect" && root.bluetoothDevicePendingAddress === modelData.address ? "A ligar…" : "Ligar"
+                                                color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true
                                                 SequentialAnimation on opacity {
                                                     running: root.bluetoothDevicePendingAction === "bluetooth-connect" && root.bluetoothDevicePendingAddress === modelData.address
                                                     loops: Animation.Infinite
@@ -4686,21 +4855,21 @@ ShellRoot {
                                             }
                                             BounceMouseArea { id: knownConnectMouse; anchors.fill: parent; enabled: !root.bluetoothDevicePendingAddress.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.bluetoothDeviceAction("bluetooth-connect", modelData) }
                                         }
-                                        Rectangle { width: 52; height: 24; radius: 6; color: knownRemoveMouse.containsMouse ? "#59303a" : "#18242b"; Text { anchors.centerIn: parent; text: "ESQUECER"; color: "#ffb0bd"; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true } BounceMouseArea { id: knownRemoveMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginBluetoothRemove(modelData) } }
+                                        Rectangle { width: 52; height: 24; radius: 6; color: knownRemoveMouse.containsMouse ? "#59303a" : root.controlButtonSurface; Text { anchors.centerIn: parent; text: "Esquecer"; color: "#ffb0bd"; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true } BounceMouseArea { id: knownRemoveMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginBluetoothRemove(modelData) } }
                                     }
                                 }
                             }
                             Text { visible: root.bluetoothKnownDevices().length === 0; text: "-- nenhum dispositivo anterior --"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
 
                             Item { width: parent.width; height: 4 }
-                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "DISPOSITIVOS DISPONÍVEIS  ·  " + root.bluetoothAvailableDevices().length; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true } }
+                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "Dispositivos disponíveis  ·  " + root.bluetoothAvailableDevices().length; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true } }
                             Repeater {
                                 model: root.bluetoothAvailableDevices()
                                 Rectangle {
                                     required property var modelData
-                                    width: parent ? parent.width : 300; height: 36; radius: 10; color: "#182731"; border.width: 1; border.color: "#31505d"
+                                    width: parent ? parent.width : 300; height: 36; radius: 10; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                                     Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 104; elide: Text.ElideRight; text: modelData.name || modelData.address; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize }
-                                    Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 78; height: 24; radius: 6; color: availablePairMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface; Text { anchors.centerIn: parent; text: "EMPARELHAR"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true } BounceMouseArea { id: availablePairMouse; anchors.fill: parent; enabled: !root.bluetoothPairSessionId.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.beginBluetoothPair(modelData) } }
+                                    Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 78; height: 24; radius: 6; color: availablePairMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface; Text { anchors.centerIn: parent; text: "Emparelhar"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true } BounceMouseArea { id: availablePairMouse; anchors.fill: parent; enabled: !root.bluetoothPairSessionId.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.beginBluetoothPair(modelData) } }
                                 }
                             }
                             Text { visible: root.bluetoothAvailableDevices().length === 0; width: parent.width; wrapMode: Text.Wrap; text: root.hostState.bluetooth_powered ? (bluetoothScanProcess.running ? "-- a procurar dispositivos --" : "-- nenhum dispositivo disponível --") : "-- liga o Bluetooth para procurar dispositivos --"; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize }
@@ -4714,7 +4883,15 @@ ShellRoot {
                             width: parent.width - 90; height: parent.height; radius: 11
                             color: volumeSummaryMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
                             border.width: 1; border.color: root.controlButtonOutline
-                            Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 12; text: "VOLUME"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                            Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 12; text: "Volume"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                            Text {
+                                anchors.right: parent.right; anchors.rightMargin: 12
+                                anchors.top: parent.top; anchors.topMargin: 12
+                                text: Math.round(root.volumeValue) + "%"
+                                color: root.volumeMuted ? root.textDim : root.textMain
+                                font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize
+                                font.bold: true
+                            }
                             Slider {
                                 id: volumeSummarySlider
                                 anchors.left: parent.left; anchors.leftMargin: 12; anchors.right: parent.right; anchors.rightMargin: 12
@@ -4726,21 +4903,30 @@ ShellRoot {
                                 background: Rectangle {
                                     x: volumeSummarySlider.leftPadding; y: volumeSummarySlider.topPadding + volumeSummarySlider.availableHeight / 2 - height / 2
                                     width: volumeSummarySlider.availableWidth; height: 3; radius: 2; color: "#34454e"
-                                    Rectangle { width: volumeSummarySlider.visualPosition * parent.width; height: parent.height; radius: 2; color: root.volumeMuted ? root.textDim : root.cyan }
+                                    Rectangle { width: volumeSummarySlider.visualPosition * parent.width; height: parent.height; radius: 2; color: root.volumeMuted ? root.textDim : root.textMain }
                                 }
                                 handle: Rectangle {
                                     x: volumeSummarySlider.leftPadding + volumeSummarySlider.visualPosition * (volumeSummarySlider.availableWidth - width)
                                     y: volumeSummarySlider.topPadding + volumeSummarySlider.availableHeight / 2 - height / 2
-                                    width: volumeSummarySlider.pressed ? 12 : 10; height: width; radius: width / 2; color: volumeSummarySlider.pressed ? "#ffffff" : root.cyan; border.width: 2; border.color: "#182731"
+                                    width: volumeSummarySlider.pressed ? 12 : 10; height: width; radius: width / 2; color: volumeSummarySlider.pressed ? "#ffffff" : root.textMain; border.width: 2; border.color: root.controlButtonSurface
                                 }
                             }
                             BounceMouseArea { id: volumeSummaryMouse; anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; z: 1; height: 36; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("audio") }
                         }
                         Rectangle {
                             width: 84; height: parent.height; radius: 11
-                            color: microphoneSummaryMouse.containsMouse ? root.controlButtonHover : (!root.microphoneActive || root.microphoneMuted ? root.controlButtonSurface : root.controlButtonActive)
-                            border.width: 1; border.color: !root.microphoneActive || root.microphoneMuted ? root.controlButtonOutline : root.cyanDim
-                            Text { anchors.centerIn: parent; text: "MICROFONE"; color: !root.microphoneActive || root.microphoneMuted ? root.textDim : root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true }
+                            property int microphoneState: root.microphoneText === "--" ? -1 : (root.microphoneMuted ? 0 : (root.microphoneActive ? 2 : 1))
+                            property color stateSurface: microphoneState <= 0 ? root.controlButtonSurface : (microphoneState === 1 ? "#3b4850" : "#b8d8dc")
+                            color: microphoneSummaryMouse.containsMouse ? Qt.lighter(stateSurface, 1.12) : stateSurface
+                            border.width: 1; border.color: root.controlButtonOutline
+                            Behavior on color { ColorAnimation { duration: 140 } }
+                            Text {
+                                anchors.centerIn: parent
+                                width: parent.width - 8; horizontalAlignment: Text.AlignHCenter
+                                text: "Microfone" + "\n" + (parent.microphoneState < 0 ? "Indisponível" : (parent.microphoneState === 0 ? "Silenciado" : (parent.microphoneState === 1 ? "Ligado" : "Em uso")))
+                                color: parent.microphoneState === 2 ? "#172126" : root.textMain
+                                font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true
+                            }
                             BounceMouseArea { id: microphoneSummaryMouse; anchors.fill: parent; z: 1; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("microphone") }
                         }
                     }
@@ -4774,24 +4960,28 @@ ShellRoot {
                                     x: displayBrightnessSlider.leftPadding
                                     y: displayBrightnessSlider.topPadding + displayBrightnessSlider.availableHeight / 2 - height / 2
                                     width: displayBrightnessSlider.availableWidth; height: 3; radius: 2; color: "#34454e"
-                                    Rectangle { width: displayBrightnessSlider.visualPosition * parent.width; height: parent.height; radius: 2; color: root.cyan }
+                                    Rectangle { width: displayBrightnessSlider.visualPosition * parent.width; height: parent.height; radius: 2; color: root.textMain }
                                 }
                                 handle: Rectangle {
                                     x: displayBrightnessSlider.leftPadding + displayBrightnessSlider.visualPosition * (displayBrightnessSlider.availableWidth - width)
                                     y: displayBrightnessSlider.topPadding + displayBrightnessSlider.availableHeight / 2 - height / 2
                                     width: displayBrightnessSlider.pressed ? 12 : 10; height: width; radius: width / 2
-                                    color: displayBrightnessSlider.pressed ? "#ffffff" : root.cyan; border.width: 2; border.color: "#182731"
+                                    color: displayBrightnessSlider.pressed ? "#ffffff" : root.textMain; border.width: 2; border.color: root.controlButtonSurface
                                 }
                             }
                         }
                         Rectangle {
                             width: 84; height: parent.height; radius: 11
-                            color: keyboardBrightnessSummaryMouse.containsMouse ? root.controlButtonHover : (root.keyboardBrightness === 0 ? root.controlButtonSurface : root.controlButtonActive)
-                            border.width: 1; border.color: root.keyboardBrightness === 0 ? root.controlButtonOutline : root.cyanDim
+                            property int lightState: root.keyboardBrightness <= 0 ? 0 : (root.keyboardBrightness >= root.keyboardBrightnessMax ? 2 : 1)
+                            property color stateSurface: lightState === 0 ? root.controlButtonSurface : (lightState === 1 ? "#3b4850" : "#b8d8dc")
+                            color: keyboardBrightnessSummaryMouse.containsMouse ? Qt.lighter(stateSurface, 1.12) : stateSurface
+                            border.width: 1
+                            border.color: root.controlButtonOutline
+                            Behavior on color { ColorAnimation { duration: 140 } }
                             Text {
                                 anchors.centerIn: parent
                                 width: parent.width - 8; horizontalAlignment: Text.AlignHCenter
-                                text: "TECLADO"; color: root.textMain
+                                text: "Teclado" + "\n" + (parent.lightState === 0 ? "Desligado" : (parent.lightState === 1 ? "Suave" : "Forte")); color: parent.lightState === 2 ? "#172126" : root.textMain
                                 font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true
                             }
                             BounceMouseArea {
@@ -4810,13 +5000,13 @@ ShellRoot {
                     Rectangle {
                         visible: root.controlsAudioOpen
                         width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: "#182731"
-                        border.width: 1; border.color: "#31505d"
+                        color: root.controlButtonSurface
+                        border.width: 1; border.color: root.controlButtonOutline
                         Rectangle {
                             anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                             width: 62; height: 28; radius: 8
                             color: audioHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: audioHeaderMouse.containsMouse ? "#ffffff" : root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: audioHeaderMouse.containsMouse ? "#ffffff" : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                             BounceMouseArea { id: audioHeaderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("audio") }
                         }
                         Text {
@@ -4827,7 +5017,7 @@ ShellRoot {
                         Text {
                             anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter
                             text: root.volumeText
-                            color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize
+                            color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize
                         }
                     }
                     Column {
@@ -4835,7 +5025,7 @@ ShellRoot {
 
                         Rectangle {
                             width: parent.width; height: 68; radius: 11
-                            color: "#182731"; border.width: 1; border.color: "#31505d"
+                            color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                             Text {
                                 anchors.left: parent.left; anchors.leftMargin: 16; anchors.top: parent.top; anchors.topMargin: 8
                                 text: root.volumeMuted ? "Volume silenciado" : "Volume de saída"
@@ -4880,18 +5070,18 @@ ShellRoot {
                                 background: Rectangle {
                                     x: volumeSlider.leftPadding
                                     y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                    width: volumeSlider.availableWidth; height: 5; radius: 3; color: "#26343a"
+                                    width: volumeSlider.availableWidth; height: 5; radius: 3; color: root.controlButtonOutline
                                     Rectangle {
                                         width: volumeSlider.visualPosition * parent.width; height: parent.height; radius: 3
-                                        color: root.volumeMuted ? root.textDim : root.cyan
+                                        color: root.volumeMuted ? root.textDim : root.textMain
                                     }
                                 }
                                 handle: Rectangle {
                                     x: volumeSlider.leftPadding + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
                                     y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
                                     width: 16; height: 16; radius: 8
-                                    color: volumeSlider.pressed ? "#ffffff" : root.cyan
-                                    border.width: 2; border.color: "#13252c"
+                                    color: volumeSlider.pressed ? "#ffffff" : root.textMain
+                                    border.width: 2; border.color: root.controlButtonSurface
                                 }
                             }
                         }
@@ -4899,19 +5089,19 @@ ShellRoot {
                         Row {
                             width: parent.width; height: 30; spacing: 4
                             MenuButton {
-                                width: (parent.width - 6) / 2; height: parent.height; label: "AJUSTE −5%"
+                                width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste −5%"
                                 onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
                             }
                             MenuButton {
-                                width: (parent.width - 6) / 2; height: parent.height; label: "AJUSTE +5%"
+                                width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste +5%"
                                 onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "-l", "1", "@DEFAULT_AUDIO_SINK@", "5%+"])
                             }
                         }
                         Rectangle {
                             width: parent.width; height: 30; radius: 7
                             color: volumeMuteMouse.containsMouse ? root.controlButtonHover : (root.volumeMuted ? root.controlButtonActive : root.controlButtonSurface)
-                            border.width: root.volumeMuted ? 1 : 0; border.color: root.cyanDim
-                            Text { anchors.centerIn: parent; text: root.volumeMuted ? "REATIVAR SOM" : "SILENCIAR"; color: root.volumeMuted ? root.cyan : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: root.volumeMuted }
+                            border.width: root.volumeMuted ? 1 : 0; border.color: root.controlButtonOutline
+                            Text { anchors.centerIn: parent; text: root.volumeMuted ? "Reativar som" : "Silenciar"; color: root.volumeMuted ? root.textMain : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: root.volumeMuted }
                             BounceMouseArea { id: volumeMuteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.toggleVolumeMute() }
                         }
                     }
@@ -4919,22 +5109,22 @@ ShellRoot {
                     Rectangle {
                         visible: root.controlsMicrophoneOpen
                         width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: "#182731"; border.width: 1; border.color: "#31505d"
+                        color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                         Rectangle {
                             anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                             width: 62; height: 28; radius: 8
                             color: microphoneHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: microphoneHeaderMouse.containsMouse ? "#ffffff" : root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
+                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: microphoneHeaderMouse.containsMouse ? "#ffffff" : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuSmallSize; font.bold: true }
                             BounceMouseArea { id: microphoneHeaderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("microphone") }
                         }
                         Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter; text: "Microfone"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
-                        Text { anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter; text: root.microphoneText; color: root.microphoneMuted ? root.textDim : root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize }
+                        Text { anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter; text: root.microphoneText; color: root.microphoneMuted ? root.textDim : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize }
                     }
                     Column {
                         width: parent.width; spacing: 5; visible: root.controlsMicrophoneOpen
                         Rectangle {
                             width: parent.width; height: 68; radius: 11
-                            color: "#182731"; border.width: 1; border.color: "#31505d"
+                            color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                             Text { anchors.left: parent.left; anchors.leftMargin: 16; anchors.top: parent.top; anchors.topMargin: 8; text: root.microphoneMuted ? "Microfone silenciado" : "Volume de entrada"; color: root.microphoneMuted ? root.textDim : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                             Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: Math.round(microphoneSlider.value) + "%"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                             Slider {
@@ -4949,26 +5139,26 @@ ShellRoot {
                                 Binding { target: microphoneSlider; property: "value"; value: root.microphoneVolume; when: !microphoneSlider.pressed }
                                 background: Rectangle {
                                     x: microphoneSlider.leftPadding; y: microphoneSlider.topPadding + microphoneSlider.availableHeight / 2 - height / 2
-                                    width: microphoneSlider.availableWidth; height: 5; radius: 3; color: "#26343a"
-                                    Rectangle { width: microphoneSlider.visualPosition * parent.width; height: parent.height; radius: 3; color: root.microphoneMuted ? root.textDim : root.cyan }
+                                    width: microphoneSlider.availableWidth; height: 5; radius: 3; color: root.controlButtonOutline
+                                    Rectangle { width: microphoneSlider.visualPosition * parent.width; height: parent.height; radius: 3; color: root.microphoneMuted ? root.textDim : root.textMain }
                                 }
                                 handle: Rectangle {
                                     x: microphoneSlider.leftPadding + microphoneSlider.visualPosition * (microphoneSlider.availableWidth - width)
                                     y: microphoneSlider.topPadding + microphoneSlider.availableHeight / 2 - height / 2
-                                    width: 16; height: 16; radius: 8; color: microphoneSlider.pressed ? "#ffffff" : root.cyan; border.width: 2; border.color: "#13252c"
+                                    width: 16; height: 16; radius: 8; color: microphoneSlider.pressed ? "#ffffff" : root.textMain; border.width: 2; border.color: root.controlButtonSurface
                                 }
                             }
                         }
                         Row {
                             width: parent.width; height: 30; spacing: 4
-                            MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: "AJUSTE −5%"; onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", "5%-"]) }
-                            MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: "AJUSTE +5%"; onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "-l", "1", "@DEFAULT_AUDIO_SOURCE@", "5%+"]) }
+                            MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste −5%"; onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", "5%-"]) }
+                            MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste +5%"; onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "-l", "1", "@DEFAULT_AUDIO_SOURCE@", "5%+"]) }
                         }
                         Rectangle {
                             width: parent.width; height: 30; radius: 7
                             color: microphoneMuteMouse.containsMouse ? root.controlButtonHover : (root.microphoneMuted ? root.controlButtonActive : root.controlButtonSurface)
-                            border.width: root.microphoneMuted ? 1 : 0; border.color: root.cyanDim
-                            Text { anchors.centerIn: parent; text: root.microphoneMuted ? "REATIVAR MICROFONE" : "SILENCIAR MICROFONE"; color: root.microphoneMuted ? root.cyan : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: root.microphoneMuted }
+                            border.width: root.microphoneMuted ? 1 : 0; border.color: root.controlButtonOutline
+                            Text { anchors.centerIn: parent; text: root.microphoneMuted ? "Reativar microfone" : "Silenciar microfone"; color: root.microphoneMuted ? root.textMain : root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: root.microphoneMuted }
                             BounceMouseArea { id: microphoneMuteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.toggleMicrophoneMute() }
                         }
                     }
@@ -5019,7 +5209,7 @@ ShellRoot {
                     Text {
                         visible: root.controlsAllClosed() && !root.powerConfirmOpen
                         width: parent.width; height: 18
-                        text: "AÇÕES DA SESSÃO"
+                        text: "Ações da sessão"
                         color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: root.menuMetaSize; font.bold: true
                     }
                     Grid {
@@ -5061,7 +5251,7 @@ ShellRoot {
                             width: (parent.width - 5) / 2; height: 40; radius: 10
                             color: updateMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
                             border.width: 1; border.color: root.controlButtonOutline
-                            Text { anchors.centerIn: parent; text: root.isHub ? "Update" : "Apps"; color: root.cyan; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
+                            Text { anchors.centerIn: parent; text: root.isHub ? "Update" : "Apps"; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: root.menuBodySize; font.bold: true }
                             BounceMouseArea { id: updateMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: {
                                 popup.open = false
                                 if (root.isHub) {
@@ -5094,9 +5284,9 @@ ShellRoot {
                         width: parent.width
                         height: visible ? 104 : 0
                         radius: 7
-                        color: "#101920"
+                        color: root.controlButtonSurface
                         border.width: 1
-                        border.color: root.powerToken.length ? "#ffb15a" : root.cyanDim
+                        border.color: root.powerToken.length ? "#ffb15a" : root.controlButtonOutline
                         Column {
                             anchors.fill: parent
                             anchors.margins: 9
@@ -5115,13 +5305,13 @@ ShellRoot {
                                 spacing: 6
                                 MenuButton {
                                     width: (parent.width - 6) / 2
-                                    label: "CANCELAR"
+                                    label: "Cancelar"
                                     onActivated: root.cancelPower()
                                 }
                                 MenuButton {
                                     visible: root.powerToken.length > 0
                                     width: (parent.width - 6) / 2
-                                    label: root.powerBusy ? "A PROCESSAR..." : "CONFIRMAR"
+                                    label: root.powerBusy ? "A processar..." : "Confirmar"
                                     accent: true
                                     onActivated: root.confirmPower()
                                 }
@@ -5193,103 +5383,157 @@ ShellRoot {
 
                     Column {
                     width: parent.width
-                    spacing: 6
+                    spacing: 12
                     visible: root.popupKind === "battery"
-                    Text { text: "BATTERY :: " + root.batteryText; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: 14 }
-                    Rectangle { width: parent.width; height: 8; radius: 4; color: "#26343a"
-                        Rectangle { height: parent.height; radius: 4; color: root.cyan; width: parent.width * Math.max(0, Math.min(100, parseInt(root.batteryText) || 0)) / 100 }
+                    Rectangle {
+                        width: parent.width; height: 110; radius: 11; color: root.controlButtonSurface
+                        Text { id: batteryCapacity; x: 14; y: 10; text: root.batteryText; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: 32; font.bold: true }
+                        Text {
+                            anchors.left: batteryCapacity.right; anchors.leftMargin: 16
+                            anchors.right: parent.right; anchors.rightMargin: 14
+                            y: 24; text: root.batteryStatus; elide: Text.ElideRight
+                            color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: 11
+                        }
+                        Rectangle {
+                            x: 14; y: 61; width: parent.width - 28; height: 6; radius: 3; color: root.controlButtonOutline
+                            Rectangle { height: parent.height; radius: 3; color: parseInt(root.batteryText) <= 20 ? "#ffb15a" : "#9dc8bd"; width: parent.width * Math.max(0, Math.min(100, parseInt(root.batteryText) || 0)) / 100 }
+                        }
+                        Text {
+                            x: 14; y: 82; width: parent.width - 28; elide: Text.ElideRight
+                            text: root.batteryMinutes >= 0 ? "Estimativa · " + Math.floor(root.batteryMinutes / 60) + " h " + (root.batteryMinutes % 60) + " min" : "Autonomia indisponível"
+                            color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: 11
+                        }
+                    }
+                    Text {
+                        visible: root.isHub && root.hardwareStatusError.length > 0
+                        width: parent.width; wrapMode: Text.WordWrap
+                        text: "Controlos de energia indisponíveis. " + root.hardwareStatusError
+                        color: "#ff91a4"; font.family: "Adwaita Mono"; font.pixelSize: 11
                     }
                     Text {
                         visible: root.isHub
-                        text: "MODO DE ENERGIA :: " + root.platformLabel(root.hardwareProfile.platform_profile)
+                        text: "Modo de energia"
                         color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: 11
                     }
                     Row {
+                        id: energyModeRow
                         visible: root.isHub
-                        width: parent.width; height: 34; spacing: 6
-                        MenuButton {
-                            width: (parent.width - 12) / 3; label: "SILENCIOSO"
-                            accent: root.hardwareProfile.platform_profile === "low-power"
-                            enabled: !root.hardwareBusy
-                            onActivated: root.setPlatformProfile("low-power")
-                        }
-                        MenuButton {
-                            width: (parent.width - 12) / 3; label: "NORMAL"
-                            accent: root.hardwareProfile.platform_profile === "balanced"
-                            enabled: !root.hardwareBusy
-                            onActivated: root.setPlatformProfile("balanced")
-                        }
-                        MenuButton {
-                            width: (parent.width - 12) / 3; label: "PERFORMANCE"
-                            accent: root.hardwareProfile.platform_profile === "performance"
-                            enabled: !root.hardwareBusy
-                            onActivated: root.setPlatformProfile("performance")
-                        }
-                    }
-                    Text {
-                        visible: root.isHub
-                        text: "GPU :: " + root.gpuLabel(root.hardwareProfile.gpu_profile)
-                              + (root.hardwareProfile.reboot_required
-                                 ? "  →  " + root.gpuLabel(root.hardwareProfile.requested_gpu_profile) + " (REINÍCIO)" : "")
-                        color: root.hardwareProfile.reboot_required ? "#ffd09a" : root.cyan
-                        font.family: "Adwaita Mono"; font.pixelSize: 12
-                    }
-                    Column {
                         width: parent.width; spacing: 6
-                        visible: root.isHub && !root.hardwareConfirmOpen
-                        MenuButton {
-                            label: "[ HÍBRIDO ] AMD + NVIDIA sob pedido"
-                            accent: root.hardwareProfile.requested_gpu_profile === "hybrid"
-                            enabled: !root.hardwareBusy
-                            onActivated: root.beginGpuProfile("hybrid")
-                        }
-                        MenuButton {
-                            label: "[ NVIDIA ] dedicada · máximo desempenho"
-                            accent: root.hardwareProfile.requested_gpu_profile === "nvidia"
-                            enabled: !root.hardwareBusy
-                            onActivated: root.beginGpuProfile("nvidia")
-                        }
-                    }
-                    Rectangle {
-                        visible: root.isHub && root.hardwareConfirmOpen
-                        width: parent.width; height: visible ? 126 : 0; radius: 7
-                        color: "#101920"; border.width: 1
-                        border.color: root.hardwareApplied ? root.cyan : "#ffb15a"
-                        Column {
-                            anchors.fill: parent; anchors.margins: 9; spacing: 8
-                            Text {
-                                width: parent.width; text: root.hardwareMessage
-                                color: root.hardwareApplied ? root.cyan : "#ffd09a"
-                                font.family: "Adwaita Mono"; font.pixelSize: 10; font.bold: true
-                                wrapMode: Text.Wrap
-                            }
-                            Row {
-                                width: parent.width; spacing: 6
-                                MenuButton {
-                                    width: (parent.width - 6) / 2
-                                    label: root.hardwareApplied ? "MAIS TARDE" : "CANCELAR"
-                                    onActivated: root.cancelGpuProfile()
-                                }
-                                MenuButton {
-                                    width: (parent.width - 6) / 2
-                                    visible: root.hardwareApplied || root.hardwareToken.length > 0
-                                    label: root.hardwareApplied ? "REINICIAR AGORA" : (root.hardwareBusy ? "A PROCESSAR..." : "CONFIRMAR")
-                                    accent: true
-                                    onActivated: root.hardwareApplied ? root.rebootForGpuProfile() : root.confirmGpuProfile()
+                        Repeater {
+                            model: [
+                                { profile: "low-power", label: "Poupar" },
+                                { profile: "balanced", label: "Equilibrado" },
+                                { profile: "performance", label: "Desempenho" }
+                            ]
+                            MenuButton {
+                                required property var modelData
+                                width: (energyModeRow.width - 12) / 3; height: 42
+                                label: modelData.label
+                                accent: root.hardwareProfile.platform_profile === modelData.profile
+                                enabled: !root.hardwareBusy && (root.hardwareProfile.platform_profiles || []).indexOf(modelData.profile) >= 0
+                                onActivated: root.setPlatformProfile(modelData.profile)
+                                Rectangle {
+                                    anchors.bottom: parent.bottom; anchors.bottomMargin: 5
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: 18; height: 2; radius: 1
+                                    color: root.textMain; visible: parent.accent
                                 }
                             }
                         }
                     }
                     Text {
                         visible: root.hardwareMessage.length > 0 && !root.hardwareConfirmOpen
-                        text: root.hardwareMessage; color: root.textDim; wrapMode: Text.WordWrap
+                        text: root.hardwareMessage; color: root.platformProfileError.length ? "#ff91a4" : root.textDim; wrapMode: Text.WordWrap
                         width: parent.width; font.family: "Adwaita Mono"; font.pixelSize: 10
                     }
-                    Text {
-                        text: "Este Legion expõe dois modos físicos: Híbrido (AMD + NVIDIA sob pedido) e NVIDIA dedicada. A mudança de GPU requer reinício."
-                        color: root.textDim; wrapMode: Text.WordWrap; width: parent.width
-                        font.family: "Adwaita Mono"; font.pixelSize: 9
+                    MenuButton {
+                        label: root.batteryDetailsOpen ? "− Ocultar detalhes" : "+ Detalhes e gráficos"
+                        height: 36
+                        enabled: !root.hardwareConfirmOpen
+                        onActivated: root.batteryDetailsOpen = !root.batteryDetailsOpen
                     }
+                    Column {
+                        width: parent.width; spacing: 12
+                        visible: root.batteryDetailsOpen || root.hardwareConfirmOpen
+                        Row {
+                            width: parent.width; spacing: 8
+                            Repeater {
+                                model: [
+                                    { title: "POTÊNCIA", value: root.batteryWatts >= 0 ? root.batteryWatts.toFixed(1) + " W" : "—" },
+                                    { title: "SAÚDE DA BATERIA", value: root.batteryHealth >= 0 ? root.batteryHealth + "%" : "—" }
+                                ]
+                                Rectangle {
+                                    required property var modelData
+                                    width: (parent.width - 8) / 2; height: 48; radius: 9; color: root.controlButtonSurface
+                                    Text { x: 10; y: 7; text: modelData.title; color: root.textDim; font.family: "Adwaita Mono"; font.pixelSize: 9 }
+                                    Text { x: 10; y: 24; text: modelData.value; color: root.textMain; font.family: "Adwaita Mono"; font.pixelSize: 14 }
+                                }
+                            }
+                        }
+                        Rectangle { width: parent.width; height: 1; color: root.controlButtonOutline; visible: root.isHub }
+                        Text {
+                            visible: root.isHub
+                            text: "Gráficos · " + root.gpuLabel(root.hardwareProfile.gpu_profile)
+                                  + (root.hardwareProfile.reboot_required
+                                     ? "  →  " + root.gpuLabel(root.hardwareProfile.requested_gpu_profile) + " (REINÍCIO)" : "")
+                            color: root.hardwareProfile.reboot_required ? "#ffd09a" : root.textDim
+                            font.family: "Adwaita Mono"; font.pixelSize: 11
+                            width: parent.width; wrapMode: Text.WordWrap
+                        }
+                        Column {
+                            width: parent.width; spacing: 8
+                            visible: root.isHub && !root.hardwareConfirmOpen
+                            MenuButton {
+                                height: 40; label: "Híbridos · NVIDIA sob pedido"
+                                accent: root.hardwareProfile.requested_gpu_profile === "hybrid"
+                                enabled: !root.hardwareBusy && (root.hardwareProfile.gpu_profiles || []).indexOf("hybrid") >= 0
+                                onActivated: root.beginGpuProfile("hybrid")
+                            }
+                            MenuButton {
+                                height: 40; label: "NVIDIA dedicada · maior consumo"
+                                accent: root.hardwareProfile.requested_gpu_profile === "nvidia"
+                                enabled: !root.hardwareBusy && (root.hardwareProfile.gpu_profiles || []).indexOf("nvidia") >= 0
+                                onActivated: root.beginGpuProfile("nvidia")
+                            }
+                        }
+                        Rectangle {
+                            visible: root.isHub && root.hardwareConfirmOpen
+                            width: parent.width; height: visible ? gpuConfirmationContent.implicitHeight + 24 : 0; radius: 7
+                            color: root.controlButtonSurface; border.width: 1
+                            border.color: root.hardwareApplied ? root.cyan : "#ffb15a"
+                            Column {
+                                id: gpuConfirmationContent
+                                x: 12; y: 12; width: parent.width - 24; spacing: 12
+                                Text {
+                                    width: parent.width; text: root.hardwareMessage
+                                    color: root.hardwareApplied ? root.textMain : "#ffd09a"
+                                    font.family: "Adwaita Mono"; font.pixelSize: 10; font.bold: true
+                                    wrapMode: Text.Wrap
+                                }
+                                Row {
+                                    width: parent.width; spacing: 6
+                                    MenuButton {
+                                        width: (parent.width - 6) / 2
+                                        label: root.hardwareApplied ? "MAIS TARDE" : "CANCELAR"
+                                        onActivated: root.cancelGpuProfile()
+                                    }
+                                    MenuButton {
+                                        width: (parent.width - 6) / 2
+                                        visible: root.hardwareApplied || root.hardwareToken.length > 0
+                                        label: root.hardwareApplied ? "REINICIAR AGORA" : (root.hardwareBusy ? "A PROCESSAR..." : "CONFIRMAR")
+                                        accent: true
+                                        onActivated: root.hardwareApplied ? root.rebootForGpuProfile() : root.confirmGpuProfile()
+                                    }
+                                }
+                            }
+                        }
+                        Text {
+                            text: root.hardwareProfile.gpu_error ? "Controlos de gráficos indisponíveis. " + root.hardwareProfile.gpu_error : "A mudança de gráficos requer reinício."
+                            color: root.textDim; wrapMode: Text.WordWrap; width: parent.width
+                            font.family: "Adwaita Mono"; font.pixelSize: 9
+                        }
+                    }
+
                     }
                 }
             }

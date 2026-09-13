@@ -35,6 +35,24 @@ def detached(command: list[str]) -> int:
     return 0
 
 
+def files() -> int:
+    # Runs as the Environment's desktop user. Repeated shortcuts focus the
+    # existing file window instead of depending on a long-lived Thunar process.
+    code = ('local w = hl.get_window("class:^(thunar|Thunar|org.xfce.Thunar)$"); '
+            'if w then hl.dispatch(hl.dsp.focus({window=w})) '
+            'else hl.exec_cmd("/usr/bin/thunar /home/apx") end')
+    try:
+        result = subprocess.run((HYPRCTL, "eval", code), capture_output=True,
+                                text=True, timeout=3, check=False)
+    except (OSError, subprocess.SubprocessError):
+        feedback("hotkeyFailed")
+        return 1
+    if result.returncode or result.stdout.strip() != "ok":
+        feedback("hotkeyFailed")
+        return 1
+    return 0
+
+
 def screenshot() -> int:
     grim = shutil.which("grim")
     if grim is None:
@@ -87,6 +105,24 @@ def airplane_status() -> int:
     return 0
 
 
+def touchpad(enabled: bool) -> int:
+    # I2C touchpads need the compositor setting too: a Lenovo ACPI notification
+    # alone does not disable this separately leased ELAN device in the desktop.
+    code = 'hl.device({name="elan06fa:00-04f3:31dd-touchpad",enabled=' \
+        + ("true" if enabled else "false") + '})'
+    try:
+        result = subprocess.run((HYPRCTL, "eval", code), capture_output=True,
+                                text=True, timeout=3, check=False)
+    except (OSError, subprocess.SubprocessError):
+        feedback("hotkeyFailed")
+        return 1
+    if result.returncode or result.stdout.strip() != "ok":
+        feedback("hotkeyFailed")
+        return 1
+    feedback("hotkeyTouchpadOn" if enabled else "hotkeyTouchpadOff")
+    return 0
+
+
 def display_cycle() -> int:
     try:
         result = subprocess.run(
@@ -135,23 +171,32 @@ def display_cycle() -> int:
         feedback_method = "hotkeyDisplayInternal"
 
     for monitor_rule in commands:
-        subprocess.run(
-            (HYPRCTL, "keyword", "monitor", monitor_rule), check=False,
-            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL, timeout=3,
-        )
+        try:
+            result = subprocess.run(
+                (HYPRCTL, "keyword", "monitor", monitor_rule), check=False,
+                stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=3,
+            )
+        except (OSError, subprocess.SubprocessError):
+            feedback("hotkeyFailed")
+            return 1
+        if result.returncode or result.stdout.strip() != "ok":
+            feedback("hotkeyFailed")
+            return 1
     feedback(feedback_method)
     return 0
 
 
 def main() -> int:
     actions = {
+        "files": files,
         "airplane-status": airplane_status,
         "apps": lambda: (feedback("hotkeyApps"), detached(["/usr/bin/rofi", "-show", "drun"]))[1],
         "calculator": calculator,
         "display-cycle": display_cycle,
         "overview": lambda: (feedback("hotkeyOverview"), detached(["/usr/bin/rofi", "-show", "window"]))[1],
         "screenshot": screenshot,
+        "touchpad-on": lambda: touchpad(True),
+        "touchpad-off": lambda: touchpad(False),
     }
     if len(sys.argv) != 2 or sys.argv[1] not in actions:
         return 2

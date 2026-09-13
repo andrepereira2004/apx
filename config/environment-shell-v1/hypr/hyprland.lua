@@ -85,10 +85,10 @@ hl.config({
         gaps_in  = 5,
         gaps_out = 20,
 
-        border_size = 1,
+        border_size = 2,
 
         col = {
-            active_border   = "rgba(26343aff)",
+            active_border   = "rgba(ffffffff)",
             inactive_border = "rgba(26343aff)",
         },
 
@@ -156,6 +156,13 @@ hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "
 hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
+
+-- A lone window needs no focus indicator. Count tiled and floating windows.
+hl.window_rule({
+    name = "apx-single-window-no-border",
+    match = { workspace = "w[1]" },
+    border_size = 0,
+})
 
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 -- "Smart gaps" / "No gaps when only"
@@ -274,8 +281,8 @@ hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("quickshell -c apx ipc call host open
 hl.bind(mainMod .. " + M", hl.dsp.exit())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
--- The role-aware shell refuses this action in the Hub. Workload Environments
--- retain their private Thunar package and use SUPER+P for it.
+-- Open or focus the file manager as the current Environment's desktop user.
+-- The owner retains this binding even though Fn+F7 emits the same chord.
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("quickshell -c apx ipc call host openFiles"))
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
@@ -315,6 +322,11 @@ hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("quickshell -c apx ipc call host
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("quickshell -c apx ipc call host microphoneMute"), { locked = true })
 
 local laptopAction = "/home/apx/.local/bin/apx-laptop-action-v1"
+-- Standard application-switcher chords also cover firmware-emitted shortcuts.
+-- Three isolated Legion Fn+F11 presses produced Ctrl+Alt+Tab.
+hl.bind("CTRL + ALT + Tab", hl.dsp.exec_cmd(laptopAction .. " overview"))
+hl.bind("ALT + Tab", hl.dsp.exec_cmd(laptopAction .. " overview"))
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd(laptopAction .. " overview"))
 hl.bind("XF86Display", hl.dsp.exec_cmd(laptopAction .. " display-cycle"), { locked = true })
 hl.bind("XF86Launch1", hl.dsp.exec_cmd(laptopAction .. " apps"), { locked = true })
 hl.bind("XF86TaskPane", hl.dsp.exec_cmd(laptopAction .. " overview"), { locked = true })

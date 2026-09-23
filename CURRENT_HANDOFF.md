@@ -1,5 +1,20 @@
 # APX Current Handoff
 
+## Native migration and installer completed; finalizer fix pending (2026-09-24)
+
+Generation `2770478b-480f-4aea-8910-e3201d5334c5` recorded
+`relocate:complete:write-gpt` on the ESP. The current seven-partition GPT
+passes `sfdisk --verify`: p3 is the original Windows at 120 GiB, and p5/p6/p7
+reserve 80 GiB, 512 MiB EFI and 16 MiB MSR for `windows-testes`. WinPE wrote
+matching `boot-prepared` statuses on p4 and p6, with a BCD and Microsoft boot
+manager on p6. Read-only mounts found Windows system files on both p3 and p5.
+The finalizer rejected the firmware-created `Boot0000 Windows Boot Manager`
+for p6 because it expected an `APX windows-testes` label, leaving the v3 job
+at `installing` with an error. The repository now accepts this firmware label
+only with the exact p6 GUID and Microsoft loader. Install that bounded fix on
+the Host, update the v3 file manifest, rerun finalization, and then validate
+independent boots. Linux remains first in BootOrder and BootNext is absent.
+
 ## `windows-testes` subvolume fix staged (2026-09-23)
 
 The instrumented maintenance retry wrote

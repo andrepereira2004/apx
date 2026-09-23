@@ -221,7 +221,8 @@ def create_entry(partition,label,loader):
     before=command('efibootmgr','-v');order=re.search(r'^BootOrder:\s*(.+)$',before,re.MULTILINE).group(1)
     if not order.startswith('0005,') or re.search(r'^BootNext:',before,re.MULTILINE):raise ValueError('Linux boot order changed or another one-shot boot is armed')
     part=next(p for p in layout()['partitions'] if p['node']==DISK+'p'+str(partition))
-    existing=find_matching_entry(before,partition,part['uuid'],label,loader)
+    allow_windows_manager=partition==6 and loader=='\\EFI\\Microsoft\\Boot\\bootmgfw.efi'
+    existing=find_matching_entry(before,partition,part['uuid'],label,loader,allow_windows_manager=allow_windows_manager)
     if existing is not None:return existing
     identities=set(re.findall(r'^Boot([0-9A-F]{4})\*?\s',before,re.MULTILINE))
     command('efibootmgr','--create-only','--disk',DISK,'--part',str(partition),'--label',label,'--loader',loader)
@@ -231,13 +232,13 @@ def create_entry(partition,label,loader):
     line=next(line for line in after.splitlines() if re.match(r'^Boot'+entry+r'\*?\s',line))
     if ('hd('+str(partition)+',gpt,'+part['uuid']+',').lower() not in line.lower() or loader.lower() not in line.lower():
         raise ValueError('new firmware entry identifies a different partition or loader')
-    if find_matching_entry(after,partition,part['uuid'],label,loader)!=entry:
+    if find_matching_entry(after,partition,part['uuid'],label,loader,allow_windows_manager=allow_windows_manager)!=entry:
         raise ValueError('new firmware entry label or identity differs')
     return entry
 
 
-def find_matching_entry(firmware,partition,partuuid,label,loader):
-    """Reuse only one exact entry; reject aliases to the same EFI target."""
+def find_matching_entry(firmware,partition,partuuid,label,loader,*,allow_windows_manager=False):
+    """Reuse one exact target, including a scoped Windows-created boot label."""
     expected_hd=('HD('+str(partition)+',GPT,'+partuuid+',').lower()
     expected_loader=('File('+loader+')').lower()
     firmware_loader=('/'+loader).lower()
@@ -249,8 +250,11 @@ def find_matching_entry(firmware,partition,partuuid,label,loader):
         owns_target=expected_hd in body.lower() and \
             (expected_loader in body.lower() or firmware_loader in body.lower())
         owns_label=body.startswith(label+' ') or body.startswith(label+'\t')
-        if owns_target or owns_label:
-            if not (owns_target and owns_label):raise ValueError('native firmware entry aliases a different target')
+        auto_label=allow_windows_manager and partition==6 and loader=='\\EFI\\Microsoft\\Boot\\bootmgfw.efi' and \
+            (body.startswith('Windows Boot Manager ') or body.startswith('Windows Boot Manager\t'))
+        auto_partition=auto_label and ('hd('+str(partition)+',gpt,') in body.lower()
+        if owns_target or owns_label or auto_partition:
+            if not owns_target or not (owns_label or auto_label):raise ValueError('native firmware entry aliases a different target')
             matching.append(entry)
     if len(matching)>1:raise ValueError('duplicate native firmware entries')
     return matching[0] if matching else None
@@ -462,7 +466,7 @@ def delete_instance(generation,token):
             re.search(r'^BootNext:',firmware,re.MULTILINE):
         raise ValueError('Linux boot authority changed before native deletion')
     entry=find_matching_entry(firmware,6,plan['new']['esp_partuuid'],
-                              'APX '+selected['name'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi')
+                              'APX '+selected['name'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi',allow_windows_manager=True)
     if re.search(r'^Boot'+re.escape(selected['windows_boot_entry'])+r'\*?\s',firmware,re.MULTILINE) and \
             entry!=selected['windows_boot_entry']:
         raise ValueError('selected native firmware number was reassigned')
@@ -471,7 +475,7 @@ def delete_instance(generation,token):
             raise ValueError('selected native firmware entry differs')
         command('efibootmgr','-b',entry,'-B')
         if find_matching_entry(command('efibootmgr','-v'),6,plan['new']['esp_partuuid'],
-                               'APX '+selected['name'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi') is not None:
+                               'APX '+selected['name'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi',allow_windows_manager=True) is not None:
             raise ValueError('selected native firmware entry remained after deletion')
     state(pending,'applying',20,'A limpar apenas o Windows novo e o seu EFI…')
     for number,key in ((5,'partuuid'),(6,'esp_partuuid')):

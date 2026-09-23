@@ -256,3 +256,23 @@ class NativeLifecycleTests(unittest.TestCase):
                 LIFECYCLE.find_matching_entry(changed, 6, uuid, label, loader)
         with self.assertRaises(ValueError):
             LIFECYCLE.find_matching_entry(line + '\n' + line.replace('0007', '0008'), 6, uuid, label, loader)
+
+    def test_windows_installer_firmware_entry_is_reused_only_for_new_esp(self):
+        uuid = '10783707-92f8-5f8a-9407-1c4fb92ab0ea'
+        loader = '\\EFI\\Microsoft\\Boot\\bootmgfw.efi'
+        label = 'APX windows-testes'
+        line = f'Boot0000* Windows Boot Manager\tHD(6,GPT,{uuid},0x306d9000,0x100000)/{loader}RC'
+        self.assertEqual(LIFECYCLE.find_matching_entry(line, 6, uuid, label, loader,
+                         allow_windows_manager=True), '0000')
+        with self.assertRaisesRegex(ValueError, 'aliases'):
+            LIFECYCLE.find_matching_entry(line, 6, uuid, label, loader)
+        self.assertIsNone(LIFECYCLE.find_matching_entry(line.replace('HD(6,', 'HD(1,'),
+                          6, uuid, label, loader, allow_windows_manager=True))
+        for changed in (line.replace(uuid, 'aaaaaaaa-2222-4333-8444-555555555555'),
+                        line.replace('Windows Boot Manager', 'Unrelated manager')):
+            with self.assertRaises(ValueError):
+                LIFECYCLE.find_matching_entry(changed, 6, uuid, label, loader,
+                                              allow_windows_manager=True)
+        original = 'Boot0006* Windows Boot Manager\tHD(1,GPT,9625f250-9acc-453a-ae63-0c863ade440f,0,1)/'+loader
+        self.assertEqual(LIFECYCLE.find_matching_entry(original+'\n'+line, 6, uuid, label, loader,
+                         allow_windows_manager=True), '0000')

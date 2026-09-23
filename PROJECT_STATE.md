@@ -1,5 +1,16 @@
 # APX Project State
 
+## Native `windows-testes` installation awaits finalization (2026-09-24)
+
+The owner-authorized offline migration completed on the physical pilot. The
+validated GPT now has seven partitions: the existing Windows p3 at 120 GiB and
+new `windows-testes` p5 at 80 GiB with its own p6 EFI and p7 MSR. WinPE wrote
+matching `boot-prepared` status on p4 and p6; both Windows partitions expose
+Windows system files. Finalization stopped because Windows Setup created an
+otherwise exact p6 boot entry with its standard `Windows Boot Manager` label.
+The finalizer now accepts that label only for the exact new p6 and loader.
+Host deployment and independent boot validation remain to be completed.
+
 ## Native v3 offline subvolume correction (2026-09-23)
 
 The instrumented second maintenance boot failed at `preflight-authorization`.

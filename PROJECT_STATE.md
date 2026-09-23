@@ -1,5 +1,15 @@
 # APX Project State
 
+## Native v3 offline subvolume correction (2026-09-23)
+
+The instrumented second maintenance boot failed at `preflight-authorization`.
+The script mounted Btrfs `@` but the authorization and Windows images live in
+the separate `@apx` subvolume. The original GPT and Btrfs size remained intact.
+A read-only nested-mount proof validated the existing authorization through
+`@apx`. Relocation and rollback UKIs were rebuilt and signed with that mount;
+the corrected relocation UKI is published for a further one-time boot. No
+Windows relocation or new Windows installation has yet completed.
+
 ## Native v3 physical preflight retry (2026-09-23)
 
 The first offline maintenance boot returned to Linux with a

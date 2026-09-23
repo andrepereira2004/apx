@@ -34,6 +34,8 @@ class OfflineTests(unittest.TestCase):
             self.assertIn('stage=preflight-sysroot\nif mountpoint -q /sysroot; then false; fi',script)
             self.assertIn('stage=preflight-image-hash',script)
             self.assertIn('stage=preflight\nrecord started',script)
+            self.assertIn('mount -t btrfs -o rw,subvol=@apx "$mapping" "$work/var/lib/apx"',script)
+            self.assertLess(script.index('umount "$work/var/lib/apx"'),script.index('umount "$work"'))
             self.assertEqual('btrfs filesystem resize' in script,not rollback)
             self.assertLess(script.index('stage=verify-windows'),script.index('stage=write-gpt'))
             self.assertLess(script.index('sfdisk --verify'),script.index('record complete'))

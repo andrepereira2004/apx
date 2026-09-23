@@ -97,6 +97,8 @@ sfdisk --json "$disk" >/run/apx-observed-gpt.json
 stage=preflight-mount
 mkdir -p "$work"
 mount -t btrfs -o rw,subvol=@ "$mapping" "$work"
+mkdir -p "$work/var/lib/apx"
+mount -t btrfs -o rw,subvol=@apx "$mapping" "$work/var/lib/apx"
 stage=preflight-authorization
 /usr/bin/python3 /usr/lib/apx/apx-native-offline-layout-v3.py --authorize "$work/var/lib/apx/native-environments/migrations-v3/$generation/authorization.json" /usr/share/apx/native-v3-plan.json "$action"
 image="$work/$backup_relative/$image_file"
@@ -123,6 +125,7 @@ stage=verify-windows
 [[ $(dd if="$disk" bs=8M skip="$offset" count="$image_bytes" iflag=skip_bytes,count_bytes status=none | sha256sum | cut -d' ' -f1) == "$image_sha256" ]]
 sync
 record copy-verified
+umount "$work/var/lib/apx"
 umount "$work"
 systemctl stop systemd-cryptsetup@cryptroot.service
 [[ ! -e $mapping ]]

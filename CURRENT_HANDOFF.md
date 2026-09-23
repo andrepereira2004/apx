@@ -1,5 +1,22 @@
 # APX Current Handoff
 
+## `windows-testes` subvolume fix staged (2026-09-23)
+
+The instrumented maintenance retry wrote
+`failed:preflight-authorization` to the ESP and returned to Linux. The root
+Btrfs `@` subvolume did not expose `/var/lib/apx`, which is a distinct `@apx`
+subvolume. The original four-partition GPT and full Btrfs device size remain;
+BootOrder is Linux first and BootNext is absent. A read-only two-subvolume
+mount proved that the unchanged authorization validates at the intended path.
+The generator now mounts `@apx` for authorization and image access, and
+unmounts it before closing the encrypted device. Both signed maintenance
+images were rebuilt; the published relocation image has SHA-256
+`eb650f540b407e3f9ba8d6b757262aa7d23d39bc09ae3f62aba4652f1f923a4f`.
+The rollback image remains private with SHA-256
+`bc5d8e52cfee8cac77a3854be36a5b1d9104b5d3bea32c973502f1c174a9f9a4`.
+The next step is another one-time maintenance boot, then inspection of its ESP
+status and disk state before any further action.
+
 ## `windows-testes` offline preflight retry staged (2026-09-23)
 
 The first offline maintenance boot for generation

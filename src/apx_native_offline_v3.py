@@ -72,25 +72,40 @@ fail() {
     exit 1
 }
 trap fail ERR
+stage=preflight-root
 [[ $(id -u) == 0 ]]
+stage=preflight-initrd
 [[ $(cat /etc/initrd-release) != '' ]]
+stage=preflight-cmdline
 [[ $(cat /proc/cmdline) == *"apx.native_v3=$generation"* ]]
+stage=preflight-power
 [[ $(cat /sys/class/power_supply/ADP0/online) == 1 ]]
+stage=preflight-serial
 [[ $(tr -d '[:space:]' </sys/class/block/nvme0n1/device/serial) == "$serial" ]]
+stage=preflight-disk-id
 [[ $(sfdisk --disk-id "$disk") == "$disk_id" ]]
+stage=preflight-crypt-uuid
 [[ $(blkid -s PARTUUID -o value "${disk}p2") == "${crypt_uuid,,}" ]]
+stage=preflight-mapping
 [[ -b $mapping ]]
-! mountpoint -q /sysroot
+stage=preflight-sysroot
+if mountpoint -q /sysroot; then false; fi
 # Require the exact starting layout for the selected action.
+stage=preflight-layout
 sfdisk --json "$disk" >/run/apx-observed-gpt.json
 /usr/bin/python3 /usr/lib/apx/apx-native-offline-layout-v3.py /run/apx-observed-gpt.json /usr/share/apx/native-v3-plan.json "$action"
+stage=preflight-mount
 mkdir -p "$work"
 mount -t btrfs -o rw,subvol=@ "$mapping" "$work"
+stage=preflight-authorization
 /usr/bin/python3 /usr/lib/apx/apx-native-offline-layout-v3.py --authorize "$work/var/lib/apx/native-environments/migrations-v3/$generation/authorization.json" /usr/share/apx/native-v3-plan.json "$action"
 image="$work/$backup_relative/$image_file"
+stage=preflight-image-metadata
 [[ -f $image && ! -L $image && $(stat -c '%u:%g' "$image") == 0:0 ]]
 [[ $(stat -c %s "$image") == "$image_bytes" ]]
+stage=preflight-image-hash
 [[ $(sha256sum "$image" | cut -d' ' -f1) == "$image_sha256" ]]
+stage=preflight
 record started
 '''
     if not rollback:

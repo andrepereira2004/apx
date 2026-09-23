@@ -1,5 +1,15 @@
 # APX Project State
 
+## Native v3 physical preflight retry (2026-09-23)
+
+The first offline maintenance boot returned to Linux with a
+`failed:preflight` status. It made no GPT change or Btrfs shrink; the original
+four-partition layout and Linux-first BootOrder remain. The prepared Windows
+image and current Windows source were rehashed successfully. The signed
+maintenance image has been rebuilt with named preflight failure stages and
+published for the same plan-bound generation. The retry has not yet booted;
+independent dual-Windows boot remains unproven.
+
 ## Native v3 prepared activation correction (2026-09-23)
 
 The owner-authorized `windows-testes` physical job has verified backups and

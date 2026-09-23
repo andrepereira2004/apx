@@ -1,5 +1,22 @@
 # APX Current Handoff
 
+## `windows-testes` offline preflight retry staged (2026-09-23)
+
+The first offline maintenance boot for generation
+`2770478b-480f-4aea-8910-e3201d5334c5` returned to Linux and wrote
+`failed:preflight` on the ESP. The original GPT still has four partitions,
+Btrfs retains its original 339,219,578,880-byte device size, BootOrder remains
+Linux first, and BootNext is absent. The exact failing check was not recorded.
+The prepared 120 GiB image rehashed to its manifest digest and the live
+Windows p3 fingerprint still matches the verified backup source. A replacement
+signed maintenance UKI, SHA-256
+`e5a58ada08093279f6ba82e062ac3f701e9378e93d226aa3172dfcad02bf184b`,
+is published under the same firmware entry with named preflight stages. The
+private previous UKI is retained in `/var/lib/apx/backups/`. The next step is
+to arm one-time BootNext for that exact entry and observe the result. If the
+preflight passes, the previously authorized migration may proceed; if it
+fails, inspect its new ESP status before changing anything else.
+
 ## `windows-testes` prepared; activation parser corrected (2026-09-23)
 
 The persistent v3 job for generation

@@ -276,3 +276,21 @@ class NativeLifecycleTests(unittest.TestCase):
         original = 'Boot0006* Windows Boot Manager\tHD(1,GPT,9625f250-9acc-453a-ae63-0c863ade440f,0,1)/'+loader
         self.assertEqual(LIFECYCLE.find_matching_entry(original+'\n'+line, 6, uuid, label, loader,
                          allow_windows_manager=True), '0000')
+
+    def test_restore_installer_preserves_reused_windows_boot_entry(self):
+        table, legacy, args = fixture()
+        plan = plan_second_windows(table, legacy, **args)
+        uuid = plan['new']['esp_partuuid']
+        loader = '\\EFI\\Microsoft\\Boot\\bootmgfw.efi'
+        firmware = f'Boot0000* Windows Boot Manager\tHD(6,GPT,{uuid},0,1)/{loader}RC\n'
+        record = {'stage':'installing','setup_entry':'0000','target':plan['new']['name'],
+                  'generation':plan['new']['generation']}
+        with tempfile.TemporaryDirectory() as directory:
+            job = Path(directory)
+            LIFECYCLE.write(job/'plan.json', plan)
+            with mock.patch.object(LIFECYCLE, 'command', return_value=firmware) as command:
+                LIFECYCLE.restore_installer(job, record)
+                command.assert_called_once_with('efibootmgr', '-v')
+            with mock.patch.object(LIFECYCLE, 'command', return_value=firmware.replace(uuid, 'aaaaaaaa-2222-4333-8444-555555555555')):
+                with self.assertRaises(ValueError):
+                    LIFECYCLE.restore_installer(job, record)

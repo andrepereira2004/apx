@@ -1,5 +1,20 @@
 # APX Current Handoff
 
+## Two native Windows recorded; boot checks outstanding (2026-09-24)
+
+The v3 finalizer completed for generation
+`2770478b-480f-4aea-8910-e3201d5334c5`. The pending job was removed;
+`apx_native_hub_v3.records()` validates `windows` on Boot0006 and
+`windows-testes` on Boot0000, both ready. Boot0000 was created by Windows
+Setup for the exact p6 EFI and Microsoft loader, reusing the temporary setup
+number. The finalizer now preserves that verified entry while restoring the
+previous installer WIM. The installer restoration hash and the p6 Microsoft
+boot manager signature passed. The job archive still carries an old `error`
+field from an earlier failed finalizer attempt; a source fix removes it on
+success and the archive needs that one-field cleanup. Both Windows must still
+be booted independently on the physical machine, and `windows-testes` may
+require first-run configuration.
+
 ## Native migration and installer completed; finalizer fix pending (2026-09-24)
 
 Generation `2770478b-480f-4aea-8910-e3201d5334c5` recorded

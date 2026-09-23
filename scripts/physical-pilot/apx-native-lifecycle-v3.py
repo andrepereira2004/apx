@@ -293,8 +293,17 @@ def restore_installer(job,record):
         firmware=command('efibootmgr','-v')
         lines=[line for line in firmware.splitlines() if re.match(r'^Boot'+re.escape(entry)+r'\*?\s',line)]
         if lines:
-            if 'APX setup '+record['generation'][:8] not in lines[0] or 'HD(4,GPT,'.lower() not in lines[0].lower() or '\\EFI\\BOOT\\BOOTX64.EFI'.lower() not in lines[0].lower():raise ValueError('setup firmware identity changed')
-            command('efibootmgr','-b',entry,'-B')
+            setup=('APX setup '+record['generation'][:8] in lines[0] and
+                   'HD(4,GPT,'.lower() in lines[0].lower() and
+                   '\\EFI\\BOOT\\BOOTX64.EFI'.lower() in lines[0].lower())
+            if setup:
+                command('efibootmgr','-b',entry,'-B')
+            else:
+                if record.get('stage')!='installing':raise ValueError('setup firmware identity changed')
+                plan=validate_windows_install_plan(trusted(job/'plan.json'))
+                selected=find_matching_entry(firmware,6,plan['new']['esp_partuuid'],
+                    'APX '+record['target'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi',allow_windows_manager=True)
+                if selected!=entry:raise ValueError('setup firmware identity changed')
 
 
 def launch_setup(job,record,plan):
@@ -545,6 +554,7 @@ def finalize():
         for value in records:write(ROOT/'instances-v3'/(value['name']+'.json'),value)
         if reuse:(ROOT/'free-slot-v3.json').unlink()
         restore_installer(job,record)
+        record.pop('error',None)
         record['stage']='ready';write(job/'job.json',record);PENDING.unlink();state(record,'complete',100,'Novo Windows criado. Abre-o no Hub para concluir a configuração inicial.');return
     raise ValueError('A operação Windows precisa de recuperação explícita.')
 

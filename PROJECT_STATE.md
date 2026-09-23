@@ -1,5 +1,15 @@
 # APX Project State
 
+## Native Windows dual catalogue ready for boot validation (2026-09-24)
+
+The physical v3 finalizer completed after accepting Windows Setup's exact p6
+firmware entry and preserving it when the temporary setup entry number had
+been reused. APX now validates and lists both `windows` and `windows-testes`
+as ready. The temporary installer WIM was restored; the p6 Microsoft boot
+manager signature and both Windows filesystem paths were checked. Linux remains
+first in BootOrder. Independent physical boot and new Windows first-run setup
+are still open acceptance checks.
+
 ## Native `windows-testes` installation awaits finalization (2026-09-24)
 
 The owner-authorized offline migration completed on the physical pilot. The

@@ -1,5 +1,18 @@
 # Multiple native Windows instances — repository candidate
 
+## First activation preflight and recovery (2026-09-23)
+
+The real generation-bound preparation for `windows-testes` reached `prepared`
+and retained the verified original backup, 120 GiB copy, installer and two
+signed maintenance images. Activation stopped before BootNext because the
+pilot's `efibootmgr` output formats the EFI loader as `/\\EFI\\...` and uses a
+tab after the label. The newly created maintenance entry and EFI image were
+retired after checking their exact identities, and authorization was revoked.
+The four original partitions and Linux-first boot order remain; no offline
+migration ran. The parser now accepts this observed format as well as
+`File(...)`, with a focused regression test. The 1287-test suite passes with
+11 skips. The prepared job remains available for a guarded retry.
+
 ## Host staging and remaining recovery gate (2026-09-23)
 
 The owner authorized the exact 120+80 GiB physical migration. The candidate

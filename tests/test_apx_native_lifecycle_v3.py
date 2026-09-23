@@ -18,6 +18,18 @@ SPEC.loader.exec_module(LIFECYCLE)
 
 
 class NativeLifecycleTests(unittest.TestCase):
+    def test_real_efibootmgr_loader_format_matches_exact_entry(self):
+        partuuid = '9625F250-9ACC-453A-AE63-0C863ADE440F'
+        label = 'APX native relocate 2770478b'
+        loader = '\\EFI\\APX\\native-v3-2770478b-relocate.efi'
+        firmware = ('Boot0000* ' + label + '\tHD(1,GPT,' + partuuid.lower()
+                    + ',0x800,0x200000)/' + loader + '\n')
+        self.assertEqual(LIFECYCLE.find_matching_entry(firmware, 1, partuuid,
+                         label, loader), '0000')
+        with self.assertRaisesRegex(ValueError, 'aliases'):
+            LIFECYCLE.find_matching_entry(firmware.replace(label, 'Other label'),
+                                          1, partuuid, label, loader)
+
     def test_delete_only_new_slot_and_resume_after_interrupted_wipe(self):
         table, legacy, args = fixture()
         plan = plan_second_windows(table, legacy, **args)

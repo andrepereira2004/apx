@@ -240,13 +240,15 @@ def find_matching_entry(firmware,partition,partuuid,label,loader):
     """Reuse only one exact entry; reject aliases to the same EFI target."""
     expected_hd=('HD('+str(partition)+',GPT,'+partuuid+',').lower()
     expected_loader=('File('+loader+')').lower()
+    firmware_loader=('/'+loader).lower()
     matching=[]
     for line in firmware.splitlines():
         found=re.match(r'^Boot([0-9A-F]{4})\*?\s+(.+)$',line)
         if not found:continue
         entry,body=found.groups()
-        owns_target=expected_hd in body.lower() and expected_loader in body.lower()
-        owns_label=body.startswith(label+' ')
+        owns_target=expected_hd in body.lower() and \
+            (expected_loader in body.lower() or firmware_loader in body.lower())
+        owns_label=body.startswith(label+' ') or body.startswith(label+'\t')
         if owns_target or owns_label:
             if not (owns_target and owns_label):raise ValueError('native firmware entry aliases a different target')
             matching.append(entry)
@@ -355,6 +357,7 @@ def activate(generation,token,rollback=False):
     shutil.copyfile(image,destination);os.chmod(destination,0o644);command('sync')
     write(job/'authorization.json',dict(schema=3,profile='apx-native-offline-authorization-v3',generation=generation,plan_sha256=plan['plan_sha256'],action=action,state='approved'))
     entry=create_entry(1,'APX native '+action+' '+generation[:8],'\\EFI\\APX\\'+destination.name)
+    record.pop('error',None)
     record.update(stage='offline',offline_action=action,maintenance_entry=entry,maintenance_file=destination.name,maintenance_sha256=image_hash(destination))
     write(job/'job.json',record);write(PENDING,record)
     state(record,'applying',50,'A reiniciar para reorganizar o espaço Windows…');reboot_entry(entry)

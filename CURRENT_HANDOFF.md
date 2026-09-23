@@ -1,5 +1,20 @@
 # APX Current Handoff
 
+## `windows-testes` prepared; activation parser corrected (2026-09-23)
+
+The persistent v3 job for generation
+`2770478b-480f-4aea-8910-e3201d5334c5` reached `prepared` with a verified
+original Windows backup, 120 GiB prepared copy, installer WIM and signed
+relocation/rollback images. Activation rechecked the source, then stopped
+before BootNext because the pilot's `efibootmgr` renders the loader as
+`/\\EFI\\...` and separates the label with a tab. The orphan maintenance
+entry/image were removed and its authorization retired. The GPT remains the
+original four-partition layout, BootOrder remains Linux first, and BootNext is
+absent. The job is still prepared and its verified images are retained.
+The parser now accepts the exact observed rendering; the full suite passes
+1287 tests with 11 skips. Evidence is in
+`audit/2026-09-23-native-v3-windows-testes-current/activation-entry-format-recovery.json`.
+
 ## Native v3 Host staging after owner migration approval (2026-09-23)
 
 The owner explicitly authorized the physical layout change for the existing

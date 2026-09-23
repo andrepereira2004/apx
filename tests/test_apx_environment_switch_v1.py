@@ -108,7 +108,8 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
     def test_native_preview_worker_has_only_read_device_access(self):
         subject = load_switch_service()
         reply={"profile":"apx-native-creation-preview-v3", "target":"windows-games", "can_create":False}
-        with mock.patch.object(subject.subprocess, "run", return_value=mock.Mock(returncode=0, stdout=json.dumps(reply))) as launch:
+        with mock.patch.object(subject.native_v3, "persist_preview", side_effect=lambda value: value), \
+                mock.patch.object(subject.subprocess, "run", return_value=mock.Mock(returncode=0, stdout=json.dumps(reply))) as launch:
             self.assertEqual(subject.request_native_plan("windows-games", "Jogos", 80),reply)
         command=launch.call_args.args[0]
         self.assertIn("--property=ProtectSystem=strict",command)
@@ -827,6 +828,7 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
             "target": "windows", "action": "native-create",
         }
         with tempfile.TemporaryDirectory() as directory, \
+                mock.patch.object(subject.native_v3, "control", return_value=None), \
                 mock.patch.object(subject, "MANAGEMENT_STATE", Path(directory) / "state.json"), \
                 mock.patch.object(subject, "MANAGEMENT_LOCK", Path(directory) / "lock"), \
                 mock.patch.object(subject, "WINDOWS_PENDING", Path(directory) / "pending.json"):
@@ -857,6 +859,7 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
             "target": "windows", "action": "native-create",
         }
         with tempfile.TemporaryDirectory() as directory, \
+                mock.patch.object(subject.native_v3, "control", return_value=None), \
                 mock.patch.object(subject, "MANAGEMENT_STATE", Path(directory) / "state.json"), \
                 mock.patch.object(subject, "MANAGEMENT_LOCK", Path(directory) / "lock"), \
                 mock.patch.object(subject, "WINDOWS_PENDING", Path(directory) / "pending.json"):

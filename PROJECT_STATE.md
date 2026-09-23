@@ -1,5 +1,14 @@
 # APX Project State
 
+## Native v3 prepared activation correction (2026-09-23)
+
+The owner-authorized `windows-testes` physical job has verified backups and
+signed maintenance images retained on APX. Its first activation stopped before
+reboot on an `efibootmgr` output-format mismatch. Exact orphan EFI/firmware
+artifacts were retired; the original four-partition GPT and Linux-first boot
+order remain. The parser and focused regression test were corrected. This is
+not a completed migration or proof of independent Windows boots.
+
 ## Native v3 Host staging (2026-09-23)
 
 After the owner's explicit authorization for the two-Windows partition layout,

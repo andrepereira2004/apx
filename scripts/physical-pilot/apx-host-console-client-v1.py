@@ -15,7 +15,9 @@ import tty
 sys.path.insert(0, "/usr/lib/apx")
 from apx_host_console_contract import MAX_MESSAGE_BYTES, parse_message, request_bytes  # noqa: E402
 
-SOCKET = "/run/apx/host-console-v1.sock"
+SOCKET = ("/run/apx/environment-host-console-v1.sock"
+          if os.path.exists("/run/apx/environment-host-console-v1.sock")
+          else "/run/apx/host-console-v1.sock")
 
 
 def exchange(operation: str, payload: dict[str, object]) -> dict[str, object]:

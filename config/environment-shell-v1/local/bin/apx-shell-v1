@@ -1,6 +1,11 @@
 #!/usr/bin/bash
 set -u
 
+# Authentication and child applications must retain the real account name.
+# Human-facing labels belong in the UI, never in the login identity.
+export USER=apx
+export LOGNAME=apx
+
 config=/home/apx/.config/quickshell/apx/shell.qml
 lock_config=/home/apx/.config/hypr/hyprlock.conf
 idle_config=/home/apx/.config/hypr/hypridle.conf
@@ -19,6 +24,10 @@ if ! /usr/bin/flock -n 9; then
 fi
 
 install -d -m 0700 "$state_dir"
+# Establish the default vault before any desktop service/application asks for it.
+/usr/bin/python3 /home/apx/.local/bin/apx-keyring-prepare-v1 >>"$log" 2>&1 || \
+    printf 'APX: não foi possível preparar o cofre local.\n' >>"$log"
+/home/apx/.local/bin/apx-application-catalog-v1 >/dev/null 2>&1 || true
 if [[ -f $log ]] && (( $(stat -c %s "$log") > 1048576 )); then
     mv -f -- "$log" "$log.previous"
 fi
@@ -77,6 +86,10 @@ start_desktop_service() {
         "$@" >>"$log" 2>&1 &
     fi
 }
+
+# Publish Wayland/X11 and application paths before any portal is activated.
+/home/apx/.local/bin/apx-desktop-activation-v1 >>"$log" 2>&1 || \
+    printf 'APX: não foi possível preparar a abertura de aplicações por D-Bus.\n' >>"$log"
 
 # These are ordinary desktop facilities, not APX privileges. Keeping them in
 # the Environment makes notifications, password storage, file pickers and

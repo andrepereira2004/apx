@@ -36,11 +36,20 @@ def detached(command: list[str]) -> int:
 
 
 def files() -> int:
+    if Path("/run/apx/host-console-v1.sock").is_socket():
+        return 0  # The Hub contains APX management only.
+    if not Path("/usr/bin/thunar").is_file():
+        feedback("hotkeyFailed")
+        return 1
+    updater = shutil.which("xdg-user-dirs-update")
+    if updater:
+        subprocess.run([updater], check=False, timeout=5)
+    subprocess.run(["/home/apx/.local/bin/apx-application-catalog-v1"], check=False, timeout=10)
     # Runs as the Environment's desktop user. Repeated shortcuts focus the
     # existing file window instead of depending on a long-lived Thunar process.
     code = ('local w = hl.get_window("class:^(thunar|Thunar|org.xfce.Thunar)$"); '
             'if w then hl.dispatch(hl.dsp.focus({window=w})) '
-            'else hl.exec_cmd("/usr/bin/thunar /home/apx") end')
+            'else hl.exec_cmd("env USER=apx LOGNAME=apx HOME=/home/Home GIO_USE_VFS=local /usr/bin/thunar /home/Home") end')
     try:
         result = subprocess.run((HYPRCTL, "eval", code), capture_output=True,
                                 text=True, timeout=3, check=False)
@@ -124,6 +133,11 @@ def touchpad(enabled: bool) -> int:
 
 
 def display_cycle() -> int:
+    saved = Path.home() / ".config/hypr/apx-monitors.lua"
+    if saved.is_file():
+        text = saved.read_text()
+        if 'auto-left' in text or 'auto-right' in text:
+            return display_layout("left" if 'auto-left' in text else "right")
     try:
         result = subprocess.run(
             (HYPRCTL, "-j", "monitors", "all"), check=True, capture_output=True,
@@ -134,46 +148,23 @@ def display_cycle() -> int:
         feedback("hotkeyFailed")
         return 0
 
-    internal = next(
-        (item for item in monitors if str(item.get("name", "")).startswith(("eDP-", "LVDS-"))),
-        None,
-    )
-    external = next(
-        (item for item in monitors if item is not internal and item.get("name")), None
-    )
-    if internal is None or external is None:
+    connected = [item for item in monitors if isinstance(item, dict) and item.get("name")]
+    if len(connected) < 2:
         feedback("hotkeyDisplayInternalOnly")
         return 0
 
-    internal_name = str(internal["name"])
-    external_name = str(external["name"])
-    internal_enabled = not bool(internal.get("disabled", False))
-    external_enabled = not bool(external.get("disabled", False))
-    mirror_source = external.get("mirrorOf")
-    mirrored = mirror_source not in (None, "", "none")
-
-    commands: list[str]
-    if internal_enabled and not external_enabled:
-        # Extend the desktop to the external screen.
-        commands = [f"{external_name},preferred,auto,auto"]
-        feedback_method = "hotkeyDisplayExtended"
-    elif internal_enabled and external_enabled and not mirrored:
-        # Duplicate the internal screen.
-        commands = [f"{external_name},preferred,auto,auto,mirror,{internal_name}"]
-        feedback_method = "hotkeyDisplayMirrored"
-    elif internal_enabled and external_enabled:
-        # External screen only; remove mirroring before disabling its source.
-        commands = [f"{external_name},preferred,auto,auto", f"{internal_name},disable"]
-        feedback_method = "hotkeyDisplayExternal"
-    else:
-        # Laptop screen only.
-        commands = [f"{internal_name},preferred,auto,auto", f"{external_name},disable"]
-        feedback_method = "hotkeyDisplayInternal"
+    # The owner default is an extended desktop on every connected output.
+    # Reapplying it repairs a previous mirror/disabled rule, without cycling
+    # into mirroring or turning off an output that may contain open windows.
+    commands = ["hl.monitor({output=" + json.dumps(str(item["name"]))
+                + ', mode="preferred", position="auto", scale="auto"})'
+                for item in connected]
+    feedback_method = "hotkeyDisplayExtended"
 
     for monitor_rule in commands:
         try:
             result = subprocess.run(
-                (HYPRCTL, "keyword", "monitor", monitor_rule), check=False,
+                (HYPRCTL, "eval", monitor_rule), check=False,
                 stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=3,
             )
         except (OSError, subprocess.SubprocessError):
@@ -186,14 +177,119 @@ def display_cycle() -> int:
     return 0
 
 
+def move_to_monitor(side: str) -> int:
+    if side not in {"left", "right"}:
+        return 2
+    try:
+        monitors = json.loads(subprocess.run((HYPRCTL, "-j", "monitors"), check=True,
+                              capture_output=True, text=True, timeout=3).stdout)
+        if len(monitors) < 2:
+            return 0
+        window = json.loads(subprocess.run((HYPRCTL, "-j", "activewindow"), check=True,
+                            capture_output=True, text=True, timeout=3).stdout)
+        if not window.get("address"):
+            return 0
+        current = next((m for m in monitors if m["id"] == window.get("monitor")), None)
+        if current is None:
+            return 0
+        candidates = [m for m in monitors if (m["x"] < current["x"] if side == "left" else m["x"] > current["x"])]
+        if not candidates:
+            return 0
+        target = min(candidates, key=lambda m: (abs(m["x"] - current["x"]), abs(m["y"] - current["y"])))
+        code = 'hl.dispatch(hl.dsp.window.move({monitor=' + json.dumps(target["name"])
+        code += ',window=' + json.dumps('address:' + window["address"]) + ',follow=true}))'
+        result = subprocess.run((HYPRCTL, "eval", code), check=True, capture_output=True, text=True, timeout=3)
+        if result.stdout.strip() != "ok":
+            return 1
+        clients = json.loads(subprocess.run((HYPRCTL, "-j", "clients"), check=True,
+                             capture_output=True, text=True, timeout=3).stdout)
+        moved = next((c for c in clients if c.get("address") == window["address"] and c.get("monitor") == target["id"]), None)
+        if moved:
+            x = round(moved["at"][0] + moved["size"][0] / 2)
+            y = round(moved["at"][1] + moved["size"][1] / 2)
+            code = 'hl.dispatch(hl.dsp.cursor.move({x=' + str(x) + ',y=' + str(y) + '})); '
+            code += 'hl.dispatch(hl.dsp.focus({window=' + json.dumps('address:' + window["address"]) + '}))'
+            result = subprocess.run((HYPRCTL, "eval", code), check=True, capture_output=True, text=True, timeout=3)
+            return 0 if result.stdout.strip() == "ok" else 1
+        return 0
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError):
+        return 1
+
+
+def display_layout(side: str) -> int:
+    if side not in {"left", "right", "status", "home", "larger"}:
+        return 2
+    path = Path.home() / ".config/hypr/apx-monitors.lua"
+    try:
+        result = subprocess.run((HYPRCTL, "-j", "monitors"), check=True,
+                                capture_output=True, text=True, timeout=3)
+        monitors = json.loads(result.stdout)
+        internal = next((m for m in monitors if m["name"].startswith(("eDP-", "LVDS-"))), None)
+        if side == "status":
+            saved = path.read_text() if path.is_file() else ""
+            selected = "left" if 'auto-left' in saved else "right" if 'auto-right' in saved else ""
+            if not selected and internal:
+                external = next((m for m in monitors if m is not internal), None)
+                if external:
+                    selected = "left" if external["x"] < internal["x"] else "right"
+            print(json.dumps({"side": selected, "count": len(monitors)}))
+            return 0
+        if not internal:
+            raise ValueError("internal monitor unavailable")
+        enlarge = side == "larger"
+        if enlarge:
+            external = next((m for m in monitors if m is not internal), None)
+            if external is None:
+                return 0
+            side = "left" if external["x"] < internal["x"] else "right"
+        if side == "home":
+            x = round(internal["x"] + internal["width"] / internal["scale"] / 2)
+            y = round(internal["y"] + internal["height"] / internal["scale"] / 2)
+            code = 'hl.dispatch(hl.dsp.focus({monitor=' + json.dumps(internal["name"]) + '})); '
+            code += 'hl.dispatch(hl.dsp.cursor.move({x=' + str(x) + ',y=' + str(y) + '}))'
+        else:
+            # hyprctl parses arguments beginning with '--' as CLI flags.
+            code = ''
+            code += 'hl.monitor({output="",mode="preferred",position="auto-' + side + '",scale="auto"})\n'
+            code += 'hl.monitor({output=' + json.dumps(internal["name"]) + ',mode="preferred",position="0x0",scale="auto"})\n'
+            # Preserve each connected external display's scale across placement changes.
+            for monitor in monitors:
+                if monitor is internal:
+                    continue
+                scale = 1.25 if enlarge else float(monitor.get("scale", 1))
+                code += 'hl.monitor({output=' + json.dumps(monitor["name"]) + ',mode="preferred",position="auto-' + side + '",scale=' + str(scale) + '})\n'
+        applied = subprocess.run((HYPRCTL, "eval", code), check=True,
+                                 capture_output=True, text=True, timeout=3)
+        if applied.stdout.strip() != "ok":
+            raise ValueError(applied.stdout.strip())
+        if side != "home":
+            path.parent.mkdir(parents=True, exist_ok=True)
+            temporary = path.with_suffix('.lua.tmp')
+            temporary.write_text(code)
+            temporary.replace(path)
+            return display_layout("status")
+        return 0
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError):
+        feedback("hotkeyFailed")
+        return 1
+
+
 def main() -> int:
+    rofi = shutil.which("rofi")
     actions = {
         "files": files,
         "airplane-status": airplane_status,
-        "apps": lambda: (feedback("hotkeyApps"), detached(["/usr/bin/rofi", "-show", "drun"]))[1],
+        "apps": lambda: (feedback("hotkeyApps") if rofi else feedback("hotkeyFailed"), detached([rofi, "-show", "drun"]) if rofi else 0)[1],
         "calculator": calculator,
         "display-cycle": display_cycle,
-        "overview": lambda: (feedback("hotkeyOverview"), detached(["/usr/bin/rofi", "-show", "window"]))[1],
+        "display-left": lambda: display_layout("left"),
+        "display-right": lambda: display_layout("right"),
+        "display-status": lambda: display_layout("status"),
+        "display-home": lambda: display_layout("home"),
+        "display-larger": lambda: display_layout("larger"),
+        "window-left": lambda: move_to_monitor("left"),
+        "window-right": lambda: move_to_monitor("right"),
+        "overview": lambda: (feedback("hotkeyOverview") if rofi else feedback("hotkeyFailed"), detached(["/home/apx/.local/bin/apx-workspace-overview-v1"]) if rofi else 0)[1],
         "screenshot": screenshot,
         "touchpad-on": lambda: touchpad(True),
         "touchpad-off": lambda: touchpad(False),

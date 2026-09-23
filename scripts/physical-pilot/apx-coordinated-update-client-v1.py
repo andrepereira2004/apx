@@ -7,8 +7,15 @@ import argparse
 import json
 import socket
 import sys
+import os
+import subprocess
+import time
 
-SOCKET = "/run/apx/coordinated-update-v1.sock"
+# A bounded live repair may bind a replacement endpoint without restarting Hub.
+# Fresh sessions use the normal launcher-provided socket.
+SOCKET = ("/run/apx/coordinated-update-live-v1.sock"
+          if os.path.exists("/run/apx/coordinated-update-live-v1.sock")
+          else "/run/apx/coordinated-update-v1.sock")
 
 
 def exchange(operation: str, payload: dict[str, object]) -> dict[str, object]:
@@ -46,9 +53,48 @@ def ui() -> int:
     print("\n", result["message"]); input("\nEnter para fechar..."); return 0
 
 
+def environments_ui() -> int:
+    current = exchange("environments.status", {})
+    if current.get("state") not in ("queued", "running", "awaiting-hub"):
+        plan = exchange("environments.preview", {})
+        print("\nAtualizar todos os Environments: " + ", ".join(item["name"] for item in plan["targets"]), flush=True)
+        if plan["blockers"]:
+            print("Não é possível atualizar: " + ", ".join(plan["blockers"])); return 2
+        print("Serão atualizados o sistema, as aplicações AUR e os Flatpaks de cada Environment.")
+        print("Os outros Environments são atualizados primeiro; o Hub fica para o fim.")
+        print("Cada Environment terá uma cópia de segurança. O Host não é atualizado.")
+        if input("\nEscreve CONFIRMAR para começar: ").strip() != "CONFIRMAR": return 1
+        current = exchange("environments.apply", {"plan_digest": plan["plan_digest"], "confirmation": "CONFIRMAR"})
+    operation_id = current["operation"]
+    last = None
+    while current["state"] in ("queued", "running"):
+        progress = (current["state"], current.get("current"), tuple(current.get("completed", [])))
+        if progress != last:
+            print("A atualizar: " + (current.get("current") or "a preparar"), flush=True)
+            if current.get("completed"): print("Concluídos: " + ", ".join(current["completed"]), flush=True)
+            last = progress
+        time.sleep(2)
+        current = exchange("environments.status", {})
+        if current.get("operation") != operation_id: raise RuntimeError("Update operation changed")
+    if current["state"] != "awaiting-hub":
+        print(current.get("error") or current.get("message", "A atualização parou.")); return 2
+    print("\nA atualizar o Hub…", flush=True)
+    result = subprocess.run(["/home/apx/.local/bin/apx-environment-update-v1"])
+    if result.returncode:
+        print("O Hub não terminou a atualização. Abre Atualizar para retomar."); return result.returncode
+    final = exchange("environments.finish", {"operation": operation_id})
+    print(final["message"], flush=True)
+    return 0
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(); parser.add_argument("mode", choices=("preview", "status", "include", "exclude", "ui")); parser.add_argument("environment", nargs="?")
+    parser = argparse.ArgumentParser(); parser.add_argument("mode", choices=("preview", "status", "include", "exclude", "ui", "environments-ui")); parser.add_argument("environment", nargs="?")
     args = parser.parse_args()
+    if args.mode == "environments-ui":
+        try: return environments_ui()
+        finally:
+            try: input("\nEnter para fechar…")
+            except (EOFError, KeyboardInterrupt): pass
     if args.mode == "ui": return ui()
     if args.mode == "preview": print(json.dumps(exchange("preview", {}), ensure_ascii=False, indent=2)); return 0
     if args.mode == "status": print(json.dumps(exchange("status", {}), ensure_ascii=False, indent=2)); return 0

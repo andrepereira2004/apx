@@ -19,6 +19,7 @@ import threading
 import uuid
 
 sys.path.insert(0, "/usr/lib/apx")
+import apx_native_hub_v3 as native_v3
 from apx_environment_switch_contract import (  # noqa: E402
     MAX_MESSAGE_BYTES, PROFILE, parse_message, valid_description, valid_display_name,
 )
@@ -222,7 +223,9 @@ def catalog() -> list[dict[str, object]]:
         values.append(native_environment_view(trusted_native_environment("windows")))
     except (OSError, ValueError, KeyError, json.JSONDecodeError, PermissionError):
         pass
-    return values
+    v3 = native_v3.catalogue()
+    replaced = {item["name"] for item in v3}
+    return [item for item in values if item["name"] not in replaced] + v3
 
 
 def request_native_boot() -> dict[str, object]:
@@ -308,6 +311,7 @@ def request_storage_status() -> dict[str, object]:
 
 
 def management_state() -> dict[str, object]:
+    v3_control = native_v3.control()
     try:
         metadata = MANAGEMENT_STATE.lstat()
         data = MANAGEMENT_STATE.read_bytes()
@@ -355,11 +359,13 @@ def management_state() -> dict[str, object]:
             })
         except (OSError, ValueError, KeyError, json.JSONDecodeError, PermissionError):
             value["native_recovery"] = False
+        if v3_control: value.update(v3_control)
         return value
     except FileNotFoundError:
         value = {"schema": 1, "profile": "apx-environment-management-v1", "phase": "idle",
                  "progress": 0, "message": "", "target": "", "action": "",
                  "busy": WINDOWS_PENDING.exists(), "native_recovery": False}
+        if v3_control: value.update(v3_control)
         return value
 
 
@@ -414,10 +420,10 @@ def authorize(peer: HostServicesPeer, operation: str, target: str | None = None)
     return active.name
 
 
-def authorize_hub_management(peer: HostServicesPeer) -> None:
+def authorize_hub_management(peer: HostServicesPeer, *, resume_native_v3: bool = False) -> None:
     authorize_official_hub_peer(peer)
     quickshell_parent(peer.pid, OFFICIAL_UNIT)
-    if LOCK.exists() or MANAGEMENT_LOCK.exists():
+    if LOCK.exists() or MANAGEMENT_LOCK.exists() or (native_v3.PENDING.exists() and not resume_native_v3):
         raise RuntimeError("já existe uma operação de Environment em curso")
 
 
@@ -448,7 +454,28 @@ def start_management(action: str, target: str, generation: str | None = None,
     return {"accepted": True, "action": action, "target": target, "unit": unit + ".service"}
 
 
+def request_native_plan(target: str, description: str, size_gib: int) -> dict[str, object]:
+    command = ["/usr/bin/systemd-run", "--quiet", "--pipe", "--wait", "--collect",
+               "--unit=apx-native-preview-" + secrets.token_hex(6),
+               "--property=Type=exec", "--property=RuntimeMaxSec=25s",
+               "--property=ProtectSystem=strict", "--property=ProtectHome=yes",
+               "--property=PrivateTmp=yes", "--property=NoNewPrivileges=yes",
+               "--property=CapabilityBoundingSet=", "--property=DevicePolicy=closed"]
+    command += ["--property=DeviceAllow=/dev/nvme0n1" + suffix + " r" for suffix in ("", "p2", "p3")]
+    command += ["/usr/bin/python3", "/usr/lib/apx/apx-native-windows-plan-v3.py",
+                "--target", target, "--description", description, "--size-gib", str(size_gib)]
+    result = subprocess.run(command, text=True, capture_output=True, timeout=30, check=False)
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip()[-400:] or "Não foi possível verificar o espaço Windows.")
+    value = json.loads(result.stdout)
+    if value.get("profile") != "apx-native-creation-preview-v3" or value.get("target") != target or value.get("can_create") is not False:
+        raise RuntimeError("A resposta de preparação Windows é inválida.")
+    return native_v3.persist_preview(value)
+
+
 def start_native_management(action: str, size_gib: int, generation: str) -> dict[str, object]:
+    if (NATIVE_ENVIRONMENTS / "instances-v3").exists():
+        raise RuntimeError("Esta instalação usa a gestão Windows por instância; o executor antigo não é permitido.")
     if action not in {"create", "delete"} or size_gib not in {80, 120, 160} \
             or re.fullmatch(r"[0-9a-f]{8}-[0-9a-f-]{27}", generation) is None:
         raise RuntimeError("a operação Windows nativa difere")
@@ -515,10 +542,7 @@ def start_native_recovery(action: str, generation: str) -> dict[str, object]:
 
 def prime_return_screen() -> None:
     """Prepare tty1 before the workload exits so no Host prompt can flash."""
-    payload = ("\033[2J\033[H\033[?25l\n\n\n\n"
-               "                  APX ENVIRONMENTS\n\n"
-               "                  A REGRESSAR AO HUB\n\n"
-               "                  [######------------------------]  20%\n").encode()
+    payload = b"\033[0m\033[40m\033[2J\033[H\033[?25l"
     descriptor = os.open("/dev/tty1", os.O_WRONLY | os.O_NOCTTY)
     try:
         os.write(descriptor, payload)
@@ -593,6 +617,13 @@ def apply(operation: str, payload: dict[str, object], peer: HostServicesPeer) ->
         except HostServicesPeerError:
             active = authorize(peer, "return.to-hub")
         return {"active": active, "handoff_running": LOCK.exists(), "identity": active_identity(peer)}
+    if operation in {"native.prepare-v3", "native.activate-v3", "native.rollback-v3", "native.retry-v3", "native.delete-v3", "native.boot-v3"}:
+        authorize_hub_management(peer, resume_native_v3=operation in {"native.activate-v3", "native.rollback-v3", "native.retry-v3", "native.delete-v3"})
+        action = operation.removeprefix("native.").removesuffix("-v3")
+        return native_v3.dispatch(action, str(payload["target"]), str(payload["generation"]), MANAGEMENT_LOCK)
+    if operation == "native.plan":
+        authorize_hub_management(peer)
+        return request_native_plan(str(payload["target"]), str(payload["description"]), int(payload["size_gib"]))
     if operation == "environment.create":
         authorize_hub_management(peer)
         target = str(payload["target"])
@@ -635,6 +666,8 @@ def apply(operation: str, payload: dict[str, object], peer: HostServicesPeer) ->
         return start_management("destroy", target, generation)
     if operation == "native.boot":
         authorize_hub_management(peer)
+        if (NATIVE_ENVIRONMENTS / "instances-v3").exists():
+            raise RuntimeError("Volta a selecionar o Windows no Hub para usar a geração atual.")
         if payload.get("target") != "windows":
             raise RuntimeError("o sistema nativo selecionado difere")
         trusted_native_environment("windows")

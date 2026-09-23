@@ -11,6 +11,9 @@ PROFILE = "apx-host-shared-services"
 VERSION = 3
 MAX_MESSAGE_BYTES = 65536
 MAX_SSID_BYTES = 32
+MAX_CALENDAR_EVENTS = 256
+MAX_CALENDAR_CATEGORIES = 64
+MAX_CALENDAR_TEXT = 256
 OPERATIONS = (
     "bluetooth.device.connect", "bluetooth.device.disconnect", "bluetooth.device.remove",
     "bluetooth.pair.begin", "bluetooth.pair.respond", "bluetooth.pair.status",
@@ -18,7 +21,7 @@ OPERATIONS = (
     "capabilities.get", "events.subscribe", "network.connect",
     "network.connectivity-check", "network.disconnect", "network.forget",
     "network.portal.open", "network.scan", "network.status", "radio.status",
-    "snapshot.get",
+    "snapshot.get", "calendar.load", "calendar.save",
 )
 SECRET_FIELDS = frozenset({"credential", "passphrase", "password", "pin", "secret"})
 _REQUEST_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}")
@@ -60,10 +63,35 @@ def validate_payload(operation: str, payload: object) -> dict[str, object]:
         raise HostServicesV3ContractError("operation or payload is unsupported")
     if operation in {"bluetooth.scan", "bluetooth.status", "capabilities.get",
                      "network.connectivity-check", "network.disconnect",
-                     "network.portal.open", "network.scan", "network.status", "radio.status", "snapshot.get"}:
+                     "network.portal.open", "network.scan", "network.status", "radio.status", "snapshot.get",
+                     "calendar.load"}:
         if payload:
             raise HostServicesV3ContractError("operation takes no payload")
         return {}
+    if operation == "calendar.save":
+        if set(payload) != {"events", "categories"} or type(payload["events"]) is not list \
+                or type(payload["categories"]) is not list:
+            raise HostServicesV3ContractError("calendar payload differs")
+        if len(payload["events"]) > MAX_CALENDAR_EVENTS or len(payload["categories"]) > MAX_CALENDAR_CATEGORIES:
+            raise HostServicesV3ContractError("calendar payload is oversized")
+        categories = []
+        for category in payload["categories"]:
+            if type(category) is not str or not 1 <= len(category) <= MAX_CALENDAR_TEXT or "\x00" in category:
+                raise HostServicesV3ContractError("calendar category is invalid")
+            categories.append(category)
+        events = []
+        for event in payload["events"]:
+            if type(event) is not dict or not isinstance(event.get("id"), str) or not isinstance(event.get("title"), str):
+                raise HostServicesV3ContractError("calendar event is invalid")
+            if any(type(event.get(key)) is not str or len(event[key]) > MAX_CALENDAR_TEXT or "\x00" in event[key]
+                   for key in ("id", "title", "date", "time", "category", "notes")):
+                raise HostServicesV3ContractError("calendar event text is invalid")
+            if type(event.get("scope")) is not str or event["scope"] not in {"shared", "environment"} \
+                    or type(event.get("active")) is not bool or type(event.get("reminders")) is not list \
+                    or len(event["reminders"]) > 8 or any(type(value) is not int or value < 1 or value > 525600 for value in event["reminders"]):
+                raise HostServicesV3ContractError("calendar event metadata is invalid")
+            events.append(dict(event))
+        return {"events": events, "categories": categories}
     if operation == "bluetooth.power":
         if set(payload) != {"powered"} or type(payload.get("powered")) is not bool:
             raise HostServicesV3ContractError("Bluetooth power payload differs")

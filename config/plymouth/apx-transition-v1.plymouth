@@ -1,0 +1,29 @@
+[Plymouth Theme]
+Name=APX Environment transition
+Description=Host-owned waiting surface for Environment preparation
+ModuleName=two-step
+
+[two-step]
+Font=Adwaita Sans 12
+TitleFont=Adwaita Sans 18
+ImageDir=/usr/share/plymouth/themes/spinner
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.5
+TitleHorizontalAlignment=.5
+TitleVerticalAlignment=.44
+HorizontalAlignment=.5
+VerticalAlignment=.55
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x000000
+BackgroundEndColor=0x000000
+ProgressBarBackgroundColor=0x242424
+ProgressBarForegroundColor=0xffffff
+MessageBelowAnimation=true
+
+[updates]
+SuppressMessages=true
+ProgressBarShowPercentComplete=false
+UseProgressBar=true
+Title=A preparar o ambiente
+SubTitle=

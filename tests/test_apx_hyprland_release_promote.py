@@ -1,6 +1,7 @@
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,9 +29,19 @@ class HyprlandReleasePromoteTests(unittest.TestCase):
 
     def test_account_and_manifest_are_fixed_inside_release(self) -> None:
         source = Path(promote.__file__).read_text(encoding="utf-8")
-        self.assertIn("apx:x:1000:1000:APX graphical Environment:/home/apx:/usr/bin/bash", source)
+        self.assertIn("apx:x:1000:1000:Home:/home/apx:/usr/bin/bash", source)
         self.assertIn('"identity": "empty-until-environment-creation"', source)
         self.assertIn('"role": "graphical-h0"', source)
+
+    def test_desktop_uid_has_exactly_one_login_identity(self) -> None:
+        appended = []
+        with patch.object(promote, "_append_unique", side_effect=lambda *a: appended.append(a)), \
+             patch.object(promote, "_atomic_replace"), \
+             patch.object(promote, "_write_new_regular"), \
+             patch.object(Path, "mkdir"), patch.object(promote.os, "chown"):
+            promote._configure_target()
+        accounts = [line for path, prefix, line in appended if path.name == "passwd"]
+        self.assertEqual([line.split(":")[0] for line in accounts if line.split(":")[2] == "1000"], ["apx"])
 
     def test_preconditions_bind_current_generations_and_hold(self) -> None:
         self.assertEqual(promote.EXPECTED_HUB_GENERATION, "d68ee7a2-268a-4534-b033-8f5313943fcf")

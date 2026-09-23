@@ -12,7 +12,7 @@ ProtectHome=yes
 PrivateTmp=yes
 PrivateDevices=no
 RestrictAddressFamilies=AF_UNIX
-ReadWritePaths=/run/apx /var/lib/apx/environments /var/lib/apx/coordinated-updates-v1
+ReadWritePaths=/run/apx /var/lib/apx/environments /var/lib/apx/coordinated-updates-v1 /var/lib/apx/environment-updates-v1
 
 [Install]
 WantedBy=multi-user.target

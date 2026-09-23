@@ -36,13 +36,14 @@ def load_contract():
 
 
 def load_switch_service():
+    original_path = list(sys.path)
     sys.path.insert(0, str(ROOT / "src"))
     try:
         spec = importlib.util.spec_from_file_location("switch_service", SERVICE)
         module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
         return module
     finally:
-        sys.path.pop(0)
+        sys.path[:] = original_path
 
 
 def load_runner():
@@ -70,6 +71,52 @@ def load_native_recovery_runner():
 
 
 class EnvironmentSwitchV1Tests(unittest.TestCase):
+    def test_native_v3_retry_requires_selected_name_and_generation(self):
+        contract = load_contract()
+        generation = '11111111-2222-4333-8444-555555555555'
+        raw = contract.request_bytes('native.retry-v3', 'windows-games', generation)
+        self.assertEqual(contract.parse_message(raw)['payload'],
+                         {'target': 'windows-games', 'generation': generation})
+        with self.assertRaises(ValueError):
+            contract.request_bytes('native.retry-v3', 'windows-games', None)
+        deleted = contract.request_bytes('native.delete-v3', 'windows-testes', generation)
+        self.assertEqual(contract.parse_message(deleted)['payload'],
+                         {'target': 'windows-testes', 'generation': generation})
+        with self.assertRaises(ValueError):
+            contract.request_bytes('native.delete-v3', 'windows-testes', None)
+
+    def test_native_preview_accepts_distinct_name_without_enabling_legacy_create(self):
+        contract = load_contract()
+        raw = contract.request_bytes("native.plan", "windows-games", description="Jogos", size_gib=80)
+        parsed = contract.parse_message(raw)
+        self.assertEqual(parsed["payload"]["target"], "windows-games")
+        with self.assertRaises(ValueError):
+            contract.request_bytes("native.plan", "../windows", size_gib=80)
+        with self.assertRaises(ValueError):
+            contract.request_bytes("native.plan", "windows-games", size_gib=True)
+        with self.assertRaises(ValueError):
+            contract.request_bytes("environment.create", "windows-games", system_kind="windows-native", size_gib=80, preset="basic", modules=["system"])
+
+    def test_native_preview_rejects_workload_before_starting_worker(self):
+        subject = load_switch_service()
+        with mock.patch.object(subject, "authorize_hub_management", side_effect=PermissionError("not Hub")), \
+                mock.patch.object(subject, "request_native_plan") as plan:
+            with self.assertRaises(PermissionError):
+                subject.apply("native.plan", {"target":"windows-games", "description":"", "size_gib":80}, mock.Mock())
+        plan.assert_not_called()
+
+    def test_native_preview_worker_has_only_read_device_access(self):
+        subject = load_switch_service()
+        reply={"profile":"apx-native-creation-preview-v3", "target":"windows-games", "can_create":False}
+        with mock.patch.object(subject.subprocess, "run", return_value=mock.Mock(returncode=0, stdout=json.dumps(reply))) as launch:
+            self.assertEqual(subject.request_native_plan("windows-games", "Jogos", 80),reply)
+        command=launch.call_args.args[0]
+        self.assertIn("--property=ProtectSystem=strict",command)
+        self.assertIn("--property=CapabilityBoundingSet=",command)
+        self.assertTrue(all(arg.endswith(" r") for arg in command if "DeviceAllow=" in arg))
+        self.assertNotIn("reboot", command)
+
+
     def test_native_boot_submission_does_not_race_the_reboot(self) -> None:
         subject = load_switch_service()
         runner = mock.Mock()
@@ -522,21 +569,21 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('ScrollBar.vertical: ScrollBar', source)
         self.assertIn('menuContent.implicitHeight > popupBackground.height - 20', source)
         self.assertIn('WlrLayershell.keyboardFocus:', source)
-        self.assertNotIn('import Quickshell.Hyprland', source)
-        self.assertNotIn('HyprlandFocusGrab {', source)
+        self.assertIn('Hyprland.focusedMonitor', source)
+        self.assertIn('HyprlandFocusGrab {', source)
         self.assertIn('id: popupDismissLayer', source)
         self.assertIn('WlrLayershell.layer: WlrLayer.Top', source)
         self.assertIn('onClicked: root.closePopup()', source)
-        self.assertIn('? WlrKeyboardFocus.Exclusive', source)
-        self.assertNotIn('WlrKeyboardFocus.OnDemand', source)
+        self.assertIn('? WlrKeyboardFocus.OnDemand', source)
+        self.assertNotIn('? WlrKeyboardFocus.Exclusive', source)
         self.assertIn('environmentNameInput.forceActiveFocus()', source)
-        self.assertIn('text: "‹  VOLTAR"', source)
+        self.assertIn('text: "‹  Voltar"', source)
         self.assertIn('root.cancelEnvironmentCreate()', source)
         self.assertIn('property bool environmentKeyboardFocus: false', source)
         self.assertIn('property int environmentFocusIndex: -1', source)
         self.assertIn('id: hubEnvironmentCard', source)
-        self.assertIn('root.environmentFocusIndex === -1', source)
-        self.assertIn('var indices = [-1]', source)
+        self.assertIn('property bool keyboardFocused: false', source)
+        self.assertIn('var indices = []', source)
         self.assertIn('if (environmentFocusIndex === -1)', source)
         self.assertIn('environment_focus_index: root.environmentFocusIndex', source)
         self.assertIn('property int environmentCreateFocusIndex: -1', source)
@@ -551,26 +598,28 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('root.activateEnvironmentFocus()', source)
         self.assertIn('root.deleteFocusedEnvironment()', source)
         self.assertIn('root.beginEnvironmentEdit()', source)
-        self.assertIn('label: "EDITAR"', source)
+        self.assertIn('label: "Editar"', source)
         self.assertIn('id: environmentEditTitleInput', source)
         self.assertIn('id: environmentEditDescriptionInput', source)
         self.assertIn('[root.environmentClient, "edit"', source)
         self.assertIn('"--display-name", title', source)
-        self.assertIn('label: root.environmentMetadataBusy ? "A GUARDAR…" : "GUARDAR ALTERAÇÕES"', source)
+        self.assertIn('label: root.environmentMetadataBusy ? "A guardar…" : "Guardar alterações"', source)
         self.assertIn('text: "O identificador interno “" + root.selectedEnvironmentName + "” não muda."', source)
         self.assertIn('id: environmentStorageProcess', source)
         self.assertIn('command: [root.environmentClient, "storage"]', source)
         self.assertIn('text: root.environmentStorageSummary()', source)
-        self.assertIn('root.environmentSizeSuffix(modelData)', source)
-        self.assertIn('LIMITE ATUAL · 1', source)
+        self.assertIn('root.environmentSizeLabel(modelData)', source)
+        self.assertNotIn('Limite atual · 1', source)
+        self.assertIn('native-plan', source)
+        self.assertIn('Verificar espaço', source)
         self.assertIn('function nativeWindowsExists()', source)
         self.assertIn('function nativeWindowsRecoveryAvailable()', source)
         self.assertIn('function recoverNativeWindows(action)', source)
         self.assertIn('function beginEnvironmentCreate() {\n        if (environmentManagementBusy || environmentMetadataBusy) return', source)
         self.assertIn('"native-discard" : "native-retry"', source)
-        self.assertIn('? "PROSSEGUIR WINDOWS" : "RETOMAR WINDOWS"', source)
-        self.assertIn('"CONFIRMAR APAGAR" : (root.environmentManagementState.native_retry', source)
-        self.assertIn('"APAGAR INCOMPLETO" : "TENTAR APAGAR"', source)
+        self.assertIn('? "Prosseguir Windows" : "Retomar Windows"', source)
+        self.assertIn('"Confirmar apagar" : (root.environmentManagementState.native_retry', source)
+        self.assertIn('"Apagar incompleto" : "Tentar apagar"', source)
         self.assertIn('root.environmentFocusIndex === root.environmentCatalog.length', source)
         self.assertIn('root.environmentFocusIndex === root.environmentCatalog.length + 1', source)
         self.assertIn('root.environmentFocusIndex === root.environmentCatalog.length + 2', source)
@@ -601,9 +650,9 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('"--system", environmentSystemKind', source)
         self.assertNotIn('title: "WINDOWS 11 · SISTEMA"', source)
         self.assertNotIn('title: "UBUNTU · SISTEMA"', source)
-        self.assertIn('title: "APX · NATIVO"', source)
-        self.assertIn('title: "WINDOWS · NATIVO"', source)
-        self.assertIn('property int environmentNativeWindowsSizeGib: 120', source)
+        self.assertIn('title: "APX · nativo"', source)
+        self.assertIn('title: "Windows · nativo"', source)
+        self.assertIn('property int environmentNativeWindowsSizeGib: 80', source)
         self.assertIn('title: "80 GiB"', source)
         self.assertIn('title: "120 GiB"', source)
         self.assertIn('title: "160 GiB"', source)
@@ -611,15 +660,15 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('"Apaga a partição e devolve todo o espaço ao APX após reiniciar."', source)
         self.assertIn('modelData.system_label', source)
         self.assertIn('function environmentIsNative(item)', source)
-        self.assertIn('environmentIsNative(selected) ? "native-open" : "open"', source)
-        self.assertIn('modelData.state === "preparing" ? "A PREPARAR"', source)
-        self.assertIn('title: "BÁSICO · BASE APX"', source)
-        self.assertIn('title: "INTERMÉDIO · DIA A DIA"', source)
-        self.assertIn('title: "COMPLETO · TRABALHO"', source)
-        self.assertIn('additions: "EXTRAS · NENHUM"', source)
-        self.assertIn('+ BRAVE · PDF · MPV', source)
+        self.assertIn('selected.native_version === 3 ? "native-open-v3" : "native-open"', source)
+        self.assertIn('modelData.state === "preparing" ? "A preparar"', source)
+        self.assertIn('title: "Básico · base APX"', source)
+        self.assertIn('title: "Intermédio · dia a dia"', source)
+        self.assertIn('title: "Completo · trabalho"', source)
+        self.assertIn('additions: "Extras · nenhum"', source)
+        self.assertIn('+ Brave · PDF · MPV', source)
         self.assertIn('environmentCreateOpen = false', source)
-        self.assertIn('+ LIBREOFFICE · DEV · IMPRESSÃO', source)
+        self.assertIn('+ LibreOffice · dev · impressão', source)
         self.assertIn('root.environmentSelectedModules[moduleInfo.key] === true', source)
         self.assertIn('property var environmentModuleGroups', source)
         self.assertIn('component FeatureCard: Rectangle', source)
@@ -645,24 +694,24 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('root.selectedEnvironmentName = ""', source)
         self.assertIn('root.selectedEnvironmentGeneration = ""', source)
         self.assertIn('root.environmentKeyboardFocus = false', source)
-        self.assertIn('label: root.environmentManagementBusy ? "A CRIAR…" : "CRIAR ENVIRONMENT"', source)
+        self.assertIn('root.environmentManagementBusy ? "A criar…" : "Criar environment"', source)
         self.assertNotIn("Escolha um Environment disponível", source)
         self.assertNotIn("ESC  FECHAR", source)
         self.assertNotIn("TRANSIÇÃO GERIDA PELO HOST", source)
         self.assertIn("function openEnvironments(): void", source)
-        self.assertIn('root.togglePopup("environments", environmentButton, true)', source)
+        self.assertIn('root.toggleFocusedPopup("environments")', source)
         self.assertIn("function toggleControls(): void", source)
         self.assertIn("function toggleCalendar(): void", source)
         self.assertIn("function toggleModel(): void", source)
         self.assertIn("function toggleBattery(): void", source)
         self.assertIn("id: batteryButton", source)
-        self.assertIn('text: "SUPER+M"', source)
+        self.assertNotIn('text: "SUPER+M"', source)
         self.assertIn('text: "Sair para o Host"', source)
         self.assertNotIn('text: root.isHub ? "Escolher Environment" : "Voltar ao Hub"', source)
         self.assertIn('command: ["/usr/bin/hyprctl", "dispatch", "hl.dsp.exit()"]', source)
-        self.assertIn('text: root.isHub ? "Terminal do Host"', source)
+        self.assertIn('text: "Terminal do Host"', source)
         self.assertNotIn("sessão única", source)
-        self.assertIn('(root.isHub ? 440 : 394) * root.controlCenterScale', source)
+        self.assertIn('((root.isHub ? 470 : 394) + (root.hasExternalDisplay ? 100 : 0)) * root.controlCenterScale', source)
         self.assertIn('key: "shortcuts"', source)
         self.assertIn('label: "Atalhos APX"', source)
         self.assertIn('SUPER+A/B/D/E', source)
@@ -670,8 +719,8 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('function returnToHub()', source)
         self.assertIn('["/usr/bin/hyprctl", "eval", "hl.dsp.exit()"]', source)
         self.assertIn('enabled: root.sessionKindReady && !root.environmentSwitchPending', source)
-        self.assertNotIn('import Quickshell.Hyprland', source)
-        self.assertNotIn('HyprlandFocusGrab {', source)
+        self.assertIn('Hyprland.focusedMonitor', source)
+        self.assertIn('HyprlandFocusGrab {', source)
         self.assertIn('id: popupDismissLayer', source)
         self.assertIn('columns: 2', source)
 

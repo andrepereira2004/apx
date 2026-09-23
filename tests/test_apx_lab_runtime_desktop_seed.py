@@ -109,7 +109,7 @@ class RuntimeDesktopSeedTests(unittest.TestCase):
                 )
                 self.assertEqual(target.read_bytes(), (SHELL_PROFILE / relative).read_bytes())
                 self.assertNotEqual(target.stat().st_ino, (seed / relative).stat().st_ino)
-                expected_mode = 0o755 if relative.startswith("local/bin/") else 0o600
+                expected_mode = 0o755 if relative.startswith(("local/bin/", "local/libexec/")) else 0o600
                 self.assertEqual(target.stat().st_mode & 0o777, expected_mode)
 
     def test_changed_or_extra_environment_shell_asset_is_refused(self) -> None:

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 from dataclasses import asdict
 import json
 import os
@@ -85,7 +86,56 @@ def atomic_registration(path: Path, value: dict[str, object]) -> None:
     os.replace(temporary, path)
 
 
+def environment_batch():
+    spec = importlib.util.spec_from_file_location("apx_environment_batch_runner", "/usr/lib/apx/apx-environment-update-batch-v1.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def apply_environment_batch(operation: str, payload: dict[str, object]) -> dict[str, object]:
+    batch = environment_batch()
+    if operation == "environments.preview": return batch.preview()
+    if operation == "environments.status": return batch.latest_status()
+    if operation == "environments.finish":
+        current = batch.latest_status()
+        if current.get("state") != "awaiting-hub" or payload != {"operation": current["operation"]}:
+            raise ValueError("No matching Hub update is pending")
+        plan = batch.read_json(batch.BASE / current["operation"] / "plan.json")
+        if batch.preview() != plan: raise ValueError("Environment inventory changed")
+        current.update(state="complete", current="", message="Todos os Environments foram atualizados.")
+        current["completed"].append("hub")
+        batch.atomic(batch.BASE / current["operation"] / "status.json", current)
+        return current
+    if operation != "environments.apply": raise ValueError("Unsupported Environment update operation")
+    if Path("/run/apx/system-power-v1.reserved").exists(): raise RuntimeError("Power operation pending")
+    previous = batch.latest_status()
+    if previous.get("state") in ("queued", "running", "awaiting-hub"):
+        raise RuntimeError("Uma atualização já está pendente; retoma a operação existente.")
+    plan = batch.preview()
+    if payload != {"plan_digest": plan["plan_digest"], "confirmation": "CONFIRMAR"}:
+        raise ValueError("Preview or confirmation differs")
+    if plan["classification"] != "ready-for-approval": raise RuntimeError("Environment plan is blocked")
+    operation_id = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()) + "-" + plan["plan_digest"][:12]
+    directory = batch.BASE / operation_id
+    directory.mkdir(parents=True, mode=0o700)
+    batch.atomic(directory / "plan.json", plan)
+    status = {"operation": operation_id, "state": "queued", "completed": [], "current": ""}
+    batch.atomic(directory / "status.json", status)
+    result = subprocess.run(("/usr/bin/systemd-run", "--unit=apx-environment-update-" + operation_id.lower(),
+                             "--collect", "--property=Type=oneshot", "--property=TimeoutStartSec=infinity",
+                             "/usr/lib/apx/apx-environment-update-batch-v1.py", "--operation", operation_id),
+                            text=True, capture_output=True, check=False)
+    if result.returncode:
+        status.update(state="failed", error="Não foi possível iniciar a atualização.")
+        batch.atomic(directory / "status.json", status)
+        raise RuntimeError(status["error"])
+    return status
+
+
 def apply(operation: str, payload: dict[str, object]) -> dict[str, object]:
+    if operation.startswith("environments."):
+        return apply_environment_batch(operation, payload)
     if operation == "preview": return preview()
     if operation == "status": return latest_status()
     if operation == "policy.set":

@@ -1,0 +1,80 @@
+#!/usr/bin/python3
+"""Interactive package update, executed only inside the current Environment."""
+from pathlib import Path
+import os
+import shutil
+import subprocess
+import tempfile
+import argparse
+
+
+def run(*args, **kwargs):
+    return subprocess.run(args, check=True, **kwargs)
+
+
+def update(unattended=False):
+    # Never turn this desktop entry point into a Host package administrator.
+    if os.geteuid() == 0 or Path('/run/systemd/container').read_text().strip() != 'systemd-nspawn':
+        raise RuntimeError('Abre esta ação como utilizador dentro do Environment.')
+    print('Atualizar este Environment: sistema, Hyprland, aplicações, AUR e Flatpak.', flush=True)
+    print('Os gestores mostram as alterações antes de pedirem confirmação.', flush=True)
+    confirm = ('--noconfirm',) if unattended else ()
+    # The Host owns the running NVIDIA kernel module. Updating its userspace
+    # libraries independently makes outputs wired to that GPU go black.
+    run('/usr/bin/sudo', '/usr/bin/pacman', '-Syu',
+        '--ignore', 'nvidia-utils,lib32-nvidia-utils,opencl-nvidia', *confirm)
+    query = subprocess.run(('/usr/bin/pacman', '-Qm'), capture_output=True, text=True)
+    if query.returncode not in (0, 1) or (query.returncode == 1 and query.stderr.strip()):
+        raise RuntimeError('Não foi possível consultar os pacotes externos: ' + query.stderr.strip())
+    foreign = query.stdout.strip()
+    if foreign:
+        helper = shutil.which('paru') or shutil.which('yay')
+        if not helper:
+            print('\nPacotes externos aos repositórios:\n' + foreign, flush=True)
+            answer = 's' if unattended else input('Instalar o gestor yay para procurar e atualizar pacotes AUR? [s/N] ')
+            if answer.strip().lower() not in ('s', 'sim'):
+                raise RuntimeError('Atualização incompleta: os pacotes externos ainda precisam de verificação.')
+            run('/usr/bin/sudo', '/usr/bin/pacman', '-S', '--needed', 'base-devel', 'git', *confirm)
+            with tempfile.TemporaryDirectory(prefix='apx-yay-') as directory:
+                source = str(Path(directory) / 'yay')
+                run('/usr/bin/git', 'clone', '--depth', '1', 'https://aur.archlinux.org/yay.git', source)
+                print(Path(source, 'PKGBUILD').read_text(), flush=True)
+                if not unattended and input('Compilar e instalar este yay? [s/N] ').strip().lower() not in ('s', 'sim'):
+                    raise RuntimeError('Instalação cancelada; atualização AUR pendente.')
+                run('/usr/bin/makepkg', '-si', *confirm, cwd=source)
+            helper = shutil.which('yay')
+            if not helper:
+                raise RuntimeError('O gestor yay não ficou disponível.')
+        run(helper, '-Sua', *confirm)
+        # Foreign packages without an AUR entry have no automatic update source.
+        # Keep their names visible rather than treating helper success as coverage.
+        print('\nVerifica os avisos do AUR: pacotes locais sem origem AUR precisam do fornecedor.', flush=True)
+    flatpak = shutil.which('flatpak')
+    if flatpak:
+        run(flatpak, '--user', 'update', *(('--noninteractive', '-y') if unattended else ()))
+        run('/usr/bin/sudo', flatpak, '--system', 'update', *(('--noninteractive', '-y') if unattended else ()))
+    print('\nAtualizações dos gestores concluídas. Volta a entrar no Environment para usar o novo desktop.', flush=True)
+    print('Aplicações com atualizador próprio e instalações manuais mantêm o seu mecanismo de atualização.', flush=True)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--unattended', action='store_true')
+    args = parser.parse_args()
+    status = 0
+    try:
+        update(args.unattended)
+    except (OSError, RuntimeError, subprocess.CalledProcessError, KeyboardInterrupt, EOFError) as error:
+        print(f'\nAtualização não concluída: {error}', flush=True)
+        status = 1
+    if args.unattended:
+        return status
+    try:
+        input('\nEnter para fechar…')
+    except (EOFError, KeyboardInterrupt):
+        pass
+    return status
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

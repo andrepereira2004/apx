@@ -192,14 +192,31 @@ def machine_running() -> bool:
     return run(("machinectl", "show", MACHINE), False).returncode == 0
 
 
+def admitted_external_input(properties: dict[str, str], node: str) -> bool:
+    return re.fullmatch(r"/dev/input/event[0-9]+", node) is not None \
+        and properties.get("DEVNAME") == node \
+        and properties.get("ID_BUS") in {"usb", "bluetooth"} \
+        and properties.get("ID_INTEGRATION") != "internal" \
+        and properties.get("ID_INPUT") == "1" \
+        and any(properties.get(key) == "1" for key in (
+            "ID_INPUT_KEYBOARD", "ID_INPUT_MOUSE", "ID_INPUT_TOUCHPAD",
+        ))
+
+
 def resolve_input_devices() -> dict[str, str]:
     matches: dict[str, list[str]] = {label: [] for label in INPUT_IDENTITIES}
     hotkeys: dict[str, list[str]] = {label: [] for label in HOTKEY_IDENTITIES}
+    external: dict[str, str] = {}
     for node in sorted(Path("/dev/input").glob("event*")):
         result = run(("udevadm", "info", "--query=property", f"--name={node}"), False)
         if result.returncode:
             continue
         properties = dict(line.split("=", 1) for line in result.stdout.splitlines() if "=" in line)
+        # Admit physical USB/Bluetooth keyboards and pointers, never uinput,
+        # hidraw, storage or unrelated event devices. Composite HID interfaces
+        # are distinct evdev nodes and must all be considered.
+        if admitted_external_input(properties, str(node)):
+            external["external_" + node.name] = str(node)
         for label, identity in INPUT_IDENTITIES.items():
             if properties.get("DEVNAME") == str(node) and all(
                 properties.get(key) == expected for key, expected in identity.items()
@@ -218,6 +235,7 @@ def resolve_input_devices() -> dict[str, str]:
     if any(len(nodes) > 1 for nodes in hotkeys.values()):
         raise OfficialHubGraphicalError("an admitted firmware hotkey identity is ambiguous")
     resolved.update({label: nodes[0] for label, nodes in hotkeys.items() if nodes})
+    resolved.update({label: node for label, node in external.items() if node not in resolved.values()})
     if len(set(resolved.values())) != len(resolved):
         raise OfficialHubGraphicalError("admitted internal input identities overlap")
     return resolved
@@ -789,13 +807,13 @@ def _device_lease_state() -> tuple[dict[str, object], ...]:
     metadata = DEVICE_LEASE_STATE.lstat()
     data = DEVICE_LEASE_STATE.read_bytes()
     if DEVICE_LEASE_STATE.is_symlink() or not DEVICE_LEASE_STATE.is_file() \
-            or metadata.st_uid != 0 or metadata.st_gid != 0 or len(data) > 4096:
+            or metadata.st_uid != 0 or metadata.st_gid != 0 or len(data) > 65536:
         raise OfficialHubGraphicalError("graphical device lease state is untrusted")
     value = json.loads(data)
     if type(value) is not dict:
         raise OfficialHubGraphicalError("graphical device lease state is not an object")
     leases = value.get("leases")
-    if value.get("schema") != 1 or type(leases) is not list or not 1 <= len(leases) <= 23:
+    if value.get("schema") != 1 or type(leases) is not list or not 1 <= len(leases) <= 256:
         raise OfficialHubGraphicalError("graphical device lease state is malformed")
     for index, lease in enumerate(leases):
         if type(lease) is not dict or set(lease) != {"node", "proxy", "major", "minor"} \
@@ -879,7 +897,18 @@ def before_publish_stopped() -> None:
     """Hook for workload-specific resources needed by the returning Hub."""
 
 
+def clear_transition_consoles() -> None:
+    """Clear both VT buffers before either becomes visible during handoff."""
+    for tty in ("/dev/tty1", "/dev/tty2"):
+        descriptor = os.open(tty, os.O_WRONLY | os.O_NOCTTY)
+        try:
+            os.write(descriptor, b"\033[0m\033[40m\033[2J\033[3J\033[H\033[?25l")
+        finally:
+            os.close(descriptor)
+
+
 def _recover() -> None:
+    clear_transition_consoles()
     run(("systemctl", "-M", MACHINE, "stop", INNER_UNIT + ".service"), False)
     if machine_running():
         run(("machinectl", "shell", f"root@{MACHINE}", "/usr/bin/rm", "-f", LOCAL_ADMIN_PROOF), False)
@@ -1107,6 +1136,24 @@ def resolve_user_namespace() -> int:
     return starts[0]
 
 
+def start_input_bridge() -> None:
+    leader = run(("machinectl", "show", MACHINE, "-p", "Leader", "--value")).stdout.strip()
+    if not leader.isdecimal():
+        raise OfficialHubGraphicalError("input bridge namespace leader unavailable")
+    run(("systemd-run", f"--unit={OUTER_UNIT}-input", "--collect",
+         f"--property=BindsTo={OUTER_UNIT}.service", f"--property=After={OUTER_UNIT}.service",
+         "--property=TimeoutStopSec=3s", "/usr/bin/python3",
+         "/usr/lib/apx/apx-external-input-bridge-v1.py", "--leader", leader,
+         "--outer-unit", OUTER_UNIT + ".service", "--seatd-unit", SEATD_UNIT + ".service"))
+    ready = Path(f"/proc/{leader}/root/run/apx/input-bridge-v1.ready")
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline:
+        if ready.is_file() and unit_active(OUTER_UNIT + "-input"):
+            return
+        time.sleep(0.05)
+    raise OfficialHubGraphicalError("input hotplug bridge did not become ready")
+
+
 def start_inner(inputs: dict[str, str], audio: dict[str, str], graphics: dict[str, str]) -> None:
     arguments = [
         # Keep the stopped unit loaded until the container is recovered so the
@@ -1217,6 +1264,41 @@ def hyprctl(pid: int, signature: str, *arguments: str) -> subprocess.CompletedPr
         f"XDG_RUNTIME_DIR={SESSION_RUNTIME}", f"HYPRLAND_INSTANCE_SIGNATURE={signature}",
         "hyprctl", *arguments,
     ), False)
+
+
+def settle_initial_cursor(pid: int, signature: str) -> None:
+    """Invalidate the initial cursor image on an extended desktop."""
+    try:
+        monitors = json.loads(hyprctl(pid, signature, "-j", "monitors").stdout)
+        position = json.loads(hyprctl(pid, signature, "-j", "cursorpos").stdout)
+        if type(monitors) is not list or len(monitors) < 2 or type(position) is not dict:
+            return
+        x, y = position.get("x"), position.get("y")
+        if type(x) is not int or type(y) is not int:
+            return
+        current = next((item for item in monitors if type(item) is dict
+                        and type(item.get("x")) is int and type(item.get("y")) is int
+                        and type(item.get("width")) is int and type(item.get("height")) is int
+                        and type(item.get("scale")) in (int, float) and item["scale"] > 0
+                        and not item.get("disabled", False)
+                        and item["x"] <= x < item["x"] + item["width"] / item["scale"]
+                        and item["y"] <= y < item["y"] + item["height"] / item["scale"]), None)
+        if current is None:
+            return
+        right = current["x"] + current["width"] / current["scale"]
+        other_x = x + (1 if x + 1 < right else -1)
+        if other_x < current["x"]:
+            return
+        move = lambda target: hyprctl(pid, signature, "eval",
+            f"hl.dispatch(hl.dsp.cursor.move({{x={target},y={y}}}))")
+        try:
+            first = move(other_x)
+            if first.returncode == 0 and first.stdout.strip() == "ok":
+                time.sleep(0.05)
+        finally:
+            move(x)
+    except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError):
+        pass
 
 
 def verify_audio_playback(pid: int) -> str:
@@ -1566,7 +1648,49 @@ def health_watchdog() -> dict[str, object]:
             "recovered": False, "action_required": True}
 
 
+_transition_display_owned = False
+
+
+def transition_display(action: str, progress: int = 0) -> None:
+    """Own only our short-lived Host splash; never touch the SSD boot daemon."""
+    global _transition_display_owned
+    unit = "apx-transition-display-v1.service"
+
+    def command(*args: str) -> subprocess.CompletedProcess:
+        return subprocess.run(args, capture_output=True, timeout=10, check=False)
+
+    if action == "start":
+        if VFIO_GUEST_MODE or Path("/sys/class/tty/tty0/active").read_text().strip() != "tty1":
+            return
+        if command("/usr/bin/plymouth", "--ping").returncode == 0:
+            return
+        # Mark ownership before starting: even a start timeout must clean up
+        # this exact service before the compositor is allowed to acquire DRM.
+        _transition_display_owned = True
+        result = command("/usr/bin/systemctl", "start", unit)
+        _transition_display_owned = command("/usr/bin/systemctl", "is-active", "--quiet", unit).returncode == 0
+        if result.returncode or not _transition_display_owned:
+            command("/usr/bin/systemctl", "stop", unit)
+            _transition_display_owned = False
+            return
+        command("/usr/bin/plymouth", "system-update", "--progress=10")
+    elif action == "progress" and _transition_display_owned:
+        command("/usr/bin/plymouth", "system-update", f"--progress={max(0, min(100, progress))}")
+    elif action == "release" and _transition_display_owned:
+        result = command("/usr/bin/systemctl", "stop", unit)
+        if result.returncode:
+            raise OfficialHubGraphicalError("Host loading surface did not release the display")
+        _transition_display_owned = False
+
+
 def launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, object]:
+    try:
+        return _launch(test_mode, authenticated_handoff)
+    finally:
+        transition_display("release")
+
+
+def _launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, object]:
     if os.geteuid() != 0 or Path("/etc/hostname").read_text().strip() != "apx-host":
         raise OfficialHubGraphicalError("official Hub graphics require root on the APX Host")
     if Path("/sys/class/tty/tty0/active").read_text().strip() != "tty1":
@@ -1580,10 +1704,12 @@ def launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, ob
     if run(("machinectl", "list", "--no-legend"), False).stdout.strip():
         raise OfficialHubGraphicalError("another Environment is running")
     inputs = resolve_input_devices()
+    transition_display("start")
     audio = resolve_audio_devices()
     graphics = resolve_graphics()
     camera = resolve_camera_device()
     validate_devices(inputs, audio, graphics, camera)
+    transition_display("progress", 25)
     ensure_audio_master_playback(audio)
     device_nodes = tuple(dict.fromkeys((
         *inputs.values(), *audio.values(), graphics["display_card"], graphics["display_render"],
@@ -1602,14 +1728,20 @@ def launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, ob
         start_host_seatd(inputs, graphics)
         arm_test_expiry(75) if test_mode else arm_health_watchdog()
         start_outer(inputs, audio, graphics, bindings, authenticated_handoff)
+        transition_display("progress", 55)
         uid_base = resolve_user_namespace()
         activate_device_leases(uid_base, read_only_inputs(inputs))
         activate_service_sockets(uid_base)
+        start_input_bridge()
+        transition_display("progress", 85)
+        transition_display("release")
+        clear_transition_consoles()
         start_inner(inputs, audio, graphics)
         print("APX: a mudar para tty2. Super+Q abre Kitty; Super+M volta à recuperação Host.", flush=True)
         print("APX: Ctrl+Alt+F1 volta visualmente ao Host; o watchdog apenas monitoriza.", flush=True)
         run(("chvt", "2"), False)
         pid, signature, keyboards = wait_ready()
+        settle_initial_cursor(pid, signature)
         audio_state = verify_audio_playback(pid)
         desktop_shell = verify_desktop_shell()
         write_registration_state("running")

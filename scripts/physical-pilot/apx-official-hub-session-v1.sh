@@ -181,6 +181,7 @@ cd -- /home/apx
   /usr/bin/env -i HOME=/home/apx USER=apx LOGNAME=apx SHELL=/usr/bin/bash \
   PATH=/usr/bin LANG=C.UTF-8 XDG_RUNTIME_DIR="$RUNTIME" XDG_SESSION_TYPE=wayland \
   XDG_CURRENT_DESKTOP=Hyprland XDG_SESSION_DESKTOP=Hyprland \
+  BROWSER=/usr/bin/brave \
   XDG_CONFIG_HOME=/home/apx/.config XDG_CACHE_HOME=/home/apx/.cache \
   XDG_DATA_HOME=/home/apx/.local/share LIBSEAT_BACKEND=seatd SEATD_SOCK="$SEATD_SOCKET" \
   DBUS_SESSION_BUS_ADDRESS=unix:path="$RUNTIME/bus" AQ_DRM_DEVICES="$drm_devices" \

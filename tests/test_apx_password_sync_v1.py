@@ -25,6 +25,15 @@ class ApxPasswordSyncV1Tests(unittest.TestCase):
         self.assertNotIn("passwd", source)
         self.assertNotIn("shell=True", source)
 
+    def test_host_root_source_validates_active_machine_and_does_not_rewrite_host(self) -> None:
+        source = SCRIPT.read_text()
+        self.assertIn('parser.add_argument("--from-host-root", action="store_true")', source)
+        self.assertIn('shadow(Path("/etc/shadow"), "root")', source)
+        self.assertIn('if arguments.include_host_root:', source)
+        self.assertIn('"RootDirectory"', source)
+        self.assertIn('details.stdout.strip() != str(directory / "root")', source)
+        self.assertIn('set(active) != expected_active', source)
+
 
 if __name__ == "__main__":
     unittest.main()

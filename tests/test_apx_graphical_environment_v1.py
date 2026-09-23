@@ -1,12 +1,31 @@
 from pathlib import Path
+import importlib.util
+import tempfile
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
 LAUNCHER = ROOT / "scripts/physical-pilot/apx-graphical-environment-v1.py"
+SPEC = importlib.util.spec_from_file_location('graphical_environment', LAUNCHER)
+MODULE = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(MODULE)
 
 
 class GraphicalEnvironmentLauncherTests(unittest.TestCase):
+    def test_nvidia_libraries_must_match_host_module(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            library = base / 'usr/lib/libEGL_nvidia.so.0'
+            library.parent.mkdir(parents=True)
+            (library.parent / 'libEGL_nvidia.so.610.43.03').touch()
+            library.symlink_to('libEGL_nvidia.so.610.43.03')
+            version = base / 'version'
+            version.write_text('610.43.03\n')
+            MODULE.verify_nvidia_userspace(base, version)
+            version.write_text('615.71.09\n')
+            with self.assertRaisesRegex(RuntimeError, 'do not match'):
+                MODULE.verify_nvidia_userspace(base, version)
+
     def test_launcher_reuses_proven_engine_without_merging_homes(self):
         source = LAUNCHER.read_text()
         compile(source, str(LAUNCHER), "exec")

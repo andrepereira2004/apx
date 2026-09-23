@@ -1,0 +1,22 @@
+{
+  "added_bytes": 72624828416,
+  "after_used_bytes": 197014806528,
+  "apx_future_limit_bytes": 268872712192,
+  "backup_files_verified": true,
+  "backup_manifest_plan_matches": true,
+  "before_used_bytes": 124389978112,
+  "capacity_with_headroom_fits_after_backup_only": true,
+  "existing_windows_gib": 120,
+  "generation": "c05e92f9-9d04-496a-be37-28b067a7ff77",
+  "measured_at_utc": "2026-09-23T18:14:11Z",
+  "new_windows_gib": 80,
+  "original_allocated_bytes": 72392241152,
+  "original_apparent_bytes": 162135015424,
+  "physical_partition_or_firmware_change": false,
+  "plan_sha256": "fc2cb92d8110e8822e9ba379e8617ba9d2dcedb22c6d2386965d8cbe3eacefbc",
+  "prepared_allocated_bytes": 72396173312,
+  "prepared_apparent_bytes": 128849018880,
+  "profile": "apx-native-v3-backup-measurement",
+  "source_unchanged": true,
+  "temporary_copy_removed": true
+}

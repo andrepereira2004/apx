@@ -30,11 +30,13 @@ PRESETS = {
     "complete": MODULES,
 }
 
-# The admitted graphical release already owns its GPU stack. Reinstalling that
-# stack into every snapshot wastes space and can create a partial-upgrade
-# conflict when the Host repositories move ahead of the immutable release.
-# Modules therefore add only applications absent from that release.
+# The admitted graphical release owns the open-source base. Its NVIDIA
+# userspace must match the Host module and is supplied as a pinned local
+# artifact during creation, even for a minimal graphical Environment.
 PACKAGES = {
+    "system": ("xfce4-taskmanager",),
+    "graphics": ("egl-gbm", "egl-wayland", "egl-wayland2", "egl-x11"),
+    "files": ("papirus-icon-theme",),
     "web-documents": ("evince",),
     "multimedia": ("ffmpeg", "gst-libav", "gst-plugins-good", "mpv"),
     "office": ("hunspell-en_gb", "libreoffice-fresh"),
@@ -46,9 +48,7 @@ PACKAGES = {
 # Reviewed native packages that are not available from the official Arch
 # repositories. The runtime resolves these names through the Host-owned,
 # digest-pinned artifact manifest before invoking pacman -U.
-LOCAL_PACKAGES = {
-    "web-documents": ("brave-bin",),
-}
+LOCAL_PACKAGES = {"system": ("brave-bin",), "graphics": ("nvidia-utils",)}
 
 ESTIMATED_MIB = {
     "system": 420, "cli-aur": 260, "graphical": 520,

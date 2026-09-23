@@ -17,7 +17,7 @@ MAX_MESSAGE_BYTES = 65536
 OPERATIONS = {
     "catalog.get", "identity.get", "status.get", "management.status", "storage.get",
     "environment.create", "environment.destroy", "environment.update-metadata",
-    "switch.to-workload", "native.boot", "native.retry", "native.discard", "return.to-hub",
+    "switch.to-workload", "native.boot", "native.retry", "native.discard", "native.plan", "native.prepare-v3", "native.activate-v3", "native.rollback-v3", "native.retry-v3", "native.delete-v3", "native.boot-v3", "return.to-hub",
 }
 NAME = re.compile(r"[a-z](?:[a-z0-9]|-(?=[a-z0-9])){0,26}")
 GENERATION = re.compile(r"[0-9a-f]{8}-[0-9a-f-]{27}")
@@ -45,7 +45,21 @@ def request_bytes(
 ) -> bytes:
     if operation not in OPERATIONS:
         raise ValueError("unsupported Environment-switch operation")
-    if operation in {"switch.to-workload", "native.boot", "environment.create"}:
+    if operation in {"native.prepare-v3", "native.activate-v3", "native.rollback-v3", "native.retry-v3", "native.delete-v3", "native.boot-v3"}:
+        if type(target) is not str or NAME.fullmatch(target) is None or target == "hub" \
+                or type(generation) is not str or GENERATION.fullmatch(generation) is None \
+                or any(value is not None for value in (description,preset,modules,system_kind,size_gib,display_name)):
+            raise ValueError("invalid native instance operation")
+        payload = {"target": target, "generation": generation}
+    elif operation == "native.plan":
+        if type(target) is not str or NAME.fullmatch(target) is None or target == "hub" \
+                or not valid_description("" if description is None else description) \
+                or type(size_gib) is not int or size_gib not in NATIVE_WINDOWS_SIZES_GIB \
+                or generation is not None or preset is not None or modules is not None \
+                or system_kind is not None or display_name is not None:
+            raise ValueError("invalid native Windows plan request")
+        payload = {"target": target, "description": "" if description is None else description, "size_gib": size_gib}
+    elif operation in {"switch.to-workload", "native.boot", "environment.create"}:
         if type(target) is not str or NAME.fullmatch(target) is None or target == "hub":
             raise ValueError("invalid Environment-switch target")
         if operation == "native.boot" and target != "windows":
@@ -123,7 +137,15 @@ def parse_message(data: bytes) -> dict[str, object]:
             or value.get("profile") != PROFILE or value.get("operation") not in OPERATIONS:
         raise ValueError("invalid Environment-switch message")
     operation, payload = value["operation"], value.get("payload")
-    if operation in {"switch.to-workload", "native.boot", "environment.create"}:
+    if operation in {"native.prepare-v3", "native.activate-v3", "native.rollback-v3", "native.retry-v3", "native.delete-v3", "native.boot-v3"}:
+        if type(payload) is not dict or set(payload) != {"target","generation"}:
+            raise ValueError("invalid native instance payload")
+        request_bytes(operation,target=payload["target"],generation=payload["generation"])
+    elif operation == "native.plan":
+        if type(payload) is not dict or set(payload) != {"target", "description", "size_gib"}:
+            raise ValueError("invalid native Windows plan payload")
+        request_bytes("native.plan", target=payload["target"], description=payload["description"], size_gib=payload["size_gib"])
+    elif operation in {"switch.to-workload", "native.boot", "environment.create"}:
         target = payload.get("target") if type(payload) is dict else None
         expected = {"description", "modules", "preset", "size_gib", "system_kind", "target"} if operation == "environment.create" else {"target"}
         description = payload.get("description") if type(payload) is dict else None

@@ -26,16 +26,7 @@ FAILSAFE_UNIT = "apx-environment-switch-failsafe-v1"
 
 def transition_screen(message: str, progress: int) -> None:
     """Keep tty1 as a branded progress surface, never a visible Host prompt."""
-    progress = max(0, min(100, progress))
-    filled = round(30 * progress / 100)
-    bar = "#" * filled + "-" * (30 - filled)
-    payload = (
-        "\033[2J\033[H\033[?25l\033[40m\033[96m\n\n\n\n\n\n"
-        "                  APX ENVIRONMENTS\033[0m\033[40m\n\n"
-        f"                  \033[97m{message}\033[0m\033[40m\n\n"
-        f"                  \033[96m[{bar}]  {progress:3d}%\033[0m\033[40m\n\n"
-        "                  \033[90mA tua sessão está a ser preparada.\033[0m\033[40m\n"
-    ).encode()
+    payload = b"\033[2J\033[H\033[?25l\033[40m\033[30m"
     descriptor = os.open("/dev/tty1", os.O_WRONLY | os.O_NOCTTY)
     try:
         os.write(descriptor, payload)

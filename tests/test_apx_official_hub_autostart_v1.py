@@ -25,7 +25,8 @@ def load_subject():
 class OfficialHubAutostartV1Tests(unittest.TestCase):
     def test_unit_keeps_tty1_and_has_bounded_failure_restarts(self) -> None:
         source = UNIT.read_text()
-        self.assertIn("Wants=getty@tty1.service", source)
+        self.assertIn("Wants=apx-boot-console-hide-v1.service", source)
+        self.assertIn("OnFailure=apx-boot-console-recover-v1.service", source)
         self.assertIn("Restart=on-failure", source)
         self.assertIn("StartLimitBurst=3", source)
         self.assertNotIn("User=apx", source)

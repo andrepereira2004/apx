@@ -38,6 +38,10 @@ def wait_for_tty1() -> None:
     raise RuntimeError("tty1 recovery console did not become ready at boot")
 
 
+def hide_boot_getty() -> None:
+    run(("systemctl", "mask", "--runtime", "--now", "getty@tty1.service"), False)
+
+
 def clear_recovery_console() -> None:
     """Hide the raw getty while the graphical Hub takes over the display."""
     descriptor = os.open("/dev/tty1", os.O_WRONLY | os.O_NOCTTY)
@@ -106,6 +110,7 @@ def main() -> int:
     # from launching a competing Hub while the RTX is still leased to VFIO.
     if handoff_active():
         return 0
+    hide_boot_getty()
     wait_for_tty1()
     clear_recovery_console()
     wait_for_host_services()

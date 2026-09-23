@@ -74,28 +74,60 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--confirm", required=True)
     parser.add_argument("--include-host-root", action="store_true")
+    parser.add_argument("--from-host-root", action="store_true")
     arguments = parser.parse_args()
     if os.geteuid() != 0 or arguments.confirm != "SYNC APX PASSWORD" \
             or Path("/etc/hostname").read_text().strip() != "apx-host":
         raise RuntimeError("a confirmação ou a identidade do Host diferem")
     machines = subprocess.run(("/usr/bin/machinectl", "list", "--no-legend"),
                               text=True, capture_output=True, check=True).stdout.splitlines()
-    if [line.split()[0] for line in machines if line.split()] != ["apx-hub"]:
-        raise RuntimeError("o HUB não é o único Environment ativo")
-    _hub_lines, hub_hash, _hub_info = shadow(ENVIRONMENTS / "hub/root/etc/shadow")
+    active = [line.split()[0] for line in machines if line.split()]
+    if arguments.from_host_root:
+        if arguments.include_host_root:
+            raise RuntimeError("o Host não pode ser simultaneamente origem e destino")
+        _source_lines, source_hash, _source_info = shadow(Path("/etc/shadow"), "root")
+    else:
+        if active != ["apx-hub"]:
+            raise RuntimeError("o HUB não é o único Environment ativo")
+        _source_lines, source_hash, _source_info = shadow(ENVIRONMENTS / "hub/root/etc/shadow")
     targets: list[tuple[Path, str, str]] = []
     if arguments.include_host_root:
         targets.append((Path("/etc/shadow"), "host-root.shadow", "root"))
     for directory in sorted(ENVIRONMENTS.iterdir()):
-        if not directory.is_dir() or directory.name == "hub" or NAME.fullmatch(directory.name) is None:
+        if not directory.is_dir() or NAME.fullmatch(directory.name) is None:
             continue
         try:
             record = registration(directory)
         except FileNotFoundError:
             continue
-        if record.get("state") != "stopped" or record.get("role") != "graphical-base":
-            raise RuntimeError(f"{directory.name} não está parado ou não é um Environment gráfico")
+        if directory.name == "hub":
+            if not arguments.from_host_root:
+                continue
+            if record.get("role") != "hub":
+                raise RuntimeError("o registo do HUB não é válido")
+        elif record.get("role") != "graphical-base":
+            raise RuntimeError(f"{directory.name} não é um Environment gráfico")
+        if arguments.from_host_root:
+            expected_machine = "apx-hub" if directory.name == "hub" else "apx-g" + str(record.get("generation", ""))[:7]
+            if record.get("state") == "running":
+                if expected_machine not in active:
+                    raise RuntimeError(f"{directory.name} indica execução sem máquina ativa")
+                details = subprocess.run(("/usr/bin/machinectl", "show", expected_machine,
+                                          "-p", "RootDirectory", "--value"),
+                                         text=True, capture_output=True, check=True)
+                if details.stdout.strip() != str(directory / "root"):
+                    raise RuntimeError(f"a raiz da máquina {directory.name} difere")
+            elif record.get("state") != "stopped" or expected_machine in active:
+                raise RuntimeError(f"o estado de {directory.name} difere da máquina")
+        elif record.get("state") != "stopped":
+            raise RuntimeError(f"{directory.name} não está parado")
         targets.append((directory / "root/etc/shadow", f"{directory.name}.shadow", "apx"))
+    if arguments.from_host_root:
+        expected_active = {"apx-hub" if name == "hub" else "apx-g" + str(registration(ENVIRONMENTS / name).get("generation", ""))[:7]
+                           for name in (target.parent.parent.parent.name for target, _, _ in targets)
+                           if registration(ENVIRONMENTS / name).get("state") == "running"}
+        if set(active) != expected_active or len(active) != len(expected_active):
+            raise RuntimeError("existe uma máquina ativa fora dos Environments validados")
     backup = BACKUPS / (time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()) + "-apx-password-sync-v1")
     backup.mkdir(mode=0o700)
     for target, _backup_name, account in targets:
@@ -105,7 +137,7 @@ def main() -> int:
         for target, backup_name, account in targets:
             saved = backup / backup_name
             attempted.append((target, saved))
-            replace_hash(target, account, hub_hash, saved)
+            replace_hash(target, account, source_hash, saved)
     except Exception:
         for target, saved in attempted:
             if saved.is_file():
@@ -113,7 +145,7 @@ def main() -> int:
         raise
     environment_count = len(targets) - int(arguments.include_host_root)
     host_result = " and Host root" if arguments.include_host_root else ""
-    print(f"APX password hash synchronized to {environment_count} stopped Environments"
+    print(f"APX password hash synchronized to {environment_count} Environments"
           f"{host_result}; backup: {backup}")
     return 0
 

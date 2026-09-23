@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import os
 from pathlib import Path
 import stat
@@ -22,6 +23,84 @@ def load_launcher():
 
 
 class OfficialHubGraphicalTests(unittest.TestCase):
+    def test_extended_startup_refreshes_cursor_then_restores_position(self):
+        subject = load_launcher()
+        monitors = [
+            {"x": -1536, "y": 0, "width": 1920, "height": 1080, "scale": 1.25, "disabled": False},
+            {"x": 0, "y": 0, "width": 1920, "height": 1080, "scale": 1.5, "disabled": False},
+        ]
+        responses = [
+            SimpleNamespace(stdout=json.dumps(monitors), returncode=0),
+            SimpleNamespace(stdout=json.dumps({"x": 256, "y": 552}), returncode=0),
+            SimpleNamespace(stdout="ok\n", returncode=0),
+            SimpleNamespace(stdout="ok\n", returncode=0),
+        ]
+        with mock.patch.object(subject, "hyprctl", side_effect=responses) as ctl, \
+                mock.patch.object(subject.time, "sleep"):
+            subject.settle_initial_cursor(123, "instance")
+        self.assertIn("x=257,y=552", ctl.call_args_list[2].args[-1])
+        self.assertIn("x=256,y=552", ctl.call_args_list[3].args[-1])
+
+    def test_device_lease_catalogue_accepts_external_peripherals_and_bounds_input(self):
+        subject = load_launcher()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            state = root / "state.json"
+            leases = [{"node": f"/dev/input/event{i}", "proxy": str(root / f"device-{i}"),
+                       "major": 13, "minor": 64 + i} for i in range(40)]
+            state.write_text(json.dumps({"schema": 1, "leases": leases}))
+            with mock.patch.object(subject, "DEVICE_LEASE_DIR", root), \
+                    mock.patch.object(subject, "DEVICE_LEASE_STATE", state):
+                self.assertEqual(len(subject._device_lease_state()), 40)
+                state.write_text(json.dumps({"schema": 1, "leases": leases * 7}))
+                with self.assertRaises(subject.OfficialHubGraphicalError):
+                    subject._device_lease_state()
+
+    def test_external_hid_admission_excludes_non_input_and_virtual_devices(self):
+        subject = load_launcher()
+        properties = dict(DEVNAME="/dev/input/event11", ID_BUS="usb", ID_INPUT="1", ID_INPUT_KEYBOARD="1")
+        self.assertTrue(subject.admitted_external_input(properties, properties["DEVNAME"]))
+        for changes in ({"ID_BUS": "virtual"}, {"DEVNAME": "/dev/hidraw0"},
+                        {"ID_INPUT_KEYBOARD": "0"}, {"ID_INTEGRATION": "internal"},
+                        {"ID_INPUT": "0"}):
+            self.assertFalse(subject.admitted_external_input(properties | changes, properties["DEVNAME"]))
+        self.assertTrue(subject.admitted_external_input(properties | {"ID_BUS": "bluetooth"}, properties["DEVNAME"]))
+
+    def test_loading_leaves_existing_plymouth_untouched(self):
+        subject = load_launcher()
+        with mock.patch.object(Path, "read_text", return_value="tty1"), \
+             mock.patch.object(subject, "VFIO_GUEST_MODE", False), \
+             mock.patch.object(subject.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run:
+            subject.transition_display("start")
+            subject.transition_display("release")
+        self.assertEqual(run.call_count, 1)
+        self.assertFalse(subject._transition_display_owned)
+
+    def test_loading_releases_on_preparation_error(self):
+        subject = load_launcher()
+        subject._transition_display_owned = True
+        with mock.patch.object(subject, "_launch", side_effect=RuntimeError("preparation failed")), \
+             mock.patch.object(subject.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run:
+            with self.assertRaisesRegex(RuntimeError, "preparation failed"):
+                subject.launch(False, True)
+        self.assertEqual(run.call_args.args[0], ("/usr/bin/systemctl", "stop", "apx-transition-display-v1.service"))
+        self.assertFalse(subject._transition_display_owned)
+
+    def test_loading_release_failure_keeps_ownership_for_cleanup(self):
+        subject = load_launcher()
+        subject._transition_display_owned = True
+        with mock.patch.object(subject.subprocess, "run", return_value=SimpleNamespace(returncode=1)):
+            with self.assertRaises(subject.OfficialHubGraphicalError):
+                subject.transition_display("release")
+        self.assertTrue(subject._transition_display_owned)
+
+    def test_loading_is_not_started_on_active_desktop(self):
+        subject = load_launcher()
+        with mock.patch.object(Path, "read_text", return_value="tty2"), \
+             mock.patch.object(subject.subprocess, "run") as run:
+            subject.transition_display("start")
+        run.assert_not_called()
+
     def test_firmware_device_leases_are_read_only(self) -> None:
         subject = load_launcher()
         inputs = {"keyboard_ite": "/dev/input/event5", "hotkeys_video": "/dev/input/event4",

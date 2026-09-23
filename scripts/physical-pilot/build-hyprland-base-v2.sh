@@ -45,7 +45,7 @@ sed -i '/^#\[multilib\]$/,/^#Include = \/etc\/pacman.d\/mirrorlist$/ s/^#//' \
   hyprland hypridle hyprlock hyprpolkitagent kitty less libnotify mako man-db \
   lib32-mesa lib32-nvidia-utils lib32-vulkan-icd-loader lib32-vulkan-radeon \
   mousepad nano noto-fonts nvidia-utils pacman-contrib pipewire pipewire-pulse quickshell \
-  ristretto rofi sudo thunar tumbler udiskie udisks2 vulkan-radeon vulkan-tools waybar \
+  papirus-icon-theme ristretto rofi sudo thunar tumbler udiskie udisks2 vulkan-radeon vulkan-tools waybar \
   wireplumber xdg-desktop-portal xdg-desktop-portal-gtk \
   xdg-desktop-portal-hyprland xdg-user-dirs xdg-utils
 

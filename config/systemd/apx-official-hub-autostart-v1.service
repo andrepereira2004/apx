@@ -1,7 +1,9 @@
 [Unit]
+Wants=apx-boot-console-hide-v1.service
+After=apx-boot-console-hide-v1.service
+OnFailure=apx-boot-console-recover-v1.service
 Description=APX direct boot into the official graphical Hub
-After=systemd-user-sessions.service getty@tty1.service apx-host-services-v1.service apx-host-services-v2.service apx-host-services-v3.service apx-audio-state-v1.service apx-coordinated-update-v1.service apx-system-power-v1.service apx-environment-switch-v1.service
-Wants=getty@tty1.service
+After=systemd-user-sessions.service apx-host-services-v1.service apx-host-services-v2.service apx-host-services-v3.service apx-audio-state-v1.service apx-coordinated-update-v1.service apx-system-power-v1.service apx-environment-switch-v1.service
 StartLimitIntervalSec=120
 StartLimitBurst=3
 

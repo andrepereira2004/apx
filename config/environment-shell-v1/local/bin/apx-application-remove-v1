@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ $# -eq 1 && "$1" == *.desktop ]] || { printf 'Selecione uma aplicação .desktop.\n' >&2; exit 2; }
+desktop=$(realpath -e -- "$1")
+case "$desktop" in
+  /usr/share/applications/*.desktop|/var/lib/flatpak/exports/share/applications/*.desktop|"${HOME}"/.local/share/flatpak/exports/share/applications/*.desktop|"${HOME}"/.local/share/applications/*.desktop) ;;
+  *) printf 'A aplicação não pertence a este Environment.\n' >&2; exit 3 ;;
+esac
+
+if [[ "$desktop" == *flatpak* ]]; then
+  app_id=$(basename "$desktop" .desktop)
+  flatpak uninstall --user --assumeyes "$app_id" || flatpak uninstall --assumeyes "$app_id"
+  exit $?
+fi
+
+package=$(pacman -Qo "$desktop" 2>/dev/null | sed -n 's/.* is owned by \([^ ]*\) .*/\1/p' | head -n1)
+[[ -n "$package" ]] || { printf 'Não encontrei o pacote proprietário desta aplicação.\n' >&2; exit 4; }
+exec sudo pacman -Rns -- "$package"

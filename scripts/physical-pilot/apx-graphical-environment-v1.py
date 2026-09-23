@@ -47,6 +47,17 @@ def load_engine():
     return module
 
 
+def verify_nvidia_userspace(root: Path, module_version: Path = Path('/sys/module/nvidia/version')) -> None:
+    """Reject a desktop whose NVIDIA libraries cannot drive the Host module."""
+    version = module_version.read_text().strip()
+    if re.fullmatch(r'[0-9]+(?:\.[0-9]+){2}', version) is None:
+        raise RuntimeError('Host NVIDIA module version is unavailable')
+    library = root / 'usr/lib/libEGL_nvidia.so.0'
+    if not library.is_symlink() or os.readlink(library) != 'libEGL_nvidia.so.' + version \
+            or not library.resolve(strict=True).is_file():
+        raise RuntimeError('Environment NVIDIA libraries do not match the Host module ' + version)
+
+
 def trusted_registration(environment: Path) -> dict[str, object]:
     path = environment / "registration.json"
     metadata = path.lstat(); data = path.read_bytes()
@@ -276,15 +287,28 @@ def configure(engine, name: str) -> dict[str, object]:
         engine.HUB_MEMORY_MAX = "26G"
         engine.VFIO_MEMLOCK_LIMIT = "24G"
     else:
+        # Owner-authorized direct Host console, separate from Hub role proof.
+        hub_console_socket = engine.HOST_CONSOLE_SOCKET
+        engine.HOST_CONSOLE_SOCKET = Path("/run/apx/environment-host-console-v1.sock")
+        engine.HOST_CONSOLE_ENABLED = True
+        hardware_socket = Path("/run/apx/environment-hardware-v1.sock")
         engine.LEASED_SERVICE_SOCKETS = tuple(
-            endpoint for endpoint in engine.LEASED_SERVICE_SOCKETS
-            if endpoint not in {engine.HOST_CONSOLE_SOCKET, engine.UPDATE_SOCKET, engine.POWER_SOCKET}
-        )
+            engine.HOST_CONSOLE_SOCKET if endpoint == hub_console_socket else endpoint
+            for endpoint in engine.LEASED_SERVICE_SOCKETS
+            if endpoint not in {engine.UPDATE_SOCKET, engine.POWER_SOCKET}
+        ) + (hardware_socket,)
 
     original_run = engine.run
 
     def routed_run(arguments: tuple[str, ...], check: bool = True):
         values = list(arguments)
+        if engine.HOST_CONSOLE_ENABLED:
+            if "systemd-nspawn" in values or "/usr/bin/systemd-nspawn" in values:
+                values.append(f"--bind={hardware_socket}:{hardware_socket}")
+            values = [value.replace(
+                f"--bind={engine.HOST_CONSOLE_SOCKET}:/run/apx/host-console-v1.sock",
+                f"--bind={engine.HOST_CONSOLE_SOCKET}:{engine.HOST_CONSOLE_SOCKET}",
+            ) for value in values]
         if len(values) >= 4 and values[0] == str(engine.NETWORK) \
                 and values[-2:] == ["--environment", "hub"]:
             values[-1] = network_identity
@@ -476,6 +500,8 @@ def main() -> int:
     if vfio_capability is not None:
         engine.EXTRA_DEVICE_NODES = activate_vfio(vfio_capability)
     try:
+        if vfio_capability is None:
+            verify_nvidia_userspace(engine.ROOT)
         result = engine.launch(args.test, args.authenticated_handoff)
     finally:
         if vfio_capability is not None:

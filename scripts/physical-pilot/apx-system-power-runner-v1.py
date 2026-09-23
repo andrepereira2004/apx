@@ -7,6 +7,7 @@ import argparse
 import fcntl
 import json
 import os
+import re
 from pathlib import Path
 import signal
 import subprocess
@@ -83,6 +84,23 @@ def quiesce_hub_launcher() -> None:
         raise RuntimeError("official Hub launch supervisor did not stop")
 
 
+def recover_active_workload():
+    active=Path('/run/apx/active-graphical-environment-v1.json')
+    if not active.exists(): return
+    if active.is_symlink() or active.stat().st_uid!=0: raise RuntimeError('untrusted active Environment')
+    record=json.loads(active.read_text())
+    if record.get('role')=='hub': return
+    name=record.get('name','');generation=record.get('generation','')
+    if record.get('role')!='graphical-base' or not re.fullmatch(r'[a-z][a-z0-9-]{0,26}',name):
+        raise RuntimeError('active workload identity differs')
+    registration=Path('/var/lib/apx/environments')/name/'registration.json'
+    if registration.is_symlink() or registration.stat().st_uid!=0: raise RuntimeError('untrusted workload registration')
+    reg=json.loads(registration.read_text())
+    if reg.get('generation')!=generation or reg.get('role')!='graphical-base': raise RuntimeError('active workload generation differs')
+    if record.get('unit')!=f'apx-graphical-{name}-{generation[:8]}.service': raise RuntimeError('active workload unit differs')
+    run(('/usr/lib/apx/apx-graphical-environment-v1.py','--environment',name,'--recover'))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("--action", required=True, choices=("reboot", "poweroff", "suspend")); args = parser.parse_args()
     LOCK.touch(mode=0o600, exist_ok=True); descriptor = os.open(LOCK, os.O_RDWR | os.O_NOFOLLOW)
@@ -94,7 +112,7 @@ def main() -> int:
             atomic({"schema": 1, "profile": "apx-system-power-v1", "state": "committed", "action": args.action})
             run(("/usr/bin/loginctl", "suspend")); return 0
         atomic({"schema": 1, "profile": "apx-system-power-v1", "state": "closing-environment", "action": args.action})
-        time.sleep(2); quiesce_hub_launcher(); run((HUB_RECOVERY, "--recover"))
+        time.sleep(2); quiesce_hub_launcher(); recover_active_workload(); run((HUB_RECOVERY, "--recover"))
         machines = subprocess.run(("/usr/bin/machinectl", "list", "--no-legend"), text=True, capture_output=True, check=False)
         if machines.returncode or machines.stdout.strip(): raise RuntimeError("an Environment survived coordinated shutdown")
         atomic({"schema": 1, "profile": "apx-system-power-v1", "state": "committed", "action": args.action})

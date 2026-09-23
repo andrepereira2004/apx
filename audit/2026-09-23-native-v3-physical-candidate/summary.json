@@ -1,0 +1,122 @@
+{
+  "after": [
+    {
+      "label": "APX_EFI",
+      "number": "1",
+      "partuuid": "9625F250-9ACC-453A-AE63-0C863ADE440F",
+      "size_gib": 1.0,
+      "size_sectors": 2097152,
+      "start_gib": 0.001,
+      "start_sector": 2048
+    },
+    {
+      "label": "APX_CRYPT",
+      "number": "2",
+      "partuuid": "8835C8F0-F02F-4FC2-9035-5DBBC191DF9E",
+      "size_gib": 266.423,
+      "size_sectors": 558729216,
+      "start_gib": 1.001,
+      "start_sector": 2099200
+    },
+    {
+      "label": "APX_WINDOWS_TARGET",
+      "number": "3",
+      "partuuid": "099C31D8-313A-4ABA-B0E0-2B59502C9674",
+      "size_gib": 120.0,
+      "size_sectors": 251658240,
+      "start_gib": 267.424,
+      "start_sector": 560828416
+    },
+    {
+      "label": "APX_WINSETUP",
+      "number": "4",
+      "partuuid": "309BEBB6-5C32-4E21-9C92-6D758E51389D",
+      "size_gib": 9.0,
+      "size_sectors": 18874368,
+      "start_gib": 467.939,
+      "start_sector": 981340160
+    },
+    {
+      "label": "APX_WINDOWS_2",
+      "number": "5",
+      "partuuid": "bd908b2f-9138-54b4-8989-386c732d89d6",
+      "size_gib": 80.0,
+      "size_sectors": 167772160,
+      "start_gib": 387.939,
+      "start_sector": 813568000
+    },
+    {
+      "label": "APX_NATIVE_EFI",
+      "number": "6",
+      "partuuid": "9735565b-1076-52fa-adda-e16a813085d5",
+      "size_gib": 0.5,
+      "size_sectors": 1048576,
+      "start_gib": 387.424,
+      "start_sector": 812486656
+    },
+    {
+      "label": "APX_NATIVE_MSR",
+      "number": "7",
+      "partuuid": "c19e7a7d-d55d-5eee-a50b-e710eaeaa460",
+      "size_gib": 0.016,
+      "size_sectors": 32768,
+      "start_gib": 387.924,
+      "start_sector": 813535232
+    }
+  ],
+  "apx_payload_gib": 266.41,
+  "before": [
+    {
+      "label": "APX_EFI",
+      "number": "1",
+      "partuuid": "9625F250-9ACC-453A-AE63-0C863ADE440F",
+      "size_gib": 1.0,
+      "size_sectors": 2097152,
+      "start_gib": 0.001,
+      "start_sector": 2048
+    },
+    {
+      "label": "APX_CRYPT",
+      "number": "2",
+      "partuuid": "8835C8F0-F02F-4FC2-9035-5DBBC191DF9E",
+      "size_gib": 315.938,
+      "size_sectors": 662571008,
+      "start_gib": 1.001,
+      "start_sector": 2099200
+    },
+    {
+      "label": "APX_WINDOWS_TARGET",
+      "number": "3",
+      "partuuid": "099C31D8-313A-4ABA-B0E0-2B59502C9674",
+      "size_gib": 151.0,
+      "size_sectors": 316669952,
+      "start_gib": 316.939,
+      "start_sector": 664670208
+    },
+    {
+      "label": "APX_WINSETUP",
+      "number": "4",
+      "partuuid": "309BEBB6-5C32-4E21-9C92-6D758E51389D",
+      "size_gib": 9.0,
+      "size_sectors": 18874368,
+      "start_gib": 467.939,
+      "start_sector": 981340160
+    }
+  ],
+  "can_create": false,
+  "executable": false,
+  "generated_at_utc": "2026-09-23T18:19:58Z",
+  "generation": "f66d7cea-6f3a-4b94-ab8d-90c113a02c3b",
+  "measured_backup_required": true,
+  "plan_sha256": "236ad669990204228f90061ece22679e01845abeed60308e501215508f82fbc0",
+  "profile": "apx-native-v3-nonexecutable-physical-candidate",
+  "remaining_gates": [
+    "measured-backup-capacity",
+    "offline-executor-and-rollback-tested",
+    "verified-Windows-backup-and-restore",
+    "per-instance-EFI-and-BCD-verified",
+    "owner-disk-write-approval"
+  ],
+  "stale_if_layout_or_measurements_change": true,
+  "target": "windows-2"
+}

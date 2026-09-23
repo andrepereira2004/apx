@@ -96,7 +96,7 @@ popup.screen = 2; assert.equal(popupBarTargetAt(320,20), null);
         subprocess.run(['node', '-e', js], check=True, capture_output=True, text=True)
 
     @unittest.skipUnless(shutil.which('node'), 'Node required for QML JavaScript behavior checks')
-    def test_first_navigation_key_starts_at_correct_end(self):
+    def test_first_navigation_key_starts_at_first_control(self):
         source = SHELL.read_text()
         body = source.split('    function navigateGenericMenu(event) {', 1)[1].split('\n    }', 1)[0]
         js = """
@@ -106,10 +106,12 @@ let popupKind = 'battery', menuKeyboardNavigation = false, chosen = -1;
 const items = [{activeFocus:false},{activeFocus:false},{activeFocus:false}];
 function genericMenuItems() {return items;}
 function focusMenuItem(item) {chosen=items.indexOf(item);}
+function menuNavigationRect(item) {return {x:0,y:items.indexOf(item)*30,w:100,h:20};}
+function spatialMenuIndex(rects,current,key) {return current+1;}
 function navigateGenericMenu(event) {""" + body + """}
 navigateGenericMenu({key:99}); assert.equal(chosen,-1); assert.equal(menuKeyboardNavigation,false);
 navigateGenericMenu({key:Qt.Key_Down}); assert.equal(chosen,0); assert.equal(menuKeyboardNavigation,true);
-navigateGenericMenu({key:Qt.Key_Backtab}); assert.equal(chosen,2);
+navigateGenericMenu({key:Qt.Key_Backtab}); assert.equal(chosen,0);
 items[0].activeFocus=true; navigateGenericMenu({key:Qt.Key_Down}); assert.equal(chosen,1);
 """
         subprocess.run(['node', '-e', js], check=True, capture_output=True, text=True)

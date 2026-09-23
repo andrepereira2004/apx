@@ -67,12 +67,14 @@ class HostConsoleV1Tests(unittest.TestCase):
         self.assertNotIn("input(", source)
         self.assertNotIn("subprocess", source)
 
-    def test_exact_launcher_mounts_console_but_generic_disables_it(self):
+    def test_workload_console_is_separate_and_vm_stays_disabled(self):
         exact = LAUNCHER.read_text()
         generic = (ROOT / "scripts/physical-pilot/apx-graphical-environment-v1.py").read_text()
         self.assertIn("HOST_CONSOLE_ENABLED = True", exact)
         self.assertIn("HOST_CONSOLE_SOCKET", exact)
         self.assertIn("engine.HOST_CONSOLE_ENABLED = False", generic)
+        self.assertIn("engine.HOST_CONSOLE_ENABLED = True", generic)
+        self.assertIn("/run/apx/environment-host-console-v1.sock", generic)
 
     def test_hub_console_shortcut_focuses_or_opens_one_fresh_pty(self):
         source = OPEN.read_text(); compile(source, str(OPEN), "exec"); compile(CLIENT.read_text(), str(CLIENT), "exec")

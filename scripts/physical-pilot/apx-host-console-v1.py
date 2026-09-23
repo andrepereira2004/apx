@@ -32,6 +32,7 @@ DETACHED_OUTPUT_LIMIT = 1024 * 1024
 TICKET_LOCK = threading.Lock()
 TICKETS: dict[str, tuple[int, float]] = {}
 TICKET_TTL_SECONDS = 10
+AUTHORIZATION = "official-hub-button"
 
 
 def audit(event: str, result: str, uid: int | None = None) -> None:
@@ -247,7 +248,7 @@ def handle(connection: socket.socket) -> None:
         response(connection, True, result)
         return
     if operation == "capabilities.get":
-        result = {"root_console": True, "authorization": "official-hub-button",
+        result = {"root_console": True, "authorization": AUTHORIZATION,
                   "terminal_size_forwarding": True, "persistent_pty": False,
                   "one_time_ticket": True}
     else:

@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+# Runs only as container root. Never bind the Host's proc filesystem.
+set -eu
+[[ $(systemd-detect-virt --container) == systemd-nspawn ]]
+# Refuse a container without a private, shifted user namespace.
+read -r inside outside count < /proc/self/uid_map
+[[ $inside == 0 && $outside != 0 && $count -le 65536 ]]
+install -d -m 0755 /run/apx-flatpak-proc
+if ! mountpoint -q /run/apx-flatpak-proc; then
+    mount -t proc -o nosuid,nodev,noexec proc /run/apx-flatpak-proc
+fi
+# Bubblewrap needs a complete proc view for nested PID namespaces, and writes
+# max_user_namespaces only in its newly created user namespace. Leave the
+# existing /proc masks and all other /proc/sys protections intact.
+mount --bind /run/apx-flatpak-proc/sys/user /proc/sys/user

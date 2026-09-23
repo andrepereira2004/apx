@@ -22,9 +22,11 @@ import uuid
 
 try:
     from apx_environment_features import local_packages_for, packages_for, validate_selection
+    from apx_environment_desktop_defaults import install_flatpak_defaults
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
     from apx_environment_features import local_packages_for, packages_for, validate_selection
+    from apx_environment_desktop_defaults import install_flatpak_defaults
 
 
 STATE = Path("/var/lib/apx")
@@ -44,10 +46,14 @@ GRAPHICAL_CONFIG_ASSETS = {
     "alacritty/alacritty.toml": "14f9191aec4f69568e4c12bba0b96c3cf90989f0a2295eb79bf1a277b7b6a3be",
     "fastfetch/apx-logo.txt": "cd7ae1943f3b4da9c751e93a1f19f5c12594ae35a28dce0d80fcfaa8f7149077",
     "fastfetch/config.jsonc": "9c8f7b3184452b42c3e8670805cf7215fa073a7fe32f25d9251a17e08bc4c736",
-    "hyprland/hyprland.conf": "8d793c51f1fb5195d12636ebc504d6c80cfac836245bacbcf5f90ac769a925ac",
+    "hyprland/hyprland.conf": "1f95c439e98dd1841eab68e859b6f3e5a85cee01ef7285594993ab0a0bda248f",
     "rofi/config.rasi": "2894cd7636fcf0f03f1a7c19a1008cb8b0c162ac5fae4e9fa85dfe7484a2aa78",
     "waybar/config.json": "7a045de24f89c69be7e373cc7dc82bb06b62b0a8ee15ec41719fbce0f0de2d2f",
     "waybar/style.css": "4e649de831c068be9ff05d0c9d6ad03351e1b1a1c44ad752b44a8c353bcd90ca",
+}
+GRAPHICAL_CONFIG_PREVIOUS_DIGESTS = {
+    # Existing admitted base releases retain the earlier Super+D binding.
+    "hyprland/hyprland.conf": "8d793c51f1fb5195d12636ebc504d6c80cfac836245bacbcf5f90ac769a925ac",
 }
 DESKTOP_CONFIG_SEED = Path("/usr/share/apx/config-seeds/desktop-essential-v1")
 DESKTOP_CONFIG_ASSETS = {
@@ -62,27 +68,75 @@ LOCAL_PACKAGE_MANIFESTS = {
     "nvidia-utils": "nvidia-utils-v1.json",
 }
 ENVIRONMENT_SHELL_ASSETS = {
+    "Thunar/uca.xml": "53566c29b6d6cba38b3bc41117cf74590e3f378215c23c01b801dfe7363b9c74",
+    "apx/bashrc": "c92bd4f495294992126c8145ef2990d3042ba4d42c820332881ad08669872c04",
     "apx/wallpapers/alpine-lake.png": "dd5794c56ac03f3befb28b48554222da3a44f8f695fb4f1e9f8ac8c3f14ff09d",
     "apx/wallpapers/atlantic-coast.png": "2204c16ad3f3cea13c2b0af0179800262a0a282685bcea13e2d94d1da7cf1411",
     "apx/wallpapers/rainforest-stream.png": "624a391248bee708ce4195735f9e69937083d0e2f7ba4b9f025d92f231916535",
+    "brave-flags.conf": "beed8f20ca3b1de51bfd0a03b862afd62e51933141378c67bd1f34be1443280f",
+    "fontconfig/fonts.conf": "ff525fe6d18ebead4e7e1a7ed92ca5d92b8d73f0544a129aa2161ebcc2bc3b24",
+    "gtk-3.0/bookmarks": "04319388475f0674511ab87d2ea11e52c6407414bd975daa9cf4254ff9c207a2",
+    "gtk-3.0/gtk.css": "2f115f92ceecf22e4ab8e9cfd968bdcb391517727ef24b915a456416ca705685",
+    "gtk-3.0/settings.ini": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+    "gtk-4.0/settings.ini": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+    "hypr/apx-monitors.lua": "ac3a58b2504062c0faa3b3c452743a5b09f5367cfb2956a4c4d36e9fb0755585",
     "hypr/hypridle.conf": "02a0289df8cf26bb3c537ec40cdc2d3e64b08a52785d2759a6ec1cab1ba04476",
-    "hypr/hyprlock.conf": "5dfd13d9c23c602a24dfc69c416550425069cf47876cb5ccc4555a29681dc9a0",
-    "hypr/hyprland.lua": "1a7bf885e5266303f78b8a68b8368d9b80468c12e836e1c8c3c4cbc455234af1",
-    "hyprland/hyprland.conf": "4f572489e1af6ef871e5a4a66c43e9446531aaea974475df9797ff5172e82f7c",
-    "mako/config": "53cda37280ea02455e62879186619aae296b08e8f10bd8cc1c09fd25239cf122",
+    "hypr/hyprland.lua": "9528e4fdaa3c236fd62c87be2bf3acf63f1b45b94f4b1757c02745219c87cff8",
+    "hypr/hyprlock.conf": "ebc0d041bc4c3e1772afb46096a3aab32c1dcfa5b610ad6ec0c44516b4910c52",
+    "hyprland/hyprland.conf": "43c9eead30c90654ef7280b5eedf092ec739d04c528784e251292db7e25a6f9f",
+    "kitty/kitty.conf": "bfe0f0dfb7614cda2904c425b4b5bcc24aa5bbe6f7ce98d622857748172abf3f",
+    "local/bin/apx-application-catalog-v1": "6362d85def298ce2f3ba5581e39f0f4aed8b085b00f47b1cd332d34c54934306",
+    "local/bin/apx-application-remove-v1": "5d9a2f077813d1a246fa0498b33313b8fd23a87908024ebc9cf2d900c5d60ebb",
+    "local/bin/apx-desktop-activation-v1": "aa70ada5a34420e2e6c8d52bbcbf41b5c6c0b0bedb1afd87a2418ed25f56abed",
     "local/bin/apx-detached-launch": "40970a9ed235a6799913211dc135c66222ee55e15d5d38e5cfe5d2feafd785ef",
-    "local/bin/apx-face-auth-state-v1": "82eec2b7ca859006b14d9118bb5e1aa12d1a0d5f480cf1a3f9aeb27543b3b642",
-    "local/bin/apx-host-console-open": "ed33a55eb6ac1eb1682989efd41ad26c2b12549f0dcfd056252a4f239d94b229",
+    "local/bin/apx-environment-update-v1": "a361fc4e940658cba4eab43154939176e4412db5909cd6ce036cfa91c7ca849e",
+    "local/bin/apx-face-auth-state-v1": "82ea2de97b0990ebbd7dbdf1c664ee81343aabb84c98fc2f86501f45706da3bb",
+    "local/bin/apx-host-console-open": "99c2e22329af1acbebe5c987651353acad76cd1181b946d4c2dbbed706e8c396",
     "local/bin/apx-host-console-terminal": "187025f24fda099acc85a7b82b0e0cacfd979f86feca77219911e661e7ec963e",
-    "local/bin/apx-laptop-action-v1": "a07d4d5a6a4bcbecf4fefb536da258506dbb6f84b3bf185c6440ab04a750f942",
-    "local/bin/apx-shortcuts-v1": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
+    "local/bin/apx-keyring-prepare-v1": "ca3f235fd1598cb8093af6bc48bd6e1d1c77f57271db243d435e8b831e1a89c1",
+    "local/bin/apx-laptop-action-v1": "6ec1dbb32c79ebc816387aa1300560bd3f912d9561e7fb18b6d7d89109a7e4a8",
+    "local/bin/apx-legion-brightness-keys-v1.py": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550",
     "local/bin/apx-notification-focus-v1": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
-    "local/bin/apx-shell-v1": "861c705550466f0ecdf8467424e9c0a7b73e795ee8121bf5551a527a69a2f336",
-    "quickshell/apx/BarButton.qml": "7cf927645864a644e88ec44142823d070e1a2caec65fb5a168b378fa07c6bbeb",
-    "quickshell/apx/BounceMouseArea.qml": "7bd6f1a76ee42a94253d1e7ee9578426e6beaca4f5cb9e0c885007eb1f6efd37",
+    "local/bin/apx-shell-v1": "54a2b2303359665c7cd7a46172a2001d427ea3cb54dc65be5c23fc903eeda76e",
+    "local/bin/apx-shortcuts-v1": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
+    "local/bin/apx-sysinfo": "1daf4b37c84c855191d2190e2c44a91b95b96b0ce1a46944ea28f580349d14b5",
+    "local/bin/apx-workspace-overview-v1": "830c8dd169b2e180bcc2671c52c14ada5037873ebc3152090af466522b76483e",
+    "local/libexec/apx-system-power-client-v1.py": "c821f166113691d60f044885945412b53f8f7ddf83cf8955f30421516604c740",
+    "local/libexec/apx_system_power_contract.py": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8",
+    "local/share/fonts/cascadia/CascadiaMono-Bold.ttf": "b22cb603ed23cac36e8444846e1841caca21719a5e852780a8d37ae7a49b0a36",
+    "local/share/fonts/cascadia/CascadiaMono-BoldItalic.ttf": "ecaeab55e6334408f8ff1fde78a99ddaeb3bb7fad4fcd177df8475c88a7d240f",
+    "local/share/fonts/cascadia/CascadiaMono-Italic.ttf": "8d98a33e7617c14dd1d200b4900bc6c2d5d7165abb5c09e9d2fd51c38ce9c9ff",
+    "local/share/fonts/cascadia/CascadiaMono-Regular.ttf": "06520d032ec274fa5040b22c6f4a1d829081b24ba40b2da56dae89bf10c7b481",
+    "local/share/fonts/cascadia/LICENSE.txt": "51882cd3cdba4e16f220f44ddb08a635c38c44ea6e0975db2574f4be6f958238",
+    "local/share/fonts/selawik/LICENSE.txt": "77b7c2506d4efb22e09c8ccf10159f4956eab3ef7c007fef95de136bcf45300c",
+    "local/share/fonts/selawik/selawk.ttf": "e9d98518d8ac2817782a9a382430463a2e0793ea68350b695bb727d9a830ee1c",
+    "local/share/fonts/selawik/selawkb.ttf": "f0db5e174a90e0956ad7d2844bdca1d5e6da92ec65b2c04e57ba9b180668c904",
+    "local/share/fonts/selawik/selawkl.ttf": "8e19d073091a1e869b5b0d48b925e605c0a4c6ece7df7b22a364fb065314c4c5",
+    "local/share/fonts/selawik/selawksb.ttf": "0a9e9d0549a10f24bef9b3a29e06fe6e0b5c21e7a784c503b048a307841a7783",
+    "local/share/fonts/selawik/selawksl.ttf": "8620960344f12093482cded984a1aafa5a57d24cbf7e9299da125ccf0e9d4102",
+    "local/share/icons/APX-Graphite/index.theme": "6ec40f1027ef75c09e80d1143779d806ad92cbea920353689994c9beef965b50",
+    "local/share/icons/APX-Graphite/scalable/places/folder-documents.svg": "0ae5d0547d11f011c2b425338d7f7df6b5a89c9209646b9a994b219ca8fe6eff",
+    "local/share/icons/APX-Graphite/scalable/places/folder-download.svg": "19321af475280625ed2327c03630a85f4a6a2c81424635f4079f9ce3cde58c3b",
+    "local/share/icons/APX-Graphite/scalable/places/folder-music.svg": "4e7fc7f5ec7fd8ae0b6cb3f489045c85372245000a68a09929457000782f2ce1",
+    "local/share/icons/APX-Graphite/scalable/places/folder-open.svg": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+    "local/share/icons/APX-Graphite/scalable/places/folder-pictures.svg": "477cd43895a95cd5d64d212f427b8dbc54cbbb847a147ced86da614a3ef606c3",
+    "local/share/icons/APX-Graphite/scalable/places/folder-publicshare.svg": "bbcad1194e605f0d51e172a1b83c093a271ceb3a31d4418c8978dc064c244bec",
+    "local/share/icons/APX-Graphite/scalable/places/folder-remote.svg": "337921ce54353749fc9496b0b59e3ab2774e2ca607833a33413f28ac32b3db50",
+    "local/share/icons/APX-Graphite/scalable/places/folder-saved-search.svg": "e371d22b79521f3c4b139322bb12307df50d73e248e96531eaae1b42d47cde7d",
+    "local/share/icons/APX-Graphite/scalable/places/folder-templates.svg": "f036a39e0fcd703fe6081b6ba45fc9164506906ef7f26895e39d0f4429d1ffe6",
+    "local/share/icons/APX-Graphite/scalable/places/folder-videos.svg": "1ff0dbfa2d18ab03b727bd2f115da5b9790d6a5a5afb2b45171d2a24bbf428a9",
+    "local/share/icons/APX-Graphite/scalable/places/folder.svg": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+    "local/share/icons/APX-Graphite/scalable/places/user-desktop.svg": "d015e06aa73c72e3042568ad2327132acf5176c610abeb7acfa443af51606ab6",
+    "mako/config": "53cda37280ea02455e62879186619aae296b08e8f10bd8cc1c09fd25239cf122",
+    "mimeapps.list": "af6014a10d33380f6fb38f8d042a8d0c5defa51a07c5a4a42d1c0e038edeb01d",
+    "quickshell/apx/BarButton.qml": "3443bd463ecbe3c9c3d3c24774dc76cb06eed6ac2973bdc1a5e21e2794e3a64a",
+    "quickshell/apx/BounceMouseArea.qml": "6d6ea8c4f2d926ca40f157ea0d7443134cc35bbe9c675dc148b4aeaa6275c938",
     "quickshell/apx/ControlIcon.qml": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
-    "quickshell/apx/shell.qml": "8d4a879c44bce447d06b1ccc768485aeead7e41580b7c50b8a5df711d545fcfd",
+    "quickshell/apx/shell.qml": "e3a1a612bbf52a32cac129f687c65554a0cf3792ee12d137c4bd861f75266fae",
+    "rofi/config.rasi": "dfefd17cf9f62af0091607207a1bb0cf610a330294badb2b13a875cd3fb31708",
+    "xdg-desktop-portal/portals.conf": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
+    "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "3696963c6abe55635a1c4a2eb96e9b8aba50eacf19a978c469dfc571af565568"
 }
 MAX_GRAPHICAL_CONFIG_BYTES = 1024 * 1024
 MAX_WALLPAPER_BYTES = 4 * 1024 * 1024
@@ -208,7 +262,9 @@ def copy_graphical_config_seed(seed: Path, destination: Path, uid: int = 1000, g
                 raise Refusal("graphical configuration asset exceeds the size limit")
         finally:
             os.close(descriptor)
-        if hashlib.sha256(value).hexdigest() != expected_digest:
+        if hashlib.sha256(value).hexdigest() not in {
+            expected_digest, GRAPHICAL_CONFIG_PREVIOUS_DIGESTS.get(relative)
+        }:
             raise Refusal("graphical configuration asset digest differs")
         content[relative] = value
 
@@ -364,7 +420,7 @@ def copy_environment_shell_seed(
             if not stat.S_ISREG(metadata.st_mode) or target.is_symlink():
                 raise Refusal("environment shell destination asset is unsafe")
         temporary = target.with_name(f".{target.name}.environment-shell-{os.getpid()}.tmp")
-        mode = 0o755 if relative.startswith("local/bin/") else 0o600
+        mode = 0o755 if relative.startswith(("local/bin/", "local/libexec/")) else 0o600
         descriptor = os.open(
             temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC, mode,
         )
@@ -560,6 +616,8 @@ def create(plan_identity: str, approval: str) -> None:
         user_home = home / "apx"
         user_home.mkdir(mode=0o700)
         os.chown(user_home, 1000, 1000)
+        home_alias = home / "Home"
+        home_alias.symlink_to("apx")
         skeleton = root / "etc/skel"
         if skeleton.is_dir() and not skeleton.is_symlink():
             for source in sorted(skeleton.iterdir()):
@@ -581,6 +639,8 @@ def create(plan_identity: str, approval: str) -> None:
             copy_graphical_config_seed(seed, destination)
             copy_desktop_config_seed(DESKTOP_CONFIG_SEED, destination, role)
             copy_environment_shell_seed(ENVIRONMENT_SHELL_SEED, user_home)
+        if role in GRAPHICAL_ROLES | {"hub"}:
+            install_flatpak_defaults(root)
         if role == "graphical-base":
             configure_environment_features(root, plan)
         if role == "hub":
@@ -637,7 +697,11 @@ def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
         raise Refusal("Environment apx account is absent")
     write_trusted_shadow(root, "\n".join(target_lines) + "\n")
 
-    packages = packages_for(modules)
+    # Every graphical-base role can expose a connector wired to the Host's
+    # NVIDIA card, including the minimal desktop preset.
+    packages = tuple(sorted(set(packages_for(modules)) | {
+        "egl-gbm", "egl-wayland", "egl-wayland2", "egl-x11",
+    }))
     if packages:
         if any(package.startswith("lib32-") for package in packages):
             pacman_config = root / "etc/pacman.conf"
@@ -660,11 +724,19 @@ def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
         run(["pacman", "--root", str(root), "--dbpath", str(root / "var/lib/pacman"),
              "--cachedir", "/var/cache/pacman/pkg", "--config", str(root / "etc/pacman.conf"),
              "--disable-sandbox", "-Syu", "--needed", "--noconfirm", *packages])
-    for package in local_packages_for(modules):
+    for package in tuple(sorted(set(local_packages_for(modules)) | {"nvidia-utils"})):
         artifact = validated_local_package_artifact(package)
+        if package == "nvidia-utils":
+            module_version = host_nvidia_version()
+            if not module_version or not artifact.name.startswith(f"nvidia-utils-{module_version}-"):
+                raise Refusal("NVIDIA Environment artifact does not match the Host module")
         run(["pacman", "--root", str(root), "--dbpath", str(root / "var/lib/pacman"),
              "--cachedir", "/var/cache/pacman/pkg", "--config", str(root / "etc/pacman.conf"),
-             "--disable-sandbox", "-U", "--needed", "--noconfirm", str(artifact)])
+            "--disable-sandbox", "-U", "--needed", "--noconfirm", str(artifact)])
+
+
+def host_nvidia_version() -> str:
+    return Path("/sys/module/nvidia/version").read_text().strip()
 
 
 def validated_local_package_artifact(package: str) -> Path:

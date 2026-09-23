@@ -123,7 +123,7 @@ def _write_new_regular(path: Path, content: bytes, mode: int) -> None:
 
 
 def _configure_target() -> None:
-    _append_unique(TARGET_ROOT / "etc/passwd", "apx:", "apx:x:1000:1000:APX graphical Environment:/home/apx:/usr/bin/bash")
+    _append_unique(TARGET_ROOT / "etc/passwd", "apx:", "apx:x:1000:1000:Home:/home/apx:/usr/bin/bash")
     _append_unique(TARGET_ROOT / "etc/group", "apx:", "apx:x:1000:")
     _append_unique(TARGET_ROOT / "etc/shadow", "apx:", "apx:!:::::::")
     _append_unique(TARGET_ROOT / "etc/gshadow", "apx:", "apx:!::")

@@ -15,15 +15,16 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("readonly property real controlCenterScale: 1", source)
         self.assertIn("forced SVG icons through an intermediate texture", source)
         self.assertIn("340 * root.controlCenterScale", source)
-        self.assertIn("(root.isHub ? 440 : 394) * root.controlCenterScale", source)
+        self.assertIn("((root.isHub ? 470 : 394) + (root.hasExternalDisplay ? 100 : 0)) * root.controlCenterScale", source)
         self.assertIn("popup.menuWidth / root.controlCenterScale", source)
         self.assertIn("Math.min(popup.menuHeight, popup.height - y - 8,", source)
         self.assertIn("menuContent.implicitHeight + 20", source)
-        self.assertIn('property real popupReveal: 1', source)
-        self.assertIn('* (0.96 + 0.04 * root.popupReveal)', source)
-        self.assertIn('opacity: root.popupReveal', source)
+        self.assertIn('property bool popupAnimationPending: false', source)
+        self.assertIn('OpacityAnimator { target: popupBackground', source)
+        self.assertIn('ScaleAnimator {', source)
+        self.assertIn('function onFrameSwapped()', source)
         self.assertIn('id: popupOpenAnimation', source)
-        self.assertIn('property: "popupReveal"', source)
+        self.assertNotIn('property: "popupReveal"', source)
         self.assertIn('duration: 160', source)
         self.assertNotIn('id: popupOpenTimer', source)
         self.assertNotIn('property bool popupOpening', source)
@@ -36,9 +37,9 @@ class ControlCenterScaleTests(unittest.TestCase):
         show = source.split("function showPopup()", 1)[1].split("function togglePopup", 1)[0]
         toggle = source.split("function togglePopup", 1)[1].split("function focusEnvironmentMenuAfterOpen", 1)[0]
 
-        self.assertIn("popupReveal = 0", show)
+        self.assertIn("popupBackground.opacity = 0.001", show)
         self.assertIn("popup.open = true", show)
-        self.assertIn("popupOpenAnimation.restart()", show)
+        self.assertIn("popupAnimationPending = true", show)
 
         # Switching from one APX menu to another must not destroy/hide the
         # layer surface for a frame before revealing the next menu.
@@ -57,7 +58,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("property bool animateActivation: false", bar_button)
         self.assertIn("property bool animateDeactivation: false", bar_button)
         self.assertIn(
-            "readonly property bool visuallyActive: pointer.containsMouse || alternateActive",
+            "readonly property bool visuallyActive: (hoverOverride === null ? pointer.containsMouse : hoverOverride) || alternateActive",
             bar_button,
         )
         self.assertIn("MouseArea {", bar_button)
@@ -74,7 +75,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("scale: pointer.pressed || button.animateActivation || button.animateDeactivation ? 0.96 : 1", bar_button)
         self.assertIn('color: visuallyActive ? activeSurface : "transparent"', bar_button)
         self.assertIn("border.width: visuallyActive ? button.activeBorderWidth : 0", bar_button)
-        self.assertIn("border.color: accentColor", bar_button)
+        self.assertIn("border.color: alternateActive ? accentColor : hoverBorderColor", bar_button)
         self.assertNotIn("mouse.containsMouse", bar_button)
         self.assertEqual(
             bar_button.count("enabled: button.animateActivation || button.animateDeactivation"),
@@ -90,7 +91,7 @@ class ControlCenterScaleTests(unittest.TestCase):
             block = source.split(f"id: {button_id}", 1)[1].split("onActivated:", 1)[0]
             self.assertIn(f"alternateLabel: {button_id}.label", block)
             self.assertIn(
-                f'alternateActive: popup.open && root.popupKind === "{kind}"',
+                f'alternateActive: root.bar === screenBar && popup.open && root.popupKind === "{kind}"',
                 block,
             )
             self.assertIn(
@@ -107,7 +108,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn('label: "[|]"', controls)
         self.assertIn('alternateLabel: "[A]"', controls)
         self.assertIn(
-            'alternateActive: popup.open && root.popupKind === "controls"',
+            'alternateActive: root.bar === screenBar && popup.open && root.popupKind === "controls"',
             controls,
         )
         self.assertIn(
@@ -159,10 +160,10 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertNotIn("popupKeyboardClaiming", source)
         self.assertNotIn("popupKeyboardClaimTimer", source)
         self.assertIn("open && root.popupKeyboardRequested", popup)
-        self.assertIn("? WlrKeyboardFocus.Exclusive", popup)
-        self.assertNotIn("WlrKeyboardFocus.OnDemand", popup)
-        self.assertNotIn("HyprlandFocusGrab", source)
-        self.assertNotIn("import Quickshell.Hyprland", source)
+        self.assertIn("? WlrKeyboardFocus.OnDemand", popup)
+        self.assertNotIn("WlrKeyboardFocus.Exclusive", popup)
+        self.assertIn("HyprlandFocusGrab", source)
+        self.assertIn("Hyprland.focusedMonitor", source)
 
         dismiss = source.split("id: popupDismissLayer", 1)[1].split(
             "id: popup\n", 1
@@ -172,7 +173,8 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("id: dismissInputRegion", dismiss)
         self.assertIn("width: popup.open ? parent.width : 0", dismiss)
         self.assertIn("height: popup.open ? parent.height : 0", dismiss)
-        self.assertIn("WlrLayershell.layer: WlrLayer.Top", dismiss)
+        self.assertIn("WlrLayershell.layer: root.bar && screen === root.bar.screen ? WlrLayer.Top : WlrLayer.Overlay", dismiss)
+        self.assertIn("screen: modelData", dismiss)
         self.assertIn("WlrLayershell.keyboardFocus: WlrKeyboardFocus.None", dismiss)
         self.assertIn("onClicked: root.closePopup()", dismiss)
 
@@ -187,7 +189,7 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("color: root.popupPanel", popup_frame)
         self.assertIn('property color popupPanel: "#d90a1014"', source)
         self.assertIn('property color panel: "#d90a1014"', source)
-        self.assertIn('border.color: root.controlButtonOutline', popup_frame)
+        self.assertIn('border.color: root.shellBorder', popup_frame)
         self.assertNotIn("color: root.card", popup_frame)
         self.assertNotIn("border.color: root.cyanDim", popup_frame)
 
@@ -205,7 +207,7 @@ class ControlCenterScaleTests(unittest.TestCase):
             ("battery", "batteryButton"),
             ("controls", "controlCenterButton"),
         ):
-            self.assertIn(f'root.togglePopup("{kind}", {button}, true)', ipc)
+            self.assertIn(f'root.toggleFocusedPopup("{kind}")', ipc)
 
     def test_audio_slider_updates_volume_while_dragging(self) -> None:
         source = SHELL.read_text()
@@ -347,16 +349,16 @@ class ControlCenterScaleTests(unittest.TestCase):
 
     def test_workload_overview_has_room_for_all_actions(self) -> None:
         source = SHELL.read_text()
-        overview = source.split('visible: root.controlsAllClosed() && !root.powerConfirmOpen', 5)[-1]
+        overview = source.split('visible: root.popupKind === "controls"', 1)[1]
         self.assertIn("columns: 2", overview)
         self.assertIn("height: visible ? 85 : 0", overview)
         # The compact 46px radio row recovered more space than the taller
         # 40px action cards and their 9px section gap consume.
         self.assertIn("height: visible ? 46 : 0", source)
         self.assertIn("width: parent.width; height: visible ? 9 : 0", overview)
-        for label in ('root.isHub ? "Update" : "Apps"', 'text: "Bloquear"',
+        for label in ('text: "Atualizar"', 'text: "Bloquear"',
                       'root.isHub ? "Reiniciar" : "Ficheiros"',
-                      'root.isHub ? "Desligar" : "Voltar"'):
+                      'text: "Encerrar"'):
             self.assertIn(label, overview)
 
 

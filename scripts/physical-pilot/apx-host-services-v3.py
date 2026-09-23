@@ -45,10 +45,11 @@ CAPABILITIES = {
                    "bluetooth.power", "bluetooth.scan", "bluetooth.status",
                    "capabilities.get", "events.subscribe", "network.connect", "network.disconnect",
                    "network.connectivity-check", "network.forget", "network.portal.open",
-                   "network.scan", "network.status", "radio.status", "snapshot.get"],
+                   "network.scan", "network.status", "radio.status", "snapshot.get", "calendar.load", "calendar.save"],
     "security": {"bluetooth_pairing_agent": "KeyboardDisplay", "enterprise_wifi": False,
                  "secret_transport": "unix-socket-body", "shell": False},
 }
+CALENDAR_PATH = Path("/var/lib/apx/calendar-v1/events.json")
 _LOCK = threading.Lock()
 _MUTATION_LOCK = threading.Lock()
 _CONNECTIVITY_CHECK_LOCK = threading.Lock()
@@ -416,7 +417,25 @@ def snapshot() -> dict[str, object]:
     return {"bluetooth": bluetooth_state(), "capabilities": CAPABILITIES, "health": "ok",
             "network": network_state(), "power": power_state(), "radio": radio_state(),
             "time": {"ntp_enabled": values.get("NTP") == "yes", "synchronized": values.get("NTPSynchronized") == "yes",
-                     "timezone": values.get("Timezone", "Etc/UTC")}, "version": 3}
+             "timezone": values.get("Timezone", "Etc/UTC")}, "version": 3}
+
+
+def calendar_load() -> dict[str, object]:
+    try:
+        value = json.loads(CALENDAR_PATH.read_text(encoding="utf-8"))
+    except (FileNotFoundError, OSError, json.JSONDecodeError):
+        return {"events": [], "categories": []}
+    return value if isinstance(value, dict) and isinstance(value.get("events"), list) and isinstance(value.get("categories"), list) \
+        else {"events": [], "categories": []}
+
+
+def calendar_save(payload: dict[str, object]) -> dict[str, object]:
+    CALENDAR_PATH.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    temporary = CALENDAR_PATH.with_suffix(".tmp")
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+    os.chmod(temporary, 0o600)
+    os.replace(temporary, CALENDAR_PATH)
+    return payload
 
 
 def secret_connect(ssid: str, secret: str) -> None:
@@ -464,6 +483,8 @@ def wait_for_network(ssid: str, timeout: float = 10) -> dict[str, object]:
 def apply(operation: str, payload: dict[str, object]) -> object:
     if operation == "capabilities.get": return CAPABILITIES
     if operation == "snapshot.get": return snapshot()
+    if operation == "calendar.load": return calendar_load()
+    if operation == "calendar.save": return calendar_save(payload)
     if operation == "bluetooth.status": return bluetooth_state()
     if operation == "bluetooth.pair.begin": return pair_begin(str(payload["address"]))
     if operation == "bluetooth.pair.status": return pair_status(str(payload["session_id"]))

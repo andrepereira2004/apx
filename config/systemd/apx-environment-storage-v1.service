@@ -1,0 +1,19 @@
+[Unit]
+Description=APX stored Environment sizes
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/apx/apx-environment-storage-runner-v1.py --refresh
+User=root
+Group=root
+UMask=0077
+StateDirectory=apx/environment-storage-v1
+StateDirectoryMode=0700
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+CapabilityBoundingSet=CAP_SYS_ADMIN
+ProtectKernelTunables=yes
+ProtectKernelModules=yes

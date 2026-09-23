@@ -36,9 +36,13 @@ class EnvironmentFeaturesTests(unittest.TestCase):
         for required in ("evince", "libreoffice-fresh", "cups", "podman", "rust"):
             self.assertIn(required, packages)
         self.assertNotIn("firefox", packages)
-        self.assertEqual(subject.packages_for(subject.PRESETS["basic"]), ())
-        self.assertEqual(subject.local_packages_for(["web-documents"]),
-                         ("brave-bin",))
+        self.assertEqual(subject.packages_for(subject.PRESETS["basic"]), ("xfce4-taskmanager",))
+        self.assertEqual(subject.local_packages_for(["web-documents"]), ("brave-bin",))
+        for preset in subject.PRESETS.values():
+            self.assertIn("xfce4-taskmanager", subject.packages_for(preset))
+            self.assertIn("brave-bin", subject.local_packages_for(preset))
+        self.assertIn("egl-wayland", subject.packages_for(["graphics"]))
+        self.assertIn("nvidia-utils", subject.local_packages_for(["graphics"]))
         self.assertGreater(subject.estimated_mib(subject.PRESETS["complete"]), 4000)
 
     def test_unknown_and_empty_selections_fail_closed(self):
@@ -87,10 +91,17 @@ class EnvironmentFeaturesTests(unittest.TestCase):
             (target / "etc/shadow").chmod(0o600)
             with mock.patch.object(runtime, "ENVIRONMENTS", state / "environments"), \
                     mock.patch.object(runtime, "packages_for", return_value=()), \
-                    mock.patch.object(runtime, "local_packages_for", return_value=()):
+                    mock.patch.object(runtime, "local_packages_for", return_value=()), \
+                    mock.patch.object(runtime, "host_nvidia_version", return_value="610.43.03"), \
+                    mock.patch.object(runtime, "validated_local_package_artifact",
+                                      return_value=state / "nvidia-utils-610.43.03-3-x86_64.pkg.tar.zst"), \
+                    mock.patch.object(runtime, "run") as run:
                 runtime.configure_environment_features(target, {
                     "desktop_preset": "basic", "desktop_modules": ["system", "cli-aur"],
                 })
+            commands = [call.args[0] for call in run.call_args_list]
+            self.assertIn("egl-wayland", commands[0])
+            self.assertIn(str(state / "nvidia-utils-610.43.03-3-x86_64.pkg.tar.zst"), commands[1])
             fields = (target / "etc/shadow").read_text().strip().split(":")
             self.assertEqual(fields[1], "$6$hub-hash")
             self.assertEqual(fields[2:], ["8", "9", "10", "11", "12", "13", "14"])
@@ -113,7 +124,11 @@ class EnvironmentFeaturesTests(unittest.TestCase):
                 os.chown(path, 1278869504, 1278869504)
             with mock.patch.object(runtime, "ENVIRONMENTS", state / "environments"), \
                     mock.patch.object(runtime, "packages_for", return_value=()), \
-                    mock.patch.object(runtime, "local_packages_for", return_value=()):
+                    mock.patch.object(runtime, "local_packages_for", return_value=()), \
+                    mock.patch.object(runtime, "host_nvidia_version", return_value="610.43.03"), \
+                    mock.patch.object(runtime, "validated_local_package_artifact",
+                                      return_value=state / "nvidia-utils-610.43.03-3-x86_64.pkg.tar.zst"), \
+                    mock.patch.object(runtime, "run"):
                 runtime.configure_environment_features(target, {
                     "desktop_preset": "basic", "desktop_modules": ["system", "cli-aur"],
                 })

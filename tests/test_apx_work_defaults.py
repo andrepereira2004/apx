@@ -18,9 +18,9 @@ class WorkDefaultsTests(unittest.TestCase):
         self.assertNotIn("/var/lib/apx", source)
         self.assertNotIn("/root", source)
 
-    def test_work_defaults_use_local_brave_and_thunar(self) -> None:
+    def test_work_defaults_keep_local_file_manager_without_browser(self) -> None:
         source = (DEFAULTS / "mimeapps.list").read_text()
-        self.assertIn("x-scheme-handler/https=brave-browser.desktop", source)
+        self.assertNotIn("brave-browser.desktop", source)
         self.assertNotIn("firefox.desktop", source)
         self.assertIn("inode/directory=thunar.desktop", source)
         for forbidden in ("sudo", "machinectl", "/run/apx", "/var/lib/apx"):
@@ -28,17 +28,17 @@ class WorkDefaultsTests(unittest.TestCase):
 
     def test_environment_visual_profile_is_the_capability_aware_hub_shell(self) -> None:
         source = (SHELL / "quickshell/apx/shell.qml").read_text()
-        for expected in ("#55e6ff", "#246879", "Adwaita Mono", "environmentIdentity.role"):
+        for expected in ("#55e6ff", "#246879", "Selawik", "environmentIdentity.role"):
             self.assertIn(expected, source)
-        self.assertIn('root.isHub ? "[ HUB · ENVIRONMENTS ]"', source)
-        self.assertIn('root.isHub ? "Desligar" : "Voltar"', source)
+        self.assertIn('label: "[ " + root.environmentLabel + " ]"', source)
+        self.assertIn('text: "Encerrar"', source)
 
     def test_work_shortcuts_are_local_and_keep_an_emergency_exit(self) -> None:
         source = (SHELL / "hypr/hyprland.lua").read_text()
         self.assertIn('hl.exec_cmd("/home/apx/.local/bin/apx-shell-v1")', source)
         self.assertNotIn("waybar", source.lower())
-        for command in ("/usr/bin/rofi", "/usr/bin/brave"):
-            self.assertIn(command, source)
+        self.assertIn("openApplications", source)
+        self.assertNotIn("/usr/bin/brave", source)
         self.assertIn('hl.bind(mainMod .. " + E",', source)
         self.assertIn('hl.bind(mainMod .. " + E",', source)
         self.assertIn("openEnvironments", source)
@@ -49,8 +49,10 @@ class WorkDefaultsTests(unittest.TestCase):
         self.assertIn('hl.bind(mainMod .. " + M",', source)
         self.assertIn('hl.bind(mainMod .. " + M", hl.dsp.exit())', source)
         self.assertNotIn("/run/apx/environment-switch-client-v1.py return", source)
+        # Matching an existing terminal for scroll tuning grants no launch capability.
+        shortcut_source = source.replace('match = { class = "^(kitty|apx-host-console-v1)$" },', '')
         for forbidden in ("apx-hub --switcher", "host-console", "system-power", "coordinated-update"):
-            self.assertNotIn(forbidden, source)
+            self.assertNotIn(forbidden, shortcut_source)
 
     def test_environment_shell_launcher_is_single_instance(self) -> None:
         source = (SHELL / "local/bin/apx-shell-v1").read_text()
@@ -173,22 +175,22 @@ class WorkDefaultsTests(unittest.TestCase):
     def test_lock_enter_retries_face_or_submits_password(self) -> None:
         lock = (SHELL / "hypr/hyprlock.conf").read_text()
         self.assertIn("ignore_empty_input = false", lock)
-        self.assertIn("A VALIDAR…", lock)
+        self.assertIn("A autenticar…", lock)
         self.assertNotIn("A VERIFICAR A CARA…", lock)
-        self.assertIn("ENTER: REPETIR CARA · OU PALAVRA-PASSE", lock)
+        self.assertIn("Não foi possível autenticar", lock)
         self.assertIn("cmd[update:300] /home/apx/.local/bin/apx-face-auth-state-v1", lock)
         face_state = (SHELL / "local/bin/apx-face-auth-state-v1").read_text()
-        self.assertIn('apx-howdy-camera-*.active', face_state)
-        self.assertIn("observed_ticks", face_state)
+        self.assertIn('apx-howdy-camera-', face_state)
+        self.assertIn("lock_ancestor", face_state)
         self.assertIn('/usr/lib/howdy/compare.py', face_state)
-        self.assertIn('A VERIFICAR A CARA…', face_state)
-        self.assertIn('APÓS FALHA  ·  ENTER REPETE A CARA', face_state)
+        self.assertIn('A procurar o teu rosto…', face_state)
+        self.assertNotIn('APÓS FALHA', face_state)
         howdy_patch = (ROOT / "config/howdy-v1/howdy-apx/apx-camera-frame-state.patch").read_text()
         self.assertIn("publish_camera_frame_state()", howdy_patch)
         self.assertIn("frame, gsframe = video_capture.read_frame()", howdy_patch)
         self.assertLess(howdy_patch.index("read_frame()"), howdy_patch.rindex("publish_camera_frame_state()"))
         howdy_pkgbuild = (ROOT / "config/howdy-v1/howdy-apx/PKGBUILD").read_text()
-        self.assertIn("pkgrel=3", howdy_pkgbuild)
+        self.assertIn("pkgrel=4", howdy_pkgbuild)
         self.assertIn("apx-camera-frame-state.patch", howdy_pkgbuild)
         self.assertIn('$pkgdir/etc/howdy/config.ini', howdy_pkgbuild)
         pam = (ROOT / "config/howdy-v1/pam/hyprlock").read_text()
@@ -201,7 +203,7 @@ class WorkDefaultsTests(unittest.TestCase):
         source = (SHELL / "quickshell/apx/shell.qml").read_text()
         bar = source.split("id: bar", 1)[1].split("id: hotkeyOsdWindow", 1)[0]
         self.assertIn("anchors { top: true; left: true; right: true }", bar)
-        self.assertIn("margins { left: 20; right: 20 }", bar)
+        self.assertIn("margins { left: 19; right: 19 }", bar)
         self.assertIn("anchors.left: parent.left\n                anchors.leftMargin: 2", bar)
         self.assertIn("anchors.right: parent.right\n                anchors.rightMargin: 2", bar)
 
@@ -227,10 +229,11 @@ class WorkDefaultsTests(unittest.TestCase):
         for key in (
             "XF86AudioMute", "XF86AudioLowerVolume", "XF86AudioRaiseVolume",
             "XF86AudioMicMute", "XF86Display", "XF86TouchpadToggle",
-            "XF86TaskPane", "XF86Calculator", 'hl.bind("F13"', 'hl.bind("F14"',
-            'hl.bind("F15"', 'hl.bind("F16"',
+            "XF86Calculator", 'hl.bind("F13"', 'hl.bind("F14"', 'hl.bind("F16"',
         ):
             self.assertIn(key, source)
+        for removed in ('"ALT + Tab"', '"CTRL + ALT + Tab"', '"XF86TaskPane"', '"F15"'):
+            self.assertNotIn(removed, source)
         for action in ("airplane-status", "display-cycle", "apps", "overview", "calculator", "screenshot"):
             self.assertIn(action, helper)
         for normal_key in ('"Insert"', '"Delete"', '"Home"', '"End"', '"Page_Up"', '"Page_Down"'):

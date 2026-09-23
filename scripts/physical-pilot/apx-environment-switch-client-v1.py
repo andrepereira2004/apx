@@ -41,6 +41,7 @@ def exchange(operation: str, target: str | None = None, generation: str | None =
              modules: list[str] | None = None, system_kind: str | None = None,
              size_gib: int | None = None, display_name: str | None = None):
     with connect() as connection:
+        if operation == "native.plan": connection.settimeout(35)
         connection.sendall(request_bytes(operation, target, generation, description, preset,
                                          modules, system_kind, size_gib, display_name))
         data = bytearray()
@@ -70,7 +71,7 @@ def hub_menu() -> int:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=("catalog", "create", "destroy", "edit", "hub-menu", "identity", "management-status",
-                                         "native-discard", "native-open", "native-retry", "open", "return", "status", "storage", "waybar-identity"))
+                                         "native-prepare-v3", "native-activate-v3", "native-rollback-v3", "native-retry-v3", "native-delete-v3", "native-open-v3", "native-discard", "native-open", "native-retry", "native-plan", "open", "return", "status", "storage", "waybar-identity"))
     parser.add_argument("--target")
     parser.add_argument("--generation")
     parser.add_argument("--description")
@@ -87,12 +88,16 @@ def main() -> int:
                  "edit": "environment.update-metadata",
                  "management-status": "management.status", "open": "switch.to-workload",
                  "native-discard": "native.discard", "native-open": "native.boot",
-                 "native-retry": "native.retry",
+                 "native-retry": "native.retry", "native-plan": "native.plan",
+                 "native-prepare-v3": "native.prepare-v3", "native-activate-v3": "native.activate-v3",
+                 "native-rollback-v3": "native.rollback-v3", "native-retry-v3": "native.retry-v3", "native-delete-v3": "native.delete-v3", "native-open-v3": "native.boot-v3",
                  "return": "return.to-hub", "status": "status.get",
                  "storage": "storage.get",
                  "waybar-identity": "identity.get"}[mode]
-    if mode in {"create", "edit", "native-open", "open"} and arguments.target is None:
+    if mode in {"create", "edit", "native-open", "native-plan", "open"} and arguments.target is None:
         parser.error(mode + " requires --target")
+    if mode.endswith("-v3") and (arguments.target is None or arguments.generation is None):
+        parser.error(mode + " requires --target and --generation")
     if mode == "destroy" and (arguments.target is None or arguments.generation is None):
         parser.error("destroy requires --target and --generation")
     if mode in {"native-discard", "native-retry"} \
@@ -101,13 +106,13 @@ def main() -> int:
     if mode == "edit" and (arguments.generation is None or arguments.display_name is None
                             or arguments.description is None):
         parser.error("edit requires --target, --generation, --display-name and --description")
-    if mode not in {"create", "edit"} and arguments.description is not None:
+    if mode not in {"create", "edit", "native-plan"} and arguments.description is not None:
         parser.error("description is only valid when creating or editing an Environment")
     if mode != "edit" and arguments.display_name is not None:
         parser.error("display name is only valid when editing an Environment")
-    if mode != "create" and (arguments.preset is not None or arguments.modules is not None or arguments.system is not None or arguments.size_gib is not None):
+    if mode not in {"create", "native-plan"} and (arguments.preset is not None or arguments.modules is not None or arguments.system is not None or arguments.size_gib is not None):
         parser.error("creation options are only valid when creating an Environment")
-    if mode not in {"create", "destroy", "edit", "native-discard", "native-open", "native-retry", "open"} \
+    if mode not in {"native-prepare-v3", "native-activate-v3", "native-rollback-v3", "native-retry-v3", "native-delete-v3", "native-open-v3", "create", "destroy", "edit", "native-discard", "native-open", "native-retry", "native-plan", "open"} \
             and (arguments.target is not None or arguments.generation is not None):
         parser.error(mode + " takes no target")
     modules = arguments.modules.split(",") if arguments.modules else None

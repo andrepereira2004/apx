@@ -22,6 +22,14 @@ hl.monitor({
     scale    = "auto",
 })
 
+-- An Environment-local choice made in QuickShell; no Host display settings.
+local monitorLayout = "/home/apx/.config/hypr/apx-monitors.lua"
+local monitorLayoutFile = io.open(monitorLayout, "r")
+if monitorLayoutFile then
+    monitorLayoutFile:close()
+    dofile(monitorLayout)
+end
+
 
 ---------------------
 ---- MY PROGRAMS ----
@@ -29,7 +37,6 @@ hl.monitor({
 
 -- Set programs that you use
 local terminal    = "/usr/bin/kitty --directory /home/apx"
-local menu        = "/usr/bin/rofi -show drun"
 
 
 -------------------
@@ -52,6 +59,7 @@ end)
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
+hl.env("XDG_DATA_DIRS", "/home/apx/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 
@@ -212,6 +220,7 @@ hl.config({
         -- QuickShell normally paints the rotating landscape layer. Keep the
         -- compositor fallback plain black while that layer restarts.
         force_default_wallpaper = 0,
+        background_color = 0xff000000,
         disable_hyprland_logo   = true,
         disable_splash_rendering = true,
     },
@@ -261,9 +270,12 @@ hl.device({
 ---------------------
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
+-- Recover pointer/focus on the laptop without closing windows or disabling HDMI.
+hl.bind("SUPER + CTRL + Home", hl.dsp.exec_cmd("/home/apx/.local/bin/apx-laptop-action-v1 display-home"))
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
+hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("/usr/bin/xfce4-taskmanager"))
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("quickshell -c apx ipc call host openEnvironments"))
@@ -272,15 +284,14 @@ hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("quickshell -c apx ipc call host togg
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleCalendar"))
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleModel"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleBattery"))
-hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("/usr/bin/brave"))
 -- SUPER+Q is local. SUPER+H asks the capability-aware shell to open its
--- terminal action; only the official Hub maps that action to the Host broker.
+-- terminal action, using the broker for this active graphical Environment.
 hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("quickshell -c apx ipc call host openTerminal"))
 -- Executor- and IPC-independent escape: Hyprland handles this dispatcher
 -- internally even if its runtime sockets or the APX shell are unavailable.
 hl.bind(mainMod .. " + M", hl.dsp.exit())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("quickshell -c apx ipc call host openApplications"))
 -- Open or focus the file manager as the current Environment's desktop user.
 -- The owner retains this binding even though Fn+F7 emits the same chord.
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("quickshell -c apx ipc call host openFiles"))
@@ -291,6 +302,10 @@ hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+
+-- Follow the focused window and pointer to the adjacent display.
+hl.bind("SUPER + SHIFT + Left", hl.dsp.exec_cmd("/home/apx/.local/bin/apx-laptop-action-v1 window-left"))
+hl.bind("SUPER + SHIFT + Right", hl.dsp.exec_cmd("/home/apx/.local/bin/apx-laptop-action-v1 window-right"))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
@@ -322,17 +337,10 @@ hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("quickshell -c apx ipc call host
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("quickshell -c apx ipc call host microphoneMute"), { locked = true })
 
 local laptopAction = "/home/apx/.local/bin/apx-laptop-action-v1"
--- Standard application-switcher chords also cover firmware-emitted shortcuts.
--- Three isolated Legion Fn+F11 presses produced Ctrl+Alt+Tab.
-hl.bind("CTRL + ALT + Tab", hl.dsp.exec_cmd(laptopAction .. " overview"))
-hl.bind("ALT + Tab", hl.dsp.exec_cmd(laptopAction .. " overview"))
-hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd(laptopAction .. " overview"))
 hl.bind("XF86Display", hl.dsp.exec_cmd(laptopAction .. " display-cycle"), { locked = true })
 hl.bind("XF86Launch1", hl.dsp.exec_cmd(laptopAction .. " apps"), { locked = true })
-hl.bind("XF86TaskPane", hl.dsp.exec_cmd(laptopAction .. " overview"), { locked = true })
 hl.bind("XF86Calculator", hl.dsp.exec_cmd(laptopAction .. " calculator"), { locked = true })
 hl.bind("F13", hl.dsp.exec_cmd(laptopAction .. " apps"), { locked = true })
-hl.bind("F15", hl.dsp.exec_cmd(laptopAction .. " overview"), { locked = true })
 hl.bind("F16", hl.dsp.exec_cmd(laptopAction .. " calculator"), { locked = true })
 
 local touchpadEnabled = true
@@ -402,4 +410,14 @@ hl.window_rule({
 
     move  = "20 monitor_h-120",
     float = true,
+})
+
+-- Owner-requested touchpad trial: uniform scrolling at the accepted terminal speed.
+-- Device-specific so external mice retain their own acceleration and scrolling.
+hl.device({
+    name = "elan06fa:00-04f3:31dd-touchpad",
+    accel_profile = "flat",
+    sensitivity = -0.30,
+    scroll_factor = 0.55,
+    natural_scroll = true,
 })

@@ -1,0 +1,18 @@
+# Keep Environment-local aliases and shell customizations.
+[[ -r ~/.bashrc ]] && source ~/.bashrc
+
+# Owner-facing identity only; privileged shells retain their real prompt.
+if (( EUID == 1000 )); then
+    APX_DISPLAY_USER=andrepereira
+    APX_DISPLAY_HOST=$(cat /etc/hostname)
+    if [[ $APX_DISPLAY_HOST =~ ^apx-[a-z0-9][a-z0-9-]*$ ]]; then
+        export APX_DISPLAY_USER APX_DISPLAY_HOST
+        PS1='\[\e[38;2;85;230;255m\]${APX_DISPLAY_USER}@${APX_DISPLAY_HOST}\[\e[38;2;138;163;170m\]  \w\[\e[0m\]  '
+    fi
+fi
+export PATH="$HOME/.local/bin:$PATH"
+alias sysinfo='apx-sysinfo'
+if [[ $- == *i* && -t 1 && ${TERM:-dumb} != dumb && -z ${APX_SYSINFO_SHOWN:-} ]]; then
+    export APX_SYSINFO_SHOWN=1
+    "$HOME/.local/bin/apx-sysinfo"
+fi

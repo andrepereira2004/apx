@@ -121,6 +121,26 @@ class RuntimeQuotaTests(unittest.TestCase):
             with self.assertRaisesRegex(runtime.Refusal, "regular file"):
                 runtime.copy_graphical_config_seed(seed, base / "destination")
 
+    def test_graphical_seed_accepts_previous_admitted_hyprland_config(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            seed = base / "seed"
+            profile = Path(__file__).parents[1] / "config/hyprland-base"
+            for relative in runtime.GRAPHICAL_CONFIG_ASSETS:
+                source = profile / ("hyprland.conf" if relative == "hyprland/hyprland.conf" else relative)
+                target = seed / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(source.read_bytes())
+            config = seed / "hyprland/hyprland.conf"
+            previous = config.read_bytes().replace(b"bind = SUPER, R, exec, /usr/bin/rofi -show drun",
+                                                   b"bind = SUPER, D, exec, /usr/bin/rofi -show drun")
+            self.assertEqual(hashlib.sha256(previous).hexdigest(),
+                             runtime.GRAPHICAL_CONFIG_PREVIOUS_DIGESTS["hyprland/hyprland.conf"])
+            config.write_bytes(previous)
+            with patch.object(runtime.os, "chown"):
+                runtime.copy_graphical_config_seed(seed, base / "destination")
+            self.assertEqual((base / "destination/hyprland/hyprland.conf").read_bytes(), previous)
+
     def test_shared_reserve_refuses_new_growth_below_96_gib(self) -> None:
         enough = type("Stats", (), {"f_bavail": 97, "f_frsize": 1024**3})()
         low = type("Stats", (), {"f_bavail": 95, "f_frsize": 1024**3})()

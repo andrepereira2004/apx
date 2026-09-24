@@ -1,5 +1,25 @@
 # APX Current Handoff
 
+## Owner reached `windows-testes`; boot and return checks remain (2026-09-24)
+
+The owner reports completing the new Windows first-run setup. Afterwards the
+Windows firmware entries were renumbered: original `windows` is Boot0000 on
+p1, `windows-testes` is Boot0003 on p6, and Linux Boot0005 is currently first
+in BootOrder after the owner selected it in firmware setup. APX's v3 records
+were updated from exact EFI GUID and loader checks, with prior records backed
+up under `/var/lib/apx/backups/20260924-native-v3-firmware-renumber`.
+Both native boot runners now validate, and the Host catalogue lists both
+Windows as ready. The original p1 EFI is already mounted at `/boot`; the v3
+runner now validates that mount instead of trying a second read-only mount.
+The new Windows contained the legacy ReturnToHub PowerShell and README, which
+explains the missing `Super+E` behavior. They and the p4 installer payload were
+updated to the current checked versions, with originals under
+`/var/lib/apx/backups/20260924-native-v3-return-helper`. The new helper has not
+yet been observed running in Windows. The next checks are a Hub menu boot for
+each Windows, `Super+E` after login, and confirmation that reboot returns to
+Linux without using F2. Windows may have changed BootOrder during first-run;
+the current order is Linux first, and BootNext is absent.
+
 ## Two native Windows recorded; boot checks outstanding (2026-09-24)
 
 The v3 finalizer completed for generation

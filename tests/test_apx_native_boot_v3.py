@@ -48,3 +48,12 @@ class NativeBootTests(unittest.TestCase):
         self.assertEqual(module.validate_firmware(firmware, new, 6), '0007')
         with self.assertRaises(ValueError):module.validate_firmware(firmware, old, 6)
         with self.assertRaises(ValueError):module.validate_firmware(firmware, new, 1)
+
+    def test_windows_firmware_renumbering_uses_exact_efi_target(self):
+        record=dict(linux_boot_entry='0005',windows_boot_entry='0007',
+                    esp_partuuid='aaaaaaaa-2222-4333-8444-555555555555',
+                    efi_path='/EFI/Microsoft/Boot/bootmgfw.efi')
+        line='Boot0003* Windows Boot Manager\tHD(6,GPT,aaaaaaaa-2222-4333-8444-555555555555,0,1)/\\EFI\\Microsoft\\Boot\\bootmgfw.efi'
+        firmware='BootCurrent: 0005\nBootOrder: 0005,0003\n'+line+'\n'
+        self.assertEqual(module.validate_firmware(firmware,record,6),'0003')
+        with self.assertRaises(ValueError):module.validate_firmware(firmware+line.replace('0003','0004')+'\n',record,6)

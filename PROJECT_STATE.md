@@ -1,5 +1,18 @@
 # APX Project State
 
+## First `windows-testes` owner boot and APX return repair (2026-09-24)
+
+The owner completed the first Windows setup and reported reaching the new
+Windows. That boot renumbered firmware entries: the original Windows is now
+Boot0000 on p1, the new Windows Boot0003 on p6, and Linux Boot0005 is first in
+the current BootOrder after the owner's firmware intervention. The v3 records
+were reconciled to those exact partition identities. Both native boot
+validators pass; the APX catalogue lists both as ready. The old Windows EFI
+already mounted at `/boot` is now validated in place. The new Windows carried
+an older ReturnToHub helper; its script and README, plus the setup-media
+copies, were replaced with the current checked versions. The helper and
+independent menu boot still need owner observation after the next Windows boot.
+
 ## Native Windows dual catalogue ready for boot validation (2026-09-24)
 
 The physical v3 finalizer completed after accepting Windows Setup's exact p6

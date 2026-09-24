@@ -57,10 +57,10 @@ class NativeLifecycleTests(unittest.TestCase):
             firmware = {'entry': True}
             def command(*args, **kwargs):
                 if args == ('efibootmgr', '-v'):
-                    line = (f"Boot0007* APX {selected['name']} HD(6,GPT,{after[5]['uuid']},0,1)"
+                    line = (f"Boot0008* APX {selected['name']} HD(6,GPT,{after[5]['uuid']},0,1)"
                             '/File(\\EFI\\Microsoft\\Boot\\bootmgfw.efi)\n') if firmware['entry'] else ''
                     return 'BootCurrent: 0005\nBootOrder: 0005,0006,0007\n' + line
-                if args == ('efibootmgr', '-b', '0007', '-B'):
+                if args == ('efibootmgr', '-b', '0008', '-B'):
                     firmware['entry'] = False; return ''
                 raise AssertionError(args)
             calls = []

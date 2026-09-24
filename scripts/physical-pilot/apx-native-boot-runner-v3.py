@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Per-instance native boot validation and one-shot reboot (not deployed yet)."""
 import argparse
+from contextlib import contextmanager
 import importlib.util
 import json
 import os
@@ -42,15 +43,34 @@ def read_records():
 
 def validate_firmware(output, record, esp_number):
     fields=dict(re.findall(r'^(BootCurrent|BootNext|BootOrder):\s*(\S.*)$',output,re.MULTILINE))
-    linux,windows=record['linux_boot_entry'],record['windows_boot_entry']
+    linux=record['linux_boot_entry']
     order=fields.get('BootOrder','').split(',')
-    if fields.get('BootCurrent') != linux or 'BootNext' in fields or not order or order[0] != linux or windows not in order:
+    if fields.get('BootCurrent') != linux or 'BootNext' in fields or not order or order[0] != linux:
         raise ValueError('Linux is not the default current boot or BootNext is already armed')
-    entries=[line for line in output.splitlines() if re.match(r'^Boot'+windows+r'\*?\s',line)]
     expected=f'HD({esp_number},GPT,{record["esp_partuuid"]},'.lower()
-    if len(entries)!=1 or expected not in entries[0].lower() or record['efi_path'].replace('/','\\').lower() not in entries[0].lower():
+    loader=record['efi_path'].replace('/','\\').lower()
+    entries=[]
+    for line in output.splitlines():
+        found=re.match(r'^Boot([0-9A-F]{4})\*?\s+(.+)$',line)
+        if found and expected in found.group(2).lower() and loader in found.group(2).lower():
+            entries.append(found.group(1))
+    if len(entries)!=1 or entries[0] not in order:
         raise ValueError('firmware boot entry does not identify the selected instance')
-    return windows
+    return entries[0]
+
+
+@contextmanager
+def selected_esp_root(helper, esp, record):
+    if esp.name == 'nvme0n1p1':
+        root = Path('/boot')
+        if not root.is_mount() or os.stat(root).st_dev != os.stat(esp).st_rdev or \
+                helper.checked(('findmnt','-nro','FSTYPE','/boot'),'cannot inspect mounted EFI') != 'vfat' or \
+                helper.block_value(esp,'PARTUUID').lower() != record['esp_partuuid'].lower():
+            raise ValueError('mounted EFI does not identify the selected instance')
+        yield root
+    else:
+        with helper.mounted_read_only(esp,'vfat') as root:
+            yield root
 
 
 def validate(target,generation):
@@ -66,7 +86,7 @@ def validate(target,generation):
     parts={p['uuid'].lower():p for p in table['partitions']}
     windows=parts[record['windows_partuuid'].lower()];esp=parts[record['esp_partuuid'].lower()]
     entry=validate_firmware(helper.checked(('efibootmgr','-v'),'cannot read firmware'),record,int(esp['node'].rsplit('p',1)[1]))
-    with helper.mounted_read_only(Path(esp['node']),'vfat') as root:
+    with selected_esp_root(helper,Path(esp['node']),record) as root:
         manager=root/record['efi_path'].lstrip('/')
         bcd=root/'EFI/Microsoft/Boot/BCD'
         if not manager.is_file() or not bcd.is_file() or manager.is_symlink() or bcd.is_symlink():

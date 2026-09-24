@@ -476,12 +476,7 @@ def delete_instance(generation,token):
         raise ValueError('Linux boot authority changed before native deletion')
     entry=find_matching_entry(firmware,6,plan['new']['esp_partuuid'],
                               'APX '+selected['name'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi',allow_windows_manager=True)
-    if re.search(r'^Boot'+re.escape(selected['windows_boot_entry'])+r'\*?\s',firmware,re.MULTILINE) and \
-            entry!=selected['windows_boot_entry']:
-        raise ValueError('selected native firmware number was reassigned')
     if entry is not None:
-        if entry!=selected['windows_boot_entry']:
-            raise ValueError('selected native firmware entry differs')
         command('efibootmgr','-b',entry,'-B')
         if find_matching_entry(command('efibootmgr','-v'),6,plan['new']['esp_partuuid'],
                                'APX '+selected['name'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi',allow_windows_manager=True) is not None:

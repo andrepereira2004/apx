@@ -23,6 +23,11 @@ EXPECTED_DISK_SERIAL = "S4DYNX0R253702"
 EXPECTED_DISK_ID = "AC9FC0BD-2162-43A9-AAE6-3F654FF6F275"
 EXPECTED_ESP_BYTES = 1073741824
 EXPECTED_RETURN_HASHES = {
+    "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "d803d50670f3bc4d7f95f855fd2e3363b81272bbb51971c7bd2b639822433f2d",
+    "ProgramData/APX/ReturnToHub/README.txt": "a3d12127f87a9377d970501fba211f9a6610255a4a7a140024f5eca0d93da7df",
+    "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
+}
+PREVIOUS_RETURN_HASHES = {
     "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "a63d776336ae7bbdd406a0bab924193e409cc0a03a38fc7b332a9ccee0c54f11",
     "ProgramData/APX/ReturnToHub/README.txt": "c03fbf0afa374c30c64adf5a22c2f876f80a3d0a288a2414b6091d3ad17206a8",
     "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
@@ -32,7 +37,7 @@ LEGACY_RETURN_HASHES = {
     "ProgramData/APX/ReturnToHub/README.txt": "0434aa1e310d7a4e20400300f0d8b6062caf8f4ac023ae4a8560a5c203926349",
     "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
 }
-TRUSTED_RETURN_HASHES = (EXPECTED_RETURN_HASHES, LEGACY_RETURN_HASHES)
+TRUSTED_RETURN_HASHES = (EXPECTED_RETURN_HASHES, PREVIOUS_RETURN_HASHES, LEGACY_RETURN_HASHES)
 EFI_GLOBAL_GUID = "8be4df61-93ca-11d2-aa0d-00e098032b8c"
 SECURE_BOOT_VARIABLE = Path(f"/sys/firmware/efi/efivars/SecureBoot-{EFI_GLOBAL_GUID}")
 SETUP_MODE_VARIABLE = Path(f"/sys/firmware/efi/efivars/SetupMode-{EFI_GLOBAL_GUID}")

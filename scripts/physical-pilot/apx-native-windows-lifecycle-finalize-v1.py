@@ -32,8 +32,8 @@ TERMINAL_STAGES = {"failed", "recovery-required"}
 MAX_EXPLICIT_INSTALL_ATTEMPTS = 2
 MAX_EXPLICIT_BOOT_ATTEMPTS = 8
 EXPECTED_RETURN_HASHES = {
-    "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "a63d776336ae7bbdd406a0bab924193e409cc0a03a38fc7b332a9ccee0c54f11",
-    "ProgramData/APX/ReturnToHub/README.txt": "c03fbf0afa374c30c64adf5a22c2f876f80a3d0a288a2414b6091d3ad17206a8",
+    "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "d803d50670f3bc4d7f95f855fd2e3363b81272bbb51971c7bd2b639822433f2d",
+    "ProgramData/APX/ReturnToHub/README.txt": "a3d12127f87a9377d970501fba211f9a6610255a4a7a140024f5eca0d93da7df",
     "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
 }
 

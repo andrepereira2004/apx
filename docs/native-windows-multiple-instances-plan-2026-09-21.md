@@ -450,3 +450,20 @@ failed or declined selection leaves Windows running. The candidate is installed
 in both Windows volumes and the p4 setup payload, with previous bytes backed up
 under `/var/lib/apx/backups/20260925-windows-uefi-return`. This has not yet been
 verified by a physical Windows-to-Linux return after the update.
+
+## 2026-09-25: automatic helper for later Windows created in the Hub
+
+The Host's installed ReturnToHub assets now match the updated repository
+source. The v3 create and slot-reuse preparation verifies their exact hashes.
+Immediately before launching WinPE, the lifecycle runner refreshes the p4
+installer payload from those trusted Host assets. On return from WinPE it
+checks that the new Windows p5 contains the exact PowerShell helper, README and
+startup VBS before publishing the instance as ready in the Hub. An absent,
+modified or stale helper stops publication for recovery instead of presenting
+the new Windows as ready. The existing WinPE script copies these files into
+each new Windows installation. The current p4 payload was refreshed as well.
+
+Repository coverage: 61 native v3 tests, 15 Windows lifecycle safety tests and
+28 Environment switch tests pass. Both existing Windows instances still pass
+the Host's read-only native boot validator. A future create/delete/create cycle
+has not been physically repeated after this change.

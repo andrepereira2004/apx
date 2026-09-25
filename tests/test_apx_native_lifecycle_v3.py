@@ -1,6 +1,8 @@
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
+import shutil
 import sys
 import tempfile
 import unittest
@@ -18,6 +20,42 @@ SPEC.loader.exec_module(LIFECYCLE)
 
 
 class NativeLifecycleTests(unittest.TestCase):
+    def test_new_windows_media_refreshes_verified_return_helper(self):
+        source = Path(__file__).resolve().parents[1] / 'config/native-windows-return-v1'
+        expected = {name: hashlib.sha256((source/name).read_bytes()).hexdigest()
+                    for name in LIFECYCLE.RETURN_HASHES}
+        self.assertEqual(LIFECYCLE.RETURN_HASHES, expected)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            assets = root/'assets'; assets.mkdir()
+            payload = root/'media/APX/Payload/ReturnToHub'; payload.mkdir(parents=True)
+            for name in expected:
+                shutil.copyfile(source/name, assets/name)
+                (assets/name).chmod(0o644)
+                (payload/name).write_text('old helper')
+            with mock.patch.object(LIFECYCLE, 'RETURN_SOURCE', assets), \
+                 mock.patch.object(LIFECYCLE, 'command', return_value=''):
+                LIFECYCLE.sync_return_payload(root/'media')
+                for name in expected:
+                    self.assertEqual((payload/name).read_bytes(), (source/name).read_bytes())
+                installed = root/'installed'
+                paths = {
+                    'APX-ReturnToHub.ps1':'ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1',
+                    'README.txt':'ProgramData/APX/ReturnToHub/README.txt',
+                    'APX-ReturnToHub.vbs':'ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs',
+                }
+                for name,relative in paths.items():
+                    target = installed/relative
+                    target.parent.mkdir(parents=True,exist_ok=True)
+                    shutil.copyfile(payload/name,target)
+                LIFECYCLE.validate_installed_return(installed)
+                (installed/paths['APX-ReturnToHub.ps1']).write_text('old helper')
+                with self.assertRaisesRegex(ValueError, 'não recebeu'):
+                    LIFECYCLE.validate_installed_return(installed)
+                (assets/'APX-ReturnToHub.ps1').write_text('modified')
+                with self.assertRaisesRegex(ValueError, 'Host difere'):
+                    LIFECYCLE.sync_return_payload(root/'media')
+
     def test_real_efibootmgr_loader_format_matches_exact_entry(self):
         partuuid = '9625F250-9ACC-453A-AE63-0C863ADE440F'
         label = 'APX native relocate 2770478b'
@@ -192,6 +230,7 @@ class NativeLifecycleTests(unittest.TestCase):
                      mock.patch.object(LIFECYCLE, 'command', return_value=''), \
                      mock.patch.object(LIFECYCLE, 'measured_capacity', side_effect=measure), \
                      mock.patch.object(LIFECYCLE, 'state'), \
+                     mock.patch.object(LIFECYCLE, 'return_sources', return_value={}), \
                  mock.patch.object(Path, 'read_text', autospec=True, side_effect=lambda path, *a, **k: 'fixture' if path == Path('/usr/share/apx/native-windows-lifecycle-v1/winpe/apx-media.cmd') else original_read_text(path, *a, **k)):
                 LIFECYCLE.prepare(generation, 'owned-token')
             self.assertEqual(events, ['backup', 'migration-image', 'rollback-image', 'capacity'])

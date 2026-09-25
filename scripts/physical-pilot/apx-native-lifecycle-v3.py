@@ -19,6 +19,13 @@ LOCK=Path('/run/apx/environment-management-v1.lock')
 STATE=Path('/run/apx/environment-management-v1.json')
 DISK='/dev/nvme0n1'
 SOURCE=Path(__file__).parent
+RETURN_SOURCE=Path('/usr/share/apx/native-windows-lifecycle-v1/return')
+RETURN_HASHES={
+    'APX-ReturnToHub.ps1':'d803d50670f3bc4d7f95f855fd2e3363b81272bbb51971c7bd2b639822433f2d',
+    'README.txt':'a3d12127f87a9377d970501fba211f9a6610255a4a7a140024f5eca0d93da7df',
+    'APX-ReturnToHub.vbs':'504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f',
+    'APX-ProvisionHardware.cmd':'d6a29f7ca03d07bbfb3affe06825870c66dc9a2f6e5cf4e11e331b047a80785d',
+}
 
 
 def command(*args,**kwargs):
@@ -72,6 +79,53 @@ def mounted(device,readonly=True):
 
 
 def layout():return json.loads(command('sfdisk','--json',DISK))['partitiontable']
+
+
+def return_sources():
+    result={}
+    for name,digest in RETURN_HASHES.items():
+        path=RETURN_SOURCE/name
+        info=path.lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or \
+                stat.S_IMODE(info.st_mode)!=0o644 or info.st_size>32768 or \
+                hashlib.sha256(path.read_bytes()).hexdigest()!=digest:
+            raise ValueError('O helper de regresso Windows instalado no Host difere.')
+        result[name]=path
+    return result
+
+
+def sync_return_payload(media):
+    """Refresh the WinPE source used by every new Windows from trusted Host assets."""
+    sources=return_sources()
+    destination=media/'APX/Payload/ReturnToHub'
+    if destination.is_symlink() or not destination.is_dir():
+        raise ValueError('O destino do helper Windows no instalador difere.')
+    for name,source in sources.items():
+        target=destination/name
+        if target.is_symlink() or (target.exists() and not target.is_file()):
+            raise ValueError('O helper Windows no instalador difere.')
+        temporary=destination/('.'+name+'.apx-new')
+        if temporary.is_symlink() or (temporary.exists() and not temporary.is_file()):
+            raise ValueError('Existe uma atualização Windows inválida.')
+        temporary.unlink(missing_ok=True)
+        with temporary.open('xb') as stream:
+            stream.write(source.read_bytes());stream.flush();os.fsync(stream.fileno())
+        os.replace(temporary,target)
+        if hashlib.sha256(target.read_bytes()).hexdigest()!=RETURN_HASHES[name]:
+            raise ValueError('O helper Windows no instalador não ficou confirmado.')
+    command('sync')
+
+
+def validate_installed_return(root):
+    destinations={
+        'APX-ReturnToHub.ps1':root/'ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1',
+        'README.txt':root/'ProgramData/APX/ReturnToHub/README.txt',
+        'APX-ReturnToHub.vbs':root/'ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs',
+    }
+    for name,path in destinations.items():
+        if path.is_symlink() or not path.is_file() or path.stat().st_size>32768 or \
+                hashlib.sha256(path.read_bytes()).hexdigest()!=RETURN_HASHES[name]:
+            raise ValueError('O novo Windows não recebeu o helper de regresso ao APX.')
 
 
 def measured_capacity(plan,path):
@@ -146,6 +200,7 @@ def job_path(generation):
 
 def prepare(generation,token):
     target()
+    return_sources()
     if LOCK.read_text().strip()!=token:raise ValueError('Hub management token differs')
     preview=trusted(Path('/run/apx/native-plans-v3')/(generation+'.json'))
     plan=validate_windows_install_plan(preview['plan'])
@@ -184,6 +239,7 @@ def prepare(generation,token):
 
 
 def prepare_replacement(preview,plan,generation):
+    return_sources()
     if PENDING.exists():raise ValueError('Existe uma operação Windows pendente.')
     if canonical_layout(layout())!=canonical_layout(plan['before']):raise ValueError('O espaço Windows mudou.')
     if trusted(ROOT/'free-slot-v3.json')!=plan['slot_marker'] or \
@@ -309,6 +365,8 @@ def restore_installer(job,record):
 def launch_setup(job,record,plan):
     """Mark setup as started before any p5/p6 write; old-GPT rollback ends here."""
     generation=record['generation']
+    with mounted(DISK+'p4',False) as media:
+        sync_return_payload(media)
     record['stage']='installing'
     record.pop('error',None)
     write(job/'job.json',record);write(PENDING,record)
@@ -533,6 +591,8 @@ def finalize():
             if not (root/'EFI/Microsoft/Boot/BCD').is_file():raise ValueError('new Windows BCD absent')
             result=command('sbverify','--list',str(root/'EFI/Microsoft/Boot/bootmgfw.efi'))
             if 'Microsoft' not in result:raise ValueError('new Windows boot manager signature differs')
+        with mounted(DISK+'p5') as root:
+            validate_installed_return(root)
         entry=create_entry(6,'APX '+record['target'],'\\EFI\\Microsoft\\Boot\\bootmgfw.efi')
         reuse=plan['profile']=='apx-native-slot-reuse-plan-v3'
         legacy=trusted(ROOT/'windows.json');records=[]

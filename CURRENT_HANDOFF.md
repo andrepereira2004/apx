@@ -6,13 +6,12 @@ At 11:52 WEST the Hub sent two `native.boot-v3` requests for
 `windows-testes`; both were rejected before reboot because the v3 dispatcher
 ran its mount-based validator inside the capability-free switch daemon. The
 selected Windows validator passes directly on the Host and inside a transient
-systemd unit. Repository code now delegates that bounded read-only preflight
-to a short-lived Host unit, with the switch daemon's privileges unchanged.
-The native suite passes 98 tests. The seven-partition GPT, Linux-first
-BootOrder and the two ready Windows records remain intact. Install the updated
-v3 Hub module and release hash, exercise the preflight under the restricted
-service context, then have the owner retry the Hub menu. The new Windows boot
-and `Super+E` after the helper update remain unobserved.
+systemd unit. The updated v3 Hub module and release hash are installed; the
+switch service was restarted and the preflight passed under equivalent
+restricted permissions. The native suite passes 98 tests. The seven-partition
+GPT, Linux-first BootOrder and the two ready Windows records remain intact.
+The owner still needs to retry the Hub menu. The new Windows boot and
+`Super+E` after the helper update remain unobserved.
 
 ## Owner reached `windows-testes`; boot and return checks remain (2026-09-24)
 

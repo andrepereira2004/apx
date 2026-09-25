@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+# D-Bus activation must inherit the actual compositor session, not the clean
+# environment of the parent bus daemon. This does not require a user systemd.
+set -eu
+export BROWSER=/usr/bin/brave
+/usr/bin/dbus-update-activation-environment \
+    DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE \
+    XDG_DATA_DIRS XDG_RUNTIME_DIR USER LOGNAME BROWSER
+# Owner policy: Brave handles web links in every Environment.
+/usr/bin/python - <<'PY'
+from gi.repository import Gio
+schema = Gio.SettingsSchemaSource.get_default().lookup("org.gnome.desktop.interface", True)
+if schema is not None:
+    settings = Gio.Settings.new("org.gnome.desktop.interface")
+    settings.set_string("font-name", "Selawik 11")
+    settings.set_string("monospace-font-name", "Cascadia Mono 11")
+    Gio.Settings.sync()
+app = Gio.DesktopAppInfo.new('brave-browser.desktop')
+if app is None:
+    raise RuntimeError('Brave is not installed in this Environment')
+for mime in ('text/html', 'application/xhtml+xml', 'x-scheme-handler/http', 'x-scheme-handler/https'):
+    if not app.set_as_default_for_type(mime):
+        raise RuntimeError('Unable to set Brave default for ' + mime)
+PY

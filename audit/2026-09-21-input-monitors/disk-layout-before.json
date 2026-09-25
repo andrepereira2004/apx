@@ -1,0 +1,42 @@
+{
+   "partitiontable": {
+      "label": "gpt",
+      "id": "AC9FC0BD-2162-43A9-AAE6-3F654FF6F275",
+      "device": "/dev/nvme0n1",
+      "unit": "sectors",
+      "firstlba": 34,
+      "lastlba": 1000215182,
+      "sectorsize": 512,
+      "partitions": [
+         {
+            "node": "/dev/nvme0n1p1",
+            "start": 2048,
+            "size": 2097152,
+            "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+            "uuid": "9625F250-9ACC-453A-AE63-0C863ADE440F",
+            "name": "APX_EFI"
+         },{
+            "node": "/dev/nvme0n1p2",
+            "start": 2099200,
+            "size": 662571008,
+            "type": "CA7D7CCB-63ED-4C53-861C-1742536059CC",
+            "uuid": "8835C8F0-F02F-4FC2-9035-5DBBC191DF9E",
+            "name": "APX_CRYPT"
+         },{
+            "node": "/dev/nvme0n1p3",
+            "start": 664670208,
+            "size": 316669952,
+            "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+            "uuid": "099C31D8-313A-4ABA-B0E0-2B59502C9674",
+            "name": "APX_WINDOWS_TARGET"
+         },{
+            "node": "/dev/nvme0n1p4",
+            "start": 981340160,
+            "size": 18874368,
+            "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+            "uuid": "309BEBB6-5C32-4E21-9C92-6D758E51389D",
+            "name": "APX_WINSETUP"
+         }
+      ]
+   }
+}

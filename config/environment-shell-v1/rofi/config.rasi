@@ -1,0 +1,58 @@
+configuration {
+    modi: "drun,run,window";
+    show-icons: true;
+    icon-theme: "APX-Graphite";
+    font: "Selawik 11";
+    display-drun: "Aplicações";
+    display-run: "Executar";
+    display-window: "Pesquisar workspaces";
+    drun-display-format: "{name}";
+    drun-use-desktop-cache: false;
+    click-to-exit: true;
+    window-format: "Workspace {w}  •  {c}  —  {t}";
+}
+* {
+    background-color: transparent;
+    text-color: #eceef0;
+    border-color: #343a41;
+}
+window { fullscreen: true; background-color: transparent; border: 0px; padding: 0px; }
+mainbox { children: [button-dismiss-top, centerbox, button-dismiss-bottom]; spacing: 0px; }
+centerbox { orientation: horizontal; children: [button-dismiss-left, launcherbox, button-dismiss-right]; expand: false; spacing: 0px; }
+launcherbox {
+    children: [inputbar, listview];
+    width: 580px; expand: false;
+    background-color: #0a1014d9;
+    border: 1px; border-color: #343a41; border-radius: 12px;
+    padding: 18px; spacing: 14px;
+}
+button-dismiss-top, button-dismiss-bottom, button-dismiss-left, button-dismiss-right {
+    content: " ";
+    action: "kb-cancel";
+    expand: true;
+    background-color: transparent; border: 0px; padding: 0px;
+}
+inputbar {
+    children: [entry];
+    padding: 14px;
+    background-color: #191d22d9;
+    border: 1px;
+    border-color: #343a41;
+    border-radius: 8px;
+}
+entry { text-color: #ffffff; placeholder: "Pesquisar aplicações…"; placeholder-color: #9ba3ac; }
+listview { border: 0px; lines: 7; fixed-height: true; spacing: 4px; scrollbar: false; }
+element { padding: 10px 12px; spacing: 12px; border: 1px; border-color: transparent; border-radius: 7px; }
+element normal.normal { background-color: transparent; text-color: #eceef0; }
+element alternate.normal { background-color: transparent; text-color: #eceef0; }
+element normal.urgent, element alternate.urgent, element selected.urgent,
+element normal.active, element alternate.active, element selected.active {
+    background-color: transparent;
+    text-color: #eceef0;
+}
+element selected.normal { background-color: #30353b; border-color: #6d7883; text-color: #ffffff; }
+element-icon { size: 22px; }
+element-text { vertical-align: 0.5; text-color: inherit; }
+
+button-dismiss-top, button-dismiss-bottom { height: calc((100% - 436px) / 2); }
+button-dismiss-left, button-dismiss-right { width: calc((100% - 580px) / 2); }

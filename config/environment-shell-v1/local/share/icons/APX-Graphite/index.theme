@@ -1,0 +1,12 @@
+[Icon Theme]
+Name=APX Graphite
+Comment=Quiet neutral folders with Adwaita symbolic controls
+Inherits=Adwaita,AdwaitaLegacy,hicolor
+Directories=scalable/places
+
+[scalable/places]
+Size=48
+MinSize=16
+MaxSize=256
+Type=Scalable
+Context=Places

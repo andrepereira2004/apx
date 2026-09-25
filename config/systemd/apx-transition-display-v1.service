@@ -1,0 +1,16 @@
+[Unit]
+Description=APX Host graphical Environment waiting surface
+After=local-fs.target
+ConditionPathExists=/etc/apx-physical-pilot
+ConditionPathExists=!/run/plymouth/pid
+
+[Service]
+Type=forking
+PIDFile=/run/apx/transition-display-v1.pid
+ExecStart=/usr/bin/plymouthd --mode=boot --tty=/dev/tty1 --no-boot-log --pid-file=/run/apx/transition-display-v1.pid "--kernel-command-line=quiet splash plymouth.splash=apx-transition-v1 plymouth.ignore-serial-consoles"
+ExecStartPost=/usr/bin/plymouth change-mode --updates
+ExecStartPost=/usr/bin/plymouth show-splash
+ExecStop=-/usr/bin/plymouth quit --retain-splash
+TimeoutStartSec=8
+TimeoutStopSec=3
+RuntimeMaxSec=60

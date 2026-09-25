@@ -1,0 +1,87 @@
+{
+"HEADLESS-1": {
+    "levels": {
+
+        "0": [
+                {
+                    "address": "0x55d0201523e0",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 31801
+                }
+        ],
+        "1": [
+],
+        "2": [
+                {
+                    "address": "0x55d0201568c0",
+                    "x": 19,
+                    "y": 0,
+                    "w": 1242,
+                    "h": 46,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 31801
+                }
+        ],
+        "3": [
+]
+    }
+},"HEADLESS-2": {
+    "levels": {
+
+        "0": [
+                {
+                    "address": "0x55d020154290",
+                    "x": 1280,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 31801
+                }
+        ],
+        "1": [
+],
+        "2": [
+                {
+                    "address": "0x55d020159040",
+                    "x": 1299,
+                    "y": 0,
+                    "w": 1242,
+                    "h": 46,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 31801
+                },                {
+                    "address": "0x55d02015eaa0",
+                    "x": 1280,
+                    "y": 46,
+                    "w": 1280,
+                    "h": 674,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 31801
+                }
+        ],
+        "3": [
+                {
+                    "address": "0x55d02017cda0",
+                    "x": 1280,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 31801
+                }
+        ]
+    }
+}
+}
+

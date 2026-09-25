@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+  <action>
+    <icon>edit-delete</icon>
+    <name>Desinstalar neste Environment</name>
+    <submenu></submenu>
+    <unique-id>1789400000000000-1</unique-id>
+    <command>/home/apx/.local/bin/apx-application-remove-v1 %f</command>
+    <description>Remove apenas a aplicação selecionada deste Environment</description>
+    <range>*.desktop</range>
+    <patterns>*.desktop</patterns>
+    <startup-notify/>
+    <directories/>
+  </action>
+</actions>

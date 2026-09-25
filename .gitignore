@@ -14,6 +14,8 @@ Thumbs.db
 *.log
 tmp/
 temp/
+.apx-live-*
+.apx-restored-*
 
 # Build artifacts
 build/
@@ -23,3 +25,8 @@ target/
 
 __pycache__/
 *.py[cod]
+
+# Disposable native Windows laboratory binaries; keep scripts and summaries.
+/audit/2026-09-21-input-monitors/windows-lab/disk.raw
+/audit/2026-09-21-input-monitors/windows-lab-tools/
+/audit/2026-09-21-input-monitors/migration-lab/uki-build/maintenance-relocate/maintenance.efi

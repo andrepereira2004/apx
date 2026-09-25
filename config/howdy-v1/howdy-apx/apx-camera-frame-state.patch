@@ -1,0 +1,65 @@
+--- a/howdy/src/compare.py
++++ b/howdy/src/compare.py
+@@ -27,0 +28,60 @@
++
++camera_state_path = None
++camera_state_last_update = 0.0
++
++
++def clear_camera_frame_state():
++	"""Remove the UI-only marker for this exact comparison process."""
++	global camera_state_path
++
++	if camera_state_path is None:
++		return
++
++	try:
++		os.unlink(camera_state_path)
++	except OSError:
++		pass
++
++
++def publish_camera_frame_state():
++	"""Heartbeat after actual frames only; UI failure must not affect PAM."""
++	global camera_state_path, camera_state_last_update
++
++	now = time.monotonic()
++	if camera_state_path is not None:
++		if now - camera_state_last_update >= 0.25:
++			try:
++				os.utime(camera_state_path, follow_symlinks=False)
++				camera_state_last_update = now
++			except OSError:
++				pass
++		return
++
++	runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
++	if runtime_dir is None or not os.path.isdir(runtime_dir):
++		return
++
++	try:
++		with open("/proc/self/stat", "r", encoding="utf-8") as process_stat:
++			start_ticks = process_stat.read().rsplit(")", 1)[1].split()[19]
++	except (OSError, IndexError):
++		return
++
++	camera_state_path = os.path.join(
++		runtime_dir,
++		"apx-howdy-camera-{}-{}.active".format(os.getpid(), start_ticks)
++	)
++	try:
++		descriptor = os.open(
++			camera_state_path,
++			os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW,
++			0o600
++		)
++		os.close(descriptor)
++		camera_state_last_update = now
++	except OSError:
++		# Presentation is optional; a full/unwritable runtime cannot break auth.
++		camera_state_path = None
++
++
++atexit.register(clear_camera_frame_state)
+@@ -244,0 +305 @@ frame, gsframe = video_capture.read_frame()
++	publish_camera_frame_state()

@@ -1,7 +1,9 @@
 APX RETURN TO HUB
 
-SUPER+E reinicia o Windows e regressa ao APX, porque o Linux Boot Manager
-permanece em primeiro lugar na ordem UEFI. O helper interceta a combinação
+SUPER+E seleciona o Linux Boot Manager na UEFI, reinicia o Windows e regressa
+ao APX. O Windows pede autorizacao de administrador para esta alteracao de
+arranque. Se a selecao falhar ou for recusada, o Windows nao reinicia.
+O helper interceta a combinacao
 antes do Explorer apenas enquanto está ativo; fora dele, WIN+E mantém o
 comportamento normal do Windows.
 

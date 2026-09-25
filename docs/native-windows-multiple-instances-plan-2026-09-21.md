@@ -432,3 +432,21 @@ backup budget, disk/extent drift, collisions, stale selection and isolated state
 changes. Installed native actions remain v1 until the complete v3 offline
 executor, rollback and physical boot verification exist. No migration approval
 was requested because that executable work is not yet reviewable.
+# 2026-09-25: physical Windows return correction
+
+The owner confirmed that both native Windows instances boot and remain isolated,
+but `SUPER+E` restarted into Windows again unless the firmware order was changed
+manually in setup. The earlier ReturnToHub helper only called `shutdown.exe` and
+assumed that Linux stayed first in the firmware order. That assumption failed on
+this Lenovo pilot. Linux is currently Boot0005 and first in BootOrder after the
+owner's manual repair.
+
+The updated helper runs an elevated, exact-match firmware check when `SUPER+E`
+is pressed. It looks for one firmware entry with the systemd-boot EFI path,
+places that entry first in the persistent UEFI order, sets it as the one-time
+firmware boot sequence, checks the resulting firmware-manager record, and only
+then requests restart. The user must accept a Windows administrator prompt; a
+failed or declined selection leaves Windows running. The candidate is installed
+in both Windows volumes and the p4 setup payload, with previous bytes backed up
+under `/var/lib/apx/backups/20260925-windows-uefi-return`. This has not yet been
+verified by a physical Windows-to-Linux return after the update.

@@ -10,6 +10,22 @@ import apx_native_hub_v3 as hub
 
 
 class NativeHubRecoveryTests(unittest.TestCase):
+    def test_boot_preflight_runs_outside_restricted_switch_daemon(self):
+        completed=mock.Mock(returncode=0,stdout='Validated selected native Windows',stderr='')
+        with mock.patch.object(hub.subprocess,'run',return_value=completed) as run:
+            hub.validate_boot('windows-testes','2770478b-480f-4aea-8910-e3201d5334c5')
+        command=run.call_args.args[0]
+        self.assertEqual(command[0],'systemd-run')
+        self.assertIn('--wait',command)
+        self.assertIn('--pipe',command)
+        self.assertIn('--validate-only',command)
+        self.assertEqual(command[command.index('--target')+1],'windows-testes')
+        completed.returncode=1
+        completed.stderr='EFI validation failed'
+        with mock.patch.object(hub.subprocess,'run',return_value=completed):
+            with self.assertRaisesRegex(ValueError,'EFI validation failed'):
+                hub.validate_boot('windows-testes','2770478b-480f-4aea-8910-e3201d5334c5')
+
     def test_reusable_slot_preview_becomes_preparable_when_release_enabled(self):
         value={'target':'windows-next','can_create':False,
                'plan':{'profile':'apx-native-slot-reuse-plan-v3',

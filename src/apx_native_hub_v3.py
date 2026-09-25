@@ -1,5 +1,5 @@
 """Trusted per-instance catalogue and bounded Hub job dispatch."""
-import hashlib,json,os,re,stat,subprocess,time,sys
+import hashlib,json,os,re,secrets,stat,subprocess,time,sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from apx_native_instances_v3 import validate_windows_install_plan,validate_instances,select_instance,offline_rollback_allowed
@@ -97,6 +97,18 @@ def control():
         native_recovery=False)
 
 
+def validate_boot(target,generation):
+    # The switch daemon intentionally lacks CAP_SYS_ADMIN. Run the read-only
+    # EFI/NTFS mount checks in a transient Host unit, like the boot action.
+    unit='apx-native-v3-check-'+generation[:8]+'-'+secrets.token_hex(4)
+    result=subprocess.run(['systemd-run','--unit='+unit,'--collect','--wait','--pipe',
+        '--property=Type=exec','/usr/bin/python3',BOOT,'--target',target,
+        '--generation',generation,'--validate-only'],text=True,capture_output=True,timeout=15)
+    if result.returncode:
+        detail=(result.stderr or result.stdout).strip().splitlines()
+        raise ValueError('A validação do Windows falhou: '+(detail[-1][:240] if detail else 'verifica o registo do serviço.'))
+
+
 def dispatch(action,target,generation,lock):
     if not enabled():raise ValueError('A criação de Windows ainda está em validação.')
     if action not in {'prepare','activate','rollback','retry','delete','boot'} or not re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}',generation):raise ValueError('invalid native operation')
@@ -122,7 +134,7 @@ def dispatch(action,target,generation,lock):
     else:
         pending=trusted(PENDING)
         if pending['target']!=target or pending['generation']!=generation:raise ValueError('pending instance changed')
-    if action=='boot':subprocess.run(['python3',BOOT,'--target',target,'--generation',generation,'--validate-only'],check=True,text=True,capture_output=True,timeout=8)
+    if action=='boot':validate_boot(target,generation)
     unit='apx-native-v3-'+action+'-'+generation[:8]
     fd=os.open(lock,os.O_CREAT|os.O_EXCL|os.O_WRONLY|os.O_NOFOLLOW,0o600)
     with os.fdopen(fd,'w') as stream:stream.write(unit+'\n');stream.flush();os.fsync(stream.fileno())

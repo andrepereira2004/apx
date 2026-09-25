@@ -1,5 +1,15 @@
 # APX Project State
 
+## Hub native Windows menu preflight correction (2026-09-25)
+
+The owner reported `windows-testes` as unavailable in the Hub. The Host switch
+daemon rejected two `native.boot-v3` requests during its read-only boot
+preflight. That daemon has an empty capability set, so the preflight could not
+mount the selected EFI and NTFS volumes; the same validator succeeds directly
+on the Host and in a transient systemd unit. The v3 dispatcher now runs this
+preflight in a short-lived Host unit while retaining the switch daemon's
+restricted privileges. Physical menu boot still needs owner confirmation.
+
 ## First `windows-testes` owner boot and APX return repair (2026-09-24)
 
 The owner completed the first Windows setup and reported reaching the new

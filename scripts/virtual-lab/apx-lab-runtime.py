@@ -8,7 +8,9 @@ roles and plan digests, never caller-supplied paths or commands.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import os
@@ -37,6 +39,8 @@ JOURNAL = STATE / "journal" / "operations.jsonl"
 SNAPSHOTS = STATE / "snapshots"
 ARCHIVES = STATE / "archives"
 BACKUPS = STATE / "backups"
+LOCAL_RECOVERY = Path("/.snapshots/local-recovery")
+RECOVERY_LOCK = Path("/run/lock/apx-local-recovery.lock")
 NAME_RE = re.compile(r"[a-z][a-z0-9-]{0,31}")
 ROLES = {"hub", "development", "minimal", "graphical-h0", "graphical-base", "hub-graphical"}
 HEADLESS_START_ROLES = {"hub", "development", "minimal"}
@@ -177,7 +181,7 @@ NETWORK_ADAPTER = "/usr/lib/apx/apx-environment-network-v1.py"
 EFFECTS = {
     "create": ("root", "home", "configure", "publish"),
     "destroy": (
-        "stop", "purge-update-rollbacks", "purge-snapshots", "purge-archives", "purge-backups", "remove-home",
+        "stop", "purge-update-rollbacks", "purge-snapshots", "purge-archives", "purge-backups", "purge-local-recovery", "remove-home",
         "remove-root", "purge-metadata", "unpublish", "purge-plans",
     ),
 }
@@ -1103,6 +1107,11 @@ def enroll_local_admin(name: str) -> None:
 
 def destroy(plan_identity: str, approval: str) -> None:
     require_root()
+    with local_recovery_lock():
+        _destroy_locked(plan_identity, approval)
+
+
+def _destroy_locked(plan_identity: str, approval: str) -> None:
     plan = load_plan(plan_identity, "destroy")
     name = str(plan["name"])
     if approval != f"DESTROY {name}":
@@ -1120,6 +1129,7 @@ def destroy(plan_identity: str, approval: str) -> None:
         raise Refusal("Environment container is not a trusted root-owned directory")
     operation = str(uuid.uuid4())
     rollbacks = environment_update_rollbacks(name)
+    local_copies = local_recovery_snapshots(name)
     append_event(operation, "destroy", "operation", "started", name=name, plan=plan_identity)
     stop(name)
     for path in rollbacks:
@@ -1132,6 +1142,8 @@ def destroy(plan_identity: str, approval: str) -> None:
         operation, "destroy", "purge-backups", "complete", name=name,
         removed=removed_backups,
     )
+    purge_local_recovery(name, local_copies)
+    append_event(operation, "destroy", "purge-local-recovery", "complete", name=name, removed=len(local_copies))
     for label in ("home", "root"):
         path = target / label
         append_event(operation, "destroy", f"remove-{label}", "started", name=name)
@@ -1159,6 +1171,80 @@ def delete_subvolume_tree(path: Path) -> None:
 
 
 UUID_COMPONENT = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+
+
+@contextlib.contextmanager
+def local_recovery_lock():
+    """Shared with apx-local-snapshots: no backup can race a deletion."""
+    fd = os.open(RECOVERY_LOCK, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_gid != 0 or info.st_mode & 0o022:
+            raise Refusal("local recovery lock is not trusted")
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield
+    finally:
+        os.close(fd)
+
+
+def trusted_recovery_directory(path: Path) -> None:
+    # Check all ancestors too; resolving a symlink before checking is unsafe.
+    for item in reversed((path, *path.parents)):
+        info = item.lstat()
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != 0 or info.st_gid != 0 or info.st_mode & 0o022:
+            # /tmp is allowed only as an ancestor of isolated test fixtures.
+            if item == Path('/tmp') and stat.S_ISDIR(info.st_mode) and info.st_mode & stat.S_ISVTX:
+                continue
+            raise Refusal(f"local recovery directory is not trusted: {item}")
+
+
+def local_recovery_snapshots(name: str) -> tuple[Path, ...]:
+    """Admit the exact layout owned by apx-local-snapshots, all generations."""
+    validate_name(name)
+    if not LOCAL_RECOVERY.exists() and not LOCAL_RECOVERY.is_symlink():
+        return ()
+    trusted_recovery_directory(LOCAL_RECOVERY)
+    found = []
+    for label in ('root', 'home'):
+        parent = LOCAL_RECOVERY / f'environment-{name}-{label}'
+        if not parent.exists() and not parent.is_symlink():
+            continue
+        trusted_recovery_directory(parent)
+        for path in sorted(parent.iterdir()):
+            if not re.fullmatch(r'[0-9]{8}T[0-9]{6}Z', path.name) or path.is_symlink() or not path.is_dir():
+                raise Refusal(f"unrecognized local recovery copy: {path}")
+            # A plain directory must never be accepted as a Btrfs snapshot.
+            run(['btrfs', 'subvolume', 'show', str(path)])
+            found.append(path)
+    # Btrfs snapshots are non-recursive. On the pilot /var/lib/apx is a separate
+    # subvolume. If another installation has mixed APX state in system backups,
+    # refuse before stopping/unpublishing instead of falsely reporting deletion.
+    system = LOCAL_RECOVERY / 'system'
+    if system.exists() or system.is_symlink():
+        trusted_recovery_directory(system)
+        for snapshot in sorted(system.iterdir()):
+            trusted_recovery_directory(snapshot)
+            state = snapshot / 'var/lib/apx'
+            # Check intermediate components without following backup symlinks.
+            for part in (snapshot / 'var', snapshot / 'var/lib', state):
+                if part.is_symlink():
+                    raise Refusal('mixed system backup has a symlink in its APX state path')
+            if state.exists() and any(state.iterdir()):
+                raise Refusal('system recovery snapshot contains mixed APX state; purge its Environment copies before deletion')
+    return tuple(found)
+
+
+def purge_local_recovery(name: str, copies: tuple[Path, ...]) -> None:
+    for path in copies:
+        delete_subvolume_tree(path)
+        if path.exists() or path.is_symlink():
+            raise Refusal('local recovery snapshot remained after deletion')
+    for label in ('root', 'home'):
+        parent = LOCAL_RECOVERY / f'environment-{name}-{label}'
+        if parent.exists():
+            parent.rmdir()  # Unexpected new content fails closed.
+    if local_recovery_snapshots(name):
+        raise Refusal('local recovery copies remain')
 
 
 def environment_update_rollbacks(name: str) -> tuple[Path, ...]:
@@ -1483,6 +1569,11 @@ def recover() -> None:
 
 def recover_unpublished(name: str, approval: str) -> None:
     require_root()
+    with local_recovery_lock():
+        _recover_unpublished_locked(name, approval)
+
+
+def _recover_unpublished_locked(name: str, approval: str) -> None:
     validate_name(name)
     if approval != f"CLEAN UNPUBLISHED {name}":
         raise Refusal("exact recovery cleanup approval is absent")
@@ -1505,6 +1596,8 @@ def recover_unpublished(name: str, approval: str) -> None:
                 break
     if operation is None:
         raise Refusal("no matching uncertain unpublished operation")
+    copies = local_recovery_snapshots(name)
+    purge_local_recovery(name, copies)
     if not target.exists():
         append_event(
             operation, action or "recovery", "operation", "complete", name=name,

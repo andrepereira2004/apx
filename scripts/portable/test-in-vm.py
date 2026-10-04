@@ -17,6 +17,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output', type=Path, help='new directory for disposable VM and logs')
     parser.add_argument('--qemu-prefix', type=Path, help='optional unpacked QEMU usr/ tree')
+    parser.add_argument('--github', action='store_true', help='install using the public GitHub one-command entry point')
     args = parser.parse_args()
     if os.geteuid() != 0 or not os.access('/dev/kvm', os.R_OK | os.W_OK):
         parser.error('Host root and /dev/kvm required for this laboratory harness')
@@ -54,6 +55,8 @@ def main():
     def write(relative, text):
         path = root / relative; path.parent.mkdir(parents=True, exist_ok=True); path.write_text(text); path.chmod(0o644)
     write('etc/hostname', 'teste-de-vm\n')
+    if args.github:
+        write('etc/apx-vm-github-source', 'apx-arch-base-v1\n')
     write('etc/fstab', '/dev/vda / btrfs defaults 0 0\n')
     write('etc/machine-id', '')
     write('etc/systemd/network/20-ethernet.network', '[Match]\nName=en* eth*\n\n[Network]\nDHCP=yes\n')

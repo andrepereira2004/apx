@@ -45,18 +45,29 @@ over existing state. Repository tests are not equivalent to this evidence.
 
 ## Usage
 
-A transfer archive can be built without copying machine state:
+The public GitHub branch `apx-arch-base-v1` contains the installer and current
+source. From the **root console of a fresh installed Arch**, one command fetches
+the checkout and installs the base:
 
 ```sh
-python scripts/portable/build-bundle.py /tmp/apx-portable.tar.gz
+bash -o pipefail -c 'curl -fsSL https://raw.githubusercontent.com/andrepereira2004/apx/apx-arch-base-v1/install.sh | bash -s -- --apply'
 ```
 
-Extract it on the new PC and run `sha256sum -c SHA256SUMS` from its directory.
-Alternatively, copy a clean checkout of this repository. Then:
+`curl` must be available. The entry point checks the fresh Arch/Btrfs target,
+installs Git/Python if needed using a full signed Arch update, clones the public
+branch, prints the exact commit, and runs the installer. Temporary source files
+are removed afterwards. No manual archive transfer is needed. This command
+installs the **headless base**, not the graphical physical pilot.
+
+For inspection from an existing checkout (no install):
 
 ```sh
 bash scripts/portable/install-apx-arch.sh --check
-bash scripts/portable/install-apx-arch.sh --apply
+```
+
+After installation, enter Hub:
+
+```sh
 apx environment shell hub
 ```
 

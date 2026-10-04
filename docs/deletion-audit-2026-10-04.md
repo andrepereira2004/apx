@@ -1,7 +1,36 @@
 # Verificação de eliminação — 2026-10-04
 
-**Não é possível confirmar eliminação completa: existem cópias recuperáveis.**
-Esta verificação não apagou ficheiros, snapshots nem partições.
+## Correção e limpeza autorizadas posteriormente
+
+O owner pediu explicitamente eliminação efetiva. Às 14:46 UTC foram removidos
+os seis snapshots identificados abaixo e as três referências ao disco do antigo
+laboratório Windows. A ausência foi verificada. Os dois snapshots `system`
+foram preservados: apenas o ficheiro `disk.raw` foi removido e a propriedade
+de só leitura foi reposta. Cerca de 30 GiB ficaram livres. Os dois Windows
+atuais e os cinco environments Linux registados foram preservados.
+
+A eliminação e a limpeza de criações falhadas incluem agora o armazenamento
+`/.snapshots/local-recovery/environment-NOME-{home,root}`. O serviço de snapshots
+e a eliminação partilham um bloqueio, para evitar que um backup recrie a cópia
+durante a operação. O serviço também ignora criações sem registo publicado.
+Falhas na remoção impedem o anúncio de sucesso. Backups de sistema que incluam
+estado APX misturado são recusados antes de parar/despublicar o environment:
+precisam de limpeza atribuída explicitamente, sem apagar dados de terceiros.
+
+A correção foi aplicada ao runtime físico preservando os hashes das suas seeds.
+A VM verificou eliminação de um workload, snapshot APX, backup numerado e
+snapshot local, preservando o snapshot de outro nome. Evidência de limpeza e
+implantação em `audit/2026-10-04-portable/deletion-*.json`.
+
+Isto confirma a remoção das cópias identificadas, não apagamento forense de
+setores livres nem remoção de backups externos desconhecidos. O apagamento
+nativo Windows já usa zero e leitura de verificação das partições selecionadas;
+não foi acionado sobre os dois Windows atuais.
+
+## Estado inicial da auditoria (antes da limpeza)
+
+**A auditoria inicial encontrou cópias recuperáveis.** Foi uma verificação
+apenas de leitura; as observações abaixo são o registo histórico dessa fase.
 
 ## Confirmado em leitura
 
@@ -49,5 +78,5 @@ backup pelas extensões procuradas. Discos desligados, backups externos/cloud,
 conteúdo de todos os arquivos comprimidos, ficheiros renomeados e blocos livres
 não estão cobertos. Não há prova de apagamento seguro/irrecuperabilidade.
 
-A pergunta ao owner distingue verificar de eliminar cópias. Sem resposta, não
-se apagam snapshots do sistema inteiro nem os dois Windows válidos.
+A limpeza posterior foi autorizada pela instrução explícita do owner. Não se
+apagaram snapshots do sistema inteiro nem os dois Windows válidos.

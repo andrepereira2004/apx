@@ -25,7 +25,12 @@ def main():
         raise RuntimeError('wrong VM')
     install = Path('/var/lib/apx/portable-install.json')
     if not install.exists():
-        subprocess.run(['bash', '/root/apx/scripts/portable/install-apx-arch.sh', '--apply'], check=True)
+        if Path('/etc/apx-vm-github-source').exists():
+            # Exercise precisely the documented public, single-command path.
+            subprocess.run(['bash', '-o', 'pipefail', '-c',
+                'curl -fsSL https://raw.githubusercontent.com/andrepereira2004/apx/apx-arch-base-v1/install.sh | bash -s -- --apply'], check=True)
+        else:
+            subprocess.run(['bash', '/root/apx/scripts/portable/install-apx-arch.sh', '--apply'], check=True)
     if json.loads(install.read_text())['phase'] != 'complete':
         raise RuntimeError('installation is incomplete')
     for attempt in range(90):
@@ -67,10 +72,28 @@ def main():
         raise RuntimeError('workload package appeared in Hub')
     print('APX_VM_CHECK: real package transaction isolated from Host and Hub', flush=True)
     hub('environment', 'stop', 'vmtest')
+    # Real restorable copies, including the formerly missed Host recovery store.
+    snapshot = hub('environment', 'snapshot', 'vmtest').strip()
+    recovery = Path('/.snapshots/local-recovery/environment-vmtest-home')
+    recovery.mkdir(parents=True, mode=0o700)
+    call('btrfs', 'subvolume', 'snapshot', '-r', '/var/lib/apx/environments/vmtest/home', str(recovery / '20261004T150000Z'))
+    neighbor = Path('/.snapshots/local-recovery/environment-vmtest-extra-home')
+    neighbor.mkdir(parents=True, mode=0o700, exist_ok=True)
+    preserved = neighbor / '20261004T150000Z'
+    if not preserved.exists():
+        call('btrfs', 'subvolume', 'snapshot', '-r', '/var/lib/apx/environments/hub/home', str(preserved))
+    backup = Path('/var/lib/apx/backups/vm-deletion-test'); backup.mkdir(parents=True, exist_ok=True)
+    (backup / '0').write_text('private settings')
+    (backup / 'manifest.json').write_text(json.dumps([{'target': '/var/lib/apx/environments/vmtest/home/apx/private', 'backup': str(backup / '0')}]))
     plan = json.loads(hub('environment', 'destroy-plan', 'vmtest'))
     hub('environment', 'destroy', '--plan', plan['digest'], '--approve', 'DESTROY vmtest')
     if Path('/var/lib/apx/environments/vmtest').exists():
         raise RuntimeError('deleted workload remains')
+    if recovery.exists() or (backup / '0').exists() or list(Path('/var/lib/apx/snapshots').glob('vmtest-*')):
+        raise RuntimeError('deleted workload backup remains')
+    if not preserved.exists():
+        raise RuntimeError('neighbor recovery snapshot was deleted')
+    print('APX_VM_CHECK: APX snapshot, numbered backup and local recovery deleted; neighbor preserved', flush=True)
     refused = call('bash', '/root/apx/scripts/portable/install-apx-arch.sh', '--apply', check=False)
     if refused.returncode != 2:
         raise RuntimeError('installer did not refuse existing state')

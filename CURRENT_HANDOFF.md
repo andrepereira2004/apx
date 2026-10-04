@@ -1,5 +1,37 @@
 # APX Current Handoff
 
+## Effective deletion and GitHub installation (2026-10-04, later owner request)
+
+Owner explicitly requested effective deletion and GitHub delivery with a single
+fetch/install command. This supersedes the earlier unanswered cleanup question.
+The runtime now purges the exact local-recovery home/root snapshots and shares
+a lock with the Host snapshot producer. Failed or ambiguous cleanup cannot
+report successful deletion; mixed APX state in system snapshots fails closed.
+The producer snapshots only published Environments. The changes are deployed
+to the physical runtime, preserving its accepted graphical asset pins.
+
+Six retained snapshots of already cleaned creations and all three copies of
+the retired Windows laboratory disk were removed and verified absent. The two
+mixed system snapshots remain read-only and retain their other data. Current
+Windows and all five registered Linux Environments were preserved. About 30 GiB
+was released. Evidence: `audit/2026-10-04-portable/deletion-cleanup.json` and
+`deletion-deployment.json`; scope/limits in `docs/deletion-audit-2026-10-04.md`.
+This is logical deletion of attributed local copies, not forensic erasure or
+control over unknown offline/cloud backups.
+
+The public GitHub entry point is `install.sh`, on branch `apx-arch-base-v1`.
+It fetches the current branch into a temporary checkout and installs the tested
+headless base on fresh Arch x86_64/Btrfs with 110 GiB free. See the README for
+the single command. The optional tar builder is no longer the delivery path.
+Full graphical portability is still unfinished; this must not be described as
+an installer replicating the current graphical/native Windows pilot.
+
+The extended disposable VM test passed real lifecycle/package isolation plus
+APX snapshot, numbered backup and local-recovery deletion, preserving a neighbor.
+Repository tests: 1,355 passed, 11 skipped. The GitHub entry point receives a
+separate fresh-VM acceptance run before final delivery.
+
+
 ## Portable installation and deletion audit (2026-10-04)
 
 Owner requested a commit of current state, confirmation of deleted Environment

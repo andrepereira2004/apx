@@ -5,6 +5,13 @@ Experimental installation on a fresh generic Arch x86_64 Host: see
 isolated Environments but does **not yet install the current graphical Hub or
 native Windows integration**. Existing physical-pilot installers remain target-bound.
 
+On a fresh installed Arch x86_64 PC with Btrfs and at least 110 GiB free,
+run as root to fetch and install that base directly from GitHub:
+
+```sh
+bash -o pipefail -c 'curl -fsSL https://raw.githubusercontent.com/andrepereira2004/apx/apx-arch-base-v1/install.sh | bash -s -- --apply'
+```
+
 APX is a personal operating environment platform built on top of Arch Linux.
 
 APX does not replace Linux. The host remains a single Arch Linux installation

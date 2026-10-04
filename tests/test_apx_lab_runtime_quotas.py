@@ -265,6 +265,7 @@ class RuntimeDestroyGenerationTests(unittest.TestCase):
                     shutil.rmtree(path)
 
             with patch.object(runtime, "STATE", state), \
+                 patch.object(runtime, "LOCAL_RECOVERY", state / "local-recovery"), \
                  patch.object(runtime, "ENVIRONMENTS", environments), \
                  patch.object(runtime, "SNAPSHOTS", snapshots), \
                  patch.object(runtime, "ARCHIVES", archives), \

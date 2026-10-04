@@ -15,6 +15,7 @@ def load_runtime():
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     spec.loader.exec_module(module)
+    module.LOCAL_RECOVERY = Path('/nonexistent-apx-unit-test-recovery')
     return module
 
 

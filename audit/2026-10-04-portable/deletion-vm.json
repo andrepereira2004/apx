@@ -1,0 +1,15 @@
+{
+  "profile": "local-recovery-deletion-v1",
+  "vm": "Teste de VM",
+  "kind": "standalone QEMU/KVM, no physical disk passthrough",
+  "boot_log_sha256": "74155b6bda076cfa91e1fe122f96b75b05598c7e708823c570b3a92d4241c106",
+  "passed": true,
+  "checks": [
+    "APX_VM_CHECK: installer and authenticated Hub running",
+    "APX_VM_CHECK: workload created and started by Hub",
+    "APX_VM_CHECK: private root and absent workload management socket",
+    "APX_VM_CHECK: real package transaction isolated from Host and Hub",
+    "APX_VM_CHECK: APX snapshot, numbered backup and local recovery deleted; neighbor preserved",
+    "APX_VM_CHECK: destroy and overwrite refusal passed"
+  ]
+}

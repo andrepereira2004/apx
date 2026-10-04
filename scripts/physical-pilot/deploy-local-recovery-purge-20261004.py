@@ -45,6 +45,10 @@ def main():
         temporary.chmod(0o755)
         os.replace(temporary, path)
         evidence.append({'target': str(path), 'before': expected[path], 'after': hashlib.sha256(content).hexdigest()})
+    # The typed executor imports the runtime once at startup. The graphical
+    # management runner uses fresh CLI processes; both paths need the fix.
+    subprocess.run(['systemctl', 'restart', 'apx-pilot-executor.service'], check=True)
+    subprocess.run(['systemctl', 'is-active', '--quiet', 'apx-pilot-executor.service'], check=True)
     (REPO / 'audit/2026-10-04-portable/deletion-deployment.json').write_text(json.dumps(evidence, indent=2) + '\n')
     print('Deletion runtime and serialized snapshot producer installed; graphical Hub unchanged.')
 

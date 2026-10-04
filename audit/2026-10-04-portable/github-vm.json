@@ -1,0 +1,78 @@
+{
+  "profile": "github-portable-install-v1",
+  "source_commit": "7ee9211644d199b8d119e33429f2a5873ad41e58",
+  "entry_point": "https://raw.githubusercontent.com/andrepereira2004/apx/apx-arch-base-v1/install.sh",
+  "vm_name": "Teste de VM",
+  "physical_disks_shared": false,
+  "headless_only": true,
+  "boots": [
+    {
+      "boot": 1,
+      "log_sha256": "fcae632f9b02236dfabe54508358da745183286291046d26a123162093342453",
+      "passed": true,
+      "checks": [
+        "APX_VM_CHECK: installer and authenticated Hub running",
+        "APX_VM_CHECK: workload created and started by Hub",
+        "APX_VM_CHECK: private root and absent workload management socket",
+        "APX_VM_CHECK: real package transaction isolated from Host and Hub",
+        "APX_VM_CHECK: APX snapshot, numbered backup and local recovery deleted; neighbor preserved",
+        "APX_VM_CHECK: destroy and overwrite refusal passed"
+      ]
+    },
+    {
+      "boot": 2,
+      "log_sha256": "585d6a7b8186b089703b997cdcfe817afd53eac51a641c64ceee32fa77dcd26f",
+      "passed": true,
+      "checks": [
+        "APX_VM_CHECK: installer and authenticated Hub running",
+        "APX_VM_CHECK: workload created and started by Hub",
+        "APX_VM_CHECK: private root and absent workload management socket",
+        "APX_VM_CHECK: real package transaction isolated from Host and Hub",
+        "APX_VM_CHECK: APX snapshot, numbered backup and local recovery deleted; neighbor preserved",
+        "APX_VM_CHECK: destroy and overwrite refusal passed"
+      ]
+    }
+  ],
+  "installed_sources": [
+    {
+      "source": "scripts/virtual-lab/apx-lab-runtime.py",
+      "sha256": "e4c96ea18b28ad07b6caf7b20e696496b92e399be661a59f25a39d8dda271693"
+    },
+    {
+      "source": "scripts/portable/apx-portable-runtime.py",
+      "sha256": "a2590631bb3bd5dc628be376e006b082b7fbb75201f58799b79e7e5320939d20"
+    },
+    {
+      "source": "scripts/virtual-lab/apx-lab-client.py",
+      "sha256": "917e3bbac51acd28a2992c95bd9f85df93fdac08ccda3c25441d185aefb0f17d"
+    },
+    {
+      "source": "scripts/virtual-lab/apx-lab-executor.py",
+      "sha256": "952bc14c999eb23a5eda090cc9106bcb045bdbd5b50717b025b6559932587438"
+    },
+    {
+      "source": "scripts/physical-pilot/apx-environment-network-v1.py",
+      "sha256": "e60eefb90a6dac0cf769303fa3926d48b8c950a5f0a0a30a55be5205e9d1ac01"
+    },
+    {
+      "source": "src/apx_environment_features.py",
+      "sha256": "58bccde698671db48c948d67b83e537f26dad77d433a6f75a14126d70e49130a"
+    },
+    {
+      "source": "src/apx_environment_desktop_defaults.py",
+      "sha256": "c5ce9476cad574f88e9a6ad49f80cf6e11ca26db18983b7ec94aaf7c0fd05e5b"
+    },
+    {
+      "source": "config/environment-flatpak-v1/apx-flatpak-nesting-v1",
+      "sha256": "97305e81f99d29f6fd55c675d40c069368ce93bc67b7d2be762eb605edd3e5a5"
+    },
+    {
+      "source": "config/environment-flatpak-v1/apx-flatpak-nesting-v1.service",
+      "sha256": "6ac1facb4c407dce57212a23ba273165e2b21ce85ffa0583e779c13f6fe5b2c0"
+    }
+  ],
+  "installation_phase": "complete",
+  "registered_environments": [
+    "hub"
+  ]
+}

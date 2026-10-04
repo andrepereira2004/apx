@@ -139,3 +139,18 @@ The stopped VM and raw logs are in `/root/apx-teste-de-vm`; successful logs are
 `disk-v5.raw`. Failed trial disks were removed; diagnostic logs were retained.
 The VM is not a registered Environment in the current physical APX because its
 69 GiB initial free space was below the unchanged 96 GiB creation reserve.
+
+## GitHub delivery acceptance (2026-10-04)
+
+The public command above installed commit `7ee9211` on a second fresh QEMU/KVM
+VM, “Teste de VM”, and passed the lifecycle checks on initial boot and after a
+reboot. Both runs created a workload via the authenticated Hub, installed a
+signed Arch package only there, and deleted its active data, APX snapshot,
+numbered configuration backup and Host local-recovery snapshot. A neighboring
+snapshot was preserved. Existing-installation overwrite was refused.
+
+All installed source hashes match the repository and only Hub remains
+registered. Evidence: `audit/2026-10-04-portable/github-vm.json`. The stopped VM
+is retained at `/root/apx-teste-de-vm-github`. Reproduce on an authorized
+laboratory Host with `test-in-vm.py NEW_DIRECTORY --github` (plus
+`--qemu-prefix PATH` if using unpacked QEMU). It exposes no physical disks.

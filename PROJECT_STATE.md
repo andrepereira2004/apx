@@ -28,8 +28,12 @@ an installer replicating the current graphical/native Windows pilot.
 
 The extended disposable VM test passed real lifecycle/package isolation plus
 APX snapshot, numbered backup and local-recovery deletion, preserving a neighbor.
-Repository tests: 1,355 passed, 11 skipped. The GitHub entry point receives a
-separate fresh-VM acceptance run before final delivery.
+Repository suite: 1,355 tests OK (11 skipped). The public GitHub command
+installed commit `7ee9211` in a fresh standalone VM and passed the complete
+lifecycle/deletion checks on first boot and after reboot. All installed source
+hashes match; only Hub remains registered. Evidence: `github-vm.json` in the
+same audit directory. Stopped VM: `/root/apx-teste-de-vm-github`. The physical
+executor was restarted to load the new runtime; the graphical Hub kept running.
 
 
 ## Portable installation and deletion audit (2026-10-04)

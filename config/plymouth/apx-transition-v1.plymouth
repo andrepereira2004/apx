@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=APX Environment transition
+Description=Black waiting surface for Environment preparation
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/apx-transition-v1
+ScriptFile=/usr/share/plymouth/themes/apx-transition-v1/apx-transition-v1.script

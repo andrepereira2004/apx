@@ -1,0 +1,325 @@
+#!/usr/bin/env python3
+"""Environment-local desktop choices, with no Host package or device access."""
+import configparser
+import json
+import os
+from pathlib import Path
+import re
+import shlex
+import subprocess
+import sys
+import tempfile
+import time
+import uuid
+
+HOME = Path.home()
+CONFIG = HOME / '.config'
+STATE = CONFIG / 'apx/desktop-preferences.json'
+DEFAULTS = dict(layout='pt', repeat_rate=25, repeat_delay=600, natural_scroll=True,
+                tap_to_click=True, reduced_motion=False, lock_seconds=300,
+                screen_seconds=600, suspend_battery=0, suspend_ac=0, clipboard_history=False)
+
+
+def run(argv):
+    result = subprocess.run(argv, text=True, capture_output=True, timeout=10)
+    if result.returncode:
+        raise RuntimeError((result.stderr or result.stdout or 'A operação falhou').strip()[:400])
+    return result.stdout.strip()
+
+
+def atomic(path, text):
+    if path.is_symlink():
+        raise ValueError('O ficheiro de preferências é uma ligação simbólica')
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    fd, temporary = tempfile.mkstemp(prefix='.apx-preferences-', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w') as stream:
+            stream.write(text); stream.flush(); os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary): os.unlink(temporary)
+
+
+def load():
+    values = dict(DEFAULTS)
+    if STATE.exists(): values.update(json.loads(STATE.read_text()))
+    return values
+
+
+def validate(values):
+    if set(values) != set(DEFAULTS): raise ValueError('Preferência desconhecida')
+    if values['layout'] not in {'pt', 'us', 'gb', 'pt,us', 'us,pt'}: raise ValueError('Disposição inválida')
+    for key, limits in {'repeat_rate': (1, 100), 'repeat_delay': (100, 2000),
+                        'lock_seconds': (0, 7200), 'screen_seconds': (0, 7200),
+                        'suspend_battery': (0, 14400), 'suspend_ac': (0, 14400)}.items():
+        if type(values[key]) is not int or not limits[0] <= values[key] <= limits[1]:
+            raise ValueError('Valor fora do intervalo: ' + key)
+    for key in ['natural_scroll','tap_to_click','reduced_motion','clipboard_history']:
+        if type(values[key]) is not bool: raise ValueError('Valor inválido: ' + key)
+    for key in ['lock_seconds','screen_seconds','suspend_battery','suspend_ac']:
+        if 0 < values[key] < 60: raise ValueError('O intervalo mínimo é um minuto')
+    lock = values['lock_seconds']
+    for key in ['suspend_battery','suspend_ac']:
+        if values[key] and (not lock or lock >= values[key]):
+            raise ValueError('O bloqueio deve acontecer antes da suspensão automática')
+
+
+def lua(values):
+    options = 'terminate:ctrl_alt_bksp' + (',grp:win_space_toggle' if ',' in values['layout'] else '')
+    boolean = lambda v: 'true' if v else 'false'
+    return ('-- APX desktop preferences v1\n'
+            'hl.config({input={kb_layout=' + json.dumps(values['layout']) + ',kb_options=' + json.dumps(options)
+            + ',repeat_rate=' + str(values['repeat_rate']) + ',repeat_delay=' + str(values['repeat_delay'])
+            + ',touchpad={natural_scroll=' + boolean(values['natural_scroll'])
+            + ',tap_to_click=' + boolean(values['tap_to_click']) + '}},animations={enabled='
+            + boolean(not values['reduced_motion']) + '}})\n')
+
+
+def idle(values):
+    text = '''# APX desktop idle preferences v1
+general {
+    lock_cmd = pidof hyprlock || hyprlock --immediate-render --no-fade-in
+    before_sleep_cmd = pidof hyprlock || hyprlock --immediate-render --no-fade-in
+    after_sleep_cmd = hyprctl dispatch 'hl.dsp.dpms({action = "on"})'
+    ignore_dbus_inhibit = false
+    ignore_systemd_inhibit = false
+    ignore_wayland_inhibit = false
+    inhibit_sleep = 2
+}
+'''
+    listeners = [('lock_seconds','pidof hyprlock || hyprlock --immediate-render --no-fade-in',''),
+                 ('screen_seconds',"hyprctl dispatch 'hl.dsp.dpms({action = \"off\"})'", "hyprctl dispatch 'hl.dsp.dpms({action = \"on\"})'"),
+                 ('suspend_battery','/home/apx/.local/bin/apx-desktop-preferences-v1 idle-suspend battery',''),
+                 ('suspend_ac','/home/apx/.local/bin/apx-desktop-preferences-v1 idle-suspend ac','')]
+    for key, action, resume in listeners:
+        if values[key]:
+            text += '\nlistener {\n    timeout = %d\n    on-timeout = %s\n' % (values[key], action)
+            if resume: text += '    on-resume = ' + resume + '\n'
+            text += '}\n'
+    return text
+
+
+def save(changes):
+    values = load(); values.update(changes); validate(values)
+    if set(changes) & {'layout','repeat_rate','repeat_delay','natural_scroll','tap_to_click','reduced_motion'}:
+        code = lua(values)
+        result = run(['/usr/bin/hyprctl','eval',code])
+        if result != 'ok': raise RuntimeError('O compositor recusou a alteração: ' + result[:300])
+        atomic(CONFIG / 'hypr/apx-desktop-preferences.lua',code)
+    if set(changes) & {'lock_seconds','screen_seconds','suspend_battery','suspend_ac'}:
+        path = CONFIG / 'hypr/hypridle.conf'
+        if path.exists() and not path.with_name('hypridle.conf.before-apx-settings').exists():
+            atomic(path.with_name('hypridle.conf.before-apx-settings'), path.read_text())
+        atomic(path, idle(values))
+        # This runs inside the Environment's PID namespace, as its desktop user.
+        subprocess.run(['/usr/bin/pkill','-u',str(os.getuid()),'-x','hypridle'], check=False)
+        subprocess.Popen(['/usr/bin/hypridle','--quiet','--config',str(path)],
+                         stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True)
+    atomic(STATE, json.dumps(values, indent=2) + '\n')
+    if 'clipboard_history' in changes: clipboard_session(values)
+
+
+def clipboard_session(values=None):
+    values = values or load()
+    pidfile = HOME / '.local/state/apx-desktop-preferences/clipboard.pid'
+    if pidfile.exists():
+        try:
+            pid = int(pidfile.read_text()); cmd = Path('/proc') / str(pid) / 'cmdline'
+            parts = cmd.read_bytes().split(b'\0')
+            if parts[:3] == [b'/usr/bin/wl-paste',b'--watch',b'/usr/bin/cliphist']:
+                os.kill(pid, 15)
+        except (ValueError,OSError): pass
+        pidfile.unlink(missing_ok=True)
+    if values['clipboard_history']:
+        if not Path('/usr/bin/cliphist').is_file(): raise RuntimeError('O histórico não está instalado')
+        process = subprocess.Popen(['/usr/bin/wl-paste','--watch','/usr/bin/cliphist','store'],
+                                   stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True)
+        atomic(pidfile,str(process.pid))
+
+
+def available_locales():
+    return sorted(set(run(['/usr/bin/locale','-a']).splitlines()))
+
+
+def set_locale(language, formats):
+    available = available_locales()
+    if language not in available or formats not in available: raise ValueError('Idioma não instalado')
+    if any(not re.fullmatch(r'[A-Za-z0-9_.@-]+', x) for x in [language, formats]): raise ValueError('Idioma inválido')
+    content = 'LANG=%s\nLC_TIME=%s\nLC_NUMERIC=%s\nLC_MONETARY=%s\n' % (language,formats,formats,formats)
+    atomic(CONFIG / 'apx/locale.env',content)
+    atomic(CONFIG / 'environment.d/80-apx-locale.conf',content)
+
+
+def autostarts():
+    entries = {}
+    for directory in [Path('/etc/xdg/autostart'), CONFIG / 'autostart']:
+        if directory.is_dir():
+            for path in sorted(directory.glob('*.desktop')):
+                config = configparser.ConfigParser(interpolation=None)
+                try:
+                    config.read(path); entry = config['Desktop Entry']
+                    if entry.get('Type') != 'Application': continue
+                    if path.name.startswith('apx-'): continue
+                    entries[path.name] = dict(name=entry.get('Name',path.stem),
+                        enabled=entry.get('Hidden','false').lower() != 'true', path=str(path))
+                except (OSError,KeyError,configparser.Error): continue
+    return entries
+
+
+def set_autostart(identity, enabled):
+    entries = autostarts()
+    if identity not in entries: raise ValueError('Aplicação de arranque desconhecida')
+    source = Path(entries[identity]['path'])
+    config = configparser.ConfigParser(interpolation=None); config.optionxform = str
+    config.read(source); config['Desktop Entry']['Hidden'] = 'false' if enabled else 'true'
+    import io
+    text = io.StringIO(); config.write(text)
+    atomic(CONFIG / 'autostart' / identity,text.getvalue())
+
+
+def startup_session():
+    clipboard_session()
+    for entry in autostarts().values():
+        if not entry['enabled']: continue
+        # Only launch user-selected/owned overrides; existing system services retain their startup.
+        path = Path(entry['path'])
+        if path.parent != CONFIG / 'autostart': continue
+        from gi.repository import Gio
+        app = Gio.DesktopAppInfo.new_from_filename(str(path))
+        if app and app.should_show():
+            try: app.launch([], None)
+            except Exception: pass
+
+
+def idle_suspend(source):
+    state = json.loads(run(['/run/apx/host-services-client-v3.py','snapshot']))
+    batteries = state.get('power',{}).get('batteries',[])
+    on_battery = any(str(b.get('status','')).lower() == 'discharging' for b in batteries)
+    if (source == 'battery') != on_battery: return
+    if subprocess.run(['/usr/bin/pgrep','-u',str(os.getuid()),'-x','hyprlock'],stdout=subprocess.DEVNULL).returncode:
+        raise RuntimeError('A suspensão automática exige o bloqueio de ecrã em execução')
+    run(['/usr/bin/qs','--path','/home/apx/.config/quickshell/apx/shell.qml','ipc','call','host','idleSuspend'])
+
+
+def shortcuts():
+    path = CONFIG / 'apx/custom-shortcuts.json'
+    return json.loads(path.read_text()) if path.exists() else []
+
+
+def write_shortcuts(entries):
+    lines = ['-- APX custom application shortcuts v1']
+    for entry in entries:
+        command = '/usr/bin/gio launch ' + shlex.quote(entry['desktop_file'])
+        lines.append('hl.bind(' + json.dumps(entry['chord']) + ',hl.dsp.exec_cmd(' + json.dumps(command) + '))')
+    path = CONFIG / 'hypr/apx-shortcuts.lua'
+    old = path.read_text() if path.exists() else None
+    atomic(path, '\n'.join(lines) + '\n')
+    try: run(['/usr/bin/hyprctl','reload'])
+    except Exception:
+        if old is not None: atomic(path, old)
+        else: path.unlink(missing_ok=True)
+        raise
+    atomic(CONFIG / 'apx/custom-shortcuts.json',json.dumps(entries,indent=2) + '\n')
+
+
+def add_shortcut(chord, desktop_file):
+    chord = chord.upper().replace(' ', '')
+    match = re.fullmatch(r'(SUPER|CTRL|ALT)(?:\+(SUPER|CTRL|ALT|SHIFT))*\+([A-Z0-9]|F[1-9]|F1[0-2])',chord)
+    if not match: raise ValueError('Usa modificadores e uma tecla, por exemplo SUPER+ALT+K')
+    tokens = chord.split('+'); key = tokens[-1]
+    modifiers = tokens[:-1]
+    if len(set(modifiers)) != len(modifiers): raise ValueError('Modificador repetido')
+    mask = sum({'SUPER':64,'CTRL':4,'ALT':8,'SHIFT':1}[value] for value in modifiers)
+    path = Path(desktop_file)
+    if not path.is_file() or path.suffix != '.desktop' or path.parent not in {Path('/usr/share/applications'), HOME / '.local/share/applications', Path('/var/lib/flatpak/exports/share/applications'), HOME / '.local/share/flatpak/exports/share/applications'}:
+        raise ValueError('Escolhe uma aplicação instalada')
+    existing = json.loads(run(['/usr/bin/hyprctl','-j','binds']))
+    if any(int(item.get('modmask',0)) == mask and str(item.get('key','')).upper() == key for item in existing):
+        raise ValueError('Este atalho já está ocupado; escolhe outro')
+    entries = shortcuts(); entries.append(dict(chord=' + '.join(tokens),desktop_file=str(path)))
+    write_shortcuts(entries)
+
+
+def remove_shortcut(chord):
+    write_shortcuts([entry for entry in shortcuts() if entry['chord'] != chord])
+
+
+def display_rule(output, mode, scale, x, y):
+    mode = mode.removesuffix('Hz')
+    return 'hl.monitor({output=' + json.dumps(output) + ',mode=' + json.dumps(mode) + ',scale=' + str(scale) + ',position=' + json.dumps(str(x) + 'x' + str(y)) + '})'
+
+
+def preview_path(token):
+    if re.fullmatch(r'[0-9a-f]{32}', token) is None: raise ValueError('Pré-visualização inválida')
+    return HOME / '.local/state/apx-display-preview' / (token + '.json')
+
+
+def preview_display(output, mode, scale, x, y):
+    monitors = json.loads(run(['/usr/bin/hyprctl', '-j', 'monitors']))
+    monitor = next((item for item in monitors if item.get('name') == output), None)
+    if monitor is None: raise ValueError('O monitor já não está ligado')
+    if mode not in monitor.get('availableModes', []): raise ValueError('Escolhe um modo disponível')
+    match = re.fullmatch(r'(\d+)x(\d+)@([0-9.]+)(?:Hz)?', mode)
+    if not match or scale not in (1.0, 1.25, 1.5, 1.75, 2.0): raise ValueError('Modo ou escala inválidos')
+    width, height = int(match[1])/scale, int(match[2])/scale
+    if not width.is_integer() or not height.is_integer(): raise ValueError('Esta escala não divide a resolução em píxeis inteiros')
+    if type(x) is not int or type(y) is not int or not -16000 <= x <= 16000 or not -16000 <= y <= 16000:
+        raise ValueError('Posição inválida')
+    if monitor.get('transform',0) != 0: raise ValueError('Este controlo requer um monitor sem rotação')
+    for other in monitors:
+        if other.get('name') == output: continue
+        ow, oh = other['width']/other['scale'], other['height']/other['scale']
+        if other.get('transform', 0) % 2: ow, oh = oh, ow
+        if x < other['x'] + ow and x + width > other['x'] and y < other['y'] + oh and y + height > other['y']:
+            raise ValueError('Os ecrãs ficariam sobrepostos; ajusta a posição')
+    previous = display_rule(output, '%dx%d@%.3f' % (monitor['width'],monitor['height'],monitor['refreshRate']),monitor['scale'],monitor['x'],monitor['y'])
+    rule = display_rule(output,mode,scale,x,y)
+    token = uuid.uuid4().hex
+    atomic(preview_path(token),json.dumps(dict(output=output, previous=previous, rule=rule, confirmed=False)))
+    subprocess.Popen(['/usr/bin/python3',str(Path(__file__).resolve()),'display-watch',token],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True)
+    try:
+        if run(['/usr/bin/hyprctl','eval',rule]) != 'ok': raise RuntimeError('O monitor recusou a alteração')
+    except Exception:
+        revert_display(token); raise
+    return token
+
+
+def revert_display(token):
+    path = preview_path(token)
+    if not path.exists(): return
+    state = json.loads(path.read_text())
+    run(['/usr/bin/hyprctl','eval',state['previous']])
+    path.unlink(missing_ok=True)
+
+
+def confirm_display(token):
+    path = preview_path(token)
+    if not path.exists(): raise RuntimeError('O prazo de confirmação terminou; a imagem anterior foi reposta')
+    state = json.loads(path.read_text())
+    saved = CONFIG / 'apx/display-preferences.json'
+    rules = json.loads(saved.read_text()) if saved.exists() else {}
+    rules[state['output']] = state['rule']
+    atomic(CONFIG / 'hypr/apx-display-preferences.lua','-- APX confirmed monitor choices\n' + '\n'.join(rules.values()) + '\n')
+    atomic(saved,json.dumps(rules,indent=2))
+    state['confirmed'] = True; atomic(path,json.dumps(state))
+
+
+def watch_display(token):
+    time.sleep(20)
+    path = preview_path(token)
+    if not path.exists(): return
+    state = json.loads(path.read_text())
+    if not state['confirmed']: revert_display(token)
+    else: path.unlink(missing_ok=True)
+
+
+if __name__ == '__main__':
+    try:
+        args = sys.argv[1:]
+        if len(args) == 2 and args[0] == 'display-watch': watch_display(args[1])
+        elif args == ['get']: print(json.dumps(load()))
+        elif args == ['session']: startup_session()
+        elif len(args) == 2 and args[0] == 'idle-suspend' and args[1] in ['battery','ac']: idle_suspend(args[1])
+        else: raise ValueError('Operação desconhecida')
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
+        print(str(error), file=sys.stderr); raise SystemExit(2)

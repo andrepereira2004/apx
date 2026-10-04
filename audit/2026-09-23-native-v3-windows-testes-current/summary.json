@@ -1,0 +1,21 @@
+{
+  "can_create": false,
+  "executable": false,
+  "generation": "023e14fd-98e9-4277-bd84-0dccf0cf8c34",
+  "measurements": {
+    "apx_used_bytes": 124469743616,
+    "luks_header_bytes": 16777216,
+    "ntfs_min_bytes": 72392241152
+  },
+  "physical_disk_write_performed": false,
+  "plan_sha256": "69c4afa23a359f8e43c5cc7633508104a7ffb16d794e72a31611d0e2eb83a589",
+  "profile": "apx-native-v3-current-readonly-preview",
+  "remaining_gates": [
+    "measured-backup-capacity",
+    "offline-executor-and-rollback-tested",
+    "verified-Windows-backup-and-restore",
+    "per-instance-EFI-and-BCD-verified",
+    "owner-disk-write-approval"
+  ],
+  "target": "windows-testes"
+}

@@ -1,0 +1,87 @@
+{
+  "at": "2026-10-04T12:35:00.602458+00:00",
+  "profile": "portable-headless-v1",
+  "vm_name": "Teste de VM",
+  "vm_path": "/root/apx-teste-de-vm",
+  "disk": "disk-v5.raw",
+  "registered_on_physical_apx": false,
+  "reason": "physical Host free space below unchanged 96 GiB reserve",
+  "guest_kernel": "7.2.8-arch1-2",
+  "guest_disk_gib": 160,
+  "guest_memory_mib": 4096,
+  "physical_disk_passthrough": false,
+  "installed_record": {
+    "schema": 1,
+    "profile": "portable-headless-v1",
+    "phase": "complete",
+    "packages": [
+      "python",
+      "btrfs-progs",
+      "systemd",
+      "nftables",
+      "arch-install-scripts"
+    ],
+    "quota_state": "disabled",
+    "source_sha256": {
+      "scripts/virtual-lab/apx-lab-runtime.py": "781a4be563490386a6b191b13960809cf03784038a0f8f4a2d1dfbd8cfe2717c",
+      "scripts/portable/apx-portable-runtime.py": "a2590631bb3bd5dc628be376e006b082b7fbb75201f58799b79e7e5320939d20",
+      "scripts/virtual-lab/apx-lab-client.py": "917e3bbac51acd28a2992c95bd9f85df93fdac08ccda3c25441d185aefb0f17d",
+      "scripts/virtual-lab/apx-lab-executor.py": "952bc14c999eb23a5eda090cc9106bcb045bdbd5b50717b025b6559932587438",
+      "scripts/physical-pilot/apx-environment-network-v1.py": "e60eefb90a6dac0cf769303fa3926d48b8c950a5f0a0a30a55be5205e9d1ac01",
+      "src/apx_environment_features.py": "58bccde698671db48c948d67b83e537f26dad77d433a6f75a14126d70e49130a",
+      "src/apx_environment_desktop_defaults.py": "c5ce9476cad574f88e9a6ad49f80cf6e11ca26db18983b7ec94aaf7c0fd05e5b",
+      "config/environment-flatpak-v1/apx-flatpak-nesting-v1": "97305e81f99d29f6fd55c675d40c069368ce93bc67b7d2be762eb605edd3e5a5",
+      "config/environment-flatpak-v1/apx-flatpak-nesting-v1.service": "6ac1facb4c407dce57212a23ba273165e2b21ce85ffa0583e779c13f6fe5b2c0"
+    },
+    "limitations": [
+      "no graphical Hub",
+      "no native Windows",
+      "no hardware-specific controls"
+    ]
+  },
+  "logs": {
+    "boot-v5-1.log": {
+      "sha256": "1a6d4e78425cb88b721b76d70b9990471155401fe7b99d4ccc26b5f44e82a835",
+      "checks": [
+        "APX_VM_CHECK: installer and authenticated Hub running",
+        "APX_VM_CHECK: workload created and started by Hub",
+        "APX_VM_CHECK: private root and absent workload management socket",
+        "APX_VM_CHECK: real package transaction isolated from Host and Hub",
+        "APX_VM_CHECK: destroy and overwrite refusal passed",
+        "APX_VM_SMOKE_PASS"
+      ]
+    },
+    "boot-v6-1.log": {
+      "sha256": "d37c0e68907036e43914f397f1d57bd28c9e758fe23bdaab871e34c8125596e9",
+      "checks": [
+        "APX_VM_CHECK: installer and authenticated Hub running",
+        "APX_VM_CHECK: workload created and started by Hub",
+        "APX_VM_CHECK: private root and absent workload management socket",
+        "APX_VM_CHECK: real package transaction isolated from Host and Hub",
+        "APX_VM_CHECK: destroy and overwrite refusal passed",
+        "APX_VM_SMOKE_PASS"
+      ]
+    },
+    "boot-v6-2.log": {
+      "sha256": "1cf7433faf6d4bdd6607f72956cef232ccd349b753d992dd222094b56deca00b",
+      "checks": [
+        "APX_VM_CHECK: installer and authenticated Hub running",
+        "APX_VM_CHECK: workload created and started by Hub",
+        "APX_VM_CHECK: private root and absent workload management socket",
+        "APX_VM_CHECK: real package transaction isolated from Host and Hub",
+        "APX_VM_CHECK: destroy and overwrite refusal passed",
+        "APX_VM_SMOKE_PASS"
+      ]
+    }
+  },
+  "repository_tests": {
+    "run": 1347,
+    "skipped": 11,
+    "failures": 0
+  },
+  "limitations": [
+    "no graphical Hub portability",
+    "no native Windows portability",
+    "no secure erasure claim"
+  ]
+}

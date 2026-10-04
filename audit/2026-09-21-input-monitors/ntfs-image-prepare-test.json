@@ -1,0 +1,24 @@
+{
+  "source_unchanged": true,
+  "payload_preserved_in_both_images": true,
+  "manifest": {
+    "schema": 3,
+    "profile": "apx-native-image-backup-v3",
+    "state": "verified-images",
+    "original": {
+      "file": "original.ntfs.raw",
+      "bytes": 134217728,
+      "sha256": "9c7a47cd2c5af0d5d6e56fe5ded839c1b9d8f53b287829476fd0d6afaa986e8a"
+    },
+    "prepared": {
+      "file": "prepared.ntfs.raw",
+      "bytes": 100663296,
+      "sha256": "ad76bd8eec5c26c5ee1c6fcba2eb3b14f2ea5efa883daea3250e14f61b9274b1"
+    },
+    "source_identity": {
+      "device": 38,
+      "inode": 263228,
+      "rdev": 0
+    }
+  }
+}

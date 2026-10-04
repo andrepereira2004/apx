@@ -1,0 +1,50 @@
+[
+  {
+    "kind": "controls",
+    "visible": true,
+    "screen": "HEADLESS-1",
+    "bars": [
+      "HEADLESS-1",
+      "HEADLESS-2"
+    ],
+    "width": 340,
+    "height": 570,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 14,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "APX recusou a troca: peer is neither the official Hub nor the active graphical Environment: trusted Host-services state is unavailable",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  {
+    "kind": "controls",
+    "visible": true,
+    "screen": "HEADLESS-2",
+    "bars": [
+      "HEADLESS-1",
+      "HEADLESS-2"
+    ],
+    "width": 340,
+    "height": 570,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 14,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "APX recusou a troca: peer is neither the official Hub nor the active graphical Environment: trusted Host-services state is unavailable",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  }
+]

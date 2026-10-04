@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ $# -eq 1 && "$1" == *.desktop ]] || { printf 'Selecione uma aplicação .desktop.\n' >&2; exit 2; }
+desktop=$(realpath -e -- "$1")
+case "$desktop" in
+  /usr/share/applications/*.desktop|/var/lib/flatpak/exports/share/applications/*.desktop|"${HOME}"/.local/share/flatpak/exports/share/applications/*.desktop|"${HOME}"/.local/share/applications/*.desktop) ;;
+  *) printf 'A aplicação não pertence a este Environment.\n' >&2; exit 3 ;;
+esac
+
+printf 'Desinstalar: %s\n\n' "$(basename "$desktop" .desktop)"
+printf '1) Apagar somente a aplicação (manter os dados pessoais)\n'
+printf '2) Apagar a aplicação e os dados associados\n'
+printf '0) Cancelar\n\n'
+if ! read -r -p 'Escolha [0-2]: ' choice </dev/tty; then
+  printf 'Operação cancelada.\n'
+  exit 0
+fi
+case "$choice" in
+  1|2) ;;
+  *) printf 'Operação cancelada.\n'; exit 0 ;;
+esac
+
+if [[ "$desktop" == /var/lib/flatpak/exports/share/applications/* ]]; then
+  app_id=$(basename "$desktop" .desktop)
+  if [[ "$choice" == 2 ]]; then
+    exec flatpak uninstall --system --delete-data -- "$app_id"
+  fi
+  exec flatpak uninstall --system -- "$app_id"
+fi
+if [[ "$desktop" == "${HOME}"/.local/share/flatpak/exports/share/applications/* ]]; then
+  app_id=$(basename "$desktop" .desktop)
+  if [[ "$choice" == 2 ]]; then
+    exec flatpak uninstall --user --delete-data -- "$app_id"
+  fi
+  exec flatpak uninstall --user -- "$app_id"
+fi
+
+package=$(pacman -Qqo -- "$desktop" 2>/dev/null || true)
+[[ -n "$package" ]] || { printf 'Não encontrei o pacote proprietário desta aplicação.\n' >&2; exit 4; }
+[[ "$package" != *$'\n'* ]] || { printf 'Esta entrada pertence a vários pacotes; remova-os manualmente.\n' >&2; exit 5; }
+printf 'Pacote a remover neste Environment: %s\n' "$package"
+if [[ "$choice" == 1 ]]; then
+  exec sudo pacman -Rns -- "$package"
+fi
+
+# Pacman does not own user files. Only offer exact, app-named XDG directories.
+data_paths=()
+for name in "$(basename "$desktop" .desktop)" "$package"; do
+  [[ "$name" =~ ^[[:alnum:]_.+-]+$ && "$name" != . && "$name" != .. ]] || continue
+  for base in "${XDG_CONFIG_HOME:-$HOME/.config}" "${XDG_DATA_HOME:-$HOME/.local/share}" \
+              "${XDG_CACHE_HOME:-$HOME/.cache}" "${XDG_STATE_HOME:-$HOME/.local/state}"; do
+    path="$base/$name"
+    if [[ -d "$path" && ! -L "$path" ]]; then
+      seen=false
+      for existing in "${data_paths[@]}"; do
+        [[ "$existing" == "$path" ]] && seen=true
+      done
+      [[ "$seen" == false ]] && data_paths+=("$path")
+    fi
+  done
+done
+if (( ${#data_paths[@]} )); then
+  printf 'Dados pessoais identificados para apagar após a desinstalação:\n'
+  printf '  %s\n' "${data_paths[@]}"
+else
+  printf 'Não foram encontrados diretórios de dados com o nome da aplicação ou do pacote.\n'
+fi
+printf 'Outros dados com nomes diferentes não podem ser identificados automaticamente.\n'
+if ! read -r -p 'Confirmar remoção do pacote e dos diretórios acima? [s/N] ' confirmation </dev/tty \
+   || [[ "$confirmation" != s && "$confirmation" != S ]]; then
+  printf 'Operação cancelada.\n'
+  exit 0
+fi
+sudo pacman -Rns -- "$package"
+if (( ${#data_paths[@]} )); then
+  rm -rf -- "${data_paths[@]}"
+fi

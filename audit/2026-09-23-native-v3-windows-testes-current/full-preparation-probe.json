@@ -1,0 +1,22 @@
+{
+  "backup_manifest_plan_matches": true,
+  "capacity": {
+    "apx_payload_bytes": 286052581376,
+    "headroom_bytes": 17179869184,
+    "plan_sha256": "69c4afa23a359f8e43c5cc7633508104a7ffb16d794e72a31611d0e2eb83a589",
+    "profile": "apx-native-measured-capacity-v3",
+    "schema": 3,
+    "used_bytes": 197217206272
+  },
+  "finished_at_utc": "2026-09-23T19:08:13Z",
+  "generation": "023e14fd-98e9-4277-bd84-0dccf0cf8c34",
+  "installer_wim_built": true,
+  "maintenance_images_built": true,
+  "physical_partition_or_firmware_change": false,
+  "plan_sha256": "69c4afa23a359f8e43c5cc7633508104a7ffb16d794e72a31611d0e2eb83a589",
+  "profile": "apx-native-v3-private-full-preparation-probe",
+  "stage": "prepared",
+  "started_at_utc": "2026-09-23T18:53:50Z",
+  "state": "passed",
+  "target": "windows-testes"
+}

@@ -1,0 +1,16 @@
+{
+  "authorization_retired": true,
+  "boot_current": "0005",
+  "boot_order_linux_first": true,
+  "bootnext_absent": true,
+  "failure": "efibootmgr path/label rendering differed from parser",
+  "generation": "2770478b-480f-4aea-8910-e3201d5334c5",
+  "orphan_efi_image_removed": true,
+  "orphan_firmware_entry_removed": true,
+  "partition_count_after": 4,
+  "pending_stage": "prepared",
+  "plan_sha256": "0845553fee01f4e1f9f08ea7f2aac455bd74f60ce876223fdafb682a9418782a",
+  "profile": "apx-native-v3-activation-entry-format-recovery",
+  "tests_passed": 1287,
+  "tests_skipped": 11
+}

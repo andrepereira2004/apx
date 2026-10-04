@@ -1,0 +1,20 @@
+{
+  "files": {
+    "/etc/systemd/system/apx-native-finalize-v3.service": "179f414e5ff1cb6c7fd68cd22268d2a1be2545918c65fae5a8aa380d0c1e4736",
+    "/usr/lib/apx/apx-environment-switch-client-v1.py": "426a2c93ee65f301f1e34b27254cdb08ea43bfd61093d39018e59f058d297c01",
+    "/usr/lib/apx/apx-environment-switch-v1.py": "95e58dcb10952fd90287e96f99107c88e167ace5beeeecd46088f986bf43235a",
+    "/usr/lib/apx/apx-native-boot-runner-v3.py": "4c1a41bde7f0eba633485151bed2e7c705e51aff6fb1a8bd559516bb3bfd094c",
+    "/usr/lib/apx/apx-native-lifecycle-v3.py": "bad89471953235ba89207a875d0af72332b90e18530922676dcb04c4031b296e",
+    "/usr/lib/apx/apx-native-offline-layout-v3.py": "2ebe501e91412259b7e2d8ebd4bc44674bbf1a1bb38bd7dbd969282e690ad380",
+    "/usr/lib/apx/apx-native-windows-plan-v3.py": "fed23f296e61efbd88422b737732f8bdee8063cd40c5161dc1bbe599a10a1593",
+    "/usr/lib/apx/apx_environment_switch_contract.py": "590e725424e4f3af029eff049e1ca1756ca0b111f4ddc4e4d63bcb7adf687b29",
+    "/usr/lib/apx/apx_native_backup_v3.py": "800fa9993cb14db3fdba0f297196b262a0ace1feccc2dadabb20349e64d144cd",
+    "/usr/lib/apx/apx_native_hub_v3.py": "85667ab37baf972b18258a8caa145c69ae4501c2b20df40d44f4f27ac64a1f68",
+    "/usr/lib/apx/apx_native_instances_v3.py": "ef218a4136d9d8e4d7e69167a4442cd8214f1266abb6e7522db057e285b690e5",
+    "/usr/lib/apx/apx_native_offline_v3.py": "8e4de472d7d5cfe304d8efbd61aac12ca687c3ba2582be634c8cbbecd8c8521f",
+    "/usr/lib/apx/apx_native_slot_wipe_v3.py": "6679827da5f351316553948c5d1d2012771e432a05802089ef57c415401fc189",
+    "/usr/lib/apx/apx_native_winpe_v3.py": "d9a09594d1599de0cecf4772d43a4d1960c0e02df9b8baf19abffeaabcef8d9f",
+    "/usr/lib/apx/build-native-windows-uki-v3.py": "7d34c1c72f515442d44dd5ece0a0bc139ef1cc3d183f1db824e2e80cb071a7dc"
+  },
+  "profile": "apx-native-validated-release-v3"
+}

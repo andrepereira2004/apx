@@ -1,0 +1,7 @@
+[Unit]
+Description=Restore APX recovery login after graphical boot failure
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl unmask --runtime getty@tty1.service
+ExecStart=/usr/bin/systemctl --no-block start getty@tty1.service

@@ -1,0 +1,14 @@
+[Unit]
+Description=Finalize the selected APX native Windows migration
+After=local-fs.target
+Before=apx-official-hub-autostart-v1.service
+RequiresMountsFor=/boot /var/lib/apx
+ConditionPathExists=/var/lib/apx/native-environments/pending-v3.json
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/lib/apx/apx-native-lifecycle-v3.py finalize
+TimeoutStartSec=30min
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+"""Initialize an empty Environment's default keyring without an extra password.
+
+Owner-selected policy: filesystem/LUKS protection, no keyring-level encryption.
+Never reset or convert a pre-existing keyring.
+"""
+import os
+from pathlib import Path
+
+
+def prepare(home: Path) -> bool:
+    directory = home / ".local/share/keyrings"
+    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if directory.is_symlink() or directory.stat().st_uid != os.geteuid():
+        raise RuntimeError("Keyring directory must belong to the current user")
+    # Existing collections, aliases or credentials always win.
+    if any(directory.iterdir()):
+        return False
+    data = b"[keyring]\ndisplay-name=Login\nlock-on-idle=false\nlock-after=false\n"
+    descriptor = os.open(directory / "login.keyring", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, "wb") as output:
+        output.write(data)
+    descriptor = os.open(directory / "default", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, "wb") as output:
+        output.write(b"login\n")
+    return True
+
+
+if __name__ == "__main__":
+    prepare(Path.home())

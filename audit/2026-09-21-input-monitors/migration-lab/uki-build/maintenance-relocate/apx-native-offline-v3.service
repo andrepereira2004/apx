@@ -1,0 +1,12 @@
+[Unit]
+Description=APX native Windows offline migration
+DefaultDependencies=no
+ConditionKernelCommandLine=apx.native_v3=76a5f5c6-d5ce-45d8-aed4-64b9924d5824
+After=dev-mapper-cryptroot.device systemd-cryptsetup@cryptroot.service
+Before=sysroot.mount initrd-root-fs.target
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/apx-native-offline-v3
+StandardOutput=journal+console
+StandardError=journal+console
+TimeoutStartSec=infinity

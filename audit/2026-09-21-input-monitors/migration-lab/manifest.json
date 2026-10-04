@@ -1,0 +1,20 @@
+{
+  "schema": 3,
+  "profile": "apx-native-image-backup-v3",
+  "state": "verified-images",
+  "original": {
+    "file": "original.ntfs.raw",
+    "bytes": 162135015424,
+    "sha256": "35297e38afbdd1e0dac199b2f8a7b11cb9343b68e0a4f799492890185be03dba"
+  },
+  "prepared": {
+    "file": "prepared.ntfs.raw",
+    "bytes": 128849018880,
+    "sha256": "0943d7d981e4a4ed7aec1797f8e9750830983f4cc60014784644cf74648559ce"
+  },
+  "source_identity": {
+    "device": 7,
+    "inode": 1502,
+    "rdev": 66311
+  }
+}

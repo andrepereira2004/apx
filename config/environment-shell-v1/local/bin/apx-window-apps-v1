@@ -1,0 +1,337 @@
+#!/usr/bin/env python3
+"""Environment-local application catalogue and Hyprland window actions."""
+import configparser
+import html
+import json
+import os
+from pathlib import Path
+import signal
+import shlex
+import subprocess
+import sys
+import tempfile
+
+SOURCES = (Path('/usr/share/applications'), Path.home()/'.local/share/applications',
+           Path('/var/lib/flatpak/exports/share/applications'),
+           Path.home()/'.local/share/flatpak/exports/share/applications')
+USAGE = Path.home()/'.local/state/apx-window-apps-v1/usage.json'
+ROFI_USAGE = Path.home()/'.cache/rofi3.druncache'
+ICON_CACHE = Path.home()/'.cache/apx-window-apps-v1/icons.json'
+WINDOW_PRESENTATION = {'apx-host-console-v1':
+                       ('APX Terminal', '/usr/share/icons/Papirus/48x48/apps/utilities-terminal.svg')}
+
+def resolve_icons(apps):
+    apps = list(apps)
+    try:
+        cache = json.loads(ICON_CACHE.read_text())
+        if type(cache) is not dict:
+            cache = {}
+        cache = {key: value for key, value in cache.items()
+                 if type(key) is str and type(value) is str and value.startswith('/')}
+        settings = Path.home()/'.config/gtk-3.0/settings.ini'
+        if settings.exists() and settings.stat().st_mtime_ns > ICON_CACHE.stat().st_mtime_ns:
+            cache = {}
+    except (OSError, ValueError):
+        cache = {}
+    unresolved = {app['icon'] for app in apps
+                  if app['icon'] not in cache or not Path(cache[app['icon']]).is_file()}
+    if unresolved:
+        try:
+            import gi
+            gi.require_version('Gtk', '3.0')
+            from gi.repository import Gtk
+            theme = Gtk.IconTheme.get_default()
+        except (ImportError, ValueError, RuntimeError):
+            theme = None
+        fallback = '/usr/share/icons/Adwaita/scalable/mimetypes/application-x-executable.svg'
+        for icon in unresolved:
+            if icon.startswith('/') and Path(icon).is_file():
+                cache[icon] = icon
+            else:
+                info = theme.lookup_icon(icon, 48, 0) if theme is not None else None
+                cache[icon] = info.get_filename() if info is not None else fallback
+        ICON_CACHE.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        descriptor, temporary = tempfile.mkstemp(prefix='.icons-', dir=ICON_CACHE.parent)
+        try:
+            with os.fdopen(descriptor, 'w') as stream:
+                json.dump(cache, stream)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.chmod(temporary, 0o600)
+            os.replace(temporary, ICON_CACHE)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+    for app in apps:
+        app['iconPath'] = cache[app['icon']]
+
+def usage_counts():
+    counts = {}
+    try:
+        for line in ROFI_USAGE.read_text().splitlines():
+            amount, desktop_file = line.split(' ', 1)
+            if desktop_file.endswith('.desktop') and amount.isdecimal():
+                counts[desktop_file[:-8]] = min(1000000, int(amount))
+    except (OSError, ValueError):
+        pass
+    for key, count in local_usage_counts().items():
+        counts[key] = min(1000000, counts.get(key, 0) + count)
+    return counts
+
+def local_usage_counts():
+    try:
+        value = json.loads(USAGE.read_text())
+        if type(value) is dict:
+            return {key: count for key, count in value.items()
+                    if type(key) is str and type(count) is int and 0 <= count <= 1000000}
+    except (OSError, ValueError):
+        pass
+    return {}
+
+def record_use(app_id):
+    if not app_id:
+        return
+    counts = local_usage_counts()
+    counts[app_id] = min(1000000, counts.get(app_id, 0) + 1)
+    USAGE.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(prefix='.usage-', dir=USAGE.parent)
+    try:
+        with os.fdopen(descriptor, 'w') as stream:
+            json.dump(counts, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, USAGE)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+def catalog():
+    apps = {}
+    for source in SOURCES:
+        for path in sorted(source.glob('*.desktop')):
+            parser = configparser.ConfigParser(interpolation=None, strict=False)
+            try:
+                parser.read(path, encoding='utf-8')
+                entry = parser['Desktop Entry']
+                if entry.get('Type') != 'Application' or entry.getboolean('NoDisplay', False) or entry.getboolean('Hidden', False):
+                    continue
+                name = entry.get('Name', path.stem)
+                command = shlex.split(entry.get('Exec', ''))
+                executable = Path(command[0]).name.lower() if command else ''
+                aliases = {path.stem.lower(), path.stem.lower().split('.')[-1],
+                           entry.get('StartupWMClass', '').lower(), executable}
+                apps.setdefault(path.stem, {'id': path.stem, 'name': name, 'path': str(path),
+                                            'icon': entry.get('Icon', '') or 'application-x-executable',
+                                            'aliases': sorted(aliases - {''}), 'windows': []})
+            except (OSError, configparser.Error, ValueError, KeyError):
+                continue
+    try:
+        windows = json.loads(subprocess.check_output(['/usr/bin/hyprctl', '-j', 'clients'], timeout=3))
+    except (OSError, subprocess.SubprocessError, ValueError):
+        windows = []
+    for window in windows:
+        klass = str(window.get('class', '')).lower()
+        if not klass or not window.get('mapped', True):
+            continue
+        app = next((item for item in apps.values() if klass in item['aliases']), None)
+        if app is None:
+            name, icon = WINDOW_PRESENTATION.get(klass, (str(window.get('initialClass') or window.get('class')), klass))
+            app = apps.setdefault('window:' + klass, {'id': '', 'name': name,
+                                                      'path': '', 'icon': icon, 'aliases': [klass], 'windows': []})
+        workspace = window.get('workspace') or {}
+        app['windows'].append({'address': window.get('address', ''), 'pid': window.get('pid', 0), 'title': window.get('title', ''),
+                               'minimized': str(workspace.get('name', '')).startswith('special:') or bool(window.get('hidden', False))})
+    for app in apps.values():
+        app['windows'].sort(key=lambda window: window['minimized'])
+        app.pop('aliases')
+    resolve_icons(apps.values())
+    counts = usage_counts()
+    return sorted(apps.values(), key=lambda app: (
+        0 if app['windows'] and not app['windows'][0]['minimized'] else
+        1 if app['windows'] else 2,
+        -counts.get(app['id'], 0), app['name'].casefold()))
+
+def nvidia_on_demand():
+    try:
+        environment_name = Path('/etc/hostname').read_text().strip()
+    except OSError:
+        return False
+    return (environment_name in ('apx-hytale', 'apx-minecraft')
+            and os.environ.get('APX_GPU_POLICY') == 'hybrid'
+            and Path('/dev/nvidia0').is_char_device())
+
+def close_rofi_parent():
+    """Release Rofi's fullscreen input layer after an action starts."""
+    parent = os.getppid()
+    try:
+        if os.readlink(f'/proc/{parent}/exe') == '/usr/bin/rofi':
+            os.kill(parent, signal.SIGTERM)
+    except OSError:
+        pass
+
+def execute_and_close(action, value):
+    try:
+        perform(action, value)
+    except (OSError, RuntimeError, subprocess.SubprocessError, ValueError) as error:
+        subprocess.Popen(['/usr/bin/notify-send', 'Aplicações', str(error)],
+                         start_new_session=True, stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    finally:
+        close_rofi_parent()
+
+def hyprland_eval(code):
+    result = subprocess.run(['/usr/bin/hyprctl', 'eval', code], capture_output=True,
+                            text=True, timeout=3, check=False)
+    if result.returncode or result.stdout.strip() != 'ok':
+        raise RuntimeError('Não foi possível ativar a janela')
+
+def action_row(label, symbol, color, action, value, name):
+    display = (f'<span foreground="{color}"><b>{symbol}</b></span>  '
+               + html.escape(label))
+    return (label + '\0display\x1f' + display + '\x1finfo\x1faction:'
+            + action + ':' + value + '\x1fmeta\x1f' + name)
+
+def rofi_rows():
+    """Keep the catalogue visible while one application's actions are selected."""
+    apps = catalog()
+    selected = os.environ.get('ROFI_INFO', '')
+    data = os.environ.get('ROFI_DATA', '')
+    retv = os.environ.get('ROFI_RETV', '0')
+    chosen = data.removeprefix('selected:') if data.startswith('selected:') else ''
+    confirming = data.startswith('confirm:')
+    if confirming:
+        chosen = data.removeprefix('confirm:')
+    if retv == '1' and selected.startswith('action:'):
+        action, _, value = selected.removeprefix('action:').partition(':')
+        if action == 'uninstall' and value == chosen:
+            confirming = True
+        elif action == 'confirm' and confirming and value == chosen:
+            execute_and_close('uninstall', value)
+            return
+        elif action == 'cancel':
+            confirming = False
+        elif action in ('open', 'terminate', 'nvidia') and value:
+            execute_and_close(action, value)
+            return
+    elif retv in ('1', '10') and selected and not selected.startswith('action:'):
+        app = next((item for item in apps if (item['id'] or 'window:' + item['name'].lower()) == selected), None)
+        if app is None:
+            return
+        if retv == '1':
+            window = app['windows'][0] if app['windows'] else None
+            execute_and_close('focus' if window else 'open', window['address'] if window else app['id'])
+            return
+        chosen = selected
+        confirming = False
+    print('\0prompt\x1fPesquisar')
+    print('\0no-custom\x1ftrue')
+    print('\0markup-rows\x1ftrue')
+    print('\0use-hot-keys\x1ftrue')
+    print('\0message\x1fClique esquerdo: abrir ou executar · clique direito: opções · verde: ativa · amarelo: minimizada')
+    print('\0data\x1f' + (('confirm:' if confirming else 'selected:') + chosen if chosen else ''))
+    rows = []
+    selected_index = 0
+    for app in apps:
+        window = app['windows'][0] if app['windows'] else None
+        dot = ('<span foreground="#e4b75c">●</span>' if window['minimized'] else
+               '<span foreground="#77c99a">●</span>') if window else ''
+        name = app['name'].replace('\n', ' ').replace('\r', ' ')
+        visible = (name[:49] + '…') if len(name) > 50 else name
+        label = '<span font_family="monospace">' + html.escape(visible.ljust(52)) + '</span>' + dot
+        key = app['id'] or 'window:' + app['name'].lower()
+        if key == chosen:
+            selected_index = len(rows)
+        rows.append(name + '\0display\x1f' + label + '\x1ficon\x1f' + app['iconPath'] + '\x1finfo\x1f' + key)
+        if key == chosen:
+            if confirming:
+                rows.append(action_row('Confirmar desinstalação', '✓', '#e4b75c', 'confirm', key, name))
+                rows.append(action_row('Cancelar', '↩', '#9ba3ac', 'cancel', key, name))
+            else:
+                if app['id'] and window:
+                    rows.append(action_row('Abrir segunda instância', '+', '#77c99a', 'open', app['id'], name))
+                if app['id'] and nvidia_on_demand():
+                    rows.append(action_row('Abrir na NVIDIA', '◆', '#77c99a', 'nvidia', app['id'], name))
+                if window:
+                    rows.append(action_row('Terminar tarefa', '×', '#e4b75c', 'terminate', window['address'], name))
+                if app['id']:
+                    rows.append(action_row('Desinstalar aplicação', '−', '#d98989', 'uninstall', app['id'], name))
+    print('\0keep-selection\x1ftrue')
+    print('\0keep-filter\x1ftrue')
+    print('\0new-selection\x1f' + str(selected_index))
+    if chosen:
+        print('\0active\x1f' + str(selected_index))
+    for row in rows:
+        print(row)
+
+def perform(action, value):
+    # Every action resolves the current desktop entry or Hyprland window again.
+    if action in ('focus', 'terminate'):
+        found = next(((app, w) for app in catalog() for w in app['windows'] if w['address'] == value), None)
+        if found is None:
+            raise SystemExit('Janela já não disponível')
+        app, window = found
+        if action == 'focus':
+            if window['minimized']:
+                workspace = json.loads(subprocess.check_output(['/usr/bin/hyprctl', '-j', 'activeworkspace'], timeout=3))
+                workspace_id = workspace.get('id')
+                if type(workspace_id) is not int or workspace_id < 1:
+                    raise SystemExit('Workspace ativo indisponível')
+                hyprland_eval('hl.dispatch(hl.dsp.window.move({workspace='
+                              + str(workspace_id) + ',window='
+                              + json.dumps('address:' + value) + ',silent=true}))')
+            hyprland_eval('hl.dispatch(hl.dsp.focus({window='
+                          + json.dumps('address:' + value) + '}))')
+            record_use(app['id'])
+        else:
+            pid = window['pid']
+            if type(pid) is not int or pid <= 1:
+                raise SystemExit('Processo da aplicação indisponível')
+            os.kill(pid, signal.SIGTERM)
+    else:
+        apps = {app['id']: app for app in catalog()}
+        if value not in apps:
+            raise SystemExit('Aplicação já não disponível')
+        if action in ('open', 'nvidia'):
+            app = apps[value]
+            if action == 'nvidia':
+                if not nvidia_on_demand():
+                    raise SystemExit('NVIDIA sob pedido indisponível neste modo')
+                variables = {'__NV_PRIME_RENDER_OFFLOAD': '1',
+                             '__GLX_VENDOR_LIBRARY_NAME': 'nvidia',
+                             '__VK_LAYER_NV_optimus': 'NVIDIA_only'}
+                path = app['path']
+                if '/flatpak/exports/share/applications/' in path:
+                    scope = ['--user'] if '/.local/share/flatpak/' in path else []
+                    command = ['/usr/bin/flatpak', 'run', *scope,
+                               *(f'--env={key}={item}' for key, item in variables.items()), value]
+                    environment = None
+                else:
+                    command = ['/usr/bin/gtk-launch', value]
+                    environment = dict(os.environ, **variables)
+            else:
+                command = ['/usr/bin/gtk-launch', value]
+                environment = None
+            subprocess.Popen(command, env=environment, start_new_session=True, stdin=subprocess.DEVNULL,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            record_use(value)
+        else:
+            subprocess.Popen(['/usr/bin/kitty', '--hold', '--title', 'Desinstalar aplicação',
+                              '/home/apx/.local/bin/apx-application-remove-v1', apps[value]['path']],
+                             start_new_session=True, stdin=subprocess.DEVNULL,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def main():
+    # Rofi appends the selected row as argv[1] when invoking a script mode.
+    if 'ROFI_RETV' in os.environ or len(sys.argv) == 1:
+        rofi_rows()
+        return
+    if sys.argv[1] == 'list':
+        print(json.dumps(catalog(), ensure_ascii=False))
+        return
+    if len(sys.argv) != 3 or sys.argv[1] not in ('focus', 'open', 'terminate', 'uninstall'):
+        raise SystemExit(2)
+    perform(*sys.argv[1:])
+
+if __name__ == '__main__':
+    main()

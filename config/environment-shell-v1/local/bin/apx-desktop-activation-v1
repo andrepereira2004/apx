@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+# D-Bus applications inherit this Environment's actual session and locale.
+set -eu
+/usr/bin/dbus-update-activation-environment \
+    DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE \
+    XDG_DATA_DIRS XDG_RUNTIME_DIR USER LOGNAME \
+    LANG LC_TIME LC_NUMERIC LC_MONETARY
+/usr/bin/python - <<'PY'
+import configparser
+from pathlib import Path
+from gi.repository import Gio
+config = configparser.ConfigParser(interpolation=None)
+config.read(Path.home() / '.config/gtk-3.0/settings.ini')
+preferences = config['Settings'] if config.has_section('Settings') else {}
+schema = Gio.SettingsSchemaSource.get_default().lookup('org.gnome.desktop.interface', True)
+if schema is not None:
+    settings = Gio.Settings.new('org.gnome.desktop.interface')
+    for key, option, fallback in [('font-name', 'gtk-font-name', 'Selawik 11'),
+                                  ('gtk-theme', 'gtk-theme-name', 'Adwaita-dark'),
+                                  ('icon-theme', 'gtk-icon-theme-name', 'APX-Graphite')]:
+        settings.set_string(key, preferences.get(option, fallback))
+    if settings.get_user_value('monospace-font-name') is None:
+        settings.set_string('monospace-font-name', 'Cascadia Mono 11')
+    Gio.Settings.sync()
+app = Gio.DesktopAppInfo.new('brave-browser.desktop')
+if app is not None:
+    for mime in ('text/html', 'application/xhtml+xml', 'x-scheme-handler/http', 'x-scheme-handler/https'):
+        # Initialize a missing association; never replace an owner's choice.
+        if Gio.AppInfo.get_default_for_type(mime, False) is None:
+            if not app.set_as_default_for_type(mime):
+                raise RuntimeError('Unable to initialize a browser default')
+PY

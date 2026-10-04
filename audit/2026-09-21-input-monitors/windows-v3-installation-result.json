@@ -1,0 +1,8 @@
+{
+  "installation": "boot-prepared",
+  "first_boot": "Windows 11 Portuguese OOBE region screen",
+  "target": "windows-2",
+  "legacy_payload_preserved": true,
+  "legacy_efi_sentinel_preserved": true,
+  "physical_disk_modified": false
+}

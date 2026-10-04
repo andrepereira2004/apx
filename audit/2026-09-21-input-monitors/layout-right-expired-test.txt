@@ -1,0 +1,1 @@
+Couldn't connect to /run/apx/session-1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789946339_775738275/.socket.sock. (4)

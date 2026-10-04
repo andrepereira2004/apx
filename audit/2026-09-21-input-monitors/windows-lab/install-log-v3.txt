@@ -1,0 +1,2305 @@
+APX native Windows installer v3 started: windows-2.
+Exact GPT disk located as Disk 0.
+PARTITION_PROBE role=SETUP partition=1 diskpart_exit=0 type_match=1 size_match=0 label_match=0
+----- diskpart role=SETUP partition=1 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 1 is now the selected partition.
+
+Partition 1
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1048576
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 2         APX_EFI      FAT32  Partition   1024 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+* Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=SETUP partition=2 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=2 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 2 is now the selected partition.
+
+Partition 2
+Type    : ca7d7ccb-63ed-4c53-861c-1742536059cc
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1074790400
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+* Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=SETUP partition=3 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=3 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 3 is now the selected partition.
+
+Partition 3
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 287144148992
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 0     C   APXLEGACY    NTFS   Partition    120 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+* Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=SETUP partition=4 diskpart_exit=0 type_match=1 size_match=1 label_match=1
+----- diskpart role=SETUP partition=4 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 4 is now the selected partition.
+
+Partition 4
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 502446161920
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 4         APXWINSETUP  FAT32  Partition      9 GB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+* Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=SETUP partition=5 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=5 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 5 is now the selected partition.
+
+Partition 5
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416546816000
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 1     D   APXW29758BB  NTFS   Partition     80 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+* Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=SETUP partition=6 diskpart_exit=0 type_match=1 size_match=0 label_match=0
+----- diskpart role=SETUP partition=6 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 6 is now the selected partition.
+
+Partition 6
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 415993167872
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 3         APXE29758BB  FAT32  Partition    512 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+* Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=SETUP partition=7 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=7 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 7 is now the selected partition.
+
+Partition 7
+Type    : e3c9e316-0b5c-4db8-817d-f92df00215ae
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416530038784
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+* Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=SETUP partition=8 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=8 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=9 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=9 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=10 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=10 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=11 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=11 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=12 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=12 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=13 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=13 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=14 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=14 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=15 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=15 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=SETUP partition=16 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=SETUP partition=16 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+SETUP located as unique partition 4 by GPT type, size and tabular label.
+SETUP will use free temporary letter W:.
+SETUP mounted temporarily as W: after identity validation.
+PARTITION_PROBE role=EFI partition=1 diskpart_exit=0 type_match=1 size_match=0 label_match=0
+----- diskpart role=EFI partition=1 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 1 is now the selected partition.
+
+Partition 1
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1048576
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 2         APX_EFI      FAT32  Partition   1024 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+* Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=EFI partition=2 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=2 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 2 is now the selected partition.
+
+Partition 2
+Type    : ca7d7ccb-63ed-4c53-861c-1742536059cc
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1074790400
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+* Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=EFI partition=3 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=3 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 3 is now the selected partition.
+
+Partition 3
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 287144148992
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 0     C   APXLEGACY    NTFS   Partition    120 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+* Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=EFI partition=4 diskpart_exit=0 type_match=1 size_match=0 label_match=0
+----- diskpart role=EFI partition=4 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 4 is now the selected partition.
+
+Partition 4
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 502446161920
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 4     W   APXWINSETUP  FAT32  Partition      9 GB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+* Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=EFI partition=5 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=5 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 5 is now the selected partition.
+
+Partition 5
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416546816000
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 1     D   APXW29758BB  NTFS   Partition     80 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+* Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=EFI partition=6 diskpart_exit=0 type_match=1 size_match=1 label_match=1
+----- diskpart role=EFI partition=6 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 6 is now the selected partition.
+
+Partition 6
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 415993167872
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 3         APXE29758BB  FAT32  Partition    512 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+* Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=EFI partition=7 diskpart_exit=0 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=7 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 7 is now the selected partition.
+
+Partition 7
+Type    : e3c9e316-0b5c-4db8-817d-f92df00215ae
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416530038784
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+* Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=EFI partition=8 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=8 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=9 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=9 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=10 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=10 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=11 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=11 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=12 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=12 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=13 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=13 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=14 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=14 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=15 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=15 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=EFI partition=16 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=0
+----- diskpart role=EFI partition=16 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+EFI located as unique partition 6 by GPT type, size and tabular label.
+EFI will use free temporary letter S:.
+EFI mounted temporarily as S: after identity validation.
+PARTITION_PROBE role=LINUX partition=1 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=1 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 1 is now the selected partition.
+
+Partition 1
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1048576
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 2         APX_EFI      FAT32  Partition   1024 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+* Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=LINUX partition=2 diskpart_exit=0 type_match=1 size_match=1 label_match=not-required
+----- diskpart role=LINUX partition=2 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 2 is now the selected partition.
+
+Partition 2
+Type    : ca7d7ccb-63ed-4c53-861c-1742536059cc
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1074790400
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+* Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=LINUX partition=3 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=3 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 3 is now the selected partition.
+
+Partition 3
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 287144148992
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 0     C   APXLEGACY    NTFS   Partition    120 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+* Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=LINUX partition=4 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=4 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 4 is now the selected partition.
+
+Partition 4
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 502446161920
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 4     W   APXWINSETUP  FAT32  Partition      9 GB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+* Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=LINUX partition=5 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=5 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 5 is now the selected partition.
+
+Partition 5
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416546816000
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 1     D   APXW29758BB  NTFS   Partition     80 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+* Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=LINUX partition=6 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=6 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 6 is now the selected partition.
+
+Partition 6
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 415993167872
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 3     S   APXE29758BB  FAT32  Partition    512 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+* Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=LINUX partition=7 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=7 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 7 is now the selected partition.
+
+Partition 7
+Type    : e3c9e316-0b5c-4db8-817d-f92df00215ae
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416530038784
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+* Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=LINUX partition=8 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=8 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=9 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=9 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=10 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=10 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=11 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=11 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=12 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=12 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=13 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=13 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=14 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=14 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=15 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=15 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=LINUX partition=16 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=LINUX partition=16 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+LINUX located as unique partition 2 by GPT type and size; full volume identity is still untrusted.
+PARTITION_PROBE role=WINDOWS partition=1 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=1 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 1 is now the selected partition.
+
+Partition 1
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1048576
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 2         APX_EFI      FAT32  Partition   1024 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+* Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=2 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=2 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 2 is now the selected partition.
+
+Partition 2
+Type    : ca7d7ccb-63ed-4c53-861c-1742536059cc
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1074790400
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+* Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=3 diskpart_exit=0 type_match=1 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=3 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 3 is now the selected partition.
+
+Partition 3
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 287144148992
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 0     C   APXLEGACY    NTFS   Partition    120 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+* Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=4 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=4 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 4 is now the selected partition.
+
+Partition 4
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 502446161920
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 4     W   APXWINSETUP  FAT32  Partition      9 GB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+* Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=5 diskpart_exit=0 type_match=1 size_match=1 label_match=not-required
+----- diskpart role=WINDOWS partition=5 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 5 is now the selected partition.
+
+Partition 5
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416546816000
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 1     D   APXW29758BB  NTFS   Partition     80 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+* Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=6 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=6 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 6 is now the selected partition.
+
+Partition 6
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 415993167872
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 3     S   APXE29758BB  FAT32  Partition    512 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+* Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=7 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=7 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 7 is now the selected partition.
+
+Partition 7
+Type    : e3c9e316-0b5c-4db8-817d-f92df00215ae
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416530038784
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+* Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=8 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=8 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=9 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=9 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=10 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=10 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=11 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=11 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=12 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=12 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=13 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=13 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=14 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=14 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=15 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=15 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=16 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=16 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+WINDOWS located as unique partition 5 by GPT type and size; full volume identity is still untrusted.
+WINDOWS will use free temporary letter R:.
+FULL_VOLUME_LABEL role=WINDOWS partition=5 label=APXW29758BB match=1
+WINDOWS mounted temporarily as R: after identity validation.
+COMMAND dism-get-wim-info exit=0
+
+Deployment Image Servicing and Management tool
+Version: 10.0.26100.5074
+
+Details for image : W:\sources\install.swm
+
+Index : 6
+Name : Windows 11 Pro
+Description : Windows 11 Pro
+Size : 24�640�853�414 bytes
+WIM Bootable : No
+Architecture : x64
+Hal : <undefined>
+Version : 10.0.26200
+ServicePack Build : 8037
+ServicePack Level : 0
+Edition : Professional
+Installation : Client
+ProductType : WinNT
+ProductSuite : Terminal Server
+System Root : WINDOWS
+Directories : 33204
+Files : 145211
+Created : 07/03/2026 - 00:04:13
+Modified : 07/03/2026 - 00:38:16
+Languages :
+	pt-PT (Default)
+
+The operation completed successfully.
+Exact GPT disk located as Disk 0.
+PARTITION_PROBE role=WINDOWS partition=1 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=1 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 1 is now the selected partition.
+
+Partition 1
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1048576
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 2         APX_EFI      FAT32  Partition   1024 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+* Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=2 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=2 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 2 is now the selected partition.
+
+Partition 2
+Type    : ca7d7ccb-63ed-4c53-861c-1742536059cc
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 1074790400
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+* Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=3 diskpart_exit=0 type_match=1 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=3 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 3 is now the selected partition.
+
+Partition 3
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 287144148992
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 0     C   APXLEGACY    NTFS   Partition    120 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+* Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=4 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=4 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 4 is now the selected partition.
+
+Partition 4
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 502446161920
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 4     W   APXWINSETUP  FAT32  Partition      9 GB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+* Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=5 diskpart_exit=0 type_match=1 size_match=1 label_match=not-required
+----- diskpart role=WINDOWS partition=5 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 5 is now the selected partition.
+
+Partition 5
+Type    : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+Hidden  : No
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416546816000
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 1     R   APXW29758BB  NTFS   Partition     80 GB  Healthy            
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+* Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=6 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=6 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 6 is now the selected partition.
+
+Partition 6
+Type    : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 415993167872
+
+  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info
+  ----------  ---  -----------  -----  ----------  -------  ---------  --------
+* Volume 3     S   APXE29758BB  FAT32  Partition    512 MB  Healthy    Hidden  
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+* Partition 6    System             512 MB   387 GB
+  Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=7 diskpart_exit=0 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=7 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 7 is now the selected partition.
+
+Partition 7
+Type    : e3c9e316-0b5c-4db8-817d-f92df00215ae
+Hidden  : Yes
+Required: No
+Attrib  : 0000000000000000
+Offset in Bytes: 416530038784
+
+There is no volume associated with this partition.
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System            1024 MB  1024 KB
+  Partition 2    Unknown            266 GB  1025 MB
+  Partition 3    Primary            120 GB   267 GB
+  Partition 6    System             512 MB   387 GB
+* Partition 7    Reserved            16 MB   387 GB
+  Partition 5    Primary             80 GB   387 GB
+  Partition 4    System               9 GB   467 GB
+
+Leaving DiskPart...
+PARTITION_PROBE role=WINDOWS partition=8 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=8 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=9 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=9 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=10 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=10 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=11 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=11 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=12 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=12 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=13 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=13 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=14 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=14 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=15 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=15 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+PARTITION_PROBE role=WINDOWS partition=16 diskpart_exit=-2147024809 type_match=0 size_match=0 label_match=not-required
+----- diskpart role=WINDOWS partition=16 -----
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+The specified partition is not valid.
+Please select a valid partition.
+
+There is no partition selected.
+WINDOWS located as unique partition 5 by GPT type and size; full volume identity is still untrusted.
+
+Microsoft DiskPart version 10.0.26100.1150
+
+Copyright (C) Microsoft Corporation.
+On computer: MININT-G839BPQ
+
+Disk 0 is now the selected disk.
+
+Partition 5 is now the selected partition.
+
+
+    0 percent completed
+    0 percent completed
+    0 percent completed
+  100 percent completed
+
+
+DiskPart successfully formatted the volume.
+
+Leaving DiskPart...
+COMMAND diskpart-format-windows-target exit=0
+        1 file(s) copied.
+
+Deployment Image Servicing and Management tool
+Version: 10.0.26100.5074
+
+Applying image
+
+[                           1.0%                           ] 
+
+[=                          2.0%                           ] 
+
+[=                          3.0%                           ] 
+
+[==                         4.0%                           ] 
+
+[==                         5.0%                           ] 
+
+[===                        6.0%                           ] 
+
+[====                       7.0%                           ] 
+
+[====                       8.0%                           ] 
+
+[=====                      9.0%                           ] 
+
+[=====                      10.0%                          ] 
+
+[======                     11.0%                          ] 
+
+[======                     12.0%                          ] 
+
+[=======                    13.0%                          ] 
+
+[========                   14.0%                          ] 
+
+[========                   15.0%                          ] 
+
+[=========                  16.0%                          ] 
+
+[=========                  17.0%                          ] 
+
+[==========                 18.0%                          ] 
+
+[===========                19.0%                          ] 
+
+[===========                20.0%                          ] 
+
+[============               21.0%                          ] 
+
+[============               22.0%                          ] 
+
+[=============              23.0%                          ] 
+
+[=============              24.0%                          ] 
+
+[==============             25.0%                          ] 
+
+[===============            26.0%                          ] 
+
+[===============            27.0%                          ] 
+
+[================           28.0%                          ] 
+
+[================           29.0%                          ] 
+
+[=================          30.0%                          ] 
+
+[=================          31.0%                          ] 
+
+[==================         32.0%                          ] 
+
+[===================        33.0%                          ] 
+
+[===================        34.0%                          ] 
+
+[====================       35.0%                          ] 
+
+[====================       36.0%                          ] 
+
+[=====================      37.0%                          ] 
+
+[======================     38.0%                          ] 
+
+[======================     39.0%                          ] 
+
+[=======================    40.0%                          ] 
+
+[=======================    41.0%                          ] 
+
+[========================   42.0%                          ] 
+
+[========================   43.0%                          ] 
+
+[=========================  44.0%                          ] 
+
+[========================== 45.0%                          ] 
+
+[========================== 46.0%                          ] 
+
+[===========================47.0%                          ] 
+
+[===========================48.0%                          ] 
+
+[===========================49.0%                          ] 
+
+[===========================50.0%                          ] 
+
+[===========================51.0%                          ] 
+
+[===========================52.0%                          ] 
+
+[===========================53.0%                          ] 
+
+[===========================54.0%                          ] 
+
+[===========================55.0%                          ] 
+
+[===========================56.0%                          ] 
+
+[===========================57.0%=                         ] 
+
+[===========================58.0%=                         ] 
+
+[===========================59.0%==                        ] 
+
+[===========================60.0%==                        ] 
+
+[===========================61.0%===                       ] 
+
+[===========================62.0%===                       ] 
+
+[===========================63.0%====                      ] 
+
+[===========================64.0%=====                     ] 
+
+[===========================65.0%=====                     ] 
+
+[===========================66.0%======                    ] 
+
+[===========================67.0%======                    ] 
+
+[===========================68.0%=======                   ] 
+
+[===========================69.0%========                  ] 
+
+[===========================70.0%========                  ] 
+
+[===========================71.0%=========                 ] 
+
+[===========================72.0%=========                 ] 
+
+[===========================73.0%==========                ] 
+
+[===========================74.0%==========                ] 
+
+[===========================75.0%===========               ] 
+
+[===========================76.0%============              ] 
+
+[===========================77.0%============              ] 
+
+[===========================78.0%=============             ] 
+
+[===========================79.0%=============             ] 
+
+[===========================80.0%==============            ] 
+
+[===========================81.0%==============            ] 
+
+[===========================82.0%===============           ] 
+
+[===========================83.0%================          ] 
+
+[===========================84.0%================          ] 
+
+[===========================85.0%=================         ] 
+
+[===========================86.0%=================         ] 
+
+[===========================87.0%==================        ] 
+
+[===========================88.0%===================       ] 
+
+[===========================89.0%===================       ] 
+
+[===========================90.0%====================      ] 
+
+[===========================91.0%====================      ] 
+
+[===========================92.0%=====================     ] 
+
+[===========================93.0%=====================     ] 
+
+[===========================94.0%======================    ] 
+
+[===========================95.0%=======================   ] 
+
+[===========================96.0%=======================   ] 
+
+[===========================97.0%========================  ] 
+
+[===========================98.0%========================  ] 
+
+[==========================100.0%==========================] 
+The operation completed successfully.
+COMMAND dism-apply-image exit=0 log=W:\APX\Native\windows-2\29758bbf-bc17-4b73-8db9-15cf1f0d9725\dism-apply-v3.log
+A subdirectory or file R:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup already exists.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+W:\APX\Drivers\Realtek8852AE\netrtwlane6.cat
+W:\APX\Drivers\Realtek8852AE\netrtwlane6.inf
+W:\APX\Drivers\Realtek8852AE\rtldata60.txt
+W:\APX\Drivers\Realtek8852AE\rtwlane6.sys
+4 File(s) copied
+
+Deployment Image Servicing and Management tool
+Version: 10.0.26100.5074
+
+Image Version: 10.0.26200.8037
+
+Found 1 driver package(s) to install.
+Installing 1 of 1 - W:\APX\Drivers\Realtek8852AE\netrtwlane6.inf: The driver package was successfully installed.
+The operation completed successfully.
+BFSVC: ServiceBootFiles MuiOnly:n Res:y Fonts:y BootMgrOvw:n BootStatOvw:n DbgTrn:y SuspendBDE:n BootEx:y Offline:n
+BFSVC: Failed to check UEFI DbDefault variable. Error code = 0xcb
+BFSVC Error: Failed to check UEFI DB variable. Error code = 0xcb
+BFSVC Error: ShouldUseExFiles check failed: cb, defaulting to 2011 binaries 142f0500
+BFSVC: Using source OS version a000065f40001
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi for read because the file or path does not exist
+BFSVC: Updating \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Boot\bootx64.efi
+BFSVC: Updating \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 1 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 2 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 3 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 4 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 5 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 6 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 7 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 8 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 9 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 10 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 11 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 12 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 13 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 14 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 15 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 16 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 17 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 18 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 19 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 20 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 21 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 22 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 23 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 24 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 25 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 26 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 27 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 28 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 29 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 30 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 31 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 32 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 33 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 34 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 35 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 36 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 37 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 38 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 39 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 40 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 41 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 42 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 43 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 44 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 45 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 46 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 47 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 48 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 49 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 50 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 51 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 52 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 53 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 54 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 55 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 56 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 57 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 58 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 59 of 60) Last Error = 0x3
+BFSVC Error: BfspCopyFile(R:\Windows\boot\EFI\bootmgfw.efi, \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi) failed! (Attempt 60 of 60) Last Error = 0x3
+BFSVC Warning: Failed to copy Boot Manager to Microsoft bootmgfw.efi location. Last error = 0x3
+BFSVC: Copy files which lack a version: y	R:\Windows\boot\EFI -> \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot 
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bg-BG\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bg-BG\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgfw.efi for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\bootmgr.efi for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\cs-CZ\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\cs-CZ\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\cs-CZ\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\da-DK\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\da-DK\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\da-DK\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\de-DE\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\de-DE\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\de-DE\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\el-GR\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\el-GR\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\el-GR\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\en-GB\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\en-GB\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\en-US\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\en-US\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\en-US\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\es-ES\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\es-ES\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\es-ES\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\es-MX\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\es-MX\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\et-EE\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\et-EE\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fi-FI\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fi-FI\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fi-FI\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fr-CA\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fr-CA\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fr-FR\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fr-FR\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\fr-FR\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\hr-HR\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\hr-HR\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\hu-HU\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\hu-HU\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\hu-HU\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\it-IT\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\it-IT\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\it-IT\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ja-JP\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ja-JP\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ja-JP\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kdnet_uart16550.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kdstub.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_10df.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_10ec.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_1137.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_1414.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_14e4.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_15b3.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_1969.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_19a2.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_1af4.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_1d0f.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_02_8086.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_07_1415.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\kd_0C_8086.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ko-KR\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ko-KR\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ko-KR\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\lt-LT\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\lt-LT\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\lv-LV\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\lv-LV\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\memtest.efi for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\nb-NO\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\nb-NO\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\nb-NO\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\nl-NL\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\nl-NL\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\nl-NL\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pl-PL\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pl-PL\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pl-PL\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pt-BR\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pt-BR\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pt-BR\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pt-PT\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pt-PT\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\pt-PT\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\qps-ploc\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\qps-plocm\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ro-RO\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ro-RO\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ru-RU\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ru-RU\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\ru-RU\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sk-SK\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sk-SK\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sl-SI\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sl-SI\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sr-Latn-RS\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sr-Latn-RS\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sv-SE\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sv-SE\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\sv-SE\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\tr-TR\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\tr-TR\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\tr-TR\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\uk-UA\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\uk-UA\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\zh-CN\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\zh-CN\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\zh-CN\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\zh-TW\bootmgfw.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\zh-TW\bootmgr.efi.mui for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\zh-TW\memtest.efi.mui for read because the file or path does not exist
+BFSVC: Destination Boot.stl does not exist. Will enforce Pending Boot.stl (R:\Windows\boot\EFI\boot.pnd.stl) as Boot.stl. (\\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\boot.stl)
+BFSVC: Creating Recovery directory.
+BFSVC: Copying font files from R:\Windows\boot\Fonts to \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\Fonts...
+BFSVC: Copying resource files from R:\Windows\boot\Resources to \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\Resources...
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\Resources\bootres.dll for read because the file or path does not exist
+BFSVC: Unable to open file \\?\GLOBALROOT\Device\HarddiskVolume4\EFI\Microsoft\Boot\Resources\pt-PT\bootres.dll.mui for read because the file or path does not exist
+BFSVC: Servicing debugger files
+BFSVC: List of debugger files is empty
+BFSVC: System partition is not in a space
+BFSVC: BfsInitializeBcdStore flags(0x0000021c) RetainElementData:n DelExistinObject:n
+BFSVC: VolumePathName for R:\Windows is R:\
+BFSVC: SystemRoot is \Windows
+BFSVC: Opening template from \Device\HarddiskVolume6\Windows\System32\config\BCD-Template.
+BFSVC: Opening store from \Device\HarddiskVolume4\EFI\Microsoft\Boot\BCD
+BFSVC: System BCD store does not exist, creating.
+BFSVC: Creating General objects.
+BFSVC: Creating Resume object.
+BFSVC: Creating MemTest object.
+BFSVC: Creating OsLoader object.
+BFSVC: OsLoader identifier: {f6898b96-b587-11f1-a0cc-b828eaeb177f}
+BFSVC: Removing duplicate entries.
+BFSVC: Create BOOTMGR object RetainBootDefault:n
+BFSVC: Setting {default} to {f6898b96-b587-11f1-a0cc-b828eaeb177f}
+BFSVC: Cleaning up debugger settings.
+BFSVC: Cleaning up hypervisor settings.
+BFSVC: Opening recovery store from \Device\HarddiskVolume4\EFI\Microsoft\Recovery\BCD
+BFSVC: Creating new recovery store \Device\HarddiskVolume4\EFI\Microsoft\Recovery\BCD
+BFSVC: Creating General objects.
+BFSVC: Create BOOTMGR object RetainBootDefault:y
+Boot files successfully created.
+COMMAND bcdboot exit=0
+        1 file(s) copied.

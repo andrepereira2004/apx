@@ -1,5 +1,45 @@
 # APX Current Handoff
 
+## Portable installation and deletion audit (2026-10-04)
+
+Owner requested a commit of current state, confirmation of deleted Environment
+files including Windows/backups, and an installer for a different generic Arch
+PC. Checkpoint `b84e40b` preserves all 100 previously changed/untracked source,
+configuration, test and evidence files; no push was requested.
+
+The read-only audit found six retained home snapshots for the cleaned unpublished
+`developer`, `trabalharei`, `workkk-from-jome` creations, plus the old Windows
+laboratory disk and its copies inside two system snapshots. Complete deletion
+is **not confirmed**. Current registered Windows were preserved; no Windows.old
+appeared at either NTFS root. Exact findings and coverage limits are in
+[the audit](docs/deletion-audit-2026-10-04.md). No backup deletion is authorized
+by inference from a request to verify; the clarification remains unanswered.
+
+`scripts/portable/install-apx-arch.sh` is a new experimental, fresh-Host-only
+**headless** bootstrap using the current lifecycle and authenticated Hub executor.
+It builds independent Arch releases, preserves the 96 GiB reserve and refuses
+existing installations. It does not reproduce the graphical Hub/native Windows
+pilot and must not be represented as fulfilling full graphical portability.
+That remaining work requires generic device discovery/leases, seat recovery,
+hardware service capability discovery and graphical acceptance on other hardware.
+See [architecture, usage and evidence](docs/portable-arch-base-v1.md).
+
+The requested registered test Environment cannot be created on the current Host:
+free storage is below the unchanged 96 GiB reserve. The alternative laboratory
+uses a fresh file-backed QEMU VM called “Teste de VM”, with no physical disks or
+Host/Hub credentials exposed. This is a standalone VM, not a published APX
+Environment. The existing Host/Hub services and workloads were not redeployed.
+
+Fresh headless installation and two subsequent boots passed in that VM. Each
+run created/started/deleted a workload through the Hub and installed signed
+package `ed` exclusively in the workload. Installed source hashes match, the
+guest retains only Hub, and all 1,347 repository tests pass (11 skips). Evidence:
+`audit/2026-10-04-portable/result.json`. The stopped VM is retained at
+`/root/apx-teste-de-vm`; failed trial disks were removed. The requested complete
+graphical portability remains unfinished; do not describe this headless
+installer as a replica of the current graphical pilot.
+
+
 ## Base desktop aplicada; Hub leve e Básico reduzido (2026-10-04)
 
 Pedido atual executado em Faculdade, Hytale, Minecraft e Steam, todos parados:

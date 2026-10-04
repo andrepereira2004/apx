@@ -76,7 +76,7 @@ let current = 'calendar';
 function button(kind, x) {return {visible: true, enabled: true, width: 80, height: 32,
 mapToItem: () => ({x, y: 7}), activated: () => {current = current === kind ? '' : kind;}};}
 const calendarButton = button('calendar', 0), environmentButton = button('environments', 100),
-modelStoreButton = button('model', 200), batteryButton = button('battery', 300), controlCenterButton = button('controls', 400);
+modelStoreButton = button('model', 200), appsButton = button('apps', 500), batteryButton = button('battery', 300), controlCenterButton = button('controls', 400);
 ''' + 'function popupBarTargetAt' + hit_test + '''
 const root = {popupBarTargetAt, closePopup: () => {current = '';}};
 const Qt = {LeftButton: 1};

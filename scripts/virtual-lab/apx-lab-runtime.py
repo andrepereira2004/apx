@@ -1463,7 +1463,7 @@ def list_environments(as_json: bool) -> None:
 def status() -> None:
     failures = run(["systemctl", "--failed", "--no-legend"], check=False, capture=True).stdout.strip()
     print("APX disposable headless runtime")
-    print(f"state={STATE} filesystem={run(['findmnt', '-n', '-o', 'FSTYPE', str(STATE)], capture=True).stdout.strip()}")
+    print(f"state={STATE} filesystem={run(['findmnt', '-n', '-T', str(STATE), '-o', 'FSTYPE'], capture=True).stdout.strip()}")
     print(f"host_system={'healthy' if not failures else 'degraded'}")
     list_environments(False)
 

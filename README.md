@@ -1,5 +1,10 @@
 # APX
 
+Experimental installation on a fresh generic Arch x86_64 Host: see
+[portable headless base](docs/portable-arch-base-v1.md). It creates and manages
+isolated Environments but does **not yet install the current graphical Hub or
+native Windows integration**. Existing physical-pilot installers remain target-bound.
+
 APX is a personal operating environment platform built on top of Arch Linux.
 
 APX does not replace Linux. The host remains a single Arch Linux installation

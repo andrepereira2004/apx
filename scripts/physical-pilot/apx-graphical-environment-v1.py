@@ -27,6 +27,8 @@ VM_CAPABILITY_CONTENT = b"apx-virtual-machine-v1\n"
 VFIO_CAPABILITY_NAME = "vfio-pci-v1.json"
 VFIO_STATE = Path("/run/apx/vfio-pci-environment-v1.json")
 VFIO_PROFILE = "apx-vfio-pci-v1"
+REMOVABLE_HELPER = Path("/usr/lib/apx/apx-removable-media-v1.py")
+REMOVABLE_ROOT = Path("/run/apx/removable-media-v1")
 VM_FORBIDDEN_PROCESSES = (
     b"quickshell", b"waybar", b"hypridle", b"hyprlock",
     b"pipewire-pulse", b"xdg-desktop-por",
@@ -299,9 +301,15 @@ def configure(engine, name: str) -> dict[str, object]:
         ) + (hardware_socket,)
 
     original_run = engine.run
+    has_file_manager = not virtual_machine and "files" in record.get("desktop_modules", ())
 
     def routed_run(arguments: tuple[str, ...], check: bool = True):
         values = list(arguments)
+        if has_file_manager and ("systemd-nspawn" in values or "/usr/bin/systemd-nspawn" in values):
+            if not REMOVABLE_HELPER.is_file():
+                raise RuntimeError("removable media Host broker is unavailable")
+            original_run((str(REMOVABLE_HELPER), "prepare"))
+            values.append(f"--bind={REMOVABLE_ROOT}:/media/apx-usb")
         if engine.HOST_CONSOLE_ENABLED:
             if "systemd-nspawn" in values or "/usr/bin/systemd-nspawn" in values:
                 values.append(f"--bind={hardware_socket}:{hardware_socket}")

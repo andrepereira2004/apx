@@ -421,3 +421,18 @@ hl.device({
     scroll_factor = 0.55,
     natural_scroll = true,
 })
+
+-- Persisted external-mouse choices from the Control Centre override the base.
+local mouseChoice = "/home/apx/.config/hypr/apx-mouse-sensitivity.lua"
+local mouseChoiceFile = io.open(mouseChoice, "r")
+if mouseChoiceFile then
+    mouseChoiceFile:close()
+    dofile(mouseChoice)
+end
+
+-- Environment-local choices edited by APX Settings.
+for _, choice in ipairs({"apx-desktop-preferences.lua", "apx-shortcuts.lua", "apx-display-preferences.lua"}) do
+    local path = "/home/apx/.config/hypr/" .. choice
+    local file = io.open(path, "r")
+    if file then file:close(); dofile(path) end
+end

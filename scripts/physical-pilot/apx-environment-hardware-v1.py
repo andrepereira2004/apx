@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bounded display, keyboard lighting and energy profile for active workloads."""
+"""Bounded hardware and confirmed power controls for active workloads."""
 import fcntl
 import importlib.util
 import json
@@ -20,23 +20,50 @@ base=importlib.util.module_from_spec(spec);spec.loader.exec_module(base)
 SOCKET=Path('/run/apx/environment-hardware-v1.sock')
 ALLOWED={'hardware.profile.status','hardware.platform.set','hardware.display.set','hardware.keyboard.cycle'}
 LOCK=threading.Lock()
-POWER_OPS={'system.poweroff.prepare','system.action.confirm','system.action.cancel'}
+POWER_OPS={'system.poweroff.prepare','system.reboot.prepare','system.action.confirm','system.action.cancel'}
 POWER_IDENTITY=None
+GPU_OPS={'hardware.gpu.prepare','hardware.gpu.confirm','hardware.gpu.cancel'}
+GPU_IDENTITY=None
+
+def shell_binding(peer,identity):
+    shell=quickshell_ancestor(peer)
+    shell_start=Path(f'/proc/{shell}/stat').read_text().rsplit(')',1)[1].split()[19]
+    if authorize_active_environment_peer(peer)!=identity:raise PermissionError('active identity changed')
+    return shell,(identity,shell,shell_start)
 
 def apply_power(operation,payload,peer,identity):
     global POWER_IDENTITY
     base.expire_pending()
-    expected=set() if operation=='system.poweroff.prepare' else {'token'}
+    preparing=operation in {'system.poweroff.prepare','system.reboot.prepare'}
+    expected=set() if preparing else {'token'}
     if set(payload)!=expected: raise ValueError('power payload fields differ')
-    shell=quickshell_ancestor(peer)
-    shell_start=Path(f'/proc/{shell}/stat').read_text().rsplit(')',1)[1].split()[19]
-    binding=(identity, shell, shell_start)
-    if authorize_active_environment_peer(peer)!=identity: raise PermissionError('active identity changed')
-    if operation!='system.poweroff.prepare' and POWER_IDENTITY!=binding:
+    shell,binding=shell_binding(peer,identity)
+    if not preparing and POWER_IDENTITY!=binding:
         raise PermissionError('power confirmation Environment generation differs')
     result=base.apply(operation,payload,peer,shell)
-    if operation=='system.poweroff.prepare' and result.get('prepared'): POWER_IDENTITY=binding
+    if preparing and result.get('prepared'): POWER_IDENTITY=binding
     if base.PENDING is None: POWER_IDENTITY=None
+    print(json.dumps(dict(operation=operation,environment=identity.name,generation=identity.generation,result='handled',peer_uid=peer.uid)),flush=True)
+    return result
+
+
+def apply_gpu(operation,payload,peer,identity):
+    global GPU_IDENTITY
+    base.expire_pending()
+    preparing=operation=='hardware.gpu.prepare'
+    expected={'profile'} if preparing else {'token'}
+    if set(payload)!=expected:raise ValueError('GPU payload fields differ')
+    shell,binding=shell_binding(peer,identity)
+    if not preparing and GPU_IDENTITY!=binding:
+        raise PermissionError('GPU confirmation Environment generation differs')
+    with open('/run/apx/machine-transition-v1.lock','a') as transition:
+        fcntl.flock(transition,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        if authorize_active_environment_peer(peer)!=identity:raise PermissionError('active identity changed')
+        if operation!='hardware.gpu.cancel' and Path('/run/apx/system-power-v1.reserved').exists():
+            raise RuntimeError('power transition pending')
+        result=base.apply(operation,payload,peer,shell)
+    if preparing and result.get('prepared'):GPU_IDENTITY=binding
+    if base.PENDING is None:GPU_IDENTITY=None
     print(json.dumps(dict(operation=operation,environment=identity.name,generation=identity.generation,result='handled',peer_uid=peer.uid)),flush=True)
     return result
 
@@ -44,11 +71,12 @@ def apply_power(operation,payload,peer,identity):
 
 def apply(operation,payload,peer):
     identity=authorize_active_environment_peer(peer)
-    if identity.role!='graphical-base' or operation not in ALLOWED | POWER_OPS:
+    if identity.role!='graphical-base' or operation not in ALLOWED | POWER_OPS | GPU_OPS:
         raise PermissionError('operation is not an active Environment hardware control')
     if type(payload) is not dict:
         raise ValueError('hardware payload differs')
     if operation in POWER_OPS: return apply_power(operation,payload,peer,identity)
+    if operation in GPU_OPS: return apply_gpu(operation,payload,peer,identity)
     keys={'hardware.profile.status':set(),'hardware.keyboard.cycle':set(),
           'hardware.platform.set':{'profile'},'hardware.display.set':{'percent'}}
     if set(payload)!=keys[operation]:raise ValueError('hardware payload fields differ')

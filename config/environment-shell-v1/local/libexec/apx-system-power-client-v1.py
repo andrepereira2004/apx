@@ -13,8 +13,8 @@ sys.path.insert(0, "/usr/lib/apx")
 from apx_system_power_contract import MAX_MESSAGE_BYTES, parse_message, request_bytes  # noqa: E402
 
 SOCKET = next((path for path in (
-    "/home/.apx-hardware-bridge/hardware-v1.sock",
     "/run/apx/environment-hardware-v1.sock",
+    "/home/.apx-hardware-bridge/hardware-v1.sock",
     "/home/.apx-host-bridge/system-power-v1.sock",
 ) if os.path.exists(path)), "/run/apx/system-power-v1.sock")
 

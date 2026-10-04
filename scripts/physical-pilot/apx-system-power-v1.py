@@ -291,9 +291,9 @@ def set_gpu_profile(profile: str) -> dict[str, object]:
         raise RuntimeError("Lenovo Hybrid Graphics control is unavailable")
     wanted_hybrid = profile != "nvidia"
     (GPU_BRIDGE / "hybrid_mode").write_text("1\n" if wanted_hybrid else "0\n", encoding="ascii")
-    observed = _read_bounded(GPU_BRIDGE / "hybrid_mode", {"0", "1"}) == "1"
-    if observed != wanted_hybrid:
-        raise RuntimeError("Lenovo firmware did not stage the GPU profile")
+    # Lenovo applies this WMI mode on reboot. A same-boot read may still report
+    # the active mode, so it cannot verify whether the requested mode was saved.
+    # The sysfs write reports WMI errors; verify the resulting mode after boot.
     atomic(HARDWARE_STATUS, {
         "schema": 1, "requested_gpu": profile, "previous_gpu": before["gpu_profile"],
         "set_boot_id": BOOT_ID.read_text(encoding="ascii").strip(), "reboot_required": True,
@@ -413,6 +413,7 @@ def receive(connection: socket.socket) -> bytes:
 
 
 def respond(connection: socket.socket) -> None:
+    operation = None
     try:
         pid, uid, gid = struct.unpack("3i", connection.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))
         peer = HostServicesPeer(pid, uid, gid); authorize_official_hub_peer(peer)
@@ -424,6 +425,9 @@ def respond(connection: socket.socket) -> None:
         with LOCK: result = apply(operation, payload, peer, shell_pid)
         response = {"schema": 1, "profile": PROFILE, "ok": True, "result": result, "error": None}
     except Exception as error:
+        if operation in {"hardware.gpu.prepare", "hardware.gpu.confirm", "hardware.gpu.cancel"}:
+            print(json.dumps({"event": "gpu-request-rejected", "operation": operation,
+                              "error": str(error)[:300]}, sort_keys=True), flush=True)
         response = {"schema": 1, "profile": PROFILE, "ok": False, "result": None,
                     "error": {"code": "request_rejected", "message": str(error)[:300]}}
     try:

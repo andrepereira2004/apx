@@ -43,6 +43,19 @@ class HostServicesV3ContractTests(unittest.TestCase):
         self.assertIn(b"secret-123", data)
         self.assertNotIn("secret-123", repr(subject.redacted(json.loads(data))))
 
+    def test_enterprise_credentials_require_server_identity_and_ca(self):
+        credential = {"kind": "enterprise", "method": "PEAP", "identity": "ana@escola.pt",
+                      "password": "secret=123", "domain": "wifi.escola.pt",
+                      "ca_cert": "/etc/ssl/certs/ca-certificates.crt"}
+        request = subject.request_bytes("network.connect", {"ssid": "Campus", "credential": credential})
+        self.assertEqual(subject.parse_request(request)[2]["credential"], credential)
+        self.assertNotIn("secret=123", repr(subject.redacted(json.loads(request))))
+        for field, bad in (("domain", ""), ("domain", "attacker.invalid\nEAP-Method=PWD"),
+                           ("ca_cert", "/tmp/cert.pem"), ("method", "TLS")):
+            changed = dict(credential, **{field: bad})
+            with self.assertRaises(subject.HostServicesV3ContractError):
+                subject.request_bytes("network.connect", {"ssid": "Campus", "credential": changed})
+
     def test_connectivity_and_portal_operations_accept_no_caller_url(self):
         for operation in ("network.connectivity-check", "network.portal.open"):
             request_id, parsed, payload = subject.parse_request(

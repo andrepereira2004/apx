@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 from types import SimpleNamespace
+import tempfile
 import unittest
 from unittest import mock
 
@@ -55,7 +56,7 @@ class HostServicesV3PhysicalTests(unittest.TestCase):
                          "CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW", "ReadWritePaths=/run/apx",
                          "MemoryDenyWriteExecute=yes"):
             self.assertIn(required, source)
-        self.assertNotIn("/var/lib/iwd", source)
+        self.assertIn("ReadWritePaths=/run/apx /var/lib/iwd", source)
 
     def test_bluetooth_power_unblocks_before_bluez_and_verifies_state(self):
         subject = load_daemon()
@@ -85,6 +86,25 @@ class HostServicesV3PhysicalTests(unittest.TestCase):
             self.assertEqual(subject.wait_for_network("requested"), {
                 "connected": True, "network": "requested",
             })
+
+    def test_enterprise_profile_is_private_and_checks_server_certificate(self):
+        subject = load_daemon()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            ca = root / "ca.pem"
+            ca.write_text("test certificate")
+            with mock.patch.object(subject, "IWD_STATE", root):
+                profile = subject.enterprise_profile("Campus", {
+                    "method": "PEAP", "identity": "ana@escola.pt", "password": "secret",
+                    "domain": "wifi.escola.pt", "ca_cert": str(ca),
+                })
+            self.assertEqual(profile.name, "Campus.8021x")
+            self.assertEqual(profile.stat().st_mode & 0o777, 0o600)
+            contents = profile.read_text()
+            self.assertIn("EAP-PEAP-CACert=", contents)
+            self.assertIn("EAP-PEAP-ServerDomainMask=wifi.escola.pt", contents)
+            self.assertIn("EAP-PEAP-Phase2-Password=secret", contents)
+            self.assertEqual(list(root.glob("*.tmp")), [])
 
     def test_deployer_stages_without_restarting_the_inode_bound_service(self):
         source = DEPLOY.read_text()

@@ -1651,7 +1651,7 @@ def health_watchdog() -> dict[str, object]:
 _transition_display_owned = False
 
 
-def transition_display(action: str, progress: int = 0) -> None:
+def transition_display(action: str) -> None:
     """Own only our short-lived Host splash; never touch the SSD boot daemon."""
     global _transition_display_owned
     unit = "apx-transition-display-v1.service"
@@ -1673,9 +1673,6 @@ def transition_display(action: str, progress: int = 0) -> None:
             command("/usr/bin/systemctl", "stop", unit)
             _transition_display_owned = False
             return
-        command("/usr/bin/plymouth", "system-update", "--progress=10")
-    elif action == "progress" and _transition_display_owned:
-        command("/usr/bin/plymouth", "system-update", f"--progress={max(0, min(100, progress))}")
     elif action == "release" and _transition_display_owned:
         result = command("/usr/bin/systemctl", "stop", unit)
         if result.returncode:
@@ -1709,7 +1706,6 @@ def _launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, o
     graphics = resolve_graphics()
     camera = resolve_camera_device()
     validate_devices(inputs, audio, graphics, camera)
-    transition_display("progress", 25)
     ensure_audio_master_playback(audio)
     device_nodes = tuple(dict.fromkeys((
         *inputs.values(), *audio.values(), graphics["display_card"], graphics["display_render"],
@@ -1728,12 +1724,10 @@ def _launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, o
         start_host_seatd(inputs, graphics)
         arm_test_expiry(75) if test_mode else arm_health_watchdog()
         start_outer(inputs, audio, graphics, bindings, authenticated_handoff)
-        transition_display("progress", 55)
         uid_base = resolve_user_namespace()
         activate_device_leases(uid_base, read_only_inputs(inputs))
         activate_service_sockets(uid_base)
         start_input_bridge()
-        transition_display("progress", 85)
         transition_display("release")
         clear_transition_consoles()
         start_inner(inputs, audio, graphics)

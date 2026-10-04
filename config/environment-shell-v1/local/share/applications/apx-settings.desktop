@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Definições APX
+Comment=Preferências deste Environment
+Exec=/home/apx/.local/bin/apx-settings
+TryExec=/home/apx/.local/bin/apx-settings
+Icon=preferences-system
+Terminal=false
+Categories=Settings;
+Keywords=APX;definições;teclado;energia;idioma;privacidade;

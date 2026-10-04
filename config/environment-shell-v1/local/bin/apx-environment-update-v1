@@ -17,7 +17,8 @@ def update(unattended=False):
     if os.geteuid() == 0 or Path('/run/systemd/container').read_text().strip() != 'systemd-nspawn':
         raise RuntimeError('Abre esta ação como utilizador dentro do Environment.')
     print('Atualizar este Environment: sistema, Hyprland, aplicações, AUR e Flatpak.', flush=True)
-    print('Os gestores mostram as alterações antes de pedirem confirmação.', flush=True)
+    print('A atualização começou; os gestores mostram as alterações e o progresso.' if unattended
+          else 'Os gestores mostram as alterações antes de pedirem confirmação.', flush=True)
     confirm = ('--noconfirm',) if unattended else ()
     # The Host owns the running NVIDIA kernel module. Updating its userspace
     # libraries independently makes outputs wired to that GPU go black.

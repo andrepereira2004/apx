@@ -75,6 +75,17 @@ def native_record(target: str, generation: str) -> tuple[Path, dict[str, object]
     return path, value, 0o400
 
 
+def native_v3_record(target: str, generation: str) -> tuple[Path, dict[str, object], int]:
+    path = NATIVE_ENVIRONMENTS / "instances-v3" / f"{target}.json"
+    value = trusted_json(path, 32768, 0o400)
+    if (value.get("schema"), value.get("profile"), value.get("name"),
+            value.get("system_kind"), value.get("state"), value.get("generation")) != (
+            3, "apx-native-instance-v3", target, "windows-native", "ready", generation,
+    ):
+        raise RuntimeError("o Windows selecionado mudou ou não está pronto")
+    return path, value, 0o400
+
+
 def atomic_write(path: Path, value: dict[str, object], mode: int) -> None:
     temporary = path.with_name(f".{path.name}.{os.getpid()}.metadata.tmp")
     descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, mode)
@@ -105,8 +116,12 @@ def update_metadata(target: str, generation: str, display_name: str, description
             or GENERATION.fullmatch(generation) is None \
             or not valid_text(display_name, 1, 64) or not valid_text(description, 0, 120):
         raise RuntimeError("a edição pedida não é válida")
-    path, value, mode = native_record(target, generation) if target == "windows" \
-        else ordinary_record(target, generation)
+    if (NATIVE_ENVIRONMENTS / "instances-v3" / f"{target}.json").exists():
+        path, value, mode = native_v3_record(target, generation)
+    elif target == "windows":
+        path, value, mode = native_record(target, generation)
+    else:
+        path, value, mode = ordinary_record(target, generation)
     value["display_name"] = display_name
     value["description"] = description
     atomic_write(path, value, mode)

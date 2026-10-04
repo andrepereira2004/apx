@@ -542,7 +542,7 @@ def start_native_recovery(action: str, generation: str) -> dict[str, object]:
 
 def prime_return_screen() -> None:
     """Prepare tty1 before the workload exits so no Host prompt can flash."""
-    payload = b"\033[0m\033[40m\033[2J\033[H\033[?25l"
+    payload = b"\033[0m\033[40m\033[30m\033[2J\033[3J\033[H\033[?25l"
     descriptor = os.open("/dev/tty1", os.O_WRONLY | os.O_NOCTTY)
     try:
         os.write(descriptor, payload)
@@ -641,7 +641,10 @@ def apply(operation: str, payload: dict[str, object], peer: HostServicesPeer) ->
         authorize_hub_management(peer)
         target, generation = str(payload["target"]), str(payload["generation"])
         display_name, description = str(payload["display_name"]), str(payload["description"])
-        if target == "windows":
+        native_v3_record = next((item for item in native_v3.records() if item["name"] == target), None)
+        if native_v3_record is not None:
+            record = native_v3_record
+        elif target == "windows":
             record = trusted_native_environment(target)
         else:
             record = trusted_environment(target)
@@ -688,6 +691,7 @@ def apply(operation: str, payload: dict[str, object], peer: HostServicesPeer) ->
         return {"accepted": True, "direction": "workload-to-workload",
                 "source": source, "target": target, "unit": unit}
     unit = "apx-environment-handoff-" + secrets.token_hex(5)
+    prime_return_screen()
     result = subprocess.run((
         "/usr/bin/systemd-run", f"--unit={unit}", "--collect", "--property=Type=simple",
         "--property=TimeoutStopSec=15s", RUNNER, "--environment", str(target),

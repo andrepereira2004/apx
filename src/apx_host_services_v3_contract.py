@@ -49,8 +49,23 @@ def validate_ssid(value: object) -> str:
 def _credential(value: object) -> dict[str, str] | None:
     if value is None:
         return None
-    if type(value) is not dict or set(value) != {"kind", "value"} \
-            or value.get("kind") != "passphrase" or type(value.get("value")) is not str:
+    if type(value) is not dict:
+        raise HostServicesV3ContractError("credential is invalid")
+    if value.get("kind") == "enterprise":
+        if set(value) != {"kind", "method", "identity", "password", "domain", "ca_cert"}:
+            raise HostServicesV3ContractError("enterprise credential fields differ")
+        if type(value["method"]) is not str or value["method"] not in {"PEAP", "TTLS-PAP", "TTLS-MSCHAPV2"}:
+            raise HostServicesV3ContractError("enterprise method is unsupported")
+        for key in ("identity", "password", "domain", "ca_cert"):
+            item = value[key]
+            if type(item) is not str or not item or len(item) > 256 or any(ord(c) < 32 or ord(c) == 127 for c in item):
+                raise HostServicesV3ContractError(f"enterprise {key} is invalid")
+        if not re.fullmatch(r"(?:\*\.)?[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", value["domain"]):
+            raise HostServicesV3ContractError("enterprise server domain is invalid")
+        if not re.fullmatch(r"/etc/ssl/certs/[A-Za-z0-9_.-]+", value["ca_cert"]):
+            raise HostServicesV3ContractError("enterprise CA certificate path is invalid")
+        return dict(value)
+    if set(value) != {"kind", "value"} or value.get("kind") != "passphrase" or type(value.get("value")) is not str:
         raise HostServicesV3ContractError("credential is invalid")
     secret = value["value"]
     if not 8 <= len(secret) <= 63 or any(ord(character) < 32 or ord(character) == 127 for character in secret):

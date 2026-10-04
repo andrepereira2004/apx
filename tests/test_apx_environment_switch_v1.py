@@ -327,6 +327,47 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
             self.assertEqual(updated_windows["windows_partuuid"], "unchanged")
             self.assertEqual(windows.stat().st_mode & 0o777, 0o400)
 
+            instances = native / "instances-v3"
+            instances.mkdir(mode=0o700)
+            second = instances / "windows-testes.json"
+            original_v3 = {
+                "schema": 3, "profile": "apx-native-instance-v3",
+                "name": "windows-testes", "system_kind": "windows-native",
+                "state": "ready", "generation": generation,
+                "display_name": "Windows Testes", "description": "Original",
+                "windows_partuuid": "unchanged",
+            }
+            second.write_text(json.dumps(original_v3)); second.chmod(0o400)
+            with mock.patch.object(subject, "NATIVE_ENVIRONMENTS", native):
+                subject.update_metadata("windows-testes", generation, "Jogos", "Jogos e testes")
+                with self.assertRaisesRegex(RuntimeError, "mudou"):
+                    subject.update_metadata("windows-testes", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "Outro", "")
+            updated_second = json.loads(second.read_text())
+            self.assertEqual(updated_second["display_name"], "Jogos")
+            self.assertEqual(updated_second["description"], "Jogos e testes")
+            self.assertEqual(updated_second["windows_partuuid"], "unchanged")
+            self.assertEqual(second.stat().st_mode & 0o777, 0o400)
+
+    def test_native_v3_edit_selects_each_current_windows_record(self) -> None:
+        subject = load_switch_service()
+        generation = "12345678-1234-4234-9234-123456789abc"
+        records = [{"name": name, "generation": generation, "state": "ready"}
+                   for name in ("windows", "windows-testes")]
+        with mock.patch.object(subject, "authorize_hub_management"), \
+                mock.patch.object(subject.native_v3, "records", return_value=records), \
+                mock.patch.object(subject, "trusted_native_environment") as legacy, \
+                mock.patch.object(subject, "trusted_environment") as ordinary, \
+                mock.patch.object(subject, "request_metadata_update", return_value={"accepted": True}) as update:
+            for name in ("windows", "windows-testes"):
+                result = subject.apply("environment.update-metadata", {
+                    "target": name, "generation": generation,
+                    "display_name": "Novo " + name, "description": "Teste",
+                }, object())
+                self.assertTrue(result["accepted"])
+                update.assert_called_with(name, generation, "Novo " + name, "Teste")
+            legacy.assert_not_called()
+            ordinary.assert_not_called()
+
     def test_storage_runner_sums_root_and_home_qgroups_only(self) -> None:
         subject = load_storage_runner()
         output = """Qgroupid Referenced Exclusive Max_ref Max_excl Path
@@ -366,7 +407,11 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn("mount -t ntfs3 -o ro,nosuid,nodev,noexec", script)
         self.assertIn("SetWindowsHookEx", powershell)
         self.assertIn("WhKeyboardLl", powershell)
-        self.assertIn("GetAsyncKeyState", powershell)
+        self.assertNotIn("GetAsyncKeyState", powershell)
+        self.assertIn("leftWin = down", powershell)
+        self.assertIn("SetTimer(IntPtr.Zero, UIntPtr.Zero, 20000", powershell)
+        self.assertNotIn("[switch]$ArmOnly", powershell)
+        self.assertNotIn("Start-Process", powershell)
         self.assertIn("VirtualKeyLeftWin", powershell)
         self.assertIn("VirtualKeyRightWin", powershell)
         self.assertIn("return new IntPtr(1)", powershell)

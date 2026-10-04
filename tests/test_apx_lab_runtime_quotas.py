@@ -264,7 +264,8 @@ class RuntimeDestroyGenerationTests(unittest.TestCase):
                 if path.exists():
                     shutil.rmtree(path)
 
-            with patch.object(runtime, "ENVIRONMENTS", environments), \
+            with patch.object(runtime, "STATE", state), \
+                 patch.object(runtime, "ENVIRONMENTS", environments), \
                  patch.object(runtime, "SNAPSHOTS", snapshots), \
                  patch.object(runtime, "ARCHIVES", archives), \
                  patch.object(runtime, "BACKUPS", backups), \

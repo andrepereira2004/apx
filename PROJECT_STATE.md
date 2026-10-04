@@ -1,5 +1,382 @@
 # APX Project State
 
+## Desktop foundation deployed on stopped workloads (2026-10-04)
+
+Owner authorized full desktop integration in intermediate and complete profiles,
+with basic reduced and Hub lightweight. Intermediate now selects all desktop
+modules except Office/development. Signed audio compatibility, fonts, optional
+clipboard history, printing/scanning additions and a 15-page Settings application
+are installed in Faculdade, Hytale, Minecraft and Steam. Shared shell/features
+support future creation; live Hub only receives creator selection/labels.
+Preferences persist across sessions. Display previews roll back unless confirmed;
+clipboard history and automatic suspend default off. No extra resident service
+runs by default; CUPS is socket activated.
+
+Environment deletion now includes exact plan-identified settled update rollbacks
+and numbered configuration backups, preserving siblings and Host resources.
+Three journal-proven unpublished failed creations were cleaned with the supported
+recovery operation; no registered workload was deleted. 63 focused tests and
+hidden GTK rendering of all 15 pages passed; 77 installed seed pins verified.
+Physical suspend/display/device acceptance and a fresh full Environment remain
+unexercised. See [evidence and remaining gaps](docs/desktop-foundation-2026-10-04.md).
+
+## Rofi focus of an open application fixed on pilot (2026-10-04)
+
+The running Host-console row is now named “APX Terminal” with a Papirus
+terminal icon. A desktop entry also exposes it in the Hub, Faculdade,
+Hytale, Minecraft, Steam and the seed for new Environments. The active
+Minecraft catalogue associates it with the existing window. The installed
+runtime pin is updated. Latest backup:
+`/var/lib/apx/backups/20261004T101129Z-apx-terminal-all-environments`.
+
+Hyprland 0.56.2 rejected the legacy `dispatch focuswindow` syntax and sent
+its Lua parser error to Rofi when the owner selected an open Brave window.
+The corrected launcher uses `hyprctl eval` for focus and minimized-window
+restore, captures command output, and reports failures through a notification.
+It is installed in the shell seed and the four existing workload Environments;
+the installed runtime digest pin is updated. Backup:
+`/var/lib/apx/backups/20261004T100150Z-rofi-brave-focus`. Focused tests
+passed. Focusing an existing Host-console window worked after installation;
+Brave had already closed by that check.
+
+## Control Centre connectivity and actions installed (2026-10-04)
+
+Host services, Hub, Faculdade, Hytale, Minecraft, Steam and the seed for new
+Environments now contain the connectivity, one-click power/update, transition
+feedback and “Mais opções” changes. The active Hub QuickShell loaded successfully.
+The submenu was inspected live: mouse slider matches volume and its navigation,
+monitor-position and shortcut buttons have normal outlines. Mouse preference
+(-55%) was preserved. The Rofi helper missing from Hub was also installed.
+
+All 65 focused tests passed. A real new open MEO-WiFi connection succeeded
+with limited connectivity and no detected portal; Casa was restored with full
+connectivity and the temporary MEO profile removed. New protected Wi-Fi,
+enterprise authentication, portal login, Bluetooth pairing, package updates
+and real shutdown/reboot remain physically unverified. Backup:
+`/var/lib/apx/backups/20261004T102158Z-control-centre-all-environments`;
+final outline backup `20261004T105232Z-options-button-outline`.
+See `docs/control-centre-connectivity-and-actions-2026-10-04.md`.
+
+## Black transition installed; quiet Windows login pending (2026-09-30)
+
+The Host now has the script-based solid-black Plymouth transition theme,
+without its former title, Arch spinner assets, update mode, or progress calls.
+Only the transition code was changed in the installed graphical launcher so
+its live HDMI-audio changes remain intact. Backup:
+`/var/lib/apx/backups/20260930T082909Z-black-transition`. A bounded tty1
+preview started and stopped the theme successfully, returned to tty2, and
+left the Environment switch service active. Owner visual acceptance on a
+complete Environment switch is still pending.
+
+The repository Windows return helper no longer requests administrator approval
+on login; SUPER+E still requests it to change UEFI boot selection and reboot.
+Both native Windows assets and their integrity hashes are aligned in source.
+The bounded installer refused before any writes because both NTFS volumes
+reported `Restart state: DIRTY`. The two installed Windows still have the old
+login behavior. Windows activation remains unresolved; a valid digital license
+or product key is needed for each installation as applicable.
+
+## Native Windows return helper repair installed (2026-09-28)
+
+Owner reports SUPER+E and automatic Linux boot selection failing in Windows.
+The return helper now tracks Win key events, refreshes its keyboard hook every
+20 seconds, and requests elevated Linux firmware selection on login without
+rebooting. UAC approval remains required; refusal prevents automatic selection.
+Both Windows NTFS volumes were clean and received the PS1/README repair, with
+Host assets/validators and v3 pins aligned. Backup and inventory:
+`/var/lib/apx/backups/20260928T165520Z-windows-return`.
+Both installed native boot preflights pass and v3 remains enabled. The 99 native
+tests and focused return-helper check pass; the existing unrelated menu-height
+assertion still fails in the larger switch suite. No firmware/EFI/partition
+write or reboot occurred in this repair. Windows compilation, keyboard handling
+and actual return remain unverified until the owner logs into each Windows,
+accepts UAC and tests SUPER+E. Readiness logs prove helper startup but do not
+establish why its hook failed to detect the recent chord.
+
+## Native Windows menu boot restored for owner test (2026-09-27)
+
+Both native Windows records remain ready. The Host rejected four `native.boot-v3`
+requests because a reviewed switch service edit at 18:24 changed its digest
+without updating the v3 release manifest. The installed switch service and
+repository source now match; only that manifest digest was updated after a
+backup at `/var/lib/apx/backups/20260927T183257Z-native-v3-switch-pin`.
+`apx_native_hub_v3.enabled()` is true and the Host's read-only boot preflight
+passes for both instances. This restores the APX boot request path; physical
+boot through the Hub and return from each Windows still await owner observation.
+No disk, EFI, firmware or Windows contents were changed.
+
+## Installed application removal choice and Rofi actions (2026-09-27)
+
+The Environment shell removal helper now asks in the terminal whether to
+remove only the application or also its associated data. Flatpak's data option
+removes its sandbox data and permissions. For native packages, the helper shows
+exact app-named XDG directories, asks for a second confirmation, and deletes
+them only after pacman succeeds. Other native application data cannot be
+identified reliably by package name. The Rofi action rows now have small
+colored symbols for new instance, NVIDIA launch, task termination, uninstall,
+confirmation and cancel; their action identifiers and click behavior remain
+unchanged. Both helpers are installed in Faculdade, Hytale, Minecraft, Steam
+and the shared shell seed. The installed runtime integrity pins match the
+helpers. The 11 replaced files have a verified backup at
+`/var/lib/apx/backups/20260927T155027Z-rofi-remove-choice`. Nineteen menu
+tests pass. The four workloads were stopped during installation, so graphical
+acceptance of the new symbols and terminal prompt remains unobserved.
+
+## Owner-reported GPU error and Rofi uninstall blockage (2026-09-27)
+
+The owner supplied the GPU error prefix. Bounded Host logging captured the
+precise cause at 15:39:05: `Lenovo firmware did not stage the GPU profile`.
+The WMI write returned success, but the immediate read still showed the active
+Hybrid mode. The Legion WMI mode takes effect only after reboot, so that
+same-boot read is not a valid staging check. The Host service now records the
+requested profile after a successful WMI write and verifies the active profile
+on the next boot through its existing mismatch status. Backup:
+`/var/lib/apx/backups/20260927T144056Z-gpu-deferred-readback`. Nine Host power
+tests pass, including a deferred-readback case. The owner has not yet confirmed
+a successful NVIDIA reboot.
+
+The workload hardware service and Battery menu now allow two-step Hybrid/NVIDIA
+selection and the follow-up reboot from Faculdade, Hytale, Minecraft and Steam.
+Requests remain bound to the active Environment generation and QuickShell
+process. The service, four stopped workloads, and shell seed were updated with
+runtime integrity pins; backup:
+`/var/lib/apx/backups/20260927T144303Z-workload-gpu-controls`. Both Host power
+and workload hardware services are active, and 36 combined focused tests pass.
+Physical pointer and reboot checks remain pending.
+
+The owner reported an error while choosing dedicated NVIDIA from the Hub and a
+display/input blockage after choosing Rofi's uninstall action in a workload.
+The initial Host audit recorded GPU preparation but no confirmation or firmware
+stage. Later diagnostic logging identified the failed confirmation above.
+The Host power service now logs bounded GPU request rejections (operation and
+error only, without confirmation tokens) for the next owner attempt. It was
+restarted successfully and remains active; backup:
+`/var/lib/apx/backups/20260927T143520Z-gpu-rejection-logging`.
+At 15:36:55 a cancellation with an expired or absent confirmation token was
+rejected; a new NVIDIA preparation at 15:37:05 was cancelled successfully three
+seconds later. A later confirmation exposed the firmware readback error.
+
+The owner reports the blockage recurred after that fix. The Rofi script had
+launched Kitty with Rofi's script-output pipe inherited as standard output and
+error. Since Kitty remains open while waiting for authentication, Rofi can wait
+for that pipe to close and keep its fullscreen input layer active. The source
+now redirects both streams away from Rofi. The revised helper is installed in
+the four workloads and shell seed with matching integrity pins; backup:
+`/var/lib/apx/backups/20260927T145051Z-rofi-uninstall-pipe`. Nineteen helper
+tests pass. Physical pointer validation remains pending.
+
+The prior Minecraft journal shows Kitty's uninstall terminal starting at
+15:22:07 while Rofi remained active until the 15:23:59 shutdown. No package
+removal appears in any of the four workload pacman logs. The application helper
+now explicitly closes only its direct Rofi parent after executing an action,
+so its fullscreen input layer cannot remain above the terminal. This fix is
+installed in the four workloads and seed; backup:
+`/var/lib/apx/backups/20260927T143001Z-rofi-action-close`. Nineteen helper
+tests pass. A safe live pointer check remains pending.
+
+## Rofi mouse actions and NVIDIA visibility (2026-09-27)
+
+The owner requested immediate primary-click launch or focus, primary-click
+execution of a chosen action, and secondary-click display of actions without
+executing them. The Rofi script now handles `ROFI_RETV=1` as execution and
+`ROFI_RETV=10` as selection only, including repeated secondary clicks and
+secondary clicks on an action row. Workload QuickShell binds MousePrimary to
+normal acceptance and MouseSecondary to custom acceptance; the existing
+adapter translates only the custom result to `ROFI_RETV=10`. The NVIDIA
+on-demand action appears only inside Hytale and Minecraft when the session is
+Hybrid and the NVIDIA device exists. The existing Battery menu remains the
+control for changing to dedicated NVIDIA mode. The helper and QuickShell
+changes are installed in Faculdade, Hytale, Minecraft, Steam and the shell
+seed. The active Minecraft QuickShell restarted successfully. Eighteen focused
+helper tests passed; physical pointer acceptance remains to be observed.
+Backups: `/var/lib/apx/backups/20260927T141259Z-rofi-click-actions` and
+`/var/lib/apx/backups/20260927T141452Z-rofi-mouse-bindings`.
+
+## Minecraft requests NVIDIA in Hybrid mode (2026-09-27)
+
+The owner also requested default NVIDIA rendering for Minecraft. The Minecraft
+Environment has the native official `minecraft-launcher.desktop` and
+`minecraft-launcher.sh`, not a Flatpak launcher. With Minecraft stopped, an
+Environment-local user desktop entry of the same ID and an APX wrapper were
+installed; the package files and their exact hashes were preserved. The wrapper
+sets NVIDIA PRIME variables in Hybrid and simply starts the packaged launcher
+in the dedicated NVIDIA mode. It requires the graphical session's bounded
+`APX_GPU_POLICY` marker installed earlier. The new files and exact removal
+inventory are in `/var/lib/apx/backups/20260927T125022Z-minecraft-nvidia-launch/manifest.json`.
+Syntax, desktop entry fields, mode, ownership and source/installed digests were
+checked. A controlled execution of the installed wrapper verified NVIDIA flags
+in Hybrid, no offload flags in dedicated NVIDIA, and refusal without session
+policy. A real Minecraft/Java launch has not yet been observed, so GPU choice
+must be confirmed from the running game before calling it validated.
+
+## Hybrid NVIDIA application launches and Hytale selection (2026-09-27)
+
+The owner wants full use of the NVIDIA GPU in dedicated and hybrid modes. The
+existing Lenovo WMI control and Hub Battery menu already offer Hybrid and
+NVIDIA dedicated firmware profiles with a two-step confirmation and reboot.
+Readback on the physical Host reports Hybrid active, both profiles available,
+and no pending reboot. The dedicated profile path chooses NVIDIA as Hyprland's
+display/render device; a physical dedicated-mode reboot has not been performed
+in this turn. The current session startup scrubbed `APX_GPU_POLICY` before
+launching Hyprland. The shared session source and installed script now carry
+that bounded policy marker into the compositor's Environment after its next
+start. The Applications helper in all four workloads and the seed exposes
+"Abrir na NVIDIA" for a selected application in Hybrid; native launches get
+NVIDIA PRIME environment variables, while Flatpak launches use explicit
+`flatpak run --env` variables. Backup manifest:
+`/var/lib/apx/backups/20260927T111813Z-hybrid-nvidia-launch/manifest.json`.
+Installed runtime seed copy verified all 71 assets; 62 focused tests passed,
+including the dedicated NVIDIA display/render choice.
+
+Hytale's existing user Flatpak override preserved `GDK_BACKEND=wayland` and
+now requests NVIDIA PRIME offload by default. Backup:
+`/var/lib/apx/backups/20260927T-hytale-nvidia-offload/com.hypixel.HytaleLauncher`.
+The matching NVIDIA 610.43.03 Flatpak GL extension and Host module are present.
+Hytale is stopped, so actual in-game renderer selection and freeze recovery
+remain unverified. Keep the 60 FPS / 128 view-distance trial until renderer
+selection is observed and gameplay is stable; only then consider restoring
+the original graphics settings.
+
+## Hytale full-display freeze: bounded graphics-load trial (2026-09-27)
+
+The owner confirmed that entering the game freezes the entire visible desktop;
+they used the physical power button to recover. The 2026-09-26 Host continued
+logging after the game's last line, including APX status requests at 15:00:52,
+and handled the power key at 15:01:18. Neither an OOM nor a GPU reset was logged.
+This supports a graphical-session hang but does not identify the failing layer.
+The client rendered on the AMD iGPU; this laptop's HDMI output is connected to
+NVIDIA. The game had FPS limit 240 and view distance 384. With Hytale stopped,
+`scripts/physical-pilot/mitigate-hytale-freeze-20260927.py` saved the original
+settings at `/var/lib/apx/backups/20260927T-hytale-graphics-load-trial/Settings.json`
+and changed only FPS limit to 60 and view distance to 128. This is a load-reduction
+trial, not a validated fix. Owner gameplay retest is required; if the hang repeats,
+compare an internal-display-only run to isolate the dual-GPU display path.
+
+## APPS/SUPER+R hotfix and Hytale observation (2026-09-26)
+
+The first installed Rofi revision left the APPS bar button calling a nonexistent
+`root.openApplications()` method and the keyboard IPC path reading the nonexistent
+`root.popup` property. The active Hytale QuickShell log recorded both errors.
+The repository, four workload homes, and shell seed now use a shared root
+`toggleApplicationLauncher()` function; the active Hytale QuickShell was
+restarted. A live IPC call opened Rofi and a second call closed it. Opening
+the Environments menu closed Rofi, with no new QML errors. Backup:
+`/var/lib/apx/backups/20260926T144906Z-rofi-launcher-hotfix`.
+Physical pointer/keyboard interaction still awaits owner retest.
+
+The last Hytale game log reaches gameplay at 15:00:45 and ends at 15:00:48,
+before the 15:04 menu installation. The launcher log then ends with OpenAL's
+`Received stream failure!`; this does not establish a cause. The Host shut down
+gracefully at 15:01:18 after a short power-key press. Neither Host kernel GPU/OOM
+errors nor a game coredump were recorded. The 2026-09-25 client log also stops
+shortly after entering the same world. The cause of the game freeze is unresolved;
+the owner was asked whether the game closes or the whole display stops responding.
+
+## Interação do menu Aplicações instalada para teste (2026-09-26)
+
+A revisão acrescenta ao Rofi o título Aplicações e um separador
+acima da pesquisa, sincroniza a abertura dos menus QuickShell com o fecho do
+Rofi e transforma o primeiro clique numa seleção persistente com ações na mesma
+lista. Um segundo clique na aplicação ativa a janela existente, incluindo uma
+janela minimizada, ou lança a aplicação fechada. As ações de segunda instância
+e terminar tarefa só aparecem quando há uma janela. A desinstalação conserva o
+terminal aberto para mostrar pedidos de autenticação e erros, e consulta o
+proprietário do ficheiro `.desktop` sem analisar texto localizado do pacman.
+Está instalada em Faculdade, Hytale, Minecraft, Steam e no seed independente.
+Os 28 ficheiros alterados têm cópia em
+`/var/lib/apx/backups/20260926T140455Z-rofi-apps-selection`.
+Uma cópia de ensaio do seed passou com 71 ativos depois de corrigir dois
+digests instalados de variantes já presentes do gestor de ficheiros; essa
+correção tem cópia em
+`/var/lib/apx/backups/20260926T140650Z-shell-seed-pin-repair`.
+O espaço vertical da moldura Rofi foi ajustado ao novo cabeçalho, com cópia em
+`/var/lib/apx/backups/20260926T140839Z-rofi-title-height`.
+Em 2026-09-27, após o owner reportar espaço excessivo acima do Rofi, a margem
+superior passou a 80 px e a região transparente inferior absorve o espaço
+restante. A alteração está instalada nos quatro Environments de trabalho e no
+seed; cópia em `/var/lib/apx/backups/20260927T135422Z-rofi-top-spacing`.
+O parser do Rofi instalado aceitou o tema. A aceitação visual continua por
+confirmar no ecrã do owner.
+O owner identificou que o cabeçalho mostrava literalmente `font: ...`: o Rofi
+tratava o restante da linha da propriedade `content` como texto. O título foi
+separado em linhas próprias, e o tema interpretado passou a conter apenas
+`Aplicações` como conteúdo. Correção instalada nos quatro Environments e no
+seed, com cópia em `/var/lib/apx/backups/20260927T135821Z-rofi-title-content`.
+Após novo feedback do owner, o cabeçalho Rofi passou a usar título de 24 px
+sem expansão, separador de 1 px com largura explícita e espaçamento de 5 px,
+seguindo o `MenuHeader` dos menus QuickShell. Está instalado nos quatro
+Environments e no seed; cópia em
+`/var/lib/apx/backups/20260927T140308Z-rofi-header-spacing`. A confirmação
+visual do owner permanece pendente.
+O owner aprovou o cabeçalho mas pediu o painel novamente centrado. As regiões
+transparentes superior e inferior expandem agora por igual em torno do painel,
+mantendo o clique exterior para fechar. Instalado nos quatro Environments e no
+seed em 2026-09-27; cópia em
+`/var/lib/apx/backups/20260927T140546Z-rofi-centered`.
+O parser do Rofi 2.0.0 aceitou o tema e os 12 testes focados passaram. A sessão
+gráfica ativa era o Hub, sem APPS, pelo que o clique real e a desinstalação
+continuam à espera do teste do owner num Environment de trabalho.
+
+## Arquivos e pesquisa no Thunar (2026-09-25)
+
+Faculdade, Hytale, Minecraft e Steam receberam o plugin de arquivos do Thunar,
+Xarchiver e utilitários para ZIP, TAR, 7z e leitura de RAR; Catfish acrescenta
+pesquisa e `ffmpegthumbnailer` permite miniaturas de vídeo. `poppler-glib` para
+PDF já estava presente. O catálogo `files` foi atualizado no repositório e no
+runtime Host para novos Environments com esse módulo. Os quatro roots passaram
+nas verificações de pacotes, plugins, bibliotecas e versão NVIDIA; criação e
+extração de ZIP/TAR/7z passaram num teste isolado. Os menus e miniaturas ainda
+carecem de observação gráfica. Ver
+`docs/environment-archives-and-search-2026-09-25.md`.
+Os presets intermédio e completo incluem `files`. O runtime Host instalado lê o
+catálogo a cada criação e mantém NVIDIA excluída da atualização de pacotes até
+instalar o artefacto alinhado com o Host. A criação física de um novo Environment
+com estes pacotes ainda não foi ensaiada.
+
+## Acesso à PEN USB em Environments com ficheiros (2026-09-25)
+
+O Host físico recebeu um serviço que monta apenas a partição exFAT Ventoy de
+UUID `4E21-0000` e a entrega por ficheiros, sem expor o dispositivo de blocos.
+Faculdade, Hytale, Minecraft e Steam têm o atalho lateral «PEN USB»; o launcher
+gráfico associa a árvore partilhada a qualquer Environment futuro com o módulo
+`files`. A montagem é de leitura e escrita e limita execução, dispositivos e
+bits setuid. O serviço está ativo. A propagação de uma desmontagem e nova
+montagem para um contentor Hytale já aberto passou num teste isolado; a sessão
+gráfica Hytale e a visualização real no Thunar ainda não foram observadas.
+Backup da instalação final: `/var/lib/apx/backups/20260925T170658Z-removable-pen`.
+Uma verificação posterior encontrou o digest do `shell.qml` desatualizado no
+runtime live e no candidato do repositório, impedindo a cópia do seed para
+novos Environments. Ambos foram alinhados aos respetivos ficheiros de seed,
+sem alterar a UI. A cópia de ensaio com o runtime live passou e incluiu o
+atalho «PEN USB». Backup do digest live:
+`/var/lib/apx/backups/20260925T175221Z-future-environment-seed-integrity`.
+O primeiro ensaio de montagem, revertido, deixou registos de montagem cobertos
+no namespace do Host; a montagem alcançável funciona e estes registos só devem
+ser considerados limpos após reinício e nova verificação. Ver
+`docs/removable-pen-access-2026-09-25.md`.
+
+## Native Windows menu sizes (2026-09-25)
+
+The legacy storage summary reports only `windows` at its former 160 GiB and
+has no `windows-testes` entry. The validated native v3 catalogue reports
+120 GiB and 80 GiB respectively. The Hub menu now reads `reserved_bytes`
+from that catalogue for native Windows, while Linux entries retain their Btrfs
+measurement. The updated Hub shell and future seed were installed with a
+backup at `/var/lib/apx/backups/20260925T164753Z-native-size-menu-fix`.
+Owner visual confirmation is pending.
+
+## Native Windows metadata edit installed (2026-09-25)
+
+The Hub's installed switch service still sent `windows-testes` metadata edits
+to the nonexistent Linux registration, as confirmed by Host logs at 17:36 WEST.
+The corrected switch service and metadata runner are now installed on the
+physical pilot, with a backup under
+`/var/lib/apx/backups/20260925T164440Z-windows-metadata-edit-fix`.
+The v3 integrity manifest now hashes the installed service and has its required
+`0400` mode. The service is active, v3 integrity validation passes, and both
+Windows remain ready in the catalogue. The 29 switch tests pass; owner menu
+confirmation remains open.
+
 ## Hub native Windows menu preflight correction (2026-09-25)
 
 The owner reported `windows-testes` as unavailable in the Hub. The Host switch
@@ -673,6 +1050,20 @@ and current acceptance ladder are in
 
 ## Development method
 
+The 2026-09-25 pilot installation adds an Environment-local applications button
+to the four registered graphical workloads, hidden in the Hub, and a shortcut
+reference inside the control centre in all five shells. The shared seed and
+installed digest manifest include the new application helper. A stale hardware
+socket in Hytale's home caused its battery controls to fail; the installed
+client now prefers the current Environment socket. Physical interaction in a
+workload after this installation remains to be observed.
+The owner follow-up changed the button to `APPS`, added themed application
+icons, explicit running/minimized/closed states, and inline right-click
+actions. The shortcuts reference now occupies its own control-centre page,
+reached from the end of the main page. The Hub control centre sizes to its
+content up to the available screen height. These changes are installed in
+the five existing shells and the future seed; owner visual acceptance is open.
+
 1. Separate observations, accepted decisions, experiments and open questions.
 2. Prefer small reversible changes with explicit preconditions, rollback and
    acceptance criteria.
@@ -723,3 +1114,34 @@ settings are shared. All four workloads and the shared shell seed now use APX
 Graphite neutral folders, white symbolic sidebar icons and compact toolbar
 controls. Login/gameplay and physical Wayland acceptance remain pending. Exact
 scope and recovery: `docs/hytale-launch-and-files-icons-2026-09-13.md`.
+
+## 2026-09-25 workload application launcher
+
+The installed workload shell uses Rofi script mode behind APPS and SUPER+R.
+It shows desktop icons and active/minimized state, prioritizes running and
+frequently launched applications, focuses or restores existing windows, and
+provides right-click actions to open another instance, terminate, or request
+confirmed uninstall. Usage counts are local to each Environment. Hub has no
+APPS launcher. The QuickShell application popup is retired; the existing
+shortcuts page and battery controls remain in the shell.
+
+The 2026-09-25 follow-up reuses each Environment's existing Rofi drun cache
+for launch priority, places status circles at the right of rows, and makes
+SUPER+R and APPS use the same launcher. The APPS bar button reflects the
+launcher process state. Rofi context actions use a custom right-click binding.
+
+The Rofi follow-up caches resolved desktop icon paths so SUPER+R opens faster.
+Rofi 2.0 script mode omits the secondary mouse-action flag when calling its
+script; the workload launcher includes a small version-bound adapter that
+passes that action as custom return value 10. The C source and binary are
+reviewed shell-seed assets. This adapter should be rechecked when Rofi is
+upgraded.
+
+The final script-mode repair accepts Rofi's selected row argument before
+handling CLI commands. Without it, mouse selection exited without handling
+the selected app. A live Hytale test opened APPS through QuickShell IPC and
+used a Wayland virtual pointer to open a closed app's context menu and a
+running window's Terminar tarefa action. The corrected helper is installed
+in all four workload homes and the independent seed. Cached repeat catalogue
+calls take about 0.10 seconds; QuickShell IPC to the mapped Rofi layer
+measured 0.075 seconds in the active Hytale session.

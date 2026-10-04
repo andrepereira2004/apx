@@ -32,12 +32,36 @@ class HardwareTests(unittest.TestCase):
  def test_shutdown_is_narrow_and_generation_bound(self):
   d=self.d
   with patch.object(d,'authorize_active_environment_peer',return_value=self.identity):
-   for op in ['system.reboot.prepare','system.suspend.prepare','hardware.gpu.prepare']:
+   for op in ['system.suspend.prepare','hardware.gpu.set']:
     with self.assertRaises(PermissionError): d.apply(op,{},self.peer)
   d.POWER_IDENTITY=(ActiveEnvironmentPeer('hytale','graphical-base','old'),123,'start')
   with patch.object(d,'authorize_active_environment_peer',return_value=self.identity),patch.object(d,'quickshell_ancestor',return_value=123),patch.object(Path,'read_text',return_value='123 (quickshell) '+' '.join(['start']*20)),patch.object(d.base,'expire_pending'),patch.object(d.base,'apply') as executor:
    with self.assertRaises(PermissionError): d.apply('system.action.confirm',{'token':'x'*32},self.peer)
    executor.assert_not_called()
+ def test_gpu_confirmation_is_bound_to_active_generation_and_shell(self):
+  d=self.d
+  old=ActiveEnvironmentPeer('hytale','graphical-base','old')
+  d.GPU_IDENTITY=(old,123,'start')
+  with patch.object(d,'authorize_active_environment_peer',return_value=self.identity),patch.object(d,'quickshell_ancestor',return_value=123),patch.object(Path,'read_text',return_value='123 (quickshell) '+' '.join(['start']*20)),patch.object(d.base,'expire_pending'),patch.object(d.base,'apply') as executor:
+   with self.assertRaises(PermissionError):d.apply('hardware.gpu.confirm',{'token':'x'*32},self.peer)
+   executor.assert_not_called()
+  d.GPU_IDENTITY=(self.identity,123,'start')
+  with patch.object(d,'authorize_active_environment_peer',return_value=self.identity),patch.object(d,'quickshell_ancestor',return_value=123),patch.object(Path,'read_text',return_value='123 (quickshell) '+' '.join(['start']*20)),patch.object(Path,'exists',return_value=False),patch('builtins.open',mock_open()),patch.object(d.fcntl,'flock'),patch.object(d.base,'expire_pending'),patch.object(d.base,'apply',return_value={'reboot_required':True}) as executor,patch.object(d.base,'PENDING',None):
+   self.assertEqual(d.apply('hardware.gpu.confirm',{'token':'x'*32},self.peer),{'reboot_required':True})
+   executor.assert_called_once_with('hardware.gpu.confirm',{'token':'x'*32},self.peer,123)
+   self.assertIsNone(d.GPU_IDENTITY)
+ def test_gpu_prepare_requires_quickshell_and_exact_payload(self):
+  d=self.d
+  with patch.object(d,'authorize_active_environment_peer',return_value=self.identity),patch.object(d,'quickshell_ancestor',side_effect=PermissionError('no shell')),patch.object(d.base,'expire_pending'),patch.object(d.base,'apply') as executor:
+   with self.assertRaises(ValueError):d.apply('hardware.gpu.prepare',{'wrong':'nvidia'},self.peer)
+   with self.assertRaises(PermissionError):d.apply('hardware.gpu.prepare',{'profile':'nvidia'},self.peer)
+   executor.assert_not_called()
+ def test_reboot_prepare_is_available_from_active_workload(self):
+  d=self.d
+  with patch.object(d,'authorize_active_environment_peer',return_value=self.identity),patch.object(d,'quickshell_ancestor',return_value=123),patch.object(Path,'read_text',return_value='123 (quickshell) '+' '.join(['start']*20)),patch.object(d.base,'expire_pending'),patch.object(d.base,'apply',return_value={'prepared':True}) as executor,patch.object(d.base,'PENDING',{'action':'reboot'}):
+   self.assertEqual(d.apply('system.reboot.prepare',{},self.peer),{'prepared':True})
+   executor.assert_called_once_with('system.reboot.prepare',{},self.peer,123)
+   self.assertEqual(d.POWER_IDENTITY,(self.identity,123,'start'))
  def test_shutdown_requires_shell_and_exact_payload(self):
   d=self.d
   with patch.object(d,'authorize_active_environment_peer',return_value=self.identity),patch.object(d,'quickshell_ancestor',side_effect=PermissionError('no shell')),patch.object(d.base,'expire_pending'),patch.object(d.base,'apply') as executor:

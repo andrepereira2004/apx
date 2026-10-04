@@ -29,7 +29,7 @@ if ($ArmAndRestart) {
         if ($LASTEXITCODE -ne 0 -or $manager -notmatch [regex]::Escape($linux)) {
             throw "A selecao UEFI do Linux nao foi confirmada."
         }
-        Write-ApxReturnLog "Linux UEFI selected: $linux; reboot requested"
+        Write-ApxReturnLog "Linux UEFI selected: $linux"
         & (Join-Path $env:WINDIR "System32\shutdown.exe") /r /t 0 /d p:0:0 /c "Regressar ao APX HUB"
         if ($LASTEXITCODE -ne 0) { throw "O Windows recusou o reinicio." }
     } catch {
@@ -65,6 +65,10 @@ public static class APXReturnToHubKeyboardHook {
     private const int WhKeyboardLl = 13;
     private const int WmKeyDown = 0x0100;
     private const int WmSysKeyDown = 0x0104;
+    private const int WmKeyUp = 0x0101;
+    private const int WmSysKeyUp = 0x0105;
+    private const uint WmTimer = 0x0113;
+    private static bool leftWin, rightWin;
     private const int VirtualKeyE = 0x45;
     private const int VirtualKeyLeftWin = 0x5B;
     private const int VirtualKeyRightWin = 0x5C;
@@ -86,8 +90,10 @@ public static class APXReturnToHubKeyboardHook {
     private static extern IntPtr CallNextHookEx(
         IntPtr hookHandle, int code, IntPtr message, IntPtr data);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern UIntPtr SetTimer(IntPtr window, UIntPtr id, uint milliseconds, IntPtr callback);
     [DllImport("user32.dll")]
-    private static extern short GetAsyncKeyState(int virtualKey);
+    private static extern bool KillTimer(IntPtr window, UIntPtr id);
 
     [DllImport("user32.dll")]
     private static extern int GetMessage(
@@ -146,10 +152,16 @@ public static class APXReturnToHubKeyboardHook {
 
     private static IntPtr HookCallback(int code, IntPtr message, IntPtr data) {
         long kind = message.ToInt64();
-        if (code >= 0 && (kind == WmKeyDown || kind == WmSysKeyDown) &&
-                Marshal.ReadInt32(data) == VirtualKeyE) {
-            bool windowsPressed = (GetAsyncKeyState(VirtualKeyLeftWin) & 0x8000) != 0 ||
-                                  (GetAsyncKeyState(VirtualKeyRightWin) & 0x8000) != 0;
+        if (code < 0) return CallNextHookEx(hook, code, message, data);
+        int key = Marshal.ReadInt32(data);
+        bool down = kind == WmKeyDown || kind == WmSysKeyDown;
+        bool up = kind == WmKeyUp || kind == WmSysKeyUp;
+        if (down || up) {
+            if (key == VirtualKeyLeftWin) leftWin = down;
+            if (key == VirtualKeyRightWin) rightWin = down;
+        }
+        if (down && key == VirtualKeyE) {
+            bool windowsPressed = leftWin || rightWin;
             if (windowsPressed && !rebootStarted &&
                     DateTime.UtcNow.Subtract(lastRequest).TotalSeconds >= 5) {
                 rebootStarted = true;
@@ -164,7 +176,9 @@ public static class APXReturnToHubKeyboardHook {
         return CallNextHookEx(hook, code, message, data);
     }
 
-    public static int Run() {
+    private static bool InstallHook() {
+        if (hook != IntPtr.Zero) UnhookWindowsHookEx(hook);
+        leftWin = rightWin = false;
         using (Process process = Process.GetCurrentProcess())
         using (ProcessModule module = process.MainModule) {
             hook = SetWindowsHookEx(WhKeyboardLl, Callback,
@@ -172,16 +186,33 @@ public static class APXReturnToHubKeyboardHook {
         }
         if (hook == IntPtr.Zero) {
             Log("keyboard hook failed; win32=" + Marshal.GetLastWin32Error());
-            return 2;
+            return false;
         }
-        Log("keyboard hook ready");
-        try {
-            Message message;
-            while (GetMessage(out message, IntPtr.Zero, 0, 0) > 0) { }
-            return 0;
-        } finally {
-            UnhookWindowsHookEx(hook);
-            hook = IntPtr.Zero;
+        return true;
+    }
+
+    public static int Run() {
+        bool created;
+        using (var singleton = new System.Threading.Mutex(true, "Local\\APXReturnToHub", out created)) {
+            if (!created) return 0;
+            if (!InstallHook()) return 2;
+            Log("keyboard hook ready v3; tracked Win keys; periodic recovery");
+            UIntPtr timer = SetTimer(IntPtr.Zero, UIntPtr.Zero, 20000, IntPtr.Zero);
+            if (timer == UIntPtr.Zero) { UnhookWindowsHookEx(hook); return 2; }
+            try {
+                Message message;
+                int result;
+                while ((result = GetMessage(out message, IntPtr.Zero, 0, 0)) > 0) {
+                    // Windows can silently remove a timed-out low-level hook.
+                    if (message.Id == WmTimer && message.WParam == timer && !InstallHook()) return 2;
+                }
+                return result == 0 ? 0 : 2;
+            } finally {
+                KillTimer(IntPtr.Zero, timer);
+                UnhookWindowsHookEx(hook);
+                hook = IntPtr.Zero;
+                singleton.ReleaseMutex();
+            }
         }
     }
 }

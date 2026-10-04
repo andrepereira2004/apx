@@ -236,6 +236,18 @@ class OfficialHubGraphicalTests(unittest.TestCase):
                 "nvidia_uvm_tools": "/dev/nvidia-uvm-tools",
             })
 
+    def test_dedicated_graphics_uses_nvidia_for_display_and_render(self) -> None:
+        subject = load_launcher()
+        with mock.patch.object(subject, 'effective_gpu_policy', return_value='nvidia'), \
+             mock.patch.object(subject, 'resolve_drm_device', side_effect=[
+                 '/dev/dri/card1', '/dev/dri/renderD128']) as resolve, \
+             mock.patch.object(subject, 'resolve_nvidia_auxiliary_devices', return_value={}):
+            graphics = subject.resolve_graphics()
+        self.assertEqual(graphics, {'policy': 'nvidia', 'display_card': '/dev/dri/card1',
+                                    'display_render': '/dev/dri/renderD128'})
+        self.assertEqual([call.args[0] for call in resolve.call_args_list],
+                         [subject.NVIDIA_PCI, subject.NVIDIA_PCI])
+
     def test_missing_nvidia_control_node_is_rebuilt_only_from_exact_kernel_registration(self) -> None:
         subject = load_launcher()
         with tempfile.TemporaryDirectory() as directory:

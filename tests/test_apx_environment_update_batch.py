@@ -89,7 +89,7 @@ class EnvironmentBatchClientTests(unittest.TestCase):
         with patch.object(client, 'exchange', side_effect=[{'state': 'awaiting-hub', 'operation': 'one'}, {'message': 'complete'}]) as exchange, \
              patch.object(client.subprocess, 'run', return_value=Mock(returncode=0)) as run:
             self.assertEqual(client.environments_ui(), 0)
-            run.assert_called_once_with(['/home/apx/.local/bin/apx-environment-update-v1'])
+            run.assert_called_once_with(['/home/apx/.local/bin/apx-environment-update-v1', '--unattended'])
             self.assertEqual(exchange.call_args.args, ('environments.finish', {'operation': 'one'}))
 
     def test_failed_hub_never_reports_batch_complete(self):

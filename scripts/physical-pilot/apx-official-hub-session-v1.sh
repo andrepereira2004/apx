@@ -185,6 +185,7 @@ cd -- /home/apx
   XDG_CONFIG_HOME=/home/apx/.config XDG_CACHE_HOME=/home/apx/.cache \
   XDG_DATA_HOME=/home/apx/.local/share LIBSEAT_BACKEND=seatd SEATD_SOCK="$SEATD_SOCKET" \
   DBUS_SESSION_BUS_ADDRESS=unix:path="$RUNTIME/bus" AQ_DRM_DEVICES="$drm_devices" \
+  APX_GPU_POLICY="$GPU_POLICY" \
   /usr/bin/start-hyprland -- --config "$CONFIG" &
 hyprland_pid=$!
 

@@ -26,7 +26,7 @@ DEPENDENCIES = {
 
 PRESETS = {
     "basic": ("system", "cli-aur"),
-    "intermediate": MODULES[:14] + ("shortcuts",),
+    "intermediate": tuple(module for module in MODULES if module not in {"office", "development"}),
     "complete": MODULES,
 }
 
@@ -36,12 +36,18 @@ PRESETS = {
 PACKAGES = {
     "system": ("xfce4-taskmanager",),
     "graphics": ("egl-gbm", "egl-wayland", "egl-wayland2", "egl-x11"),
-    "files": ("papirus-icon-theme",),
+    "audio": ("pipewire-alsa", "pavucontrol"),
+    "locale-input": ("noto-fonts-emoji", "ttf-liberation", "enchant"),
+    "desktop-integration": ("cliphist",),
+    "files": (
+        "7zip", "catfish", "ffmpegthumbnailer", "papirus-icon-theme",
+        "poppler-glib", "thunar-archive-plugin", "unrar", "unzip", "xarchiver", "zip",
+    ),
     "web-documents": ("evince",),
     "multimedia": ("ffmpeg", "gst-libav", "gst-plugins-good", "mpv"),
     "office": ("hunspell-en_gb", "libreoffice-fresh"),
     "communication": ("v4l-utils",),
-    "printing-scanning": ("cups", "sane", "simple-scan", "system-config-printer"),
+    "printing-scanning": ("cups", "sane", "sane-airscan", "simple-scan", "system-config-printer"),
     "development": ("cmake", "ninja", "nodejs", "npm", "podman", "python-pip", "rust"),
 }
 

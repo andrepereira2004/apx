@@ -24,8 +24,14 @@ class EnvironmentFeaturesTests(unittest.TestCase):
         self.assertEqual(tuple(subject.PRESETS), ("basic", "intermediate", "complete"))
         self.assertEqual(len(subject.MODULES), 19)
         self.assertEqual(subject.PRESETS["basic"], ("system", "cli-aur"))
-        self.assertEqual(len(subject.PRESETS["intermediate"]), 15)
+        self.assertEqual(len(subject.PRESETS["intermediate"]), 17)
+        for module in ("multimedia", "communication", "printing-scanning"):
+            self.assertIn(module, subject.PRESETS["intermediate"])
+        for module in ("office", "development"):
+            self.assertNotIn(module, subject.PRESETS["intermediate"])
         self.assertEqual(subject.PRESETS["complete"], subject.MODULES)
+        self.assertIn("files", subject.PRESETS["intermediate"])
+        self.assertIn("files", subject.PRESETS["complete"])
 
     def test_dependencies_are_closed_and_package_plan_is_fixed(self):
         modules = subject.normalize_modules(["printing-scanning"])
@@ -35,8 +41,13 @@ class EnvironmentFeaturesTests(unittest.TestCase):
         packages = subject.packages_for(subject.PRESETS["complete"])
         for required in ("evince", "libreoffice-fresh", "cups", "podman", "rust"):
             self.assertIn(required, packages)
+        for required in ("thunar-archive-plugin", "xarchiver", "7zip", "unzip", "zip",
+                         "unrar", "ffmpegthumbnailer", "poppler-glib", "catfish"):
+            self.assertIn(required, subject.packages_for(["files"]))
         self.assertNotIn("firefox", packages)
         self.assertEqual(subject.packages_for(subject.PRESETS["basic"]), ("xfce4-taskmanager",))
+        self.assertIn("pipewire-alsa", subject.packages_for(["audio"]))
+        self.assertIn("noto-fonts-emoji", subject.packages_for(["locale-input"]))
         self.assertEqual(subject.local_packages_for(["web-documents"]), ("brave-bin",))
         for preset in subject.PRESETS.values():
             self.assertIn("xfce4-taskmanager", subject.packages_for(preset))
@@ -53,7 +64,7 @@ class EnvironmentFeaturesTests(unittest.TestCase):
     def test_alternate_private_root_uses_a_complete_arch_upgrade(self):
         source = (Path(__file__).resolve().parents[1]
                   / "scripts/virtual-lab/apx-lab-runtime.py").read_text()
-        self.assertIn('"--disable-sandbox", "-Syu", "--needed", "--noconfirm"', source)
+        self.assertIn('"--ignore", "nvidia-utils,lib32-nvidia-utils",\n             "-Syu", "--needed", "--noconfirm"', source)
         self.assertNotIn('"--disable-sandbox", "-Sy", "--needed", "--noconfirm"', source)
         self.assertIn('"--root", str(root)', source)
         self.assertIn('"--dbpath", str(root / "var/lib/pacman")', source)
@@ -101,6 +112,8 @@ class EnvironmentFeaturesTests(unittest.TestCase):
                 })
             commands = [call.args[0] for call in run.call_args_list]
             self.assertIn("egl-wayland", commands[0])
+            self.assertIn("--ignore", commands[0])
+            self.assertIn("nvidia-utils,lib32-nvidia-utils", commands[0])
             self.assertIn(str(state / "nvidia-utils-610.43.03-3-x86_64.pkg.tar.zst"), commands[1])
             fields = (target / "etc/shadow").read_text().strip().split(":")
             self.assertEqual(fields[1], "$6$hub-hash")

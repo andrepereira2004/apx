@@ -11,3 +11,7 @@ O helper arranca oculto em segundo plano a cada início de sessão e volta a
 tentar automaticamente se o hook de teclado ainda não estiver disponível.
 O diagnóstico fica em %LOCALAPPDATA%\APX\ReturnToHub.log. Não é colocado
 qualquer ícone APX no Ambiente de Trabalho.
+
+Ao iniciar sessão, o helper não pede autorização de administrador. A autorização
+é pedida apenas quando usa SUPER+E para regressar ao APX.
+O atalho acompanha as teclas Win diretamente e recupera o hook a cada 20 s.

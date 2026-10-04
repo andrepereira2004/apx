@@ -63,7 +63,6 @@ def environments_ui() -> int:
         print("Serão atualizados o sistema, as aplicações AUR e os Flatpaks de cada Environment.")
         print("Os outros Environments são atualizados primeiro; o Hub fica para o fim.")
         print("Cada Environment terá uma cópia de segurança. O Host não é atualizado.")
-        if input("\nEscreve CONFIRMAR para começar: ").strip() != "CONFIRMAR": return 1
         current = exchange("environments.apply", {"plan_digest": plan["plan_digest"], "confirmation": "CONFIRMAR"})
     operation_id = current["operation"]
     last = None
@@ -79,7 +78,7 @@ def environments_ui() -> int:
     if current["state"] != "awaiting-hub":
         print(current.get("error") or current.get("message", "A atualização parou.")); return 2
     print("\nA atualizar o Hub…", flush=True)
-    result = subprocess.run(["/home/apx/.local/bin/apx-environment-update-v1"])
+    result = subprocess.run(["/home/apx/.local/bin/apx-environment-update-v1", "--unattended"])
     if result.returncode:
         print("O Hub não terminou a atualização. Abre Atualizar para retomar."); return result.returncode
     final = exchange("environments.finish", {"operation": operation_id})

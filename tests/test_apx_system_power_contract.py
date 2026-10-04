@@ -80,6 +80,32 @@ class SystemPowerContractTests(unittest.TestCase):
                 self.assertTrue(staged["reboot_required"])
                 self.assertEqual((bridge / "hybrid_mode").read_text(), "0\n")
 
+    def test_gpu_stage_accepts_same_boot_firmware_readback(self):
+        subject = load_daemon()
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory); bridge = base / "bridge"; bridge.mkdir()
+            (bridge / "hybrid_mode").write_text("1\n")
+            (bridge / "hybrid_supported").write_text("2\n")
+            (bridge / "igpu_supported").write_text("0\n")
+            boot_id = base / "boot_id"; boot_id.write_text("boot-one\n")
+            hardware = base / "hardware.json"
+            def read_bounded(path, choices):
+                if path == bridge / "hybrid_mode":
+                    return "1"  # Firmware still reports the active mode until reboot.
+                return path.read_text().strip()
+            with mock.patch.object(subject, "GPU_BRIDGE", bridge), \
+                    mock.patch.object(subject, "BOOT_ID", boot_id), \
+                    mock.patch.object(subject, "HARDWARE_STATUS", hardware), \
+                    mock.patch.object(subject, "_read_bounded", side_effect=read_bounded), \
+                    mock.patch.object(subject, "hardware_profile_status", return_value={
+                        "gpu_profile": "hybrid", "requested_gpu_profile": "nvidia",
+                        "reboot_required": True,
+                    }):
+                result = subject.set_gpu_profile("nvidia")
+            self.assertTrue(result["reboot_required"])
+            self.assertEqual((bridge / "hybrid_mode").read_text(), "0\n")
+            self.assertEqual(__import__("json").loads(hardware.read_text())["requested_gpu"], "nvidia")
+
     def test_quickshell_parent_is_exact(self):
         subject = load_daemon()
         with tempfile.TemporaryDirectory() as directory:

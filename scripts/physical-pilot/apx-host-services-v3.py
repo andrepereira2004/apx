@@ -35,6 +35,7 @@ SOCKET = Path("/run/apx/host-services-v3.sock")
 RFKILL_ROOT = Path("/sys/class/rfkill")
 RFKILL = "/usr/bin/rfkill"
 WIFI_INTERFACE = "wlan0"
+IWD_STATE = Path("/var/lib/iwd")
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 MAX_CLIENTS = 16
 CAPABILITIES = {
@@ -46,7 +47,7 @@ CAPABILITIES = {
                    "capabilities.get", "events.subscribe", "network.connect", "network.disconnect",
                    "network.connectivity-check", "network.forget", "network.portal.open",
                    "network.scan", "network.status", "radio.status", "snapshot.get", "calendar.load", "calendar.save"],
-    "security": {"bluetooth_pairing_agent": "KeyboardDisplay", "enterprise_wifi": False,
+    "security": {"bluetooth_pairing_agent": "KeyboardDisplay", "enterprise_wifi": True,
                  "secret_transport": "unix-socket-body", "shell": False},
 }
 CALENDAR_PATH = Path("/var/lib/apx/calendar-v1/events.json")
@@ -338,8 +339,13 @@ def _pair_view(session: dict[str, object]) -> dict[str, object]:
         phase, challenge, passkey, message = "waiting-device", "display-passkey", displayed[-1], "Escreva este código no dispositivo Bluetooth"
     if process.poll() is not None:
         if "Pairing successful" in output:
-            run(("/usr/bin/bluetoothctl", "trust", str(session["address"])))
-            phase, challenge, message = "completed", None, "Dispositivo emparelhado e confiável"
+            trusted = run(("/usr/bin/bluetoothctl", "trust", str(session["address"])))
+            if trusted.returncode:
+                phase, challenge, message = "failed", None, "O dispositivo emparelhou, mas não foi possível guardá-lo como confiável"
+            else:
+                connected = run(("/usr/bin/bluetoothctl", "connect", str(session["address"])), 25)
+                phase, challenge = "completed", None
+                message = "Dispositivo emparelhado e ligado" if connected.returncode == 0 else "Dispositivo emparelhado; use Ligar para concluir a ligação"
         else:
             phase, challenge, message = "failed", None, "O emparelhamento não foi concluído"
         _pair_cleanup(session)
@@ -446,7 +452,7 @@ def secret_connect(ssid: str, secret: str) -> None:
                                stdout=slave, stderr=slave, close_fds=True,
                                env={"PATH": "/usr/bin", "LC_ALL": "C", "TERM": "dumb"})
     os.close(slave)
-    output = bytearray(); sent = False; deadline = time.monotonic() + 25
+    output = bytearray(); sent = False; deadline = time.monotonic() + 35
     try:
         while process.poll() is None and time.monotonic() < deadline:
             readable, _, _ = select.select([master], [], [], 0.25)
@@ -456,7 +462,7 @@ def secret_connect(ssid: str, secret: str) -> None:
                 output.extend(chunk)
                 if len(output) > 16384:
                     del output[:-16384]
-                if not sent and (b"passphrase" in output.lower() or b"psk" in output.lower()):
+                if not sent and any(word in output.lower() for word in (b"passphrase", b"password", b"psk")):
                     os.write(master, secret.encode() + b"\n"); sent = True
         if process.poll() is None: process.kill()
         process.wait(timeout=2)
@@ -466,6 +472,52 @@ def secret_connect(ssid: str, secret: str) -> None:
         raise HostServicesV3Error("O serviço Wi-Fi não pediu a palavra-passe")
     if process.returncode != 0:
         raise HostServicesV3Error("A palavra-passe foi recusada ou a ligação Wi-Fi falhou")
+
+
+def enterprise_profile(ssid: str, credential: dict[str, str]) -> Path:
+    """Provision an iwd 802.1x profile with certificate and server-name checks."""
+    ca = Path(credential["ca_cert"])
+    if not ca.is_file() or ca.is_symlink() and not ca.resolve().is_file():
+        raise HostServicesV3Error("O certificado CA indicado não está disponível no Host")
+    method = credential["method"]
+    outer = "PEAP" if method == "PEAP" else "TTLS"
+    inner = "MSCHAPV2" if method in {"PEAP", "TTLS-MSCHAPV2"} else "Tunneled-PAP"
+    prefix = f"EAP-{outer}"
+    identity = credential["identity"]
+    password = credential["password"]
+    domain = credential["domain"]
+    lines = ["[Security]", f"EAP-Method={outer}", f"EAP-Identity={identity}",
+             f"{prefix}-CACert={ca}", f"{prefix}-ServerDomainMask={domain}",
+             f"{prefix}-Phase2-Method={inner}", f"{prefix}-Phase2-Identity={identity}",
+             f"{prefix}-Phase2-Password={password}", ""]
+    encoded = ssid if re.fullmatch(r"[A-Za-z0-9 _-]+", ssid) else "=" + ssid.encode().hex()
+    target = IWD_STATE / f"{encoded}.8021x"
+    if target.exists() or target.is_symlink():
+        raise ConflictError("Já existe um perfil para esta rede; esqueça-o antes de trocar as credenciais")
+    directory = os.open(IWD_STATE, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    temporary = f".{uuid.uuid4().hex}.tmp"
+    try:
+        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                     0o600, dir_fd=directory)
+        try:
+            data = ("\n".join(lines)).encode()
+            while data:
+                data = data[os.write(fd, data):]
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+        try:
+            os.link(temporary, target.name, src_dir_fd=directory, dst_dir_fd=directory,
+                    follow_symlinks=False)
+        except FileExistsError as error:
+            raise ConflictError("O perfil da rede foi criado por outro processo") from error
+        os.unlink(temporary, dir_fd=directory)
+        os.fsync(directory)
+    finally:
+        try: os.unlink(temporary, dir_fd=directory)
+        except FileNotFoundError: pass
+        os.close(directory)
+    return target
 
 
 def wait_for_network(ssid: str, timeout: float = 10) -> dict[str, object]:
@@ -530,14 +582,28 @@ def apply(operation: str, payload: dict[str, object]) -> object:
     elif operation == "network.connect":
         target = next((item for item in before["networks"] if item["ssid"] == payload["ssid"]), None)
         if target is None: raise ConflictError("network is not present in the current Host scan")
-        if target["security"] == "enterprise": raise UnsupportedError("enterprise Wi-Fi is not supported by v3")
         credential = payload["credential"]
         if target["known"] or target["security"] == "open":
             if credential is not None: raise ConflictError("credential was supplied for a known or open network")
             result = run(("/usr/bin/iwctl", "station", WIFI_INTERFACE, "connect", str(payload["ssid"])), 25)
         else:
             if credential is None: raise ConflictError("this protected network requires a passphrase")
-            secret_connect(str(payload["ssid"]), str(credential["value"])); result = None
+            if target["security"] == "enterprise":
+                if credential["kind"] != "enterprise": raise ConflictError("Esta rede pede utilizador, palavra-passe e certificado")
+                profile = enterprise_profile(str(payload["ssid"]), credential)
+                try:
+                    deadline = time.monotonic() + 5
+                    while str(payload["ssid"]) not in known_networks() and time.monotonic() < deadline:
+                        time.sleep(0.1)
+                    result = run(("/usr/bin/iwctl", "station", WIFI_INTERFACE, "connect", str(payload["ssid"])), 35)
+                    if result.returncode:
+                        raise HostServicesV3Error("A autenticação empresarial falhou")
+                except Exception:
+                    profile.unlink(missing_ok=True)
+                    raise
+            else:
+                if credential["kind"] != "passphrase": raise ConflictError("Esta rede pede uma palavra-passe Wi-Fi")
+                secret_connect(str(payload["ssid"]), str(credential["value"])); result = None
     else:
         raise UnsupportedError("operation is unsupported")
     if result is not None and result.returncode: raise HostServicesV3Error("Host network transition failed")
@@ -608,7 +674,7 @@ def respond(connection: socket.socket) -> None:
 
 def worker(connection: socket.socket) -> None:
     try:
-        connection.settimeout(35)
+        connection.settimeout(75)
         with connection: respond(connection)
     finally: _CLIENTS.release()
 

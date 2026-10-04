@@ -52,6 +52,7 @@ GRAPHICAL_CONFIG_ASSETS = {
     "waybar/style.css": "4e649de831c068be9ff05d0c9d6ad03351e1b1a1c44ad752b44a8c353bcd90ca",
 }
 GRAPHICAL_CONFIG_PREVIOUS_DIGESTS = {
+    "rofi/config.rasi": "82d42171e3269240979e4f4e5c4a58410ad710d9a981cd6bab49f39a3b4c5c5e",
     # Existing admitted base releases retain the earlier Super+D binding.
     "hyprland/hyprland.conf": "8d793c51f1fb5195d12636ebc504d6c80cfac836245bacbcf5f90ac769a925ac",
 }
@@ -75,34 +76,38 @@ ENVIRONMENT_SHELL_ASSETS = {
     "apx/wallpapers/rainforest-stream.png": "624a391248bee708ce4195735f9e69937083d0e2f7ba4b9f025d92f231916535",
     "brave-flags.conf": "beed8f20ca3b1de51bfd0a03b862afd62e51933141378c67bd1f34be1443280f",
     "fontconfig/fonts.conf": "ff525fe6d18ebead4e7e1a7ed92ca5d92b8d73f0544a129aa2161ebcc2bc3b24",
-    "gtk-3.0/bookmarks": "04319388475f0674511ab87d2ea11e52c6407414bd975daa9cf4254ff9c207a2",
+    "gtk-3.0/bookmarks": "3937f6621d3b55203dfe464ade24fe9a14df3cab1f4ae2cfa631d6cbbd26b3b3",
     "gtk-3.0/gtk.css": "2f115f92ceecf22e4ab8e9cfd968bdcb391517727ef24b915a456416ca705685",
     "gtk-3.0/settings.ini": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
     "gtk-4.0/settings.ini": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
     "hypr/apx-monitors.lua": "ac3a58b2504062c0faa3b3c452743a5b09f5367cfb2956a4c4d36e9fb0755585",
     "hypr/hypridle.conf": "02a0289df8cf26bb3c537ec40cdc2d3e64b08a52785d2759a6ec1cab1ba04476",
-    "hypr/hyprland.lua": "9528e4fdaa3c236fd62c87be2bf3acf63f1b45b94f4b1757c02745219c87cff8",
+    "hypr/hyprland.lua": "8d5c101e416137d8f6f5455447b30a94fcea6c10c0486bc42c8b2f62b0a541bc",
     "hypr/hyprlock.conf": "ebc0d041bc4c3e1772afb46096a3aab32c1dcfa5b610ad6ec0c44516b4910c52",
     "hyprland/hyprland.conf": "43c9eead30c90654ef7280b5eedf092ec739d04c528784e251292db7e25a6f9f",
     "kitty/kitty.conf": "bfe0f0dfb7614cda2904c425b4b5bcc24aa5bbe6f7ce98d622857748172abf3f",
     "local/bin/apx-application-catalog-v1": "6362d85def298ce2f3ba5581e39f0f4aed8b085b00f47b1cd332d34c54934306",
-    "local/bin/apx-application-remove-v1": "5d9a2f077813d1a246fa0498b33313b8fd23a87908024ebc9cf2d900c5d60ebb",
-    "local/bin/apx-desktop-activation-v1": "aa70ada5a34420e2e6c8d52bbcbf41b5c6c0b0bedb1afd87a2418ed25f56abed",
+    "local/bin/apx-application-remove-v1": "6ac8c31d23239a4e07aba8a04e8ff85ae4c5c90b3a56e7a684cd23ee0d5a77bf",
+    "local/bin/apx-desktop-activation-v1": "4e09e66370b44039fd6d16b8945af426b49cdf52c63afd45c24fc19b39c9163a",
     "local/bin/apx-detached-launch": "40970a9ed235a6799913211dc135c66222ee55e15d5d38e5cfe5d2feafd785ef",
-    "local/bin/apx-environment-update-v1": "a361fc4e940658cba4eab43154939176e4412db5909cd6ce036cfa91c7ca849e",
+    "local/bin/apx-environment-update-v1": "7cc941774449bef66937693cf3424ee0a71564961d58c2571bdec8a67131ae96",
     "local/bin/apx-face-auth-state-v1": "82ea2de97b0990ebbd7dbdf1c664ee81343aabb84c98fc2f86501f45706da3bb",
     "local/bin/apx-host-console-open": "99c2e22329af1acbebe5c987651353acad76cd1181b946d4c2dbbed706e8c396",
     "local/bin/apx-host-console-terminal": "187025f24fda099acc85a7b82b0e0cacfd979f86feca77219911e661e7ec963e",
     "local/bin/apx-keyring-prepare-v1": "ca3f235fd1598cb8093af6bc48bd6e1d1c77f57271db243d435e8b831e1a89c1",
     "local/bin/apx-laptop-action-v1": "6ec1dbb32c79ebc816387aa1300560bd3f912d9561e7fb18b6d7d89109a7e4a8",
+    "local/bin/apx-mouse-sensitivity-v1": "8e6a8286f25c030c5d274f874176e7b12708daeddb0b23191a3159880d16e145",
     "local/bin/apx-legion-brightness-keys-v1.py": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550",
     "local/bin/apx-notification-focus-v1": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
-    "local/bin/apx-shell-v1": "54a2b2303359665c7cd7a46172a2001d427ea3cb54dc65be5c23fc903eeda76e",
+    "local/bin/apx-shell-v1": "92335d8c03af3505e367384107b352ccb4694fccbfc0223b79b3d296429ee9c3",
     "local/bin/apx-shortcuts-v1": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
     "local/bin/apx-sysinfo": "1daf4b37c84c855191d2190e2c44a91b95b96b0ce1a46944ea28f580349d14b5",
+    "local/bin/apx-window-apps-v1": "71a5659d131d6d206f0c3a644ffa89ceaad0e4c969ae731b69566aa96928471f",
     "local/bin/apx-workspace-overview-v1": "830c8dd169b2e180bcc2671c52c14ada5037873ebc3152090af466522b76483e",
-    "local/libexec/apx-system-power-client-v1.py": "c821f166113691d60f044885945412b53f8f7ddf83cf8955f30421516604c740",
+    "local/libexec/apx-rofi-secondary-v1.so": "1de32d764d0a359a3b6334097a92452155a50d38adc92ac035c213296ffea75d",
+    "local/libexec/apx-system-power-client-v1.py": "c037419f59503c255a18a6144e363b146db3238c96b229e44dbfd04cb049e410",
     "local/libexec/apx_system_power_contract.py": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8",
+    "local/share/applications/apx-terminal.desktop": "10ed8d658f950a562f71e165f8e42661228088e45bc532b75b99bce74745bb44",
     "local/share/fonts/cascadia/CascadiaMono-Bold.ttf": "b22cb603ed23cac36e8444846e1841caca21719a5e852780a8d37ae7a49b0a36",
     "local/share/fonts/cascadia/CascadiaMono-BoldItalic.ttf": "ecaeab55e6334408f8ff1fde78a99ddaeb3bb7fad4fcd177df8475c88a7d240f",
     "local/share/fonts/cascadia/CascadiaMono-Italic.ttf": "8d98a33e7617c14dd1d200b4900bc6c2d5d7165abb5c09e9d2fd51c38ce9c9ff",
@@ -133,10 +138,14 @@ ENVIRONMENT_SHELL_ASSETS = {
     "quickshell/apx/BounceMouseArea.qml": "6d6ea8c4f2d926ca40f157ea0d7443134cc35bbe9c675dc148b4aeaa6275c938",
     "quickshell/apx/ControlIcon.qml": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
-    "quickshell/apx/shell.qml": "e3a1a612bbf52a32cac129f687c65554a0cf3792ee12d137c4bd861f75266fae",
-    "rofi/config.rasi": "dfefd17cf9f62af0091607207a1bb0cf610a330294badb2b13a875cd3fb31708",
+    "quickshell/apx/shell.qml": "4800b555d92f1713d5023c31981369f3817a3a7aaff8eebd4c0d74743932e86e",
+    "rofi/config.rasi": "86c734ba311f6243eb501ff9b715c24a6e25be856a7854ec3e97a9c54deb9ab7",
     "xdg-desktop-portal/portals.conf": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
-    "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "3696963c6abe55635a1c4a2eb96e9b8aba50eacf19a978c469dfc571af565568"
+    "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "3696963c6abe55635a1c4a2eb96e9b8aba50eacf19a978c469dfc571af565568",
+    "local/bin/apx-settings": "fbb912bc3028cd94fdb8f2bb9d9637cde038ba79569559d1e047f60965536f5c",
+    "local/bin/apx-desktop-preferences-v1": "0a34d67f908d844ec7ec0708ee3de284d130ae88c06b0c231a804031e88bf7b7",
+    "local/bin/apx-clipboard-menu-v1": "8e3e3469bf2b92366000cc20c55f577a85e6243cb719844f089a4b6c7c4d663f",
+    "local/share/applications/apx-settings.desktop": "a14f790b359027ba5f844d6c3bd262c95bd955c62647a66a23eafeb7d23e8738",
 }
 MAX_GRAPHICAL_CONFIG_BYTES = 1024 * 1024
 MAX_WALLPAPER_BYTES = 4 * 1024 * 1024
@@ -168,7 +177,7 @@ NETWORK_ADAPTER = "/usr/lib/apx/apx-environment-network-v1.py"
 EFFECTS = {
     "create": ("root", "home", "configure", "publish"),
     "destroy": (
-        "stop", "purge-snapshots", "purge-archives", "purge-backups", "remove-home",
+        "stop", "purge-update-rollbacks", "purge-snapshots", "purge-archives", "purge-backups", "remove-home",
         "remove-root", "purge-metadata", "unpublish", "purge-plans",
     ),
 }
@@ -723,7 +732,8 @@ def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
                     os.close(descriptor)
         run(["pacman", "--root", str(root), "--dbpath", str(root / "var/lib/pacman"),
              "--cachedir", "/var/cache/pacman/pkg", "--config", str(root / "etc/pacman.conf"),
-             "--disable-sandbox", "-Syu", "--needed", "--noconfirm", *packages])
+             "--disable-sandbox", "--ignore", "nvidia-utils,lib32-nvidia-utils",
+             "-Syu", "--needed", "--noconfirm", *packages])
     for package in tuple(sorted(set(local_packages_for(modules)) | {"nvidia-utils"})):
         artifact = validated_local_package_artifact(package)
         if package == "nvidia-utils":
@@ -1109,8 +1119,12 @@ def destroy(plan_identity: str, approval: str) -> None:
             or stat.S_IMODE(metadata.st_mode) != 0o700:
         raise Refusal("Environment container is not a trusted root-owned directory")
     operation = str(uuid.uuid4())
+    rollbacks = environment_update_rollbacks(name)
     append_event(operation, "destroy", "operation", "started", name=name, plan=plan_identity)
     stop(name)
+    for path in rollbacks:
+        delete_subvolume_tree(path)
+    append_event(operation, "destroy", "purge-update-rollbacks", "complete", name=name, removed=len(rollbacks))
     for effect, count in purge_environment_copies(name):
         append_event(operation, "destroy", effect, "complete", name=name, removed=count)
     removed_backups = purge_environment_backups(name)
@@ -1145,6 +1159,54 @@ def delete_subvolume_tree(path: Path) -> None:
 
 
 UUID_COMPONENT = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+
+
+def environment_update_rollbacks(name: str) -> tuple[Path, ...]:
+    """Admit only exact target snapshots in journalled update operation layouts."""
+    validate_name(name)
+    found: list[Path] = []
+    operation_pattern = re.compile(r"[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}")
+    for base, coordinated in ((STATE / "environment-updates-v1", False),
+                              (STATE / "coordinated-updates-v1", True)):
+        operations = base / "operations" if coordinated else base
+        if not operations.exists():
+            continue
+        if base.is_symlink() or operations.is_symlink():
+            raise Refusal("update operation directory is a symlink")
+        for directory in sorted(operations.iterdir()):
+            if not operation_pattern.fullmatch(directory.name):
+                continue
+            if directory.is_symlink() or not directory.is_dir():
+                raise Refusal("update operation has an unexpected type")
+            rollback = base / "rollbacks" / directory.name if coordinated else directory / "rollback"
+            if not rollback.exists():
+                continue
+            if rollback.is_symlink() or rollback.parent.is_symlink():
+                raise Refusal("update rollback directory is a symlink")
+            candidates = [rollback / (name + "-" + part) for part in ("root", "home")]
+            if not any(path.exists() or path.is_symlink() for path in candidates):
+                continue
+            plan_path = directory / ("approved-plan.json" if coordinated else "plan.json")
+            for evidence in (plan_path, directory / "status.json"):
+                info = evidence.lstat()
+                if evidence.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_gid != 0 or info.st_mode & 0o022:
+                    raise Refusal("update rollback evidence is not trusted")
+            plan = read_json(plan_path)
+            targets = plan.get("targets", [])
+            if not any(isinstance(target, dict) and target.get("name") == name
+                       and (not coordinated or target.get("kind") == "environment") for target in targets):
+                raise Refusal("rollback target is not identified by its update plan")
+            status = read_json(directory / "status.json")
+            if status.get("state") not in {"complete", "failed", "awaiting-hub"}:
+                raise Refusal("update operation may still be using this rollback")
+            for path in candidates:
+                if path.is_symlink():
+                    raise Refusal("rollback snapshot is a symlink")
+                if path.exists():
+                    if not path.is_dir():
+                        raise Refusal("rollback snapshot is not a directory")
+                    found.append(path)
+    return tuple(found)
 
 
 def _remove_exact_copy(path: Path, *, snapshot: bool) -> None:
@@ -1206,12 +1268,50 @@ def purge_environment_backups(name: str) -> int:
     validate_name(name)
     if not BACKUPS.exists():
         return 0
+    removed = 0
+    # Deployment backups store numbered files, with identity in their manifest.
+    # Delete the saved copy, never the original target named by the manifest.
+    prefix = str(ENVIRONMENTS / name) + "/"
+    for manifest in sorted(BACKUPS.glob("*/manifest.json")):
+        if manifest.is_symlink() or manifest.parent.is_symlink():
+            raise Refusal("backup manifest is a symlink")
+        try:
+            entries = json.loads(manifest.read_text())
+        except (OSError, json.JSONDecodeError):
+            continue
+        if not isinstance(entries, list):
+            continue
+        owned = [entry for entry in entries if isinstance(entry, dict)
+                 and isinstance(entry.get("target"), str) and entry["target"].startswith(prefix)]
+        copies: list[Path] = []
+        for entry in owned:
+            saved = entry.get("backup")
+            if saved is None:
+                continue
+            path = Path(saved)
+            if not path.is_absolute() or path.parent != manifest.parent:
+                raise Refusal("saved backup is outside its manifest directory")
+            if path.exists() and not path.is_file() and not path.is_symlink():
+                raise Refusal("saved configuration backup has an unexpected type")
+            copies.append(path)
+        for path in copies:
+            if path.exists() or path.is_symlink():
+                path.unlink(); removed += 1
+        if owned:
+            atomic_json(manifest, [entry for entry in entries if entry not in owned])
+            for filename in ("records.json", "packages.json"):
+                evidence = manifest.parent / filename
+                if evidence.exists():
+                    if evidence.is_symlink():
+                        raise Refusal("backup inventory is a symlink")
+                    value = json.loads(evidence.read_text())
+                    if isinstance(value, dict) and name in value:
+                        value.pop(name); atomic_json(evidence, value)
     exact_names = {name, f"{name}-shell.qml"}
     candidates = sorted(
         (path for path in BACKUPS.rglob("*") if path.name in exact_names),
         key=lambda path: len(path.parts), reverse=True,
     )
-    removed = 0
     for path in candidates:
         try:
             metadata = path.lstat()

@@ -6,6 +6,13 @@ set -u
 export USER=apx
 export LOGNAME=apx
 
+# Locale choices apply only to this Environment and its session children.
+if [[ -r /home/apx/.config/apx/locale.env ]]; then
+    set -a
+    . /home/apx/.config/apx/locale.env
+    set +a
+fi
+
 config=/home/apx/.config/quickshell/apx/shell.qml
 lock_config=/home/apx/.config/hypr/hyprlock.conf
 idle_config=/home/apx/.config/hypr/hypridle.conf
@@ -106,6 +113,11 @@ start_desktop_service '[/]apx-notification-focus-v1([[:space:]]|$)' \
 start_desktop_service '^/usr/lib/hyprpolkitagent/hyprpolkitagent' \
     /usr/lib/hyprpolkitagent/hyprpolkitagent
 start_desktop_service '^/usr/bin/udiskie([[:space:]]|$)' /usr/bin/udiskie --automount --no-tray
+
+# User-selected startup applications and optional clipboard history.
+if [[ -x /home/apx/.local/bin/apx-desktop-preferences-v1 ]]; then
+    /home/apx/.local/bin/apx-desktop-preferences-v1 session >>"$log" 2>&1 || true
+fi
 
 while true; do
     printf '\n=== APX shell start %(%Y-%m-%dT%H:%M:%S%z)T ===\n' -1 >>"$log"

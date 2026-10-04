@@ -16,7 +16,8 @@ SOCKET = "/run/apx/host-services-v3.sock"
 def exchange(operation: str, payload: dict[str, object]) -> dict[str, object]:
     request = request_bytes(operation, payload)
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
-        connection.settimeout(35); connection.connect(SOCKET); connection.sendall(request)
+        connection.settimeout(75 if operation == "network.connect" else 35)
+        connection.connect(SOCKET); connection.sendall(request)
         data = bytearray()
         while b"\n" not in data and len(data) <= MAX_MESSAGE_BYTES:
             chunk = connection.recv(min(4096, MAX_MESSAGE_BYTES + 1 - len(data)))
@@ -40,6 +41,8 @@ def main() -> int:
     parser.add_argument("target", nargs="?")
     parser.add_argument("--credential-stdin", action="store_true",
                         help="read one passphrase from stdin; never pass it as an argument")
+    parser.add_argument("--enterprise-stdin", action="store_true",
+                        help="read one JSON enterprise credential from stdin")
     parser.add_argument("--accept", choices=("yes", "no"))
     arguments = parser.parse_args()
     mapping = {"bluetooth-connect": "bluetooth.device.connect",
@@ -75,9 +78,13 @@ def main() -> int:
         payload["ssid"] = arguments.target
     if arguments.operation == "wifi-connect":
         credential = None
+        if arguments.credential_stdin and arguments.enterprise_stdin:
+            parser.error("select one credential source")
         if arguments.credential_stdin:
             secret = sys.stdin.readline().rstrip("\n") if not sys.stdin.isatty() else getpass.getpass("")
             credential = {"kind": "passphrase", "value": secret}
+        if arguments.enterprise_stdin:
+            credential = json.loads(sys.stdin.readline())
         payload["credential"] = credential
     if arguments.operation == "events": payload = {"after": 0, "timeout_ms": 25000}
     if arguments.operation == "calendar-save":

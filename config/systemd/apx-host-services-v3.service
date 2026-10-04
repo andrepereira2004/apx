@@ -22,7 +22,7 @@ RestrictNamespaces=yes
 LockPersonality=yes
 MemoryDenyWriteExecute=yes
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
-ReadWritePaths=/run/apx
+ReadWritePaths=/run/apx /var/lib/iwd
 SystemCallFilter=@system-service @io-event @process
 SystemCallErrorNumber=EPERM
 

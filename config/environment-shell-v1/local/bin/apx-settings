@@ -1,0 +1,936 @@
+#!/usr/bin/env python3
+"""APX settings window for graphical Environments."""
+
+import configparser
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import runpy
+
+import gi
+
+gi.require_version("Gtk", "3.0")
+from gi.repository import GLib, Gtk, Gio
+
+
+HOME = Path.home()
+TOOLS = HOME / ".local/bin"
+AUDIO = TOOLS / "apx-audio-devices"
+HOST = Path("/run/apx/host-services-ui-v3.py")
+LAPTOP = TOOLS / "apx-laptop-action-v1"
+IS_HUB = Path("/run/apx/host-console-v1.sock").is_socket()
+SWITCH = Path("/run/apx/environment-switch-client-v1.py")
+HOST_V3 = Path("/run/apx/host-services-client-v3.py")
+SHELL = "/home/apx/.config/quickshell/apx/shell.qml"
+
+PREFERENCES = runpy.run_path(str(TOOLS / "apx-desktop-preferences-v1"))
+
+CSS = b"""
+window, .background { background: #0a1014; color: #eceef0; font-family: Selawik; }
+headerbar { background: #191d22; border-bottom: 1px solid #343a41; color: #eceef0; }
+stacksidebar, stacksidebar list { background: #10161b; border: 0; }
+stacksidebar row { color: #9ba3ac; padding: 12px 18px; border-radius: 7px; margin: 3px 8px; }
+stacksidebar row:selected { background: #30353b; color: #55e6ff; }
+.page { background: #0a1014; }
+.title { color: #eceef0; font-size: 23px; font-weight: 600; }
+.subtitle { color: #9ba3ac; font-size: 13px; }
+.card { background: #191d22; border: 1px solid #343a41; border-radius: 10px; padding: 14px; }
+.card-title { color: #eceef0; font-size: 15px; font-weight: 600; }
+.secondary { color: #9ba3ac; }
+button { background: #272c33; color: #eceef0; border: 1px solid #343a41; border-radius: 6px; padding: 8px 12px; }
+button:hover { background: #30353b; border-color: #55e6ff; }
+button.suggested-action { background: #246879; color: #ffffff; border-color: #55e6ff; }
+entry { background: #191d22; color: #eceef0; border-color: #343a41; }
+combobox button, spinbutton { background: #191d22; color: #eceef0; border-color: #343a41; }
+separator { background: #343a41; }
+"""
+
+
+def command(argv, input_text=None):
+    result = subprocess.run(argv, input=input_text, capture_output=True, text=True,
+                            timeout=20 if "bluetooth-scan" in argv else 10, check=False)
+    if result.returncode:
+        raise RuntimeError((result.stderr or result.stdout or "A operação falhou.").strip())
+    return result.stdout
+
+
+def get_json(argv):
+    return json.loads(command(argv))
+
+
+def shell_call(method, *arguments):
+    return command(["/usr/bin/qs", "--path", SHELL, "ipc", "call", "host", method,
+                    *map(str, arguments)])
+
+
+def gtk_preferences():
+    config = configparser.ConfigParser(interpolation=None)
+    config.read(HOME / ".config/gtk-3.0/settings.ini")
+    section = config["Settings"] if config.has_section("Settings") else {}
+    return {
+        "theme": section.get("gtk-theme-name", "Adwaita-dark"),
+        "icons": section.get("gtk-icon-theme-name", "APX-Graphite"),
+        "font": section.get("gtk-font-name", "Selawik 11"),
+    }
+
+
+def apply_gtk_preferences(theme, icons, font):
+    if not all(isinstance(value, str) and value.strip() for value in (theme, icons, font)):
+        raise ValueError("Escolhe um tema, ícones e uma fonte válidos")
+    for version in ("gtk-3.0", "gtk-4.0"):
+        path = HOME / ".config" / version / "settings.ini"
+        config = configparser.ConfigParser(interpolation=None)
+        config.read(path)
+        if not config.has_section("Settings"):
+            config.add_section("Settings")
+        config["Settings"]["gtk-theme-name"] = theme
+        config["Settings"]["gtk-icon-theme-name"] = icons
+        config["Settings"]["gtk-font-name"] = font
+        config["Settings"]["gtk-application-prefer-dark-theme"] = (
+            "1" if "dark" in theme.casefold() else "0")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix(".ini.tmp")
+        with temporary.open("w") as target:
+            config.write(target)
+        os.replace(temporary, path)
+    for key, value in (("gtk-theme", theme), ("icon-theme", icons), ("font-name", font)):
+        command(["/usr/bin/gsettings", "set", "org.gnome.desktop.interface", key, value])
+
+
+def label(text, style=None):
+    widget = Gtk.Label(label=str(text), xalign=0)
+    widget.set_line_wrap(True)
+    if style:
+        widget.get_style_context().add_class(style)
+    return widget
+
+
+def button(text, callback, primary=False):
+    widget = Gtk.Button(label=text)
+    if primary:
+        widget.get_style_context().add_class("suggested-action")
+    widget.connect("clicked", lambda _widget: callback())
+    return widget
+
+
+class Settings(Gtk.Window):
+    def __init__(self):
+        super().__init__(title="Definições APX")
+        self.set_default_size(860, 590)
+        self.set_size_request(660, 460)
+        self.set_border_width(0)
+        self.connect("destroy", lambda _window: Gtk.main_quit() if Gtk.main_level() else None)
+
+        provider = Gtk.CssProvider()
+        provider.load_from_data(CSS)
+        Gtk.StyleContext.add_provider_for_screen(
+            self.get_screen(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+        header = Gtk.HeaderBar()
+        header.set_show_close_button(True)
+        header.props.title = "Definições APX"
+        header.props.subtitle = "Sistema e Environment"
+        search = Gtk.SearchEntry()
+        search.set_placeholder_text("Pesquisar definições")
+        search.set_size_request(225, -1)
+        header.pack_end(search)
+        search.connect("search-changed", self.on_search_changed)
+        self.set_titlebar(header)
+
+        layout = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.add(layout)
+        self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
+                               transition_duration=150)
+        sidebar = Gtk.StackSidebar()
+        sidebar.set_stack(self.stack)
+        sidebar.set_size_request(194, -1)
+        sidebar_scroll = Gtk.ScrolledWindow()
+        sidebar_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        sidebar_scroll.set_size_request(194, -1)
+        sidebar_scroll.add(sidebar)
+        layout.pack_start(sidebar_scroll, False, False, 0)
+        layout.pack_start(self.stack, True, True, 0)
+
+        self.audio = self.page("Som", "Escolhe a saída, o microfone e os volumes.")
+        self.network = self.page("Rede", "Ligação Wi-Fi e redes disponíveis.")
+        self.bluetooth = self.page("Bluetooth", "Controla o adaptador e os dispositivos.")
+        self.displays = self.page("Ecrãs", "Monitores ligados e disposição.")
+        self.input = self.page("Entrada", "Teclado, rato e touchpad.")
+        self.appearance = self.page("Aparência", "Tema, ícones e tamanho do texto.")
+        self.apps = self.page("Aplicações", "Aplicações predefinidas e associações de ficheiros.")
+        self.power = self.page("Energia", "Bateria, brilho e desempenho.")
+        self.storage = self.page("Armazenamento", "Espaço disponível e Environments.")
+        self.system = self.page("Sistema", "Atualizações e ferramentas úteis.")
+        self.locale = self.page("Idioma e região", "Idioma das aplicações e formatos de datas e números.")
+        self.privacy = self.page("Privacidade", "Histórico, clipboard e permissões das aplicações.")
+        self.startup = self.page("Arranque", "Aplicações que iniciam com este Environment.")
+        self.accessibility = self.page("Acessibilidade", "Texto, contraste e movimento.")
+        self.printing = self.page("Impressão", "Impressoras e digitalização disponíveis neste Environment.")
+        self.search_page = self.page("Resultados", "Definições que correspondem à pesquisa.")
+        self.sections = {
+            "audio": ("Som", "volume saída microfone áudio colunas HDMI PipeWire"),
+            "network": ("Rede", "Wi-Fi internet ligação rede sem fios"),
+            "bluetooth": ("Bluetooth", "dispositivos emparelhar rato auriculares"),
+            "displays": ("Ecrãs", "monitor resolução escala posição disposição"),
+            "input": ("Entrada", "teclado rato touchpad disposição teclas"),
+            "appearance": ("Aparência", "tema ícones fonte texto GTK visual"),
+            "apps": ("Aplicações", "programas browser predefinidas ficheiros"),
+            "power": ("Energia", "bateria brilho desempenho perfil energia"),
+            "storage": ("Armazenamento", "disco espaço tamanho environments"),
+            "system": ("Sistema", "atualizações hora serviços tarefas versão"),
+        }
+        self.sections.update({
+            "locale": ("Idioma e região", "português idioma região datas números formatos"),
+            "privacy": ("Privacidade", "histórico clipboard copiar permissões câmara microfone"),
+            "startup": ("Arranque", "iniciar automaticamente aplicações sessão"),
+            "accessibility": ("Acessibilidade", "texto contraste animações movimento"),
+            "printing": ("Impressão", "impressoras scanner digitalizar trabalhos"),
+        })
+        for name, (title, _keywords) in self.sections.items():
+            self.stack.add_titled(getattr(self, name)[0], name, title)
+        self.stack.add_named(self.search_page[0], "search")
+        self.stack.connect("notify::visible-child-name", self.on_page_changed)
+        self.render_audio()
+        self.render_network()
+        self.render_bluetooth()
+        self.render_displays()
+        self.render_input()
+        self.render_appearance()
+        self.render_apps()
+        self.render_power()
+        self.render_storage()
+        self.render_system()
+
+    def on_search_changed(self, entry):
+        query = entry.get_text().strip().casefold()
+        if not query:
+            if self.stack.get_visible_child_name() == "search":
+                self.stack.set_visible_child_name("audio")
+            return
+        box = self.search_page[1]
+        self.clear(box)
+        matches = [(key, title) for key, (title, terms) in self.sections.items()
+                   if all(word in (title + " " + terms).casefold() for word in query.split())]
+        card = self.card(box, f"{len(matches)} resultado(s)")
+        for key, title in matches:
+            card.pack_start(button(title, lambda selected=key:
+                                   self.stack.set_visible_child_name(selected)), False, False, 0)
+        box.show_all()
+        self.stack.set_visible_child_name("search")
+
+    def page(self, heading, description):
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        content.set_margin_top(28)
+        content.set_margin_bottom(28)
+        content.set_margin_start(28)
+        content.set_margin_end(28)
+        content.get_style_context().add_class("page")
+        content.pack_start(label(heading, "title"), False, False, 0)
+        content.pack_start(label(description, "subtitle"), False, False, 0)
+        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        content.pack_start(body, False, False, 12)
+        scroll.add(content)
+        return scroll, body
+
+    def card(self, parent, heading):
+        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        card.get_style_context().add_class("card")
+        card.pack_start(label(heading, "card-title"), False, False, 0)
+        parent.pack_start(card, False, False, 0)
+        return card
+
+    def row(self, parent):
+        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        parent.pack_start(row, False, False, 0)
+        return row
+
+    def clear(self, box):
+        for child in box.get_children():
+            box.remove(child)
+
+    def error(self, problem):
+        dialog = Gtk.MessageDialog(transient_for=self, modal=True,
+                                   message_type=Gtk.MessageType.ERROR,
+                                   buttons=Gtk.ButtonsType.CLOSE,
+                                   text="Não foi possível concluir a operação")
+        dialog.format_secondary_text(str(problem))
+        dialog.run()
+        dialog.destroy()
+
+    def action(self, callback, refresh=None):
+        try:
+            callback()
+            if refresh:
+                refresh()
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.error(exc)
+
+    def launch(self, argv):
+        subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL, start_new_session=True)
+
+    def render_audio(self):
+        box = self.audio[1]
+        self.clear(box)
+        try:
+            devices = get_json([str(AUDIO), "list"])
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.card(box, "Áudio indisponível").pack_start(label(str(exc)), False, False, 0)
+            box.show_all()
+            return
+        for key, title, kind in (("sinks", "Saída de som", "sink"),
+                                 ("sources", "Microfone", "source")):
+            card = self.card(box, title)
+            entries = devices.get(key, [])
+            if not entries:
+                card.pack_start(label("Nenhum dispositivo disponível", "secondary"), False, False, 0)
+            for device in entries:
+                name = ("●  " if device.get("default") else "○  ") + device["name"]
+                card.pack_start(button(name, lambda ident=device["id"], selection=kind:
+                                       self.action(lambda: command([str(AUDIO), selection, str(ident)]),
+                                                   self.render_audio)), False, False, 0)
+        card = self.card(box, "Controlo avançado")
+        if Path("/usr/bin/pavucontrol").is_file():
+            card.pack_start(button("Volumes por aplicação e perfis", lambda: self.launch(
+                ["/usr/bin/pavucontrol"])), False, False, 0)
+        card.pack_start(button("Atualizar dispositivos", self.render_audio), False, False, 0)
+        box.show_all()
+
+    def render_bluetooth(self):
+        box = self.bluetooth[1]
+        self.clear(box)
+        try:
+            state = get_json([str(HOST), "status"])
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.card(box, "Bluetooth indisponível").pack_start(label(str(exc)), False, False, 0)
+            box.show_all()
+            return
+        powered = state.get("bluetooth_powered", False)
+        card = self.card(box, "Adaptador")
+        card.pack_start(label("Ligado" if powered else "Desligado"), False, False, 0)
+        row = self.row(card)
+        row.pack_start(button("Desligar" if powered else "Ligar", lambda: self.action(
+            lambda: command([str(HOST), "bluetooth-power", "off" if powered else "on"]),
+            self.render_bluetooth)), False, False, 0)
+        row.pack_start(button("Procurar dispositivos", lambda: self.action(
+            lambda: command(["/run/apx/host-services-client-v3.py", "bluetooth-scan", "on"]),
+            self.render_bluetooth)), False, False, 0)
+        card = self.card(box, "Dispositivos")
+        devices = state.get("bluetooth_devices", [])
+        if not devices:
+            card.pack_start(label("Nenhum dispositivo encontrado.", "secondary"), False, False, 0)
+        for device in devices:
+            address = device.get("address")
+            name = device.get("name") or address or "Dispositivo"
+            status = "ligado" if device.get("connected") else "desligado"
+            row = self.row(card)
+            row.pack_start(label(f"{name} · {status}"), True, True, 0)
+            if address:
+                if device.get("paired"):
+                    action = "bluetooth-disconnect" if device.get("connected") else "bluetooth-connect"
+                    row.pack_start(button("Desligar" if device.get("connected") else "Ligar",
+                        lambda a=address, op=action: self.action(
+                            lambda: command([str(HOST), op, a]), self.render_bluetooth)), False, False, 0)
+                else:
+                    row.pack_start(button("Emparelhar", lambda a=address:
+                        self.action(lambda: self.pair_bluetooth(a))), False, False, 0)
+        card.pack_start(button("Atualizar", self.render_bluetooth), False, False, 0)
+        box.show_all()
+
+    def pair_bluetooth(self, address):
+        client = "/run/apx/host-services-client-v3.py"
+        session = get_json([client, "bluetooth-pair", address])
+        session_id = session["session_id"]
+        dialog = Gtk.Dialog(title="Emparelhar Bluetooth", transient_for=self, modal=True)
+        dialog.add_button("Cancelar", Gtk.ResponseType.CANCEL)
+        approve = dialog.add_button("Confirmar", Gtk.ResponseType.OK)
+        message = label("A emparelhar…")
+        pin = Gtk.Entry()
+        pin.set_placeholder_text("PIN, quando pedido")
+        dialog.get_content_area().pack_start(message, False, False, 12)
+        dialog.get_content_area().pack_start(pin, False, False, 12)
+        dialog.show_all()
+
+        def refresh():
+            nonlocal session
+            try:
+                session = get_json([client, "bluetooth-pair-status", session_id])
+            except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+                message.set_text(str(exc))
+                approve.set_sensitive(False)
+                return False
+            description = session.get("message", "A emparelhar…")
+            if session.get("passkey"):
+                description += " · Código: " + session["passkey"]
+            message.set_text(description)
+            pin.set_visible(session.get("challenge") == "pin")
+            approve.set_sensitive(session.get("phase") == "needs-response")
+            if session.get("phase") in ("completed", "failed"):
+                dialog.response(Gtk.ResponseType.CLOSE)
+                return False
+            return True
+
+        if not refresh():
+            dialog.destroy()
+            self.render_bluetooth()
+            return
+        timer = GLib.timeout_add(700, refresh)
+        try:
+            while True:
+                response = dialog.run()
+                if response != Gtk.ResponseType.OK:
+                    if session.get("phase") == "needs-response":
+                        command([client, "bluetooth-pair-respond", session_id, "--accept", "no"])
+                    break
+                arguments = [client, "bluetooth-pair-respond", session_id, "--accept", "yes"]
+                if session.get("challenge") == "pin":
+                    arguments.append("--credential-stdin")
+                    session = json.loads(command(arguments, pin.get_text() + "\n"))
+                else:
+                    session = get_json(arguments)
+                refresh()
+        finally:
+            if GLib.MainContext.default().find_source_by_id(timer) is not None:
+                GLib.source_remove(timer)
+            dialog.destroy()
+            self.render_bluetooth()
+
+    def wifi_connect(self, item):
+        ssid = item["ssid"]
+        if item.get("known") or item.get("security") == "open":
+            self.action(lambda: command([str(HOST), "wifi-connect", ssid]), self.render_network)
+            return
+        dialog = Gtk.Dialog(title="Ligar a " + ssid, transient_for=self, modal=True)
+        dialog.add_button("Cancelar", Gtk.ResponseType.CANCEL)
+        dialog.add_button("Ligar", Gtk.ResponseType.OK)
+        secret = Gtk.Entry()
+        secret.set_visibility(False)
+        secret.set_placeholder_text("Palavra-passe Wi-Fi")
+        secret.set_activates_default(True)
+        dialog.get_content_area().pack_start(secret, False, False, 12)
+        dialog.set_default_response(Gtk.ResponseType.OK)
+        dialog.show_all()
+        response = dialog.run()
+        password = secret.get_text() if response == Gtk.ResponseType.OK else ""
+        dialog.destroy()
+        if response == Gtk.ResponseType.OK and password:
+            self.action(lambda: command(["/run/apx/host-services-client-v3.py", "wifi-connect",
+                                         ssid, "--credential-stdin"], password + "\n"),
+                        self.render_network)
+
+    def render_network(self):
+        box = self.network[1]
+        self.clear(box)
+        try:
+            state = get_json([str(HOST), "status"])
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.card(box, "Rede indisponível").pack_start(label(str(exc)), False, False, 0)
+            box.show_all()
+            return
+        current = state.get("network_name") or "Sem ligação Wi-Fi"
+        card = self.card(box, "Ligação atual")
+        card.pack_start(label(current), False, False, 0)
+        card.pack_start(label(str(state.get("network_connectivity", "")), "secondary"), False, False, 0)
+        row = self.row(card)
+        row.pack_start(button("Procurar redes", lambda: self.action(
+            lambda: command([str(HOST), "wifi-scan"]), self.render_network)), False, False, 0)
+        if state.get("network_name"):
+            row.pack_start(button("Desligar", lambda: self.action(
+                lambda: command([str(HOST), "wifi-disconnect"]), self.render_network)), False, False, 0)
+        card = self.card(box, "Redes disponíveis")
+        for item in state.get("network_details", []):
+            card.pack_start(button(item.get("ssid", "Rede") + ("  ·  ligada" if item.get("ssid") == current else ""),
+                                   lambda selected=item: self.wifi_connect(selected)), False, False, 0)
+        box.show_all()
+
+    def render_displays(self):
+        box = self.displays[1]
+        self.clear(box)
+        try:
+            monitors = get_json(["/usr/bin/hyprctl", "-j", "monitors"])
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.card(box, "Ecrãs indisponíveis").pack_start(label(str(exc)), False, False, 0)
+            box.show_all()
+            return
+        for monitor in monitors:
+            card = self.card(box, monitor.get("description") or monitor.get("name") or "Ecrã")
+            card.pack_start(label(f"{monitor.get('name', '')}  ·  {monitor.get('width', '?')} × {monitor.get('height', '?')}  ·  {monitor.get('refreshRate', 0):.0f} Hz",
+                                  "secondary"), False, False, 0)
+        for monitor in monitors:
+            modes = monitor.get("availableModes", [])
+            if not modes: continue
+            card = self.card(box, "Configurar " + monitor["name"])
+            current = min(modes, key=lambda mode: (0 if mode.startswith(str(monitor["width"]) + "x" + str(monitor["height"]) + "@") else 100000) + abs(float(mode.split("@")[1].rstrip("Hz")) - monitor["refreshRate"]))
+            mode = self.choice(card, "Resolução e frequência", [(value, value) for value in modes], current)
+            scale = self.choice(card, "Escala", [(str(value), str(round(value * 100)) + "%") for value in (1.0, 1.25, 1.5, 1.75, 2.0)], str(float(monitor["scale"])))
+            x = self.number(card, "Posição horizontal", monitor["x"], -16000, 16000)
+            y = self.number(card, "Posição vertical", monitor["y"], -16000, 16000)
+            card.pack_start(button("Testar alteração", lambda output=monitor["name"], selected=mode, zoom=scale, left=x, top=y: self.action(lambda: self.try_display(output, selected.get_active_id(), float(zoom.get_active_id()), int(left.get_value()), int(top.get_value())))), False, False, 0)
+        card = self.card(box, "Disposição")
+        row = self.row(card)
+        row.pack_start(button("Externo à esquerda", lambda: self.action(
+            lambda: command([str(LAPTOP), "display-left"]), self.render_displays)), False, False, 0)
+        row.pack_start(button("Externo à direita", lambda: self.action(
+            lambda: command([str(LAPTOP), "display-right"]), self.render_displays)), False, False, 0)
+        if Path("/usr/bin/wdisplays").is_file():
+            card.pack_start(button("Resolução e posição avançadas", lambda: self.launch(
+                ["/usr/bin/wdisplays"])), False, False, 0)
+        box.show_all()
+
+    def render_input(self):
+        box = self.input[1]
+        self.clear(box)
+        try:
+            devices = get_json(["/usr/bin/hyprctl", "-j", "devices"])
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.card(box, "Entrada indisponível").pack_start(label(str(exc)), False, False, 0)
+            box.show_all()
+            return
+        mice = devices.get("mice", [])
+        groups = (("keyboards", "Teclados", devices.get("keyboards", [])),
+                  ("mice", "Ratos", [item for item in mice if "touchpad" not in item.get("name", "").lower()]),
+                  ("touchpads", "Touchpads", [item for item in mice if "touchpad" in item.get("name", "").lower()]))
+        for key, title, entries in groups:
+            card = self.card(box, title)
+            if not entries:
+                card.pack_start(label("Nenhum dispositivo detetado", "secondary"), False, False, 0)
+            for item in entries:
+                card.pack_start(label(item.get("name", "Dispositivo")), False, False, 0)
+                if key == "keyboards" and item.get("active_keymap"):
+                    card.pack_start(label("Disposição: " + item["active_keymap"], "secondary"),
+                                    False, False, 0)
+            if key == "touchpads" and entries:
+                row = self.row(card)
+                for action, title in (("touchpad-on", "Ativar"),
+                                      ("touchpad-off", "Desativar")):
+                    row.pack_start(button(title, lambda selected=action: self.action(
+                        lambda: command([str(LAPTOP), selected]), self.render_input)), False, False, 0)
+        prefs = PREFERENCES["load"]()
+        card = self.card(box, "Disposição e repetição")
+        layout = self.choice(card, "Teclado", [("pt", "Português"), ("us", "Inglês US"), ("gb", "Inglês UK"), ("pt,us", "Português / US"), ("us,pt", "US / Português")], prefs["layout"])
+        rate = self.number(card, "Teclas por segundo", prefs["repeat_rate"], 1, 100)
+        delay = self.number(card, "Atraso em milissegundos", prefs["repeat_delay"], 100, 2000)
+        card.pack_start(label("Com dois layouts, SUPER+Espaço alterna entre eles.", "secondary"), False, False, 0)
+        card.pack_start(button("Aplicar teclado", lambda: self.action(lambda: PREFERENCES["save"]({
+            "layout": layout.get_active_id(), "repeat_rate": int(rate.get_value()), "repeat_delay": int(delay.get_value())}))), False, False, 0)
+        card = self.card(box, "Touchpad")
+        natural = self.check(card, "Deslocamento natural", prefs["natural_scroll"])
+        tap = self.check(card, "Toque para clicar", prefs["tap_to_click"])
+        card.pack_start(button("Aplicar touchpad", lambda: self.action(lambda: PREFERENCES["save"]({
+            "natural_scroll": natural.get_active(), "tap_to_click": tap.get_active()}))), False, False, 0)
+        card = self.card(box, "Rato externo")
+        mouse = TOOLS / "apx-mouse-sensitivity-v1"
+        if mouse.is_file():
+            value = int(command([str(mouse), "get"]))
+            sensitivity = self.number(card, "Sensibilidade", value, -100, 100)
+            card.pack_start(button("Aplicar rato", lambda: self.action(lambda: command([str(mouse), "set", str(int(sensitivity.get_value()))]))), False, False, 0)
+        card.pack_start(button("Ver atalhos atuais", lambda: shell_call("openShortcuts")), False, False, 0)
+        self.shortcut_controls(card)
+        box.show_all()
+
+    def render_appearance(self):
+        box = self.appearance[1]
+        self.clear(box)
+        preferences = gtk_preferences()
+        card = self.card(box, "Visual das aplicações")
+        card.pack_start(label("O APX usa um tema escuro, ícones Graphite e Selawik.",
+                              "secondary"), False, False, 0)
+        themes = {path.name for path in Path("/usr/share/themes").iterdir() if path.is_dir()}
+        themes.update(("Adwaita", "Adwaita-dark", preferences["theme"]))
+        icons = {path.name for base in (Path("/usr/share/icons"), HOME / ".local/share/icons")
+                 if base.is_dir() for path in base.iterdir() if path.is_dir()}
+        icons.add(preferences["icons"])
+
+        def selector(title, options, current):
+            row = self.row(card)
+            caption = label(title)
+            caption.set_size_request(95, -1)
+            row.pack_start(caption, False, False, 0)
+            combo = Gtk.ComboBoxText()
+            for item in sorted(options, key=str.casefold):
+                combo.append(item, item)
+            combo.set_active_id(current)
+            if combo.get_active_id() is None and options: combo.set_active(0)
+            row.pack_start(combo, True, True, 0)
+            return combo
+
+        theme = selector("Tema", themes, preferences["theme"])
+        icon = selector("Ícones", icons, preferences["icons"])
+        row = self.row(card)
+        row.pack_start(label("Texto"), False, False, 0)
+        font = Gtk.Entry()
+        font.set_text(preferences["font"])
+        font.set_placeholder_text("Selawik 11")
+        row.pack_start(font, True, True, 0)
+        controls = self.row(card)
+        controls.pack_start(button("Aplicar", lambda: self.action(
+            lambda: apply_gtk_preferences(theme.get_active_id(), icon.get_active_id(),
+                                          font.get_text().strip()), self.render_appearance), True),
+            False, False, 0)
+        controls.pack_start(button("Restaurar APX", lambda: self.action(
+            lambda: apply_gtk_preferences("Adwaita-dark", "APX-Graphite", "Selawik 11"),
+            self.render_appearance)), False, False, 0)
+        card.pack_start(label("As aplicações já abertas podem precisar de ser reiniciadas.",
+                              "secondary"), False, False, 0)
+        box.show_all()
+
+    def render_apps(self):
+        box = self.apps[1]
+        self.clear(box)
+        card = self.card(box, "Navegador predefinido")
+        try:
+            current = command(["/usr/bin/xdg-settings", "get", "default-web-browser"]).strip()
+        except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            current = ""
+            card.pack_start(label(str(exc), "secondary"), False, False, 0)
+        card.pack_start(label("Atual: " + (current or "não definido")), False, False, 0)
+        browsers = {}
+        for directory in (Path("/usr/share/applications"), HOME / ".local/share/applications"):
+            if not directory.is_dir():
+                continue
+            for path in directory.glob("*.desktop"):
+                entry = configparser.ConfigParser(interpolation=None)
+                try:
+                    entry.read(path)
+                    data = entry["Desktop Entry"]
+                    if "WebBrowser" in data.get("Categories", "") and data.get("Type") == "Application":
+                        browsers[path.name] = data.get("Name", path.stem)
+                except (OSError, KeyError, configparser.Error):
+                    continue
+        for desktop_id, title in sorted(browsers.items(), key=lambda item: item[1].casefold()):
+            card.pack_start(button(("● " if desktop_id == current else "○ ") + title,
+                lambda selected=desktop_id: self.action(
+                    lambda: command(["/usr/bin/xdg-settings", "set",
+                                     "default-web-browser", selected]), self.render_apps)),
+                False, False, 0)
+        card = self.card(box, "Ficheiros e tipos")
+        try:
+            manager = command(["/usr/bin/xdg-mime", "query", "default", "inode/directory"]).strip()
+            card.pack_start(label("Gestor de ficheiros: " + (manager or "não definido")),
+                            False, False, 0)
+        except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            card.pack_start(label(str(exc), "secondary"), False, False, 0)
+        if Path("/usr/bin/thunar").is_file():
+            card.pack_start(button("Usar Thunar para pastas", lambda: self.action(
+                lambda: command(["/usr/bin/xdg-mime", "default", "thunar.desktop",
+                                 "inode/directory"]), self.render_apps)), False, False, 0)
+        for mime, title in (("application/pdf", "PDF"), ("image/png", "Imagens"), ("video/mp4", "Vídeo"), ("audio/mpeg", "Áudio"), ("text/plain", "Texto")):
+            card = self.card(box, title)
+            apps = {app.get_id(): app for app in Gio.AppInfo.get_all_for_type(mime) if app.get_id() and app.should_show()}
+            current = Gio.AppInfo.get_default_for_type(mime, False)
+            if not apps:
+                card.pack_start(label("Nenhuma aplicação compatível instalada", "secondary"), False, False, 0)
+                continue
+            choice = self.choice(card, "Aplicação", [(key, app.get_display_name()) for key, app in apps.items()], current.get_id() if current else next(iter(apps)))
+            def apply(selected=choice, mapping=apps, kind=mime):
+                app = mapping[selected.get_active_id()]
+                kinds = {"image/png": ("image/png", "image/jpeg", "image/webp"), "video/mp4": ("video/mp4", "video/x-matroska", "video/webm"), "audio/mpeg": ("audio/mpeg", "audio/flac", "audio/ogg")}.get(kind, (kind,))
+                for target in kinds: app.set_as_default_for_type(target)
+            card.pack_start(button("Usar por defeito", lambda operation=apply: self.action(operation)), False, False, 0)
+        box.show_all()
+
+    def render_power(self):
+        box = self.power[1]
+        self.clear(box)
+        try:
+            state = get_json([str(HOST_V3), "snapshot"])
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.card(box, "Energia indisponível").pack_start(label(str(exc)), False, False, 0)
+            box.show_all()
+            return
+        card = self.card(box, "Bateria")
+        batteries = state.get("power", {}).get("batteries", [])
+        for battery in batteries:
+            card.pack_start(label(f"{battery.get('name', 'Bateria')}: {battery.get('capacity', '?')}% · "
+                                  f"{battery.get('status', 'desconhecido')}"), False, False, 0)
+        if not batteries:
+            card.pack_start(label("Nenhuma bateria detetada", "secondary"), False, False, 0)
+        card = self.card(box, "Brilho do ecrã integrado")
+        row = self.row(card)
+        for title, action in (("− 5%", "brightnessDown"), ("+ 5%", "brightnessUp")):
+            row.pack_start(button(title, lambda selected=action: self.action(
+                lambda: shell_call(selected))), False, False, 0)
+        try:
+            status = get_json(["/usr/bin/qs", "--path", SHELL, "ipc", "call", "host",
+                               "hardwareStatus"])
+            profile = status.get("profile", "indisponível")
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired):
+            profile = "indisponível"
+        card = self.card(box, "Perfil de desempenho")
+        card.pack_start(label("Atual: " + profile), False, False, 0)
+        for choice, title in (("low-power", "Poupar energia"),
+                              ("balanced", "Equilibrado"),
+                              ("performance", "Desempenho")):
+            card.pack_start(button(("● " if choice == profile else "○ ") + title,
+                lambda selected=choice: self.action(
+                    lambda: shell_call("setPowerProfile", selected),
+                    lambda: GLib.timeout_add(1200, self.refresh_power_once))),
+                False, False, 0)
+        prefs = PREFERENCES["load"]()
+        card = self.card(box, "Inatividade")
+        times = [(str(value), title) for value, title in ((0, "Nunca"), (60, "1 minuto"), (300, "5 minutos"), (600, "10 minutos"), (900, "15 minutos"), (1800, "30 minutos"), (3600, "1 hora"))]
+        choices = {}
+        for key, title in (("lock_seconds", "Bloquear"), ("screen_seconds", "Apagar ecrã"), ("suspend_battery", "Suspender em bateria"), ("suspend_ac", "Suspender na tomada")):
+            options = list(times)
+            if str(prefs[key]) not in [value for value, _title in options]: options.append((str(prefs[key]), str(prefs[key]) + " segundos"))
+            choices[key] = self.choice(card, title, options, str(prefs[key]))
+        card.pack_start(label("A suspensão automática só é aceite com bloqueio anterior. A tampa é controlada pelo sistema.", "secondary"), False, False, 0)
+        card.pack_start(button("Aplicar tempos", lambda: self.action(lambda: PREFERENCES["save"]({key: int(widget.get_active_id()) for key, widget in choices.items()}))), False, False, 0)
+        box.show_all()
+
+    def refresh_power_once(self):
+        self.render_power()
+        return False
+
+    def render_storage(self):
+        box = self.storage[1]
+        self.clear(box)
+        try:
+            state = get_json([str(SWITCH), "storage"])
+            total = state.get("total_bytes", 0) / 1024**3
+            available = state.get("available_bytes", 0) / 1024**3
+            card = self.card(box, "Disco APX")
+            card.pack_start(label(f"{available:.1f} GiB livres de {total:.1f} GiB"),
+                            False, False, 0)
+            card = self.card(box, "Espaço por Environment")
+            for name, size in sorted(state.get("sizes", {}).items(),
+                                     key=lambda item: -item[1]):
+                card.pack_start(label(f"{name.capitalize()}: {size / 1024**3:.1f} GiB"),
+                                False, False, 0)
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.card(box, "Armazenamento indisponível").pack_start(
+                label(str(exc)), False, False, 0)
+        self.card(box, "Atualizar").pack_start(button("Medir novamente", self.render_storage),
+                                             False, False, 0)
+        box.show_all()
+
+    def render_system(self):
+        box = self.system[1]
+        self.clear(box)
+        card = self.card(box, "Atualizações")
+        if IS_HUB:
+            updater = "/run/apx/coordinated-update-client-v1.py"
+            argv = ["/usr/bin/kitty", "--title", "APX Atualizações", updater, "environments-ui"]
+        else:
+            argv = ["/usr/bin/kitty", "--title", "APX Atualizações",
+                    str(TOOLS / "apx-environment-update-v1")]
+        card.pack_start(button("Abrir atualizações APX", lambda: self.launch(argv)), False, False, 0)
+        card = self.card(box, "Ferramentas")
+        for title, argv in (("Gestor de tarefas", ["/usr/bin/xfce4-taskmanager"]),
+                            ("Gestor de ficheiros", [str(LAPTOP), "files"])):
+            if Path(argv[0]).is_file() and (title != "Gestor de ficheiros" or not IS_HUB):
+                card.pack_start(button(title, lambda selected=argv: self.launch(selected)),
+                                False, False, 0)
+        try:
+            disk = shutil.disk_usage("/")
+            card.pack_start(label(f"Armazenamento APX: {disk.free / 1024**3:.0f} GiB livres de {disk.total / 1024**3:.0f} GiB",
+                                  "secondary"), False, False, 0)
+        except OSError:
+            pass
+        card = self.card(box, "Sessão e serviços")
+        try:
+            state = get_json([str(HOST), "status"])
+            card.pack_start(label("Hora sincronizada: " + ("sim" if state.get("time_synchronized") else "não")), False, False, 0)
+            card.pack_start(label("Fuso horário: " + str(state.get("timezone", "desconhecido"))), False, False, 0)
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            card.pack_start(label(str(exc), "secondary"), False, False, 0)
+        try:
+            identity = get_json([str(SWITCH), "identity"])
+            card.pack_start(label("Environment: " + identity.get("display_name", "desconhecido")),
+                            False, False, 0)
+            card.pack_start(label("Versão: " + identity.get("release", "desconhecida")),
+                            False, False, 0)
+            services = get_json([str(HOST_V3), "snapshot"])
+            card.pack_start(label("Serviços de rede e Bluetooth: " +
+                                  services.get("health", "indisponíveis")), False, False, 0)
+        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            card.pack_start(label(str(exc), "secondary"), False, False, 0)
+        box.show_all()
+
+    def try_display(self, output, mode, scale, x, y):
+        token = PREFERENCES["preview_display"](output, mode, scale, x, y)
+        dialog = Gtk.MessageDialog(transient_for=self, modal=True, message_type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, text="Manter esta configuração de ecrã?")
+        remaining = [15]
+        dialog.format_secondary_text("A configuração anterior será reposta em 15 segundos.")
+        def tick():
+            remaining[0] -= 1
+            if remaining[0] <= 0:
+                dialog.response(Gtk.ResponseType.NO); return False
+            dialog.format_secondary_text("A configuração anterior será reposta em " + str(remaining[0]) + " segundos.")
+            return True
+        timer = GLib.timeout_add(1000, tick)
+        try:
+            response = dialog.run()
+            if remaining[0] > 0: GLib.source_remove(timer)
+            if response == Gtk.ResponseType.YES: PREFERENCES["confirm_display"](token)
+            else: PREFERENCES["revert_display"](token)
+        except Exception:
+            PREFERENCES["revert_display"](token)
+            raise
+        finally:
+            dialog.destroy()
+        self.render_displays()
+
+    def shortcut_controls(self, card):
+        for entry in PREFERENCES["shortcuts"]():
+            row = self.row(card); row.pack_start(label(entry["chord"] + " · " + Path(entry["desktop_file"]).stem), True, True, 0)
+            row.pack_start(button("Remover", lambda chord=entry["chord"]: self.action(lambda: PREFERENCES["remove_shortcut"](chord), self.render_input)), False, False, 0)
+        apps = {app.get_id(): app for app in Gio.AppInfo.get_all() if app.get_id() and app.should_show() and hasattr(app, "get_filename")}
+        if not apps: return
+        choice = self.choice(card, "Aplicação", [(key, app.get_display_name()) for key, app in sorted(apps.items(), key=lambda item: item[1].get_display_name().casefold())], next(iter(apps)))
+        row = self.row(card); row.pack_start(label("Novo atalho"), False, False, 0)
+        chord = Gtk.Entry(); chord.set_placeholder_text("SUPER+ALT+K"); row.pack_start(chord, True, True, 0)
+        card.pack_start(button("Adicionar atalho", lambda: self.action(lambda: PREFERENCES["add_shortcut"](chord.get_text(), apps[choice.get_active_id()].get_filename()), self.render_input)), False, False, 0)
+
+    def choice(self, parent, title, options, current):
+        row = self.row(parent)
+        row.pack_start(label(title), False, False, 0)
+        combo = Gtk.ComboBoxText()
+        for key, text in options: combo.append(key, text)
+        combo.set_active_id(current)
+        if combo.get_active_id() is None and options:
+            normalized = str(current).casefold().replace("-", "")
+            matching = next((key for key, _text in options if key.casefold().replace("-", "") == normalized), None)
+            if matching: combo.set_active_id(matching)
+            else: combo.set_active(0)
+        row.pack_start(combo, True, True, 0)
+        return combo
+
+    def number(self, parent, title, value, minimum, maximum):
+        row = self.row(parent); row.pack_start(label(title), False, False, 0)
+        spin = Gtk.SpinButton.new_with_range(minimum, maximum, 1); spin.set_value(value)
+        row.pack_start(spin, False, False, 0)
+        return spin
+
+    def check(self, parent, title, value):
+        check = Gtk.CheckButton(label=title); check.set_active(value)
+        parent.pack_start(check, False, False, 0)
+        return check
+
+    def render_locale(self):
+        box = self.locale[1]; self.clear(box)
+        card = self.card(box, "Idioma e formatos")
+        options = PREFERENCES["available_locales"]()
+        choices = [(value, value) for value in options]
+        language = self.choice(card, "Idioma", choices, os.environ.get("LANG", "C.UTF-8"))
+        formats = self.choice(card, "Formatos", choices, os.environ.get("LC_TIME", os.environ.get("LANG", "C.UTF-8")))
+        card.pack_start(button("Guardar", lambda: self.action(lambda: PREFERENCES["set_locale"](language.get_active_id(), formats.get_active_id()))), False, False, 0)
+        card.pack_start(label("A alteração entra em vigor ao voltar a abrir o Environment. Apenas idiomas já instalados aparecem aqui.", "secondary"), False, False, 0)
+        box.show_all()
+
+    def render_privacy(self):
+        box = self.privacy[1]; self.clear(box)
+        card = self.card(box, "Histórico do copiar e colar")
+        if Path("/usr/bin/cliphist").is_file():
+            check = self.check(card, "Guardar histórico neste Environment", PREFERENCES["load"]()["clipboard_history"])
+            card.pack_start(button("Aplicar", lambda: self.action(lambda: PREFERENCES["save"]({"clipboard_history": check.get_active()}))), False, False, 0)
+            card.pack_start(button("Apagar histórico", lambda: self.action(lambda: command(["/usr/bin/cliphist", "wipe"]))), False, False, 0)
+            card.pack_start(button("Abrir histórico", lambda: self.launch([str(TOOLS / "apx-clipboard-menu-v1")])), False, False, 0)
+        card.pack_start(label("O histórico fica separado por Environment e está desligado por defeito.", "secondary"), False, False, 0)
+        card = self.card(box, "Documentos recentes")
+        def clear_recent():
+            path = HOME / ".local/share/recently-used.xbel"
+            if path.is_symlink(): raise ValueError("O historial é uma ligação simbólica")
+            path.unlink(missing_ok=True)
+        card.pack_start(button("Limpar lista de recentes", lambda: self.action(clear_recent)), False, False, 0)
+        card = self.card(box, "Permissões Flatpak")
+        if Path("/usr/bin/flatpak").is_file():
+            card.pack_start(label("Consulta as permissões de câmara, som, rede e ficheiros de cada aplicação.", "secondary"), False, False, 0)
+            card.pack_start(button("Ver permissões", lambda: self.launch(["/usr/bin/kitty", "--hold", "/usr/bin/flatpak", "permissions"])), False, False, 0)
+        box.show_all()
+
+    def render_startup(self):
+        box = self.startup[1]; self.clear(box)
+        card = self.card(box, "Aplicações ao iniciar a sessão")
+        entries = PREFERENCES["autostarts"]()
+        protected = {"gnome-keyring-pkcs11.desktop", "gnome-keyring-secrets.desktop", "polkit-gnome-authentication-agent-1.desktop"}
+        for identity, entry in entries.items():
+            check = self.check(card, entry["name"], entry["enabled"])
+            if identity in protected or any(word in identity for word in ["portal", "polkit", "keyring"]):
+                check.set_sensitive(False)
+            else:
+                check.connect("toggled", lambda widget, key=identity: self.action(lambda: PREFERENCES["set_autostart"](key, widget.get_active())))
+        apps = {app.get_id(): app for app in Gio.AppInfo.get_all() if app.get_id() and app.should_show()}
+        options = [(key, app.get_display_name()) for key, app in sorted(apps.items(), key=lambda item: item[1].get_display_name().casefold())]
+        if options:
+            choice = self.choice(card, "Adicionar", options, options[0][0])
+            def add():
+                app = apps[choice.get_active_id()]
+                PREFERENCES["atomic"](HOME / ".config/autostart" / app.get_id(), Path(app.get_filename()).read_text())
+                PREFERENCES["set_autostart"](app.get_id(), True)
+            card.pack_start(button("Adicionar ao arranque", lambda: self.action(add, self.render_startup)), False, False, 0)
+        card.pack_start(label("Estas escolhas aplicam-se no próximo arranque deste Environment. Os componentes essenciais mantêm o arranque próprio.", "secondary"), False, False, 0)
+        box.show_all()
+
+    def render_accessibility(self):
+        box = self.accessibility[1]; self.clear(box)
+        card = self.card(box, "Movimento")
+        reduced = self.check(card, "Reduzir animações", PREFERENCES["load"]()["reduced_motion"])
+        card.pack_start(button("Aplicar", lambda: self.action(lambda: PREFERENCES["save"]({"reduced_motion": reduced.get_active()}))), False, False, 0)
+        card = self.card(box, "Texto e contraste")
+        try: current_size = int(gtk_preferences()["font"].split()[-1])
+        except (ValueError, IndexError): current_size = 11
+        size = self.number(card, "Tamanho do texto", current_size, 8, 32)
+        contrast = self.check(card, "Contraste elevado nas aplicações GTK", gtk_preferences()["theme"] == "HighContrast")
+        card.pack_start(button("Aplicar", lambda: self.action(lambda: apply_gtk_preferences(
+            "HighContrast" if contrast.get_active() else "Adwaita-dark", gtk_preferences()["icons"], "Selawik " + str(int(size.get_value()))))), False, False, 0)
+        card.pack_start(label("O tema e o texto afetam as aplicações GTK. A escala dos monitores é configurada em Ecrãs.", "secondary"), False, False, 0)
+        box.show_all()
+
+    def render_printing(self):
+        box = self.printing[1]; self.clear(box)
+        card = self.card(box, "Impressoras e digitalização")
+        for title, executable in (("Configurar impressoras", "/usr/bin/system-config-printer"), ("Digitalizar documento", "/usr/bin/simple-scan")):
+            if Path(executable).is_file(): card.pack_start(button(title, lambda path=executable: self.launch([path])), False, False, 0)
+        if Path("/usr/bin/lpstat").is_file():
+            try: state = command(["/usr/bin/lpstat", "-p", "-d"])
+            except RuntimeError as error: state = "Nenhuma impressora disponível: " + str(error)
+            card.pack_start(label(state or "Nenhuma impressora configurada", "secondary"), False, False, 0)
+        else:
+            card.pack_start(label("O módulo de impressão não está instalado neste Environment.", "secondary"), False, False, 0)
+        box.show_all()
+
+    def on_page_changed(self, _stack, _property):
+        name = self.stack.get_visible_child_name()
+        if name in {"locale", "privacy", "startup", "accessibility", "printing"}:
+            self.action(lambda: getattr(self, "render_" + name)())
+        elif name == "audio":
+            self.render_audio()
+        elif name == "network":
+            self.render_network()
+        elif name == "bluetooth":
+            self.render_bluetooth()
+        elif name == "displays":
+            self.render_displays()
+        elif name == "input":
+            self.render_input()
+        elif name == "appearance":
+            self.render_appearance()
+        elif name == "apps":
+            self.render_apps()
+        elif name == "power":
+            self.render_power()
+        elif name == "storage":
+            self.render_storage()
+        elif name == "system":
+            self.render_system()
+
+
+if __name__ == "__main__":
+    if sys.argv[1:] == ["--self-check"]:
+        print(json.dumps({"gtk": [Gtk.get_major_version(), Gtk.get_minor_version()],
+                          "audio_helper": AUDIO.is_file(), "host_client": HOST.is_file(),
+                          "laptop_helper": LAPTOP.is_file()}))
+    elif sys.argv[1:] == ["--ui-check"]:
+        window = Settings()
+        print(json.dumps({"pages": list(window.sections),
+                          "title": window.get_title()}))
+        window.destroy()
+    else:
+        Settings().show_all()
+        Gtk.main()

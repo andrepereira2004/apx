@@ -15,7 +15,8 @@ class ControlCenterScaleTests(unittest.TestCase):
         self.assertIn("readonly property real controlCenterScale: 1", source)
         self.assertIn("forced SVG icons through an intermediate texture", source)
         self.assertIn("340 * root.controlCenterScale", source)
-        self.assertIn("((root.isHub ? 470 : 394) + (root.hasExternalDisplay ? 100 : 0)) * root.controlCenterScale", source)
+        self.assertIn("root.controlsMoreOpen ? 340 * root.controlCenterScale", source)
+        self.assertNotIn("root.hasExternalDisplay ? 100 : 0", source)
         self.assertIn("popup.menuWidth / root.controlCenterScale", source)
         self.assertIn("Math.min(popup.menuHeight, popup.height - y - 8,", source)
         self.assertIn("menuContent.implicitHeight + 20", source)
@@ -127,8 +128,8 @@ class ControlCenterScaleTests(unittest.TestCase):
         # Every instance supplies the shell palette explicitly; the extracted
         # primitive has no dependency on the root singleton's object id.
         self.assertEqual(source.count('activeSurface: "#18343e"'), 0)
-        self.assertEqual(source.count("accentColor: root.textMain"), 6)
-        self.assertEqual(source.count("textColor: root.textMain"), 6)
+        self.assertEqual(source.count("accentColor: root.textMain"), 7)
+        self.assertEqual(source.count("textColor: root.textMain"), 7)
 
         close = source.split("function closePopup()", 1)[1].split(
             "function showPopup()", 1

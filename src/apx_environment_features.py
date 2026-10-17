@@ -6,7 +6,7 @@ MODULES = (
     "system", "cli-aur", "graphical", "desktop-integration", "locale-input",
     "network", "bluetooth", "audio", "graphics", "power", "devices-storage",
     "files", "web-documents", "multimedia", "office", "communication",
-    "printing-scanning", "development", "shortcuts",
+    "printing-scanning", "development", "shortcuts", "iphone-integration",
 )
 
 DEPENDENCIES = {
@@ -22,12 +22,13 @@ DEPENDENCIES = {
     "communication": ("desktop-integration", "network", "audio", "graphics"),
     "printing-scanning": ("desktop-integration", "network", "devices-storage"),
     "development": ("cli-aur",), "shortcuts": ("graphical",),
+    "iphone-integration": ("desktop-integration", "network"),
 }
 
 PRESETS = {
     "basic": ("system", "cli-aur"),
-    "intermediate": tuple(module for module in MODULES if module not in {"office", "development"}),
-    "complete": MODULES,
+    "intermediate": tuple(module for module in MODULES if module not in {"office", "development", "iphone-integration"}),
+    "complete": tuple(module for module in MODULES if module != "iphone-integration"),
 }
 
 # The admitted graphical release owns the open-source base. Its NVIDIA
@@ -37,32 +38,35 @@ PACKAGES = {
     "system": ("xfce4-taskmanager",),
     "graphics": ("egl-gbm", "egl-wayland", "egl-wayland2", "egl-x11"),
     "audio": ("pipewire-alsa", "pavucontrol"),
-    "locale-input": ("noto-fonts-emoji", "ttf-liberation", "enchant"),
-    "desktop-integration": ("cliphist",),
+    "locale-input": ("noto-fonts-emoji", "ttf-liberation", "enchant", "otf-font-awesome"),
+    "desktop-integration": ("cliphist", "man-pages", "qt5-wayland"),
     "files": (
         "7zip", "catfish", "ffmpegthumbnailer", "papirus-icon-theme",
-        "poppler-glib", "thunar-archive-plugin", "unrar", "unzip", "xarchiver", "zip",
+        "poppler-glib", "rsync", "thunar-archive-plugin", "unrar", "unzip", "xarchiver", "zip",
     ),
     "web-documents": ("evince",),
-    "multimedia": ("ffmpeg", "gst-libav", "gst-plugins-good", "mpv"),
-    "office": ("hunspell-en_gb", "libreoffice-fresh"),
+    "multimedia": ("ffmpeg", "gst-libav", "gst-plugins-good", "gst-plugins-ugly", "mpv"),
+    # ArtCraft binaries are admitted through pinned local artifacts.
+    "office": (),
     "communication": ("v4l-utils",),
     "printing-scanning": ("cups", "sane", "sane-airscan", "simple-scan", "system-config-printer"),
     "development": ("cmake", "ninja", "nodejs", "npm", "podman", "python-pip", "rust"),
+    "iphone-integration": ("libayatana-appindicator", "libayatana-indicator", "ayatana-ido"),
 }
 
 # Reviewed native packages that are not available from the official Arch
 # repositories. The runtime resolves these names through the Host-owned,
 # digest-pinned artifact manifest before invoking pacman -U.
-LOCAL_PACKAGES = {"system": ("brave-bin",), "graphics": ("nvidia-utils",)}
+LOCAL_PACKAGES = {"system": ("brave-bin",), "graphics": ("nvidia-utils",), "office": ("gridcraft", "wordcraft", "deckcraft"), "iphone-integration": ("localsend-bin",)}
 
 ESTIMATED_MIB = {
     "system": 420, "cli-aur": 260, "graphical": 520,
     "desktop-integration": 170, "locale-input": 190, "network": 70,
     "bluetooth": 35, "audio": 125, "graphics": 390, "power": 30,
     "devices-storage": 120, "files": 115, "web-documents": 360,
-    "multimedia": 240, "office": 620, "communication": 55,
+    "multimedia": 240, "office": 220, "communication": 55,
     "printing-scanning": 145, "development": 1150, "shortcuts": 8,
+    "iphone-integration": 90,
 }
 
 

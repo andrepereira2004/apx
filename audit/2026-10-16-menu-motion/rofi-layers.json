@@ -1,0 +1,73 @@
+{
+"eDP-1": {
+    "levels": {
+
+        "0": [
+                {
+                    "address": "0x565260149830",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 439
+                }
+        ],
+        "1": [
+],
+        "2": [
+                {
+                    "address": "0x56525fd46b00",
+                    "x": 8,
+                    "y": 0,
+                    "w": 1264,
+                    "h": 46,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 439
+                },                {
+                    "address": "0x56525fd4ab50",
+                    "x": 0,
+                    "y": 46,
+                    "w": 1280,
+                    "h": 674,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 439
+                },                {
+                    "address": "0x56525fd4cf20",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 439
+                }
+        ],
+        "3": [
+                {
+                    "address": "0x56525fd4f280",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 439
+                },                {
+                    "address": "0x56525fb6e450",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "alpha": 1,
+                    "namespace": "quickshell",
+                    "pid": 439
+                }
+        ]
+    }
+}
+}
+

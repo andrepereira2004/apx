@@ -9,3 +9,4 @@ Icon=minecraft-launcher
 Terminal=false
 Categories=Game;Application;
 StartupNotify=true
+StartupWMClass=Minecraft Launcher

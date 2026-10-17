@@ -299,9 +299,31 @@ class OfficialHubGraphicalTests(unittest.TestCase):
             "resolve_camera_device", 'Path("/dev").glob("video*")',
             'r"/dev/video[0-9]+"', "os.major(camera_metadata.st_rdev) != 81",
             "validate_devices(inputs, audio, graphics, camera)",
-            "camera,\n        *EXTRA_DEVICE_NODES",
+            "*((camera,) if camera is not None else ())",
         ):
             self.assertIn(required, source)
+
+    def test_missing_camera_does_not_block_desktop(self):
+        subject = load_launcher()
+        with mock.patch.object(subject.Path, "glob", return_value=[]):
+            self.assertIsNone(subject.resolve_camera_device())
+
+    def test_camera_identity_remains_exact_and_ambiguity_leases_nothing(self):
+        subject = load_launcher()
+        for nodes, admitted in ((["/dev/video7"], "/dev/video7"),
+                                (["/dev/video7", "/dev/video8"], None)):
+            def query(arguments, check):
+                node = arguments[-1].split("=", 1)[1]
+                properties = {**subject.CAMERA_IDENTITY, "DEVNAME": node}
+                return SimpleNamespace(returncode=0, stdout="\n".join(
+                    f"{key}={value}" for key, value in properties.items()))
+            with mock.patch.object(subject.Path, "glob", return_value=list(map(Path, nodes))), \
+                    mock.patch.object(subject, "run", side_effect=query):
+                self.assertEqual(subject.resolve_camera_device(), admitted)
+        with mock.patch.object(subject.Path, "glob", return_value=[Path("/dev/video7")]), \
+                mock.patch.object(subject, "run", return_value=SimpleNamespace(
+                    returncode=0, stdout="DEVNAME=/dev/video7\nID_VENDOR_ID=ffff")):
+            self.assertIsNone(subject.resolve_camera_device())
 
     def test_audio_master_is_initialized_before_device_lease(self) -> None:
         source = LAUNCHER.read_text()

@@ -1,0 +1,5 @@
+[/dev/mapper/cryptroot].write_io_errs    0
+[/dev/mapper/cryptroot].read_io_errs     0
+[/dev/mapper/cryptroot].flush_io_errs    0
+[/dev/mapper/cryptroot].corruption_errs  79
+[/dev/mapper/cryptroot].generation_errs  0

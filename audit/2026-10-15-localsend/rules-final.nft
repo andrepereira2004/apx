@@ -1,0 +1,26 @@
+table inet apx_ge9b0898_egress_v1 {
+	chain host_input {
+		type filter hook input priority filter - 5; policy accept;
+		iifname "ve-apx-ge9b0898" udp dport 67 accept
+		iifname "ve-apx-ge9b0898" drop
+	}
+
+	chain environment_forward {
+		type filter hook forward priority filter - 5; policy accept;
+		jump localsend_peer_forward comment "APX LocalSend opt-in"
+		iifname "ve-apx-ge9b0898" ip daddr { 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12, 192.168.0.0/16 } drop
+		iifname "ve-apx-ge9b0898" oifname "ve-*" drop
+		oifname "ve-apx-ge9b0898" tcp dport 53317 drop comment "APX LocalSend receive guard"
+	}
+
+	chain localsend_peer_forward {
+		iifname "ve-apx-ge9b0898" oifname "wlan0" ip daddr 192.168.1.100 tcp dport 53317 accept
+		iifname "ve-apx-ge9b0898" oifname "wlan0" ip daddr 192.168.1.100 tcp sport 53317 ct state established accept
+		iifname "wlan0" oifname "ve-apx-ge9b0898" ip saddr 192.168.1.100 tcp dport 53317 accept
+	}
+
+	chain localsend_prerouting {
+		type nat hook prerouting priority dstnat - 5; policy accept;
+		iifname "wlan0" ip saddr 192.168.1.100 ip daddr 192.168.1.106 tcp dport 53317 dnat ip to 192.168.21.202:53317
+	}
+}

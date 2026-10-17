@@ -28,10 +28,13 @@ class WorkDefaultsTests(unittest.TestCase):
 
     def test_environment_visual_profile_is_the_capability_aware_hub_shell(self) -> None:
         source = (SHELL / "quickshell/apx/shell.qml").read_text()
-        for expected in ("#55e6ff", "#246879", "Selawik", "environmentIdentity.role"):
+        for expected in ("#55e6ff", "#246879", "Appearance.fontFamily", "environmentIdentity.role"):
             self.assertIn(expected, source)
-        self.assertIn('label: "[ " + root.environmentLabel + " ]"', source)
-        self.assertIn('text: "Encerrar"', source)
+        appearance = (SHELL / "quickshell/apx/Appearance.qml").read_text()
+        self.assertIn('readonly property string fontFamily: "JetBrains Mono"', appearance)
+        self.assertIn("label: root.environmentLabel", source)
+        self.assertIn('iconName: "monitor"', source)
+        self.assertIn('caption: "Desligar"', (SHELL / "quickshell/apx/ControlDashboard.qml").read_text())
 
     def test_work_shortcuts_are_local_and_keep_an_emergency_exit(self) -> None:
         source = (SHELL / "hypr/hyprland.lua").read_text()
@@ -71,7 +74,7 @@ class WorkDefaultsTests(unittest.TestCase):
         for app_name in ("kitty", "Alacritty", "alacritty"):
             self.assertIn(f"[app-name={app_name}]", mako)
         self.assertEqual(mako.count("default-timeout=8000"), 3)
-        self.assertEqual(mako.count("ignore-timeout=1"), 3)
+        self.assertEqual(mako.split('[app-name="APX Browser"]', 1)[0].count("ignore-timeout=1"), 3)
 
     def test_terminal_notification_deploy_keeps_shell_launcher_executable(self) -> None:
         deploy = (
@@ -110,64 +113,19 @@ class WorkDefaultsTests(unittest.TestCase):
         self.assertNotIn("force_default_wallpaper = -1", lua + fallback)
         self.assertNotIn("disable_hyprland_logo   = false", lua)
 
-    def test_control_centre_uses_text_instead_of_icons(self) -> None:
+    def test_compact_controls_keep_accessible_actions_and_local_files(self) -> None:
         source = (SHELL / "quickshell/apx/shell.qml").read_text()
-        # The sole remaining ControlIcon instance belongs to the separate Fn
-        # OSD; the control-centre cards contain text only.
-        self.assertEqual(source.count("ControlIcon {"), 1)
-        self.assertNotIn("WifiSecurityIcon", source)
-        for label in ('text: "Wi-Fi"', 'text: "Bluetooth"', 'text: "Volume"',
-                      'text: "Microfone"', 'text: "Teclado"'):
-            self.assertIn(label, source)
-        controls = source.split('visible: root.popupKind === "controls"', 1)[1]
-        self.assertIn("height: visible ? 46 : 0", controls)
-        # Interactive cards share the dark menu-button palette. Microphone and
-        # keyboard retain state through distinct surfaces.
-        for palette_entry in (
-            'controlButtonSurface: "#191d22"',
-            'controlButtonHover: "#272c33"',
-            'controlButtonActive: "#30353b"',
-            'controlButtonOutline: "#343a41"',
-        ):
-            self.assertIn(palette_entry, source)
-        for state_color in (
-            'microphoneState <= 0 ? root.controlButtonSurface : (microphoneState === 1 ? "#3b4850" : "#b8d8dc")',
-            'lightState === 0 ? root.controlButtonSurface : (lightState === 1 ? "#3b4850" : "#b8d8dc")',
-        ):
-            self.assertIn(state_color, source)
-        brightness_card = source.split('text: "Brilho do ecrã"', 1)[0].rsplit(
-            "Rectangle {", 1
-        )[1]
-        self.assertIn("color: root.controlButtonSurface", brightness_card)
-        self.assertIn("border.color: root.controlButtonOutline", brightness_card)
-        for removed_state_color in (
-            'root.wifiDisplayActive() ? "#173f49" : "#182731"',
-            'root.bluetoothDisplayPowered() ? "#173f49" : "#182731"',
-            'root.volumeMuted ? "#182731"',
-            'root.volumeValue < 50 ? "#17313a"',
-            'root.displayBrightness < 34 ? "#182731"',
-            'keyboardBrightnessSummaryMouse.containsMouse ? "#20323c"',
-            'microphoneSummaryMouse.containsMouse ? "#20323c"',
-        ):
-            self.assertNotIn(removed_state_color, source)
-        for forbidden in (
-            "wifiPowerButton", "bluetoothPowerButton", "volumeMuteSummaryButton",
-            "microphoneMuteSummaryButton", 'text: root.wifiDisplayActive() ? "ON" : "OFF"',
-            'text: root.bluetoothDisplayPowered() ? "ON" : "OFF"',
-            'text: root.volumeMuted ? "OFF" : "ON"',
-            'text: root.microphoneMuted ? "OFF" : "ON"',
-            "keyboardBrightnessSummaryButton", "LUZ OFF", "LUZ MÉD", "LUZ MAX",
-        ):
-            self.assertNotIn(forbidden, source)
-        actions = source.split('text: "Ações da sessão"', 1)[1]
-        before_actions = source.split('text: "Ações da sessão"', 1)[0]
-        self.assertIn("width: parent.width; height: visible ? 9 : 0", before_actions[-400:])
-        self.assertIn("height: visible ? 85 : 0", actions)
-        self.assertGreaterEqual(actions.count("height: 40; radius: 10"), 4)
-        self.assertGreaterEqual(actions.count("border.width: 1; border.color:"), 4)
-        self.assertLess(actions.index('text: "Bloquear"'), actions.index('id: updateMouse'))
-        self.assertLess(actions.index('id: rebootMouse'), actions.index('id: updateMouse'))
-        self.assertLess(actions.index('id: updateMouse'), actions.index('id: poweroffMouse'))
+        dashboard = (SHELL / "quickshell/apx/ControlDashboard.qml").read_text()
+        tile = (SHELL / "quickshell/apx/ControlTile.qml").read_text()
+        self.assertIn("ControlDashboard {", source)
+        self.assertIn("Accessible.name: caption", tile)
+        for section in ("wifi", "bluetooth", "audio", "microphone"):
+            self.assertIn('openControlSection("' + section + '")', dashboard)
+        for action in ("lock", "reboot", "update", "poweroff"):
+            self.assertIn('runControlAction("' + action + '")', dashboard)
+        self.assertIn('kind: "notifications"; embedded: true', dashboard)
+        self.assertNotIn('kind: "media"', dashboard)
+        self.assertIn('id: mediaPanel; width: parent.width; kind: "media"', source)
         self.assertIn("function openFiles(): void", source)
         self.assertIn("if (!fileShortcutProcess.running)", source)
         self.assertNotIn("if (!root.isHub && !environmentFilesProcess.running)", source)
@@ -199,11 +157,12 @@ class WorkDefaultsTests(unittest.TestCase):
         self.assertNotIn("sufficient      pam_howdy.so", pam)
         self.assertIn("pam_howdy runs first", lock)
 
-    def test_bar_matches_window_horizontal_margins(self) -> None:
+    def test_bar_uses_floating_pills_with_inset_edges(self) -> None:
         source = (SHELL / "quickshell/apx/shell.qml").read_text()
         bar = source.split("id: bar", 1)[1].split("id: hotkeyOsdWindow", 1)[0]
         self.assertIn("anchors { top: true; left: true; right: true }", bar)
-        self.assertIn("margins { left: 19; right: 19 }", bar)
+        self.assertIn("margins { left: 8; right: 8 }", bar)
+        self.assertIn('color: "transparent"', bar)
         self.assertIn("anchors.left: parent.left\n                anchors.leftMargin: 2", bar)
         self.assertIn("anchors.right: parent.right\n                anchors.rightMargin: 2", bar)
 

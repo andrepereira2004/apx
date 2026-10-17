@@ -250,7 +250,7 @@ class NativeWindowsStorageV1Tests(unittest.TestCase):
 
         policy = json.loads(WINDOWS_POLICY.read_text())
         self.assertEqual(policy["profile"], "apx-native-windows-policy-v1")
-        self.assertEqual(policy["size_choices_gib"], [80, 120, 160])
+        self.assertEqual(policy["size_choices_gib"], [120, 180, 250])
         self.assertEqual(policy["default_size_gib"], 120)
         self.assertEqual(policy["minimum_apx_size_gib"], 256)
         self.assertEqual(policy["max_instances"], 1)
@@ -260,7 +260,7 @@ class NativeWindowsStorageV1Tests(unittest.TestCase):
         source = LIFECYCLE_INITRD.read_text()
         self.assertIn("apx.native_windows_action=", source)
         self.assertIn("apx.native_windows_size_gib=", source)
-        self.assertIn("case \"$size_gib\" in 80|120|160)", source)
+        self.assertIn("case \"$size_gib\" in 80|120|160|170|180|250)", source)
         self.assertIn("target_btrfs_bytes", source)
         self.assertIn('btrfs filesystem resize "1:$target_btrfs_bytes"', source)
         self.assertLess(source.index("shrink-btrfs"), source.index("shrink-gpt"))

@@ -35,6 +35,17 @@ class NativeBootTests(unittest.TestCase):
         for changed in [output.replace('HD(6,','HD(1,'),output.replace('BootOrder: 0005,','BootOrder: 0007,'),output.replace('BootOrder: 0005,0006,0007','BootOrder: 0005,0006'),output+'BootNext: 0006\n',output.replace('555555555555','666666666666')]:
             with self.assertRaises(ValueError):module.validate_firmware(changed,record,6)
 
+    def test_removable_fallback_before_linux_is_allowed_but_disk_is_rejected(self):
+        record = dict(linux_boot_entry='0005', esp_partuuid='11111111-2222-4333-8444-555555555555',
+                      efi_path='/EFI/Microsoft/Boot/bootmgfw.efi')
+        firmware = ('BootCurrent: 0005\nBootOrder: 2001,0005,0006\n'
+                    'Boot2001* EFI USB Device\tRC\n'
+                    'Boot0006* Windows HD(1,GPT,11111111-2222-4333-8444-555555555555,0,1)/File(\\EFI\\Microsoft\\Boot\\bootmgfw.efi)\n')
+        self.assertEqual(module.validate_firmware(firmware, record, 1), '0006')
+        for replacement in ['Windows Boot Manager', 'EFI Hard Drive', 'Unknown']:
+            with self.assertRaises(ValueError):
+                module.validate_firmware(firmware.replace('EFI USB Device', replacement), record, 1)
+
     def test_two_windows_entries_select_their_own_efi_partitions(self):
         old = dict(linux_boot_entry='0005', windows_boot_entry='0006',
                    esp_partuuid='11111111-2222-4333-8444-555555555555',

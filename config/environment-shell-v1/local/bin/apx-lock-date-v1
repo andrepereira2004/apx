@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+"""Portuguese lock date, independent of installed locale packages."""
+from datetime import datetime
+now = datetime.now()
+week = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
+months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+print(f"{week[now.weekday()]} · {now.day} {months[now.month-1]} {now.year}")

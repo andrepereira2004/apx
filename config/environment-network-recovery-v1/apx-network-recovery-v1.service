@@ -1,0 +1,12 @@
+[Unit]
+Description=Recover failed APX virtual network links
+After=systemd-networkd.service
+ConditionPathExists=/usr/lib/apx/apx-network-recovery-v1.py
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/lib/apx/apx-network-recovery-v1.py
+TimeoutStartSec=90
+RuntimeDirectory=apx-network-recovery-v1
+RuntimeDirectoryPreserve=yes
+UMask=0077

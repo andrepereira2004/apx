@@ -151,7 +151,7 @@ def storage_status() -> dict[str, object]:
         windows = trusted_json(NATIVE_WINDOWS, 4096, 0o400)
         size = windows.get("requested_size_gib")
         expected_reserved = (1000215183 - ((1000215183 - size * 2097152) // 2048 * 2048)) * 512 \
-            if size in {80, 120, 160} else -1
+            if size in {80, 120, 160, 170, 180, 250} else -1
         if (windows.get("schema"), windows.get("profile"), windows.get("name"),
                 windows.get("state")) == (2, "apx-native-environment-v2", "windows", "ready") \
                 and windows.get("reserved_bytes") == expected_reserved:

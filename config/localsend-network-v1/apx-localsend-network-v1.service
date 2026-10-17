@@ -1,0 +1,17 @@
+[Unit]
+Description=APX single-peer LocalSend network opt-in
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/apx/apx-localsend-network-v1.py --watch
+ExecStopPost=/usr/lib/apx/apx-localsend-network-v1.py --revoke
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=45
+KillMode=mixed
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
+

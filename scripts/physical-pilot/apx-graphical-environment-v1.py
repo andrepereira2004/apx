@@ -386,6 +386,10 @@ def configure(engine, name: str) -> dict[str, object]:
         while time.monotonic() < deadline:
             if len(process_pids(expected)) == 1:
                 return expected.decode()
+            # The normal session authenticates before starting its shell.
+            # Do not tear down or bootstrap the desktop over a healthy login.
+            if len(process_pids(b"hyprlock")) == 1:
+                return "login-lock"
             if expected == b"quickshell" and not bootstrap_attempted \
                     and time.monotonic() >= bootstrap_after:
                 bootstrap_attempted = True

@@ -53,16 +53,67 @@ def ui() -> int:
     print("\n", result["message"]); input("\nEnter para fechar..."); return 0
 
 
+def explain_blockers(blockers):
+    for blocker in blockers:
+        if blocker == "host-reserve-unavailable":
+            print("Espaço insuficiente: o APX exige pelo menos 96 GiB livres para preservar a reserva e as cópias de segurança.")
+        elif blocker.startswith(("environment-state:", "environment-running:")):
+            print("Fecha o Environment antes de atualizar: " + blocker.split(":", 1)[1])
+        else:
+            print("Bloqueio: " + blocker)
+
+
+def authorize_update():
+    print("\nAutorizar atualização: Enter para reconhecimento facial ou introduz a tua palavra-passe.", flush=True)
+    result = subprocess.run(["/usr/bin/sudo", "-k", "-p",
+                             "Enter para usar a cara / palavra-passe: ", "/usr/bin/true"])
+    if result.returncode:
+        print("Autorização recusada ou cancelada. Nenhuma atualização foi iniciada.", flush=True)
+        return False
+    return True
+
+
+def full_ui():
+    print("\nAPX — Atualizar tudo: Arch Linux, kernel, drivers e aplicações.", flush=True)
+    environment_plan = exchange("environments.preview", {})
+    host_plan = exchange("preview", {})
+    print("Environments: " + ", ".join(t["name"] for t in environment_plan["targets"]))
+    if host_plan["excluded_environments"]:
+        print("A atualização completa requer incluir estes Environments na política: " + ", ".join(host_plan["excluded_environments"]))
+        return 2
+    blockers = list(dict.fromkeys(environment_plan["blockers"] + host_plan["blockers"]))
+    if blockers:
+        explain_blockers(blockers)
+        return 2
+    print("Cada sistema terá uma cópia de segurança. A etapa final fecha o Hub para atualizar o Host e alinhar os drivers.")
+    print("O reinício fica à tua decisão. Aplicações com atualizador próprio são atualizadas nesse programa.")
+    if not authorize_update():
+        return 1
+    code = environments_ui()
+    if code:
+        return code
+    # Revalidate after application updates; never reuse a stale approval digest.
+    plan = exchange("preview", {})
+    if plan["blockers"] or plan["excluded_environments"]:
+        explain_blockers(plan["blockers"])
+        print("A etapa do Host ficou pendente: o plano mudou. Abre Atualizar para verificar.")
+        return 2
+    result = exchange("apply", {"plan_digest": plan["plan_digest"], "confirmation": "CONFIRMAR"})
+    print(result["message"], flush=True)
+    print("A atualização completa ainda está em curso no Host. O resultado ficará disponível ao voltar ao Hub.", flush=True)
+    return 0
+
+
 def environments_ui() -> int:
     current = exchange("environments.status", {})
     if current.get("state") not in ("queued", "running", "awaiting-hub"):
         plan = exchange("environments.preview", {})
         print("\nAtualizar todos os Environments: " + ", ".join(item["name"] for item in plan["targets"]), flush=True)
         if plan["blockers"]:
-            print("Não é possível atualizar: " + ", ".join(plan["blockers"])); return 2
+            explain_blockers(plan["blockers"]); return 2
         print("Serão atualizados o sistema, as aplicações AUR e os Flatpaks de cada Environment.")
         print("Os outros Environments são atualizados primeiro; o Hub fica para o fim.")
-        print("Cada Environment terá uma cópia de segurança. O Host não é atualizado.")
+        print("Cada Environment terá uma cópia de segurança. Depois segue a etapa do Host.")
         current = exchange("environments.apply", {"plan_digest": plan["plan_digest"], "confirmation": "CONFIRMAR"})
     operation_id = current["operation"]
     last = None
@@ -90,7 +141,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("mode", choices=("preview", "status", "include", "exclude", "ui", "environments-ui")); parser.add_argument("environment", nargs="?")
     args = parser.parse_args()
     if args.mode == "environments-ui":
-        try: return environments_ui()
+        try: return full_ui()
         finally:
             try: input("\nEnter para fechar…")
             except (EOFError, KeyboardInterrupt): pass

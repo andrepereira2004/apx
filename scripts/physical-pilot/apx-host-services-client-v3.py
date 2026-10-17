@@ -17,7 +17,14 @@ def exchange(operation: str, payload: dict[str, object]) -> dict[str, object]:
     request = request_bytes(operation, payload)
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
         connection.settimeout(75 if operation == "network.connect" else 35)
-        connection.connect(SOCKET); connection.sendall(request)
+        try:
+            connection.connect(SOCKET)
+        except ConnectionRefusedError:
+            # A running user namespace can retain a locked bind of the old
+            # socket inode after a bounded Host broker upgrade. Only the Host
+            # provides this replacement endpoint in its root-owned /run/apx.
+            connection.connect("/run/apx/host-services-v3-refresh.sock")
+        connection.sendall(request)
         data = bytearray()
         while b"\n" not in data and len(data) <= MAX_MESSAGE_BYTES:
             chunk = connection.recv(min(4096, MAX_MESSAGE_BYTES + 1 - len(data)))
@@ -36,8 +43,8 @@ def main() -> int:
                                                "bluetooth-remove", "bluetooth-scan", "bluetooth-status",
                                                "capabilities", "events", "snapshot", "wifi-connect",
                                                "wifi-connectivity-check", "wifi-disconnect", "wifi-forget",
-                                               "wifi-portal-open", "wifi-scan", "wifi-status", "radio-status",
-                                               "calendar-load", "calendar-save"))
+                                               "wifi-portal-open", "wifi-scan", "wifi-status", "radio-status", "radio-airplane",
+                                               "calendar-load", "calendar-save", "appearance-load", "appearance-save"))
     parser.add_argument("target", nargs="?")
     parser.add_argument("--credential-stdin", action="store_true",
                         help="read one passphrase from stdin; never pass it as an argument")
@@ -54,8 +61,9 @@ def main() -> int:
                "wifi-connect": "network.connect", "wifi-disconnect": "network.disconnect",
                "wifi-connectivity-check": "network.connectivity-check", "wifi-forget": "network.forget",
                "wifi-portal-open": "network.portal.open", "wifi-scan": "network.scan",
-               "wifi-status": "network.status", "radio-status": "radio.status",
-               "calendar-load": "calendar.load", "calendar-save": "calendar.save"}
+               "wifi-status": "network.status", "radio-status": "radio.status", "radio-airplane": "radio.airplane",
+               "calendar-load": "calendar.load", "calendar-save": "calendar.save",
+               "appearance-load": "appearance.load", "appearance-save": "appearance.save"}
     payload: dict[str, object] = {}
     if arguments.operation in {"bluetooth-connect", "bluetooth-disconnect", "bluetooth-pair", "bluetooth-remove"}:
         if arguments.target is None: parser.error("this operation requires a Bluetooth address")
@@ -87,6 +95,12 @@ def main() -> int:
             credential = json.loads(sys.stdin.readline())
         payload["credential"] = credential
     if arguments.operation == "events": payload = {"after": 0, "timeout_ms": 25000}
+    if arguments.operation == "radio-airplane":
+        if arguments.target not in {"on", "off"}: parser.error("airplane mode requires on or off")
+        payload = {"enabled": arguments.target == "on"}
+    if arguments.operation == "appearance-save":
+        if arguments.target is None: parser.error("appearance-save requires a JSON style")
+        payload = json.loads(arguments.target)
     if arguments.operation == "calendar-save":
         if arguments.target is None: parser.error("calendar-save requires a JSON payload")
         try: payload = json.loads(arguments.target)

@@ -113,6 +113,8 @@ start_desktop_service '[/]apx-notification-focus-v1([[:space:]]|$)' \
 start_desktop_service '^/usr/lib/hyprpolkitagent/hyprpolkitagent' \
     /usr/lib/hyprpolkitagent/hyprpolkitagent
 start_desktop_service '^/usr/bin/udiskie([[:space:]]|$)' /usr/bin/udiskie --automount --no-tray
+start_desktop_service '[/]apx-removable-bookmark-v1([[:space:]]|$)' \
+    /home/apx/.local/bin/apx-removable-bookmark-v1 --watch
 
 # User-selected startup applications and optional clipboard history.
 if [[ -x /home/apx/.local/bin/apx-desktop-preferences-v1 ]]; then

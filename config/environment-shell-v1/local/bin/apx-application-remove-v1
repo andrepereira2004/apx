@@ -2,10 +2,25 @@
 set -euo pipefail
 
 [[ $# -eq 1 && "$1" == *.desktop ]] || { printf 'Selecione uma aplicação .desktop.\n' >&2; exit 2; }
-desktop=$(realpath -e -- "$1")
+# Preserve the exported path: Flatpak desktop entries are symlinks into app/.
+# Resolve separately to check existence without losing the installation scope.
+desktop=$(realpath -ms -- "$1")
+resolved=$(realpath -e -- "$desktop")
 case "$desktop" in
   /usr/share/applications/*.desktop|/var/lib/flatpak/exports/share/applications/*.desktop|"${HOME}"/.local/share/flatpak/exports/share/applications/*.desktop|"${HOME}"/.local/share/applications/*.desktop) ;;
   *) printf 'A aplicação não pertence a este Environment.\n' >&2; exit 3 ;;
+esac
+
+# Export links must resolve inside this installation, never to another root.
+case "$desktop" in
+  /var/lib/flatpak/exports/share/applications/*.desktop)
+    case "$resolved" in /var/lib/flatpak/app/*/export/share/applications/*.desktop) ;;
+      *) printf 'Destino Flatpak inválido.\n' >&2; exit 3 ;; esac ;;
+  "${HOME}"/.local/share/flatpak/exports/share/applications/*.desktop)
+    case "$resolved" in "${HOME}"/.local/share/flatpak/app/*/export/share/applications/*.desktop) ;;
+      *) printf 'Destino Flatpak inválido.\n' >&2; exit 3 ;; esac ;;
+  *)
+    [[ "$resolved" == "$desktop" ]] || { printf 'Atalho simbólico não suportado para esta aplicação.\n' >&2; exit 3; } ;;
 esac
 
 printf 'Desinstalar: %s\n\n' "$(basename "$desktop" .desktop)"

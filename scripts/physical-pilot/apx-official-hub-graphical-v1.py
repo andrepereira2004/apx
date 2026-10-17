@@ -269,7 +269,7 @@ def resolve_audio_devices() -> dict[str, str]:
     }
 
 
-def resolve_camera_device() -> str:
+def resolve_camera_device() -> str | None:
     matches: list[str] = []
     for node in sorted(Path("/dev").glob("video*")):
         if re.fullmatch(r"/dev/video[0-9]+", str(node)) is None:
@@ -283,9 +283,11 @@ def resolve_camera_device() -> str:
         ):
             matches.append(str(node))
     if len(matches) != 1:
-        raise OfficialHubGraphicalError(
-            "the admitted internal camera capture identity is absent or ambiguous"
-        )
+        # A privacy switch/disconnected camera must not prevent desktop or
+        # Hub recovery. Never lease an arbitrary or ambiguous replacement.
+        print("APX: internal camera unavailable; facial authentication unavailable, use password.",
+              file=os.sys.stderr, flush=True)
+        return None
     return matches[0]
 
 
@@ -709,7 +711,7 @@ def resolve_graphics() -> dict[str, str]:
 
 
 def validate_devices(
-    inputs: dict[str, str], audio: dict[str, str], graphics: dict[str, str], camera: str,
+    inputs: dict[str, str], audio: dict[str, str], graphics: dict[str, str], camera: str | None,
 ) -> None:
     expected = {Path("/dev/tty2"): (4, 2)}
     for path, device in expected.items():
@@ -734,11 +736,12 @@ def validate_devices(
         metadata = os.stat(node)
         if not stat.S_ISCHR(metadata.st_mode) or os.major(metadata.st_rdev) != 116:
             raise OfficialHubGraphicalError("resolved audio node is not an ALSA character device")
-    camera_metadata = os.stat(camera)
-    if re.fullmatch(r"/dev/video[0-9]+", camera) is None \
-            or not stat.S_ISCHR(camera_metadata.st_mode) \
-            or os.major(camera_metadata.st_rdev) != 81:
-        raise OfficialHubGraphicalError("resolved camera node is not a V4L character device")
+    if camera is not None:
+        camera_metadata = os.stat(camera)
+        if re.fullmatch(r"/dev/video[0-9]+", camera) is None \
+                or not stat.S_ISCHR(camera_metadata.st_mode) \
+                or os.major(camera_metadata.st_rdev) != 81:
+            raise OfficialHubGraphicalError("resolved camera node is not a V4L character device")
     if graphics.get("policy") not in {"hybrid", "nvidia", "vfio-guest"} \
             or not re.fullmatch(r"/dev/dri/card[0-9]+", graphics.get("display_card", "")) \
             or not re.fullmatch(r"/dev/dri/renderD[0-9]+", graphics.get("display_render", "")):
@@ -1714,7 +1717,7 @@ def _launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, o
         *((graphics["nvidia_device"], graphics["nvidia_control"], graphics["nvidia_modeset"],
            graphics["nvidia_uvm"], graphics["nvidia_uvm_tools"])
           if not VFIO_GUEST_MODE else ()),
-        camera,
+        *((camera,) if camera is not None else ()),
         *EXTRA_DEVICE_NODES,
         "/dev/tty2",
     )))

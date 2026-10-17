@@ -2,145 +2,67 @@ import QtQuick
 
 Rectangle {
     id: button
-
+    property bool grouped: false
     property string label: ""
+    property string iconName: ""
+    property int iconSize: 17
+    property string alternateIconName: iconName
     property bool compactSymbol: false
-    readonly property int labelPixelSize: 14
-    property string alternateLabel: ""
+    readonly property int labelPixelSize: 13
+    property string alternateLabel: label
+    property string accessibleLabel: label
     property bool alternateActive: false
     property bool animateActivation: false
     property bool animateDeactivation: false
-    property color activeSurface
-    property color hoverBorderColor: "#879196"
-    property color accentColor
-    property color textColor
+    property color activeSurface: "#da3a4055"
+    property color hoverBorderColor: "#69728a"
+    property color accentColor: "#f0f0fa"
+    property color textColor: "#c8ccdc"
     property int activeBorderWidth: 1
-    // The popup owns pointer input while open and forwards its bar hit test.
     property var hoverOverride: null
     readonly property bool visuallyActive: (hoverOverride === null ? pointer.containsMouse : hoverOverride) || alternateActive
-
     signal activated()
 
-    implicitWidth: button.compactSymbol ? 44 : Math.ceil(Math.max(buttonText.implicitWidth, alternateButtonText.implicitWidth)) + 24
-    implicitHeight: 32
-    scale: pointer.pressed || button.animateActivation || button.animateDeactivation ? 0.96 : 1
-    radius: 7
-    color: visuallyActive ? activeSurface : "transparent"
-    border.width: visuallyActive ? button.activeBorderWidth : 0
-    border.color: alternateActive ? accentColor : hoverBorderColor
+    implicitWidth: Math.max(36, Math.ceil(Math.max(normalContent.implicitWidth, activeContent.implicitWidth)) + 24)
+    implicitHeight: Math.max(32, iconSize + 6)
+    scale: pointer.pressed || animateActivation || animateDeactivation ? 0.96 : 1
+    radius: 16
+    color: visuallyActive ? activeSurface : (grouped ? "transparent" : (Appearance.tintButtons ? Appearance.barSurface : "#ed101117"))
+    border.width: visuallyActive ? activeBorderWidth : (grouped ? 0 : 1)
+    border.color: visuallyActive ? (alternateActive ? accentColor : hoverBorderColor) : "#304f566c"
+    Accessible.role: Accessible.Button
+    Accessible.name: accessibleLabel
+    Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+    Behavior on color { ColorAnimation { duration: 120 } }
 
-    Behavior on scale {
-        NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
-    }
-
-    Text {
-        id: buttonText
-        visible: !button.compactSymbol
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: (button.height - labelInk.tightBoundingRect.height) / 2 - labelInk.tightBoundingRect.y - baselineOffset
-        TextMetrics {
-            id: labelInk
-            font: buttonText.font
-            text: buttonText.text
-        }
+    IconLabel {
+        id: normalContent
+        anchors.centerIn: parent
         text: button.label
+        iconName: button.iconName
+        color: button.visuallyActive ? button.accentColor : button.textColor
+        pixelSize: button.labelPixelSize
+        iconSize: button.iconSize
         opacity: button.alternateActive ? 0 : 1
-        scale: button.alternateActive ? 0.94 : 1
-        color: button.visuallyActive ? button.accentColor : button.textColor
-        font.family: "Selawik"
-        font.pixelSize: button.labelPixelSize
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.3
-
-        Behavior on opacity {
-            enabled: button.animateActivation || button.animateDeactivation
-            NumberAnimation { duration: 110; easing.type: Easing.OutCubic }
-        }
-        Behavior on scale {
-            enabled: button.animateActivation || button.animateDeactivation
-            NumberAnimation { duration: 130; easing.type: Easing.OutCubic }
-        }
+        Behavior on opacity { NumberAnimation { duration: 110 } }
     }
-
-    Text {
-        id: alternateButtonText
-        visible: !button.compactSymbol
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: (button.height - alternateInk.tightBoundingRect.height) / 2 - alternateInk.tightBoundingRect.y - baselineOffset
-        TextMetrics {
-            id: alternateInk
-            font: alternateButtonText.font
-            text: alternateButtonText.text
-        }
+    IconLabel {
+        id: activeContent
+        anchors.centerIn: parent
         text: button.alternateLabel
+        iconName: button.alternateIconName
+        color: button.accentColor
+        pixelSize: button.labelPixelSize
+        iconSize: button.iconSize
         opacity: button.alternateActive ? 1 : 0
-        scale: button.alternateActive ? 1 : 0.94
-        color: button.visuallyActive ? button.accentColor : button.textColor
-        font.family: "Selawik"
-        font.pixelSize: button.labelPixelSize
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.3
-
-        Behavior on opacity {
-            enabled: button.animateActivation || button.animateDeactivation
-            NumberAnimation { duration: 110; easing.type: Easing.OutCubic }
-        }
-        Behavior on scale {
-            enabled: button.animateActivation || button.animateDeactivation
-            NumberAnimation { duration: 130; easing.type: Easing.OutCubic }
-        }
+        Behavior on opacity { NumberAnimation { duration: 110 } }
     }
-
-    // Centre the visible ink, including the pipe's descender, in equal cells.
-    // Keep the owner's literal [|] / [A] labels and their existing crossfade.
-    component SymbolLabel: Item {
-        property string glyphs
-        width: 26
-        height: 20
-        Repeater {
-            model: 3
-            delegate: Text {
-                id: glyph
-                required property int index
-                text: parent.glyphs.charAt(index)
-                font.family: "Selawik"
-                font.pixelSize: button.labelPixelSize
-                font.weight: Font.DemiBold
-                color: button.visuallyActive ? button.accentColor : button.textColor
-                x: index * 9 + (8 - ink.tightBoundingRect.width) / 2 - ink.tightBoundingRect.x
-                y: (20 - ink.tightBoundingRect.height) / 2 - ink.tightBoundingRect.y - baselineOffset
-                TextMetrics {
-                    id: ink
-                    font: glyph.font
-                    text: glyph.text
-                }
-            }
-        }
-    }
-    SymbolLabel {
-        anchors.centerIn: parent
-        visible: button.compactSymbol
-        glyphs: button.label
-        opacity: buttonText.opacity
-        scale: buttonText.scale
-    }
-    SymbolLabel {
-        anchors.centerIn: parent
-        visible: button.compactSymbol
-        glyphs: button.alternateLabel
-        opacity: alternateButtonText.opacity
-        scale: alternateButtonText.scale
-    }
-
     MouseArea {
         id: pointer
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-
-        // Finish the click on the permanently mapped bar before the menu
-        // changes keyboard focus or layer-shell input regions.
         onClicked: button.activated()
     }
 }

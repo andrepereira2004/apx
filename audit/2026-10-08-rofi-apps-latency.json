@@ -1,0 +1,31 @@
+{
+  "before_seconds": [
+    0.2437,
+    0.2424
+  ],
+  "after_seconds": [
+    0.1901,
+    0.1879,
+    0.1829,
+    0.1856
+  ],
+  "uncached_helper_seconds": 0.1159,
+  "cached_helper_seconds": [
+    0.0652,
+    0.0677
+  ],
+  "unchanged_initial_rows": "byte-identical against deployed previous helper",
+  "file_home_entries": [
+    "Desktop",
+    "Documents",
+    "Downloads",
+    "Music",
+    "Pictures",
+    "Projects",
+    "Public",
+    "Templates",
+    "Videos"
+  ],
+  "owner_prior_lazy_loading_acceptance": "much better",
+  "owner_new_shortcut_latency_acceptance": "pending"
+}

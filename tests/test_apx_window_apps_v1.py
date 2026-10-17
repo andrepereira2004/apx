@@ -20,6 +20,38 @@ def load_module():
 
 
 class WindowApplicationsTests(unittest.TestCase):
+    def test_metadata_cache_reuses_only_desktop_metadata_and_keeps_windows_live(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            desktop = root / 'example.desktop'
+            desktop.write_text('[Desktop Entry]\nType=Application\nName=Example\nExec=example\n')
+            with patch.object(module, 'SOURCES', (root,)), patch.object(module, 'CATALOG_CACHE', root / 'cache.json'), patch.object(module, 'resolve_icons'), patch.object(module.subprocess, 'check_output', return_value=b'[]'):
+                self.assertFalse(module.catalog()[0]['windows'])
+                with patch.object(module, 'desktop_metadata', side_effect=AssertionError('Unchanged entry parsed again')), patch.object(module.subprocess, 'check_output', return_value=b'[{"class":"example","address":"0xabc"}]'):
+                    self.assertEqual(module.catalog()[0]['windows'][0]['address'], '0xabc')
+                import os
+                stamp = desktop.stat()
+                desktop.write_text('[Desktop Entry]\nType=Application\nName=Updated\nExec=example\n')
+                os.utime(desktop, ns=(stamp.st_atime_ns, stamp.st_mtime_ns))
+                self.assertEqual(module.catalog()[0]['name'], 'Updated')
+                desktop.unlink()
+                self.assertEqual(module.catalog(), [])
+
+    def test_broken_or_unwritable_metadata_cache_keeps_catalog_available(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'example.desktop').write_text('[Desktop Entry]\nType=Application\nName=Example\nExec=example\n')
+            cache = root / 'cache.json'
+            cache.write_text('[]')
+            with patch.object(module, 'SOURCES', (root,)), patch.object(module, 'CATALOG_CACHE', cache), patch.object(module, 'resolve_icons'), patch.object(module.subprocess, 'check_output', return_value=b'[]'):
+                self.assertEqual(module.catalog()[0]['name'], 'Example')
+                cache.write_text('invalid JSON')
+                with patch.object(module.os, 'replace', side_effect=OSError('read-only')):
+                    self.assertEqual(module.catalog()[0]['name'], 'Example')
+                self.assertEqual(list(root.glob('.catalog-*')), [])
+
     def test_catalog_marks_special_workspace_and_matches_startup_class(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as directory:
@@ -34,6 +66,136 @@ class WindowApplicationsTests(unittest.TestCase):
         self.assertTrue(apps[0]['windows'][0]['minimized'])
         self.assertEqual(apps[0]['windows'][0]['pid'], 123)
         self.assertEqual(apps[0]['icon'], 'example-icon')
+
+    def test_user_desktop_overrides_vendor_and_hidden_masks_it(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            user, vendor = root / 'user', root / 'vendor'
+            user.mkdir()
+            vendor.mkdir()
+            (vendor / 'example.desktop').write_text(
+                '[Desktop Entry]\nType=Application\nName=Vendor\nExec=vendor\n')
+            local = user / 'example.desktop'
+            local.write_text('[Desktop Entry]\nType=Application\nName=Local\nExec=wrapper\n'
+                             'StartupWMClass=ExampleApp\n')
+            windows = [{'class': 'ExampleApp', 'address': '0xabc', 'pid': 123}]
+            with patch.object(module, 'SOURCES', (user, vendor)), \
+                 patch.object(module, 'resolve_icons'), \
+                 patch.object(module.subprocess, 'check_output', return_value=json.dumps(windows).encode()):
+                apps = module.catalog()
+                self.assertEqual(len(apps), 1)
+                self.assertEqual(apps[0]['path'], str(local))
+                self.assertEqual(apps[0]['windows'][0]['address'], '0xabc')
+                local.write_text('[Desktop Entry]\nType=Application\nHidden=true\n')
+                windows.clear()
+                with patch.object(module.subprocess, 'check_output', return_value=b'[]'):
+                    self.assertEqual(module.catalog(), [])
+
+    def test_minecraft_vendor_update_without_startup_class_keeps_window_association(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory)
+            (source / 'minecraft-launcher.desktop').write_text(
+                '[Desktop Entry]\nType=Application\nName=Minecraft Launcher\nExec=minecraft-launcher.sh\n')
+            windows = [{'class': 'Minecraft Launcher', 'address': '0xabc', 'pid': 123}]
+            with patch.object(module, 'SOURCES', (source,)), \
+                 patch.object(module, 'resolve_icons'), \
+                 patch.object(module.subprocess, 'check_output', return_value=json.dumps(windows).encode()):
+                apps = module.catalog()
+            self.assertEqual(len(apps), 1)
+            self.assertEqual(apps[0]['id'], 'minecraft-launcher')
+            self.assertEqual(apps[0]['windows'][0]['address'], '0xabc')
+
+    def test_pending_launch_blocks_duplicates_expires_and_clears_on_failure(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory, \
+             patch.object(module, 'LAUNCH_STATE', Path(directory)), \
+             patch.object(module.time, 'monotonic', return_value=100), \
+             patch.object(module.subprocess, 'Popen') as spawn:
+            self.assertTrue(module.start_launch('sample', ['example'], None))
+            self.assertTrue(module.pending_launch('sample'))
+            self.assertFalse(module.start_launch('sample', ['example'], None))
+            spawn.assert_called_once()
+            with patch.object(module.time, 'monotonic', return_value=191):
+                self.assertFalse(module.pending_launch('sample'))
+            token = json.loads(module.launch_marker('sample').read_text())['token']
+            module.clear_launch('sample', 'obsolete-token')
+            self.assertTrue(module.pending_launch('sample'))
+            with patch.object(module.subprocess, 'Popen') as child, \
+                 patch.object(module, 'launch_has_window', return_value=False), \
+                 patch.object(module.subprocess, 'run'):
+                child.return_value.poll.return_value = 1
+                module.launch_worker('sample', token, ['example'])
+            self.assertFalse(module.pending_launch('sample'))
+            spawn.side_effect = OSError('launch failed')
+            with self.assertRaises(OSError):
+                module.start_launch('sample', ['example'], None)
+            self.assertFalse(module.pending_launch('sample'))
+
+    def test_blue_indicator_allows_retry_after_two_seconds(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory, \
+             patch.object(module, 'LAUNCH_STATE', Path(directory)), \
+             patch.object(module.subprocess, 'Popen') as spawn:
+            with patch.object(module.time, 'monotonic', return_value=100):
+                self.assertTrue(module.start_launch('brave-browser', ['example'], None))
+            with patch.object(module.time, 'monotonic', return_value=103):
+                self.assertTrue(module.pending_launch('brave-browser'))
+                self.assertTrue(module.start_launch('brave-browser', ['example'], None))
+            self.assertEqual(spawn.call_count, 2)
+
+    def test_worker_clears_marker_when_window_appears_without_reopening_rofi(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory, \
+             patch.object(module, 'LAUNCH_STATE', Path(directory)), \
+             patch.object(module.subprocess, 'Popen') as spawn, \
+             patch.object(module, 'launch_has_window', side_effect=[False, True]), \
+             patch.object(module.time, 'sleep'), \
+             patch.object(module.time, 'monotonic', return_value=100):
+            spawn.return_value.poll.return_value = 0
+            module.start_launch('brave-browser', ['example'], None)
+            token = json.loads(module.launch_marker('brave-browser').read_text())['token']
+            module.launch_worker('brave-browser', token, ['example'])
+            self.assertFalse(module.pending_launch('brave-browser'))
+
+    def test_worker_expires_successful_launcher_with_no_window(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory, \
+             patch.object(module, 'LAUNCH_STATE', Path(directory)), \
+             patch.object(module.subprocess, 'Popen') as spawn, \
+             patch.object(module, 'launch_has_window', return_value=False), \
+             patch.object(module.time, 'sleep'), \
+             patch.object(module.time, 'monotonic', return_value=100):
+            module.start_launch('sample', ['example'], None)
+            token = json.loads(module.launch_marker('sample').read_text())['token']
+            spawn.return_value.poll.return_value = 0
+            with patch.object(module.time, 'monotonic', side_effect=[100, 100, 116]):
+                module.launch_worker('sample', token, ['example'])
+            self.assertFalse(module.pending_launch('sample'))
+
+    def test_window_replaces_pending_marker_and_blue_row_is_rendered(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'sample.desktop').write_text(
+                '[Desktop Entry]\nType=Application\nName=Sample\nExec=sample\n')
+            with patch.object(module, 'LAUNCH_STATE', root / 'launches'), \
+                 patch.object(module, 'SOURCES', (root,)), \
+                 patch.object(module, 'resolve_icons', side_effect=lambda apps: [a.update(iconPath='/tmp/icon') for a in apps]), \
+                 patch.object(module.subprocess, 'check_output', return_value=b'[]'), \
+                 patch.object(module.subprocess, 'Popen'), \
+                 patch.dict(module.os.environ, {}, clear=True):
+                module.start_launch('sample', ['example'], None)
+                self.assertTrue(module.catalog()[0]['opening'])
+                output = io.StringIO()
+                with redirect_stdout(output):
+                    module.rofi_rows()
+                self.assertIn('#69a7ff', output.getvalue())
+                window = [{'class': 'sample', 'address': '0xabc', 'pid': 123}]
+                with patch.object(module.subprocess, 'check_output', return_value=json.dumps(window).encode()):
+                    self.assertFalse(module.catalog()[0]['opening'])
+                self.assertFalse(module.pending_launch('sample'))
 
     def test_unmatched_running_window_is_still_visible(self):
         module = load_module()
@@ -242,10 +404,10 @@ class WindowApplicationsTests(unittest.TestCase):
                'windows': []}
         with patch.object(module, 'catalog', return_value=[app]), \
              patch.object(module, 'nvidia_on_demand', return_value=True), \
-             patch.object(module.subprocess, 'Popen') as popen, \
+             patch.object(module, 'start_launch', return_value=True) as popen, \
              patch.object(module, 'record_use'):
             module.perform('nvidia', app['id'])
-        command = popen.call_args.args[0]
+        command = popen.call_args.args[1]
         self.assertEqual(command[:3], ['/usr/bin/flatpak', 'run', '--user'])
         self.assertIn('--env=__NV_PRIME_RENDER_OFFLOAD=1', command)
         self.assertIn('--env=__GLX_VENDOR_LIBRARY_NAME=nvidia', command)
@@ -257,11 +419,11 @@ class WindowApplicationsTests(unittest.TestCase):
         app = {'id': 'sample', 'name': 'Sample', 'path': '/usr/share/applications/sample.desktop', 'windows': []}
         with patch.object(module, 'catalog', return_value=[app]), \
              patch.object(module, 'nvidia_on_demand', return_value=True), \
-             patch.object(module.subprocess, 'Popen') as popen, \
+             patch.object(module, 'start_launch', return_value=True) as popen, \
              patch.object(module, 'record_use'):
             module.perform('nvidia', app['id'])
-        self.assertEqual(popen.call_args.args[0], ['/usr/bin/gtk-launch', 'sample'])
-        self.assertEqual(popen.call_args.kwargs['env']['__NV_PRIME_RENDER_OFFLOAD'], '1')
+        self.assertEqual(popen.call_args.args[1], ['/usr/bin/gtk-launch', 'sample'])
+        self.assertEqual(popen.call_args.args[2]['__NV_PRIME_RENDER_OFFLOAD'], '1')
 
     def test_uninstall_requires_inline_confirmation_and_keeps_terminal_open(self):
         module = load_module()

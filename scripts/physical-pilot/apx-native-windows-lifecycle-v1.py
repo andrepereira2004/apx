@@ -48,7 +48,7 @@ def trusted_json(path: Path, profile: str, maximum: int = 4096) -> dict[str, obj
 
 def policy() -> dict[str, object]:
     value = trusted_json(POLICY, "apx-native-windows-policy-v1")
-    if value.get("schema") != 1 or value.get("size_choices_gib") != [80, 120, 160] \
+    if value.get("schema") != 1 or value.get("size_choices_gib") != [120, 180, 250] \
             or value.get("disk_id") != "AC9FC0BD-2162-43A9-AAE6-3F654FF6F275" \
             or value.get("disk_serial") != "S4DYNX0R253702" or value.get("max_instances") != 1:
         raise RuntimeError("a política Windows nativa difere")
@@ -118,6 +118,9 @@ def validate_host() -> None:
 
 
 def validate_create(size_gib: int) -> None:
+    selected_policy = policy()
+    if size_gib not in selected_policy["size_choices_gib"]:
+        raise RuntimeError("Tamanho Windows inválido para uma nova instalação")
     if METADATA.exists() or PENDING.exists() or any(Path(f"/dev/nvme0n1p{number}").exists() for number in range(3, 7)):
         raise RuntimeError("já existe um Windows nativo ou uma operação pendente")
     if block_size("/dev/nvme0n1p2") != 511035383296:
@@ -128,6 +131,8 @@ def validate_create(size_gib: int) -> None:
         raise RuntimeError("a utilização Btrfs não pôde ser medida")
     tail_start = ((1000215183 - size_gib * 2097152) // 2048) * 2048
     target_bytes = (tail_start - 2099200 - 32768) * 512
+    if target_bytes < selected_policy["minimum_apx_size_gib"] * 1024**3:
+        raise RuntimeError("Esse tamanho não cabe mantendo a reserva mínima do APX")
     if int(match.group(1)) + 32 * 1024**3 > target_bytes:
         raise RuntimeError("o APX não tem margem suficiente para este tamanho Windows")
 
@@ -149,7 +154,7 @@ def validate_delete(size_gib: int, generation: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--action", choices=("create", "delete"), required=True)
-    parser.add_argument("--size-gib", type=int, choices=(80, 120, 160), required=True)
+    parser.add_argument("--size-gib", type=int, choices=(80, 120, 160, 170, 180, 250), required=True)
     parser.add_argument("--generation", required=True)
     parser.add_argument("--lock-token", required=True)
     arguments = parser.parse_args()

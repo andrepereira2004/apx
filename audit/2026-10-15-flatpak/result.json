@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-15T21:01:24.864673+00:00",
+  "environment": "minecraft",
+  "app": "com.modrinth.ModrinthApp",
+  "version": "0.21.9",
+  "installation_exit_code": 0,
+  "sandbox_true_exit_code": 0,
+  "full_graphical_app_tested": false,
+  "nonfatal_sandbox_warning": "Document portal NoReply; true command exited successfully.",
+  "tests_passed": 19,
+  "existing_roots_verified": [
+    "hub",
+    "faculdade",
+    "hytale",
+    "minecraft",
+    "steam"
+  ],
+  "future_creation_validation": "Installed module/installed pinned seed installed idempotently into temporary root; actual new Environment not created.",
+  "assets": {
+    "apx-flatpak-nesting-v1": "97305e81f99d29f6fd55c675d40c069368ce93bc67b7d2be762eb605edd3e5a5",
+    "apx-flatpak-nesting-v1.service": "6ac1facb4c407dce57212a23ba273165e2b21ce85ffa0583e779c13f6fe5b2c0",
+    "49-apx-flatpak-environment.rules": "f21e2026e16b71789fa529ee65711af445774000adc56b6ea578e81cf82b9375",
+    "apx-flatpak-no-revokefs.conf": "55c91eb9e1e69c1d8318ca96fd6a72e038bbfc802b3c6fea94e589a5531ae507"
+  },
+  "backups": [
+    "/var/lib/apx/backups/20261015T205743Z-flatpak-authorization",
+    "/var/lib/apx/backups/20261015T205902Z-flatpak-authorization"
+  ]
+}

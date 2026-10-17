@@ -86,6 +86,12 @@ live Hub as the filesystem parent or template for other Environments. Hub-only
 management software, permissions, credentials, metadata, widgets, and mutable
 state must not propagate to workload Environments.
 
+The owner explicitly authorized workload lock-screen reuse of the enrolled APX
+face identity on 2026-10-05. This narrow exception uses a private Host-owned
+opt-in artifact and independent copies in graphical workloads; it does not
+permit copying other Hub credentials or management state. See
+`docs/face-auth-workloads-2026-10-05.md`.
+
 Package managers and installers executed inside an Environment must affect only
 that Environment. This includes `pacman`, `yay`, `apt`, Flatpak, language
 package managers, vendor installers, and installation scripts. They must never

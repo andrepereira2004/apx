@@ -1,0 +1,10 @@
+Quotas on /:
+  Enabled:                 yes
+  Mode:                    qgroup (full accounting)
+  Inconsistent:            yes (rescan needed)
+  Override limits:         no
+  Drop subtree threshold:  3
+  Total count:             102
+  Level 0:                 84
+
+STDERR:

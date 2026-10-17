@@ -1,0 +1,7 @@
+UUID:             0ab135e1-1d10-4580-8fca-f4c6ac25ad1c
+Scrub started:    Tue Oct 13 16:28:35 2026
+Status:           finished
+Duration:         0:01:14
+Total to scrub:   185.46GiB
+Rate:             2.50GiB/s
+Error summary:    no errors found

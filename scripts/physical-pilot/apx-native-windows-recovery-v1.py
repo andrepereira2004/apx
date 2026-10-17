@@ -56,7 +56,7 @@ def trusted_pending() -> tuple[dict[str, object], bytes]:
                 ("create", "boot-prepared"), ("create", "failed"),
                 ("create", "recovery-required"), ("delete", "maintenance"),
             } \
-            or value.get("name") != "windows" or value.get("requested_size_gib") not in {80, 120, 160} \
+            or value.get("name") != "windows" or value.get("requested_size_gib") not in {80, 120, 160, 170, 180, 250} \
             or GENERATION.fullmatch(str(value.get("generation", ""))) is None \
             or type(value.get("created_at")) is not int or value["created_at"] <= 0:
         raise RuntimeError("a criação Windows pendente não é confiável")

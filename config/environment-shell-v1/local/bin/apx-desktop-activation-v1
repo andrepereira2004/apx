@@ -1,10 +1,11 @@
 #!/usr/bin/bash
 # D-Bus applications inherit this Environment's actual session and locale.
 set -eu
+"$HOME/.local/bin/apx-document-templates-v1"
 /usr/bin/dbus-update-activation-environment \
     DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE \
     XDG_DATA_DIRS XDG_RUNTIME_DIR USER LOGNAME \
-    LANG LC_TIME LC_NUMERIC LC_MONETARY
+    LANG LANGUAGE LC_MESSAGES LC_TIME LC_NUMERIC LC_MONETARY
 /usr/bin/python - <<'PY'
 import configparser
 from pathlib import Path

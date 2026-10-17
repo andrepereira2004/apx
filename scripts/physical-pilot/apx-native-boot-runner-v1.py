@@ -23,9 +23,9 @@ EXPECTED_DISK_SERIAL = "S4DYNX0R253702"
 EXPECTED_DISK_ID = "AC9FC0BD-2162-43A9-AAE6-3F654FF6F275"
 EXPECTED_ESP_BYTES = 1073741824
 EXPECTED_RETURN_HASHES = {
-    "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "e81e87d81f2b211cbb86f23a320a409e8423e9e453f72c611622c2c7983ff871",
-    "ProgramData/APX/ReturnToHub/README.txt": "1cf8618e8976999eebfab111c39ae05eabe7985c507ae493d89afa9c1e0be6e8",
-    "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
+    "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "1a13748584a58cce28f416e6b42b48d34adf5ed56e8683f4b9a7af6ed8af2318",
+    "ProgramData/APX/ReturnToHub/README.txt": "472fcfa8bd89bdbe2396202fbcd31b50cf290ff0bee26cf4424ed180bad1f170",
+    "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "9f0fc5b0f66f1e4564a3c355a89bc776052ffeff805bb27e16a271e662d2586c",
 }
 LOGIN_PROMPT_RETURN_HASHES = {
     "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "1def9b82d24f05a3b92fb3a48c7ca651c5832d796a066459d6e765d8ea45a499",
@@ -47,7 +47,12 @@ LEGACY_RETURN_HASHES = {
     "ProgramData/APX/ReturnToHub/README.txt": "0434aa1e310d7a4e20400300f0d8b6062caf8f4ac023ae4a8560a5c203926349",
     "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
 }
-TRUSTED_RETURN_HASHES = (EXPECTED_RETURN_HASHES, LOGIN_PROMPT_RETURN_HASHES, LAST_RETURN_HASHES, PREVIOUS_RETURN_HASHES, LEGACY_RETURN_HASHES)
+ACTIVE_20260928_RETURN_HASHES = {
+    "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "e81e87d81f2b211cbb86f23a320a409e8423e9e453f72c611622c2c7983ff871",
+    "ProgramData/APX/ReturnToHub/README.txt": "1cf8618e8976999eebfab111c39ae05eabe7985c507ae493d89afa9c1e0be6e8",
+    "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
+}
+TRUSTED_RETURN_HASHES = (EXPECTED_RETURN_HASHES, ACTIVE_20260928_RETURN_HASHES, LOGIN_PROMPT_RETURN_HASHES, LAST_RETURN_HASHES, PREVIOUS_RETURN_HASHES, LEGACY_RETURN_HASHES)
 EFI_GLOBAL_GUID = "8be4df61-93ca-11d2-aa0d-00e098032b8c"
 SECURE_BOOT_VARIABLE = Path(f"/sys/firmware/efi/efivars/SecureBoot-{EFI_GLOBAL_GUID}")
 SETUP_MODE_VARIABLE = Path(f"/sys/firmware/efi/efivars/SetupMode-{EFI_GLOBAL_GUID}")
@@ -93,7 +98,7 @@ def metadata() -> dict[str, object]:
             or type(value.get("description")) is not str or len(value["description"]) > 120 \
             or value["description"] != value["description"].strip() \
             or any(ord(character) < 32 for character in value["description"]) \
-            or value.get("requested_size_gib") not in {80, 120, 160} \
+            or value.get("requested_size_gib") not in {80, 120, 160, 170, 180, 250} \
             or value.get("reserved_bytes") != (1000215183 - ((1000215183 - value["requested_size_gib"] * 2097152) // 2048 * 2048)) * 512 \
             or re.fullmatch(r"[0-9a-f]{8}-[0-9a-f-]{27}", str(value.get("generation", ""))) is None \
             or not re.fullmatch(r"[0-9A-F]{4}", str(value.get("linux_boot_entry", ""))) \
@@ -164,6 +169,10 @@ def validate_hardware_and_return(root: Path) -> None:
     desktop_fallback = root / "Users/Public/Desktop/REGRESSAR AO APX.cmd"
     if desktop_fallback.exists() or desktop_fallback.is_symlink():
         raise RuntimeError("o Ambiente de Trabalho Windows ainda contém o atalho APX antigo")
+    validate_hardware(root)
+
+
+def validate_hardware(root: Path) -> None:
     repositories = [path for path in
                     (root / "Windows/System32/DriverStore/FileRepository").glob(
                         "netrtwlane6.inf_*"

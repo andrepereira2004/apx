@@ -1,0 +1,69 @@
+{
+  "apps_ipc_to_layer_alpha_one_seconds": [
+    0.2601,
+    0.2255,
+    0.2547
+  ],
+  "folder_metadata_requests": [
+    {
+      "directory": "/home/apx",
+      "seconds": 0.0875,
+      "entries": 10,
+      "labels": [
+        "Applications",
+        "Desktop",
+        "Documents",
+        "Downloads",
+        "Music",
+        "Pictures",
+        "Projects",
+        "Public",
+        "Templates",
+        "Videos"
+      ]
+    },
+    {
+      "directory": "/home/apx/Downloads",
+      "seconds": 0.0862,
+      "entries": 3,
+      "labels": [
+        "Pasta anterior",
+        "Backup",
+        "Backup.tar"
+      ]
+    },
+    {
+      "directory": "/home/apx/Downloads/Backup",
+      "seconds": 0.0852,
+      "entries": 4,
+      "labels": [
+        "Pasta anterior",
+        "Essenciais",
+        "FEUP",
+        "Finanças"
+      ]
+    }
+  ],
+  "archive_bytes": 6434531840,
+  "tests": {
+    "python_file_provider": 13,
+    "native_delayed_provider": 1,
+    "independent_seed": 7
+  },
+  "native_behaviors": [
+    "inactive mode does not enumerate",
+    "loading indicator animates while backend delayed",
+    "current-folder rows only",
+    "folder navigation",
+    "cancel on mode switch",
+    "ignore stale generation",
+    "visible-row icons only",
+    "failure and retry",
+    "escape cancellation",
+    "destroy while pending"
+  ],
+  "spinner_visual_probe": "confirmed in native Rofi with artificial 10s delay; probe not shipped",
+  "deployment_backup": "/var/lib/apx/backups/20261008T222008Z-rofi-files-lazy",
+  "final_helper_backup": "/var/lib/apx/backups/20261008T222122Z-rofi-files-lazy",
+  "physical_owner_shortcut_verification": "pending"
+}

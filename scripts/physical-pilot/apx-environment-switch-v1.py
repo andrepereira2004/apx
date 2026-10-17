@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -140,12 +141,12 @@ def trusted_native_environment(name: str) -> dict[str, object]:
         raise PermissionError("os metadados do sistema nativo não são confiáveis")
     size = value.get("requested_size_gib")
     if re.fullmatch(r"[0-9a-f]{8}-[0-9a-f-]{27}", str(value.get("generation", ""))) is None \
-            or size not in {80, 120, 160} \
+            or size not in {80, 120, 160, 170, 180, 250} \
             or value.get("reserved_bytes") != (1000215183 - ((1000215183 - size * 2097152) // 2048 * 2048)) * 512 \
             or not re.fullmatch(r"[0-9A-F]{4}", str(value.get("linux_boot_entry", ""))) \
             or not re.fullmatch(r"[0-9A-F]{4}", str(value.get("windows_boot_entry", ""))) \
             or not re.fullmatch(r"[0-9A-F]{8}(?:-[0-9A-F]{4}){3}-[0-9A-F]{12}", str(value.get("windows_partuuid", ""))) \
-            or type(value.get("windows_bytes")) is not int or not 64 * 1024**3 <= value["windows_bytes"] <= 160 * 1024**3:
+            or type(value.get("windows_bytes")) is not int or not 64 * 1024**3 <= value["windows_bytes"] <= 250 * 1024**3:
         raise PermissionError("a geração do sistema nativo difere")
     return value
 
@@ -180,7 +181,7 @@ def trusted_windows_pending() -> dict[str, object]:
             or value.get("stage") not in {"maintenance", "preparing-installer", "prepared",
                                                 "installing", "boot-prepared", "failed",
                                                 "recovery-required", "finalizing"} \
-            or value.get("requested_size_gib") not in {80, 120, 160} \
+            or value.get("requested_size_gib") not in {80, 120, 160, 170, 180, 250} \
             or GENERATION.fullmatch(str(value.get("generation", ""))) is None \
             or type(value.get("created_at")) is not int or value["created_at"] <= 0:
         raise PermissionError("a operação Windows pendente não é confiável")
@@ -476,7 +477,9 @@ def request_native_plan(target: str, description: str, size_gib: int) -> dict[st
 def start_native_management(action: str, size_gib: int, generation: str) -> dict[str, object]:
     if (NATIVE_ENVIRONMENTS / "instances-v3").exists():
         raise RuntimeError("Esta instalação usa a gestão Windows por instância; o executor antigo não é permitido.")
-    if action not in {"create", "delete"} or size_gib not in {80, 120, 160} \
+    if action not in {"create", "delete"} \
+            or (action == "create" and size_gib not in {120, 180, 250}) \
+            or (action == "delete" and size_gib not in {80, 120, 160, 170, 180, 250}) \
             or re.fullmatch(r"[0-9a-f]{8}-[0-9a-f-]{27}", generation) is None:
         raise RuntimeError("a operação Windows nativa difere")
     unit = "apx-native-windows-management-" + secrets.token_hex(5)
@@ -548,6 +551,42 @@ def prime_return_screen() -> None:
         os.write(descriptor, payload)
     finally:
         os.close(descriptor)
+
+
+def handoff_is_supervised() -> bool:
+    """A pathname alone is not evidence that a supervisor is still alive."""
+    try:
+        descriptor = os.open(LOCK, os.O_RDWR | os.O_NOFOLLOW)
+    except FileNotFoundError:
+        return False
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode) or (info.st_uid, info.st_gid) != (0, 0):
+            raise RuntimeError("o bloqueio da troca não é confiável")
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return True
+        return False
+    finally:
+        os.close(descriptor)
+
+
+def request_recovered_environment_return(name: str) -> str:
+    """Start a supervisor before stopping an independently recovered session."""
+    record = trusted_environment(name)
+    generation = str(record.get("generation", ""))
+    if GENERATION.fullmatch(generation) is None or record.get("state") != "running":
+        raise RuntimeError("a geração do Environment ativo difere")
+    unit = "apx-environment-return-" + secrets.token_hex(5)
+    result = subprocess.run((
+        "/usr/bin/systemd-run", f"--unit={unit}", "--collect",
+        "--property=Type=simple", "--property=TimeoutStopSec=15s",
+        RUNNER, "--return-environment", name, "--generation", generation,
+    ), text=True, capture_output=True, check=False)
+    if result.returncode:
+        raise RuntimeError("o supervisor do regresso não arrancou; o Environment continua aberto")
+    return unit + ".service"
 
 
 def request_environment_stop(name: str) -> str:
@@ -678,10 +717,10 @@ def apply(operation: str, payload: dict[str, object], peer: HostServicesPeer) ->
     target = str(payload["target"]) if operation == "switch.to-workload" else None
     source = authorize(peer, operation, target)
     if operation == "return.to-hub":
-        if not LOCK.exists():
-            raise RuntimeError("não existe uma troca supervisionada para concluir")
-        prime_return_screen()
-        unit = request_environment_stop(source)
+        supervised = handoff_is_supervised()
+        unit = request_environment_stop(source) if supervised else request_recovered_environment_return(source)
+        if supervised:
+            prime_return_screen()
         return {"accepted": True, "direction": "workload-to-hub", "source": source,
                 "unit": unit}
     if source != "hub":

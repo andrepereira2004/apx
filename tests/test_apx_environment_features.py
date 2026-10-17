@@ -20,18 +20,30 @@ class EnvironmentFeaturesTests(unittest.TestCase):
         module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
         return module
 
-    def test_catalogue_has_three_presets_and_nineteen_modules(self):
+    def test_catalogue_has_three_presets_and_twenty_modules(self):
         self.assertEqual(tuple(subject.PRESETS), ("basic", "intermediate", "complete"))
-        self.assertEqual(len(subject.MODULES), 19)
+        self.assertEqual(len(subject.MODULES), 20)
         self.assertEqual(subject.PRESETS["basic"], ("system", "cli-aur"))
         self.assertEqual(len(subject.PRESETS["intermediate"]), 17)
         for module in ("multimedia", "communication", "printing-scanning"):
             self.assertIn(module, subject.PRESETS["intermediate"])
         for module in ("office", "development"):
             self.assertNotIn(module, subject.PRESETS["intermediate"])
-        self.assertEqual(subject.PRESETS["complete"], subject.MODULES)
+        self.assertEqual(subject.PRESETS["complete"], tuple(m for m in subject.MODULES if m != "iphone-integration"))
         self.assertIn("files", subject.PRESETS["intermediate"])
         self.assertIn("files", subject.PRESETS["complete"])
+        self.assertEqual(set(subject.local_packages_for(["office"])), {"brave-bin", "gridcraft", "wordcraft", "deckcraft"})
+
+    def test_iphone_integration_is_opt_in_and_does_not_grant_lan_authority(self):
+        for preset in subject.PRESETS.values():
+            self.assertNotIn('iphone-integration', preset)
+            self.assertNotIn('localsend-bin', subject.local_packages_for(preset))
+        modules = subject.normalize_modules(['iphone-integration'])
+        self.assertIn('desktop-integration', modules)
+        self.assertIn('network', modules)
+        self.assertIn('localsend-bin', subject.local_packages_for(modules))
+        self.assertTrue({'libayatana-appindicator', 'libayatana-indicator', 'ayatana-ido'} <= set(subject.packages_for(modules)))
+        self.assertFalse(any(x in subject.packages_for(modules) for x in ['networkmanager', 'kdeconnect', 'plasma-desktop']))
 
     def test_dependencies_are_closed_and_package_plan_is_fixed(self):
         modules = subject.normalize_modules(["printing-scanning"])
@@ -39,12 +51,13 @@ class EnvironmentFeaturesTests(unittest.TestCase):
                          "devices-storage", "printing-scanning"):
             self.assertIn(required, modules)
         packages = subject.packages_for(subject.PRESETS["complete"])
-        for required in ("evince", "libreoffice-fresh", "cups", "podman", "rust"):
+        for required in ("evince", "cups", "podman", "rust"):
             self.assertIn(required, packages)
         for required in ("thunar-archive-plugin", "xarchiver", "7zip", "unzip", "zip",
                          "unrar", "ffmpegthumbnailer", "poppler-glib", "catfish"):
             self.assertIn(required, subject.packages_for(["files"]))
         self.assertNotIn("firefox", packages)
+        self.assertFalse(any(p.startswith("libreoffice") for p in subject.packages_for(subject.MODULES)))
         self.assertEqual(subject.packages_for(subject.PRESETS["basic"]), ("xfce4-taskmanager",))
         self.assertIn("pipewire-alsa", subject.packages_for(["audio"]))
         self.assertIn("noto-fonts-emoji", subject.packages_for(["locale-input"]))
@@ -60,6 +73,39 @@ class EnvironmentFeaturesTests(unittest.TestCase):
         for values in ([], ["unknown"], "system"):
             with self.assertRaises(ValueError):
                 subject.normalize_modules(values)
+
+    def test_enrolled_graphical_creation_installs_dependencies_before_face_policy(self):
+        runtime = self.runtime()
+        with tempfile.TemporaryDirectory() as temporary:
+            state = Path(temporary)
+            hub = state / "environments/hub/root/etc"; hub.mkdir(parents=True)
+            target = state / "target"; (target / "etc").mkdir(parents=True)
+            (hub / "shadow").write_text("apx:$6$hub-hash:1:2:3:4:5:6:7\n")
+            (target / "etc/shadow").write_text("apx:!:8:9:10:11:12:13:14\n")
+            for path in (hub / "shadow", target / "etc/shadow"):
+                path.chmod(0o600)
+            identity = {"apx.dat": b"synthetic fixture"}
+            calls = []
+            with mock.patch.object(runtime, "ENVIRONMENTS", state / "environments"), \
+                    mock.patch.object(runtime, "packages_for", return_value=()), \
+                    mock.patch.object(runtime, "local_packages_for", return_value=()), \
+                    mock.patch.object(runtime, "host_nvidia_version", return_value="610.43.03"), \
+                    mock.patch.object(runtime, "validated_local_package_artifact",
+                                      side_effect=lambda package: state / (package + "-610.43.03-3-x86_64.pkg.tar.zst")), \
+                    mock.patch("apx_face_auth.load_identity", return_value=identity) as load, \
+                    mock.patch("apx_face_auth.install_identity", side_effect=lambda *args: calls.append("policy")) as install, \
+                    mock.patch.object(runtime, "run", side_effect=lambda command: calls.append(command)):
+                runtime.configure_environment_features(target, {
+                    "desktop_preset": "intermediate", "desktop_modules": list(subject.PRESETS["intermediate"]),
+                })
+            load.assert_called_once_with(state / "face-auth-v1")
+            install.assert_called_once_with(target, identity)
+            self.assertIn("python-opencv", calls[0])
+            self.assertIn("cblas", calls[0])
+            self.assertIn("lapack", calls[0])
+            self.assertTrue(calls[-3][-1].startswith(str(state / "python-dlib-")))
+            self.assertTrue(calls[-2][-1].startswith(str(state / "howdy-apx-")))
+            self.assertEqual(calls[-1], "policy")
 
     def test_alternate_private_root_uses_a_complete_arch_upgrade(self):
         source = (Path(__file__).resolve().parents[1]

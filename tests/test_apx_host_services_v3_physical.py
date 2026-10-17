@@ -106,6 +106,43 @@ class HostServicesV3PhysicalTests(unittest.TestCase):
             self.assertIn("EAP-PEAP-Phase2-Password=secret", contents)
             self.assertEqual(list(root.glob("*.tmp")), [])
 
+    def test_profile_publication_notifies_iwd_close_write(self):
+        import ctypes
+        import os
+        import struct
+        subject = load_daemon()
+        libc = ctypes.CDLL(None, use_errno=True)
+        watcher = libc.inotify_init1(os.O_NONBLOCK | os.O_CLOEXEC)
+        self.assertGreaterEqual(watcher, 0)
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                ca = root / "ca.pem"
+                ca.write_text("test certificate")
+                self.assertGreaterEqual(libc.inotify_add_watch(watcher, os.fsencode(root), 0x8), 0)
+                with mock.patch.object(subject, "IWD_STATE", root):
+                    profile = subject.enterprise_profile("Campus", {
+                        "method": "PEAP", "identity": "ana@escola.pt", "password": "secret",
+                        "domain": "wifi.escola.pt", "ca_cert": str(ca),
+                    })
+                    with self.assertRaises(subject.ConflictError):
+                        subject.enterprise_profile("Campus", {
+                            "method": "PEAP", "identity": "other@escola.pt", "password": "different",
+                            "domain": "wifi.escola.pt", "ca_cert": str(ca),
+                        })
+                events = os.read(watcher, 65536)
+                observed = []
+                offset = 0
+                while offset < len(events):
+                    _, mask, _, size = struct.unpack_from("iIII", events, offset)
+                    name = events[offset + 16:offset + 16 + size].rstrip(b"\0").decode()
+                    observed.append((name, mask))
+                    offset += 16 + size
+                self.assertIn((profile.name, 0x8), observed)
+                self.assertIn("Phase2-Password=secret", profile.read_text())
+        finally:
+            os.close(watcher)
+
     def test_deployer_stages_without_restarting_the_inode_bound_service(self):
         source = DEPLOY.read_text()
         for required in ("rfkill unblock bluetooth", "bluetoothctl power on",

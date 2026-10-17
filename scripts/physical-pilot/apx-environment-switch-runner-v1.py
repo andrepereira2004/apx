@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import stat
 import sys
 import time
 from typing import Callable
@@ -106,14 +107,16 @@ def release_handoff_lock(descriptor, device: int, inode: int) -> None:
     still waits for that Hub session to end.  Inode matching prevents the old
     runner's cleanup from deleting a newer supervisor's lock.
     """
-    if not descriptor.closed:
-        descriptor.close()
     try:
-        metadata = LOCK.lstat()
-    except FileNotFoundError:
-        return
-    if not LOCK.is_symlink() and (metadata.st_dev, metadata.st_ino) == (device, inode):
-        LOCK.unlink()
+        try:
+            metadata = LOCK.lstat()
+        except FileNotFoundError:
+            return
+        if not LOCK.is_symlink() and (metadata.st_dev, metadata.st_ino) == (device, inode):
+            LOCK.unlink()
+    finally:
+        if not descriptor.closed:
+            descriptor.close()
 
 
 def run_authenticated(
@@ -248,25 +251,61 @@ def consume_next_environment(source: str) -> str | None:
     return target
 
 
+def acquire_handoff_lock():
+    """Reuse only a trusted unlocked stale inode; never replace a live lock."""
+    descriptor = os.open(LOCK, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode) or (info.st_uid, info.st_gid) != (0, 0):
+            raise RuntimeError("untrusted handoff lock")
+        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        current = LOCK.lstat()
+        if (current.st_dev, current.st_ino) != (info.st_dev, info.st_ino):
+            raise RuntimeError("handoff lock changed")
+        return os.fdopen(descriptor, "r+")
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def validate_return_environment(name: str, generation: str) -> None:
+    if not workload_ready(name):
+        raise RuntimeError("o Environment a devolver já não é o ativo")
+    active = json.loads(WORKLOAD_ACTIVE.read_bytes())
+    if active.get("generation") != generation:
+        raise RuntimeError("a geração do Environment a devolver mudou")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--environment")
     mode.add_argument("--relaunch-hub", action="store_true")
-    arguments = parser.parse_args(); name = arguments.environment
+    mode.add_argument("--return-environment")
+    parser.add_argument("--generation")
+    arguments = parser.parse_args(); name = arguments.return_environment or arguments.environment
     if not arguments.relaunch_hub and (type(name) is not str \
             or re.fullmatch(r"[a-z](?:[a-z0-9]|-(?=[a-z0-9])){0,26}", name) is None or name == "hub"):
         parser.error("invalid graphical Environment")
-    descriptor = LOCK.open("x")
+    if arguments.return_environment and (type(arguments.generation) is not str or
+            re.fullmatch(r"[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}", arguments.generation) is None):
+        parser.error("invalid return generation")
+    descriptor = acquire_handoff_lock()
     lock_metadata = os.fstat(descriptor.fileno())
     owns_transition = True
     try:
         fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if arguments.return_environment:
+            validate_return_environment(name, arguments.generation)
         hide_host_getty()
         transition_screen("A FECHAR O HUB", 8)
-        run((HUB, "--recover")); wait_recovered()
+        if arguments.return_environment:
+            run((GENERAL, "--environment", name, "--recover"))
+        else:
+            run((HUB, "--recover"))
+        wait_recovered()
         transition_screen("A PREPARAR O NOVO ENVIRONMENT", 38)
-        if arguments.relaunch_hub:
+        if arguments.relaunch_hub or arguments.return_environment:
             release_handoff_lock(descriptor, lock_metadata.st_dev, lock_metadata.st_ino)
             owns_transition = False
             run_authenticated((HUB, "--interactive"), "A ABRIR O HUB", 68)

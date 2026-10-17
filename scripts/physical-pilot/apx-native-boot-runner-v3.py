@@ -45,7 +45,13 @@ def validate_firmware(output, record, esp_number):
     fields=dict(re.findall(r'^(BootCurrent|BootNext|BootOrder):\s*(\S.*)$',output,re.MULTILINE))
     linux=record['linux_boot_entry']
     order=fields.get('BootOrder','').split(',')
-    if fields.get('BootCurrent') != linux or 'BootNext' in fields or not order or order[0] != linux:
+    entries_by_id = dict(re.findall(r'^Boot([0-9A-F]{4})\*?\s+(.+)$', output, re.MULTILINE))
+    # Lenovo may prepend removable USB/DVD/network fallback entries.
+    # Linux must still precede every disk loader and unknown entry.
+    preceding = order[:order.index(linux)] if linux in order else order
+    removable = all(re.fullmatch(r'EFI (USB Device|DVD/CDROM|Network)\s+RC',
+                                 entries_by_id.get(item, '')) for item in preceding)
+    if fields.get('BootCurrent') != linux or 'BootNext' in fields or linux not in order or not removable:
         raise ValueError('Linux is not the default current boot or BootNext is already armed')
     expected=f'HD({esp_number},GPT,{record["esp_partuuid"]},'.lower()
     loader=record['efi_path'].replace('/','\\').lower()
@@ -96,7 +102,7 @@ def validate(target,generation):
             raise ValueError('selected Windows manager is not Microsoft signed')
     with helper.mounted_read_only(Path(windows['node']),'ntfs3') as root:
         if not (root/'Windows/System32/winload.efi').is_file():raise ValueError('selected Windows loader absent')
-        helper.validate_hardware_and_return(root)
+        helper.validate_hardware(root)
     return helper,entry
 
 

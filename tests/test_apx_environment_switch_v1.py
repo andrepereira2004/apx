@@ -87,22 +87,34 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
 
     def test_native_preview_accepts_distinct_name_without_enabling_legacy_create(self):
         contract = load_contract()
-        raw = contract.request_bytes("native.plan", "windows-games", description="Jogos", size_gib=80)
+        raw = contract.request_bytes("native.plan", "windows-games", description="Jogos", size_gib=120)
         parsed = contract.parse_message(raw)
         self.assertEqual(parsed["payload"]["target"], "windows-games")
         with self.assertRaises(ValueError):
-            contract.request_bytes("native.plan", "../windows", size_gib=80)
+            contract.request_bytes("native.plan", "../windows", size_gib=120)
         with self.assertRaises(ValueError):
             contract.request_bytes("native.plan", "windows-games", size_gib=True)
         with self.assertRaises(ValueError):
-            contract.request_bytes("environment.create", "windows-games", system_kind="windows-native", size_gib=80, preset="basic", modules=["system"])
+            contract.request_bytes("environment.create", "windows-games", system_kind="windows-native", size_gib=120, preset="basic", modules=["system"])
+
+    def test_new_windows_presets_accept_requested_sizes_and_reject_retired_sizes(self):
+        contract = load_contract()
+        for size in (120, 180, 250):
+            with self.subTest(size=size):
+                raw = contract.request_bytes("native.plan", "windows-games", size_gib=size)
+                self.assertEqual(contract.parse_message(raw)["payload"]["size_gib"], size)
+                raw = contract.request_bytes("environment.create", "windows", system_kind="windows-native", size_gib=size, preset="basic", modules=["system"])
+                self.assertEqual(contract.parse_message(raw)["payload"]["size_gib"], size)
+        for size in (80, 160, 200):
+            with self.subTest(retired=size), self.assertRaises(ValueError):
+                contract.request_bytes("native.plan", "windows-games", size_gib=size)
 
     def test_native_preview_rejects_workload_before_starting_worker(self):
         subject = load_switch_service()
         with mock.patch.object(subject, "authorize_hub_management", side_effect=PermissionError("not Hub")), \
                 mock.patch.object(subject, "request_native_plan") as plan:
             with self.assertRaises(PermissionError):
-                subject.apply("native.plan", {"target":"windows-games", "description":"", "size_gib":80}, mock.Mock())
+                subject.apply("native.plan", {"target":"windows-games", "description":"", "size_gib":120}, mock.Mock())
         plan.assert_not_called()
 
     def test_native_preview_worker_has_only_read_device_access(self):
@@ -155,9 +167,9 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertEqual(creation_payload["size_gib"], 0)
         windows_creation = subject.request_bytes(
             "environment.create", "windows", description="Windows físico",
-            preset="basic", modules=["system"], system_kind="windows-native", size_gib=160,
+            preset="basic", modules=["system"], system_kind="windows-native", size_gib=250,
         )
-        self.assertEqual(subject.parse_message(windows_creation)["payload"]["size_gib"], 160)
+        self.assertEqual(subject.parse_message(windows_creation)["payload"]["size_gib"], 250)
         native = subject.request_bytes("native.boot", "windows")
         self.assertEqual(subject.parse_message(native)["payload"], {"target": "windows"})
         recovery_generation = "12345678-1234-4234-9234-123456789abc"
@@ -478,7 +490,7 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn("lock_metadata = os.fstat(descriptor.fileno())", source)
         self.assertIn("metadata.st_dev, metadata.st_ino", source)
         self.assertEqual(source.count("owns_transition = False"), 2)
-        self.assertIn('run((HUB, "--recover")); wait_recovered()', source)
+        self.assertIn('run((HUB, "--recover"))', source)
         self.assertIn('run_authenticated((GENERAL, "--environment", name, "--interactive"),', source)
         self.assertIn('run_authenticated((HUB, "--interactive"),', source)
         self.assertIn('HANDOFF_PROOF = Path("/run/apx/authenticated-handoff-v1")', source)
@@ -701,10 +713,10 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertNotIn('title: "UBUNTU · SISTEMA"', source)
         self.assertIn('title: "APX · nativo"', source)
         self.assertIn('title: "Windows · nativo"', source)
-        self.assertIn('property int environmentNativeWindowsSizeGib: 80', source)
-        self.assertIn('title: "80 GiB"', source)
+        self.assertIn('property int environmentNativeWindowsSizeGib: 120', source)
         self.assertIn('title: "120 GiB"', source)
-        self.assertIn('title: "160 GiB"', source)
+        self.assertIn('title: "180 GiB"', source)
+        self.assertIn('title: "250 GiB"', source)
         self.assertIn('"--size-gib", String(environmentNativeWindowsSizeGib)', source)
         self.assertIn('"Apaga a partição e devolve todo o espaço ao APX após reiniciar."', source)
         self.assertIn('modelData.system_label', source)
@@ -717,7 +729,8 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('additions: "Extras · nenhum"', source)
         self.assertIn('+ PDF · MPV · impressão', source)
         self.assertIn('environmentCreateOpen = false', source)
-        self.assertIn('+ LibreOffice · programação', source)
+        self.assertIn('+ ArtCraft · programação', source)
+        self.assertNotIn('INSTALA · LibreOffice', source)
         self.assertIn('root.environmentSelectedModules[moduleInfo.key] === true', source)
         self.assertIn('property var environmentModuleGroups', source)
         self.assertIn('component FeatureCard: Rectangle', source)

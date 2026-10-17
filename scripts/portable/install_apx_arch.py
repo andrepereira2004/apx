@@ -14,13 +14,16 @@ REPO = Path(__file__).resolve().parents[2]
 STATE = Path('/var/lib/apx')
 RESERVE = 110 * 1024**3
 SOURCES = {
+    'config/environment-flatpak-v1/apx-flatpak-no-revokefs.conf': '/usr/share/apx/config-seeds/environment-flatpak-v1/apx-flatpak-no-revokefs.conf',
     'scripts/virtual-lab/apx-lab-runtime.py': 'apx-lab-runtime-core.py',
     'scripts/portable/apx-portable-runtime.py': 'apx-lab-runtime.py',
     'scripts/virtual-lab/apx-lab-client.py': 'apx-lab-client.py',
     'scripts/virtual-lab/apx-lab-executor.py': 'apx-lab-executor.py',
     'scripts/physical-pilot/apx-environment-network-v1.py': 'apx-environment-network-v1.py',
     'src/apx_environment_features.py': 'apx_environment_features.py',
+    'src/apx_face_auth.py': 'apx_face_auth.py',
     'src/apx_environment_desktop_defaults.py': 'apx_environment_desktop_defaults.py',
+    'config/environment-flatpak-v1/49-apx-flatpak-environment.rules': '/usr/share/apx/config-seeds/environment-flatpak-v1/49-apx-flatpak-environment.rules',
     'config/environment-flatpak-v1/apx-flatpak-nesting-v1': '/usr/share/apx/config-seeds/environment-flatpak-v1/apx-flatpak-nesting-v1',
     'config/environment-flatpak-v1/apx-flatpak-nesting-v1.service': '/usr/share/apx/config-seeds/environment-flatpak-v1/apx-flatpak-nesting-v1.service',
 }

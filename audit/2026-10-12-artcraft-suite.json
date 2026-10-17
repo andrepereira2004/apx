@@ -1,0 +1,33 @@
+{
+  "packages": [
+    {
+      "schema": 1,
+      "package": "gridcraft",
+      "filename": "gridcraft-0.6.1-1-x86_64.pkg.tar.zst",
+      "sha256": "9d496ac5b2b2cabf5eb28be4749babf884ac09695c8a3f01ed0c44f734836155",
+      "upstream_archive_sha256": "61163b62d9faf814b864e1b255d15dc310a71a72ca03d8791fa8024420162745",
+      "upstream_url": "https://github.com/storytold/gridcraft/releases/download/v0.6.1/gridcraft-0.6.1-linux-x86_64.tar.gz"
+    },
+    {
+      "schema": 1,
+      "package": "wordcraft",
+      "filename": "wordcraft-0.6.1-1-x86_64.pkg.tar.zst",
+      "sha256": "fab00c2d50674a9994867ee7d1ccfa15cbc8c6a8bfd002431be55b7bea5445e8",
+      "upstream_archive_sha256": "79bd54c81276f6ea551222432adec15e0eaab4cb5881decee38eafd7a5ca38f9",
+      "upstream_url": "https://github.com/storytold/wordcraft/releases/download/v0.6.1/wordcraft-0.6.1-linux-x86_64.tar.gz"
+    },
+    {
+      "schema": 1,
+      "package": "deckcraft",
+      "filename": "deckcraft-0.5.0-1-x86_64.pkg.tar.zst",
+      "sha256": "413e98bdcf3ee1d2328d240061110c5d5652834f1a78efc0f003cd3a879b1844",
+      "upstream_archive_sha256": "c2648c6071f631ecc6639ce6b7d60f68eed83ddeaba6b1559b07c5046863117c",
+      "upstream_url": "https://github.com/storytold/deckcraft/releases/download/v0.5.0/deckcraft-0.5.0-linux-x86_64.tar.gz"
+    }
+  ],
+  "wine_removed": true,
+  "lib32_removed": 9,
+  "complete_preset_artcraft": true,
+  "docx_roundtrip": true,
+  "pptx_reopened_slides": 8
+}

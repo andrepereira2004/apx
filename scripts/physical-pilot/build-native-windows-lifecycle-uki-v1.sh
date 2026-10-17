@@ -21,7 +21,7 @@ replacement_started=0
 fail() { /usr/bin/printf 'APX Windows lifecycle UKI build refused: %s\n' "$1" >&2; exit 2; }
 [[ $(/usr/bin/id -u) == 0 ]] || fail "root is required"
 [[ $action == create || $action == delete ]] || fail "action differs"
-[[ $size_gib == 80 || $size_gib == 120 || $size_gib == 160 ]] || fail "size differs"
+[[ $size_gib == 80 || $size_gib == 120 || $size_gib == 160 || $size_gib == 170 || $size_gib == 180 || $size_gib == 250 ]] || fail "size differs"
 [[ $generation =~ ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]] || fail "generation differs"
 [[ $(< /etc/hostname) == apx-host && $(< /sys/class/dmi/id/product_name) == 82JU ]] || fail "computer identity differs"
 /usr/bin/grep -Fxq 'profile=apx-physical-headless-pilot-v1' /etc/apx-physical-pilot || fail "pilot marker differs"

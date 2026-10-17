@@ -1,6 +1,10 @@
 from pathlib import Path
 import importlib.util
 import tempfile
+import ast
+from types import SimpleNamespace
+from unittest import mock
+import time
 import unittest
 
 
@@ -12,6 +16,21 @@ SPEC.loader.exec_module(MODULE)
 
 
 class GraphicalEnvironmentLauncherTests(unittest.TestCase):
+    def test_login_surface_is_ready_without_bootstrapping_desktop(self):
+        tree = ast.parse(LAUNCHER.read_text())
+        function = next(node for node in ast.walk(tree)
+                        if isinstance(node, ast.FunctionDef) and node.name == "verify_desktop_shell")
+        with tempfile.TemporaryDirectory() as directory:
+            engine = SimpleNamespace(HOME=Path(directory),
+                                     compositor_state=mock.Mock(), hyprctl=mock.Mock())
+            processes = mock.Mock(side_effect=lambda name: [123] if name == b"hyprlock" else [])
+            scope = {"engine": engine, "virtual_machine": False,
+                     "process_pids": processes, "time": time}
+            exec(compile(ast.Module(body=[function], type_ignores=[]), str(LAUNCHER), "exec"), scope)
+            self.assertEqual(scope["verify_desktop_shell"](), "login-lock")
+            engine.compositor_state.assert_not_called()
+            engine.hyprctl.assert_not_called()
+
     def test_nvidia_libraries_must_match_host_module(self):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)

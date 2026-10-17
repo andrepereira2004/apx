@@ -1,0 +1,289 @@
+/**
+ * rofi -dump-theme output.
+ * Rofi version: 2.0.0
+ **/
+* {
+    text-color:                  rgba ( 236, 238, 240, 100 % );
+    red:                         rgba ( 220, 50, 47, 100 % );
+    selected-active-foreground:  var(background);
+    lightfg:                     rgba ( 88, 104, 117, 100 % );
+    separatorcolor:              var(foreground);
+    urgent-foreground:           var(red);
+    alternate-urgent-background: var(lightbg);
+    lightbg:                     rgba ( 238, 232, 213, 100 % );
+    background-color:            transparent;
+    border-color:                rgba ( 52, 58, 65, 100 % );
+    normal-background:           var(background);
+    selected-urgent-background:  var(red);
+    alternate-active-background: var(lightbg);
+    spacing:                     2;
+    blue:                        rgba ( 38, 139, 210, 100 % );
+    alternate-normal-foreground: var(foreground);
+    urgent-background:           var(background);
+    selected-normal-foreground:  var(lightbg);
+    active-foreground:           var(blue);
+    background:                  rgba ( 253, 246, 227, 100 % );
+    selected-active-background:  var(blue);
+    active-background:           var(background);
+    selected-normal-background:  var(lightfg);
+    alternate-normal-background: var(lightbg);
+    foreground:                  rgba ( 0, 43, 54, 100 % );
+    selected-urgent-foreground:  var(background);
+    normal-foreground:           var(foreground);
+    alternate-urgent-foreground: var(red);
+    alternate-active-foreground: var(blue);
+}
+element {
+    padding:       10px 12px ;
+    height:        44px ;
+    cursor:        pointer;
+    border-color:  transparent;
+    spacing:       12px ;
+    border:        1px ;
+    border-radius: 7px ;
+}
+element normal.normal {
+    background-color: transparent;
+    text-color:       rgba ( 236, 238, 240, 100 % );
+}
+element normal.urgent {
+    background-color: transparent;
+    text-color:       rgba ( 236, 238, 240, 100 % );
+}
+element normal.active {
+    background-color: rgba ( 48, 53, 59, 100 % );
+    border-color:     rgba ( 109, 120, 131, 100 % );
+    text-color:       White;
+}
+element selected.normal {
+    background-color: rgba ( 48, 53, 59, 100 % );
+    border-color:     rgba ( 217, 220, 234, 100 % );
+    text-color:       rgba ( 217, 220, 234, 100 % );
+}
+element selected.urgent {
+    background-color: transparent;
+    text-color:       rgba ( 236, 238, 240, 100 % );
+}
+element selected.active {
+    background-color: rgba ( 48, 53, 59, 100 % );
+    border-color:     rgba ( 217, 220, 234, 100 % );
+    text-color:       rgba ( 217, 220, 234, 100 % );
+}
+element alternate.normal {
+    background-color: transparent;
+    text-color:       rgba ( 236, 238, 240, 100 % );
+}
+element alternate.urgent {
+    background-color: transparent;
+    text-color:       rgba ( 236, 238, 240, 100 % );
+}
+element alternate.active {
+    background-color: rgba ( 48, 53, 59, 100 % );
+    border-color:     rgba ( 109, 120, 131, 100 % );
+    text-color:       White;
+}
+element-text {
+    background-color: transparent;
+    cursor:           inherit;
+    highlight:        inherit;
+    vertical-align:   0.50;
+    text-color:       inherit;
+}
+element-icon {
+    background-color: transparent;
+    size:             22px ;
+    cursor:           inherit;
+    text-color:       inherit;
+}
+window {
+    padding:          0px ;
+    background-color: transparent;
+    fullscreen:       true;
+    border:           0px ;
+}
+mainbox {
+    padding:  0;
+    spacing:  0px ;
+    border:   0;
+    children: [ "button-dismiss-top","centerbox","button-dismiss-bottom" ];
+}
+message {
+    padding:      1px ;
+    border-color: var(separatorcolor);
+    border:       2px dash 0px 0px ;
+}
+textbox {
+    text-color: var(foreground);
+}
+listview {
+    padding:      2px 0px 0px ;
+    lines:        7;
+    scrollbar:    false;
+    border-color: var(separatorcolor);
+    spacing:      4px ;
+    fixed-height: true;
+    border:       0px ;
+}
+scrollbar {
+    width:        4px ;
+    padding:      0;
+    handle-width: 8px ;
+    border:       0;
+    handle-color: var(normal-foreground);
+}
+sidebar {
+    border-color: var(separatorcolor);
+    border:       2px dash 0px 0px ;
+}
+button {
+    cursor:           pointer;
+    text-color:       rgba ( 155, 163, 172, 100 % );
+    height:           36px ;
+    width:            120px ;
+    padding:          5px 8px ;
+    horizontal-align: 0.50;
+    background-color: rgba ( 48, 52, 69, 85 % );
+    border-radius:    7px ;
+    border-color:     rgba ( 52, 58, 65, 100 % );
+    border:           1px ;
+    spacing:          0;
+    font:             "JetBrains Mono 10";
+    vertical-align:   0.50;
+    expand:           false;
+}
+button selected {
+    background-color: var(selected-normal-background);
+    text-color:       var(selected-normal-foreground);
+}
+button selected.normal {
+    background-color: rgba ( 48, 53, 59, 100 % );
+    border-color:     rgba ( 217, 220, 234, 100 % );
+    text-color:       rgba ( 217, 220, 234, 100 % );
+}
+num-filtered-rows {
+    expand:     false;
+    text-color: Gray;
+}
+num-rows {
+    expand:     false;
+    text-color: Gray;
+}
+textbox-num-sep {
+    expand:     false;
+    str:        "/";
+    text-color: Gray;
+}
+inputbar {
+    text-color:       var(normal-foreground);
+    padding:          14px ;
+    children:         [ "entry" ];
+    background-color: rgba ( 48, 52, 69, 90 % );
+    border-radius:    8px ;
+    border-color:     rgba ( 52, 58, 65, 100 % );
+    border:           1px ;
+    spacing:          12px ;
+}
+overlay {
+    padding:          0px 0.2000em ;
+    background-color: var(normal-foreground);
+    foreground-color: var(normal-background);
+    margin:           0px 0.2000em ;
+    text-color:       var(normal-background);
+}
+case-indicator {
+    spacing:    0;
+    text-color: var(normal-foreground);
+}
+entry {
+    text-color:        White;
+    cursor:            text;
+    spacing:           0;
+    placeholder-color: rgba ( 155, 163, 172, 100 % );
+    placeholder:       "Pesquisar…";
+}
+prompt {
+    vertical-align: 0.50;
+    spacing:        0;
+    text-color:     rgba ( 236, 238, 240, 100 % );
+}
+textbox-prompt-colon {
+    margin:     0px 0.3000em 0.0000em 0.0000em ;
+    expand:     false;
+    str:        ":";
+    text-color: inherit;
+}
+centerbox {
+    orientation: horizontal;
+    expand:      false;
+    spacing:     0px ;
+    children:    [ "button-dismiss-left","launcherbox","button-dismiss-right" ];
+}
+launcherbox {
+    width:            580px ;
+    padding:          18px ;
+    children:         [ "headerbox","apx-separator","inputbar","listview" ];
+    background-color: rgba ( 48, 52, 69, 85 % );
+    border-radius:    12px ;
+    border-color:     rgba ( 52, 58, 65, 100 % );
+    border:           1px ;
+    expand:           false;
+    spacing:          12px ;
+}
+headerbox {
+    orientation: horizontal;
+    expand:      false;
+    children:    [ "header-spacer","mode-switcher" ];
+    height:      36px ;
+}
+header-spacer {
+    expand: true;
+}
+mode-switcher {
+    width:       248px ;
+    orientation: horizontal;
+    expand:      false;
+    spacing:     8px ;
+    height:      36px ;
+}
+apx-separator {
+    width:            542px ;
+    background-color: rgba ( 52, 58, 65, 100 % );
+    expand:           false;
+    height:           1px ;
+}
+button-dismiss-top {
+    width:            100.0000% ;
+    action:           "kb-cancel";
+    expand:           true;
+    padding:          0px ;
+    content:          " ";
+    border:           0px ;
+    background-color: transparent;
+}
+button-dismiss-bottom {
+    width:            100.0000% ;
+    action:           "kb-cancel";
+    expand:           true;
+    padding:          0px ;
+    content:          " ";
+    border:           0px ;
+    background-color: transparent;
+}
+button-dismiss-left {
+    width:            calc( ( ( 100.0000%  - 580px  ) / 2px  ));
+    action:           "kb-cancel";
+    expand:           true;
+    padding:          0px ;
+    content:          " ";
+    border:           0px ;
+    background-color: transparent;
+}
+button-dismiss-right {
+    width:            calc( ( ( 100.0000%  - 580px  ) / 2px  ));
+    action:           "kb-cancel";
+    expand:           true;
+    padding:          0px ;
+    content:          " ";
+    border:           0px ;
+    background-color: transparent;
+}

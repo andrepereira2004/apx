@@ -1,0 +1,14 @@
+#%PAM-1.0
+# A submitted password is checked first. An empty Enter falls through to
+# Howdy; either successful method clears faillock and finishes authentication.
+auth       requisite                   pam_nologin.so
+auth       required                    pam_faillock.so preauth
+auth       [success=2 default=ignore] pam_unix.so
+auth       [success=1 default=ignore] pam_howdy.so
+auth       [default=die]              pam_faillock.so authfail
+auth       required                    pam_faillock.so authsucc
+auth       required                    pam_env.so
+
+account    include                     login
+session    include                     login
+password   include                     login

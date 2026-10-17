@@ -46,10 +46,12 @@ CAPABILITIES = {
                    "bluetooth.power", "bluetooth.scan", "bluetooth.status",
                    "capabilities.get", "events.subscribe", "network.connect", "network.disconnect",
                    "network.connectivity-check", "network.forget", "network.portal.open",
-                   "network.scan", "network.status", "radio.status", "snapshot.get", "calendar.load", "calendar.save"],
+                   "network.scan", "network.status", "radio.status", "radio.airplane", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save"],
     "security": {"bluetooth_pairing_agent": "KeyboardDisplay", "enterprise_wifi": True,
                  "secret_transport": "unix-socket-body", "shell": False},
 }
+APPEARANCE_PATH = Path("/var/lib/apx/appearance-v1/global.json")
+_APPEARANCE_LOCK = threading.Lock()
 CALENDAR_PATH = Path("/var/lib/apx/calendar-v1/events.json")
 _LOCK = threading.Lock()
 _MUTATION_LOCK = threading.Lock()
@@ -170,6 +172,26 @@ def radio_state() -> dict[str, object]:
         "radios_present": present,
         "wlan_soft_blocked": bool(radios["wlan"]) and all(radios["wlan"]),
     }
+
+
+def set_airplane(enabled: bool) -> dict[str, object]:
+    before = radio_state()
+    if not before["radios_present"]: raise UnsupportedError("Os rádios Wi-Fi e Bluetooth não estão disponíveis")
+    changed = []
+    try:
+        for kind in ("wlan", "bluetooth"):
+            result = run((RFKILL, "block" if enabled else "unblock", kind))
+            if result.returncode: raise HostServicesV3Error("Não foi possível alterar o modo de avião")
+            changed.append(kind)
+        state = radio_state()
+        if state["wlan_soft_blocked"] != enabled or state["bluetooth_soft_blocked"] != enabled:
+            raise HostServicesV3Error("O modo de avião não foi confirmado")
+        return state
+    except (HostServicesV3Error, OSError, subprocess.SubprocessError):
+        for kind in reversed(changed):
+            try: run((RFKILL, "block" if before[kind + "_soft_blocked"] else "unblock", kind))
+            except (OSError, subprocess.SubprocessError): pass
+        raise
 
 
 def _default_route() -> bool:
@@ -426,6 +448,33 @@ def snapshot() -> dict[str, object]:
              "timezone": values.get("Timezone", "Etc/UTC")}, "version": 3}
 
 
+def appearance_load() -> dict[str, object]:
+    try:
+        value = json.loads(APPEARANCE_PATH.read_text(encoding="utf-8"))
+        from apx_host_services_v3_contract import validate_payload
+        return validate_payload("appearance.save", value)
+    except (OSError, ValueError):
+        return {"color": "#d9dcea", "icons": True, "buttons": False, "windows": False}
+
+
+def appearance_save(payload: dict[str, object]) -> dict[str, object]:
+    from apx_host_services_v3_contract import validate_payload
+    value = validate_payload("appearance.save", payload)
+    with _APPEARANCE_LOCK:
+        APPEARANCE_PATH.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        temporary = APPEARANCE_PATH.with_name(".global-" + uuid.uuid4().hex + ".tmp")
+        try:
+            with temporary.open("x", encoding="utf-8") as stream:
+                os.chmod(temporary, 0o600)
+                stream.write(json.dumps(value) + "\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, APPEARANCE_PATH)
+        finally:
+            temporary.unlink(missing_ok=True)
+    return value
+
+
 def calendar_load() -> dict[str, object]:
     try:
         value = json.loads(CALENDAR_PATH.read_text(encoding="utf-8"))
@@ -513,6 +562,11 @@ def enterprise_profile(ssid: str, credential: dict[str, str]) -> Path:
             raise ConflictError("O perfil da rede foi criado por outro processo") from error
         os.unlink(temporary, dir_fd=directory)
         os.fsync(directory)
+        # iwd imports profiles on CLOSE_WRITE or MOVED_TO, not a hardlink's
+        # CREATE event. Retain no-clobber publication and notify it without
+        # changing the completed profile or exposing partial credentials.
+        published = os.open(target.name, os.O_WRONLY | os.O_NOFOLLOW, dir_fd=directory)
+        os.close(published)
     finally:
         try: os.unlink(temporary, dir_fd=directory)
         except FileNotFoundError: pass
@@ -535,6 +589,8 @@ def wait_for_network(ssid: str, timeout: float = 10) -> dict[str, object]:
 def apply(operation: str, payload: dict[str, object]) -> object:
     if operation == "capabilities.get": return CAPABILITIES
     if operation == "snapshot.get": return snapshot()
+    if operation == "appearance.load": return appearance_load()
+    if operation == "appearance.save": return appearance_save(payload)
     if operation == "calendar.load": return calendar_load()
     if operation == "calendar.save": return calendar_save(payload)
     if operation == "bluetooth.status": return bluetooth_state()
@@ -568,6 +624,7 @@ def apply(operation: str, payload: dict[str, object]) -> object:
         return state if operation == "bluetooth.power" else bluetooth_state()
     if operation == "network.status": return network_state()
     if operation == "radio.status": return radio_state()
+    if operation == "radio.airplane": return set_airplane(bool(payload["enabled"]))
     if operation == "network.connectivity-check": return perform_connectivity_check()
     if operation == "network.portal.open": return portal_open()
     before = network_state()
@@ -655,7 +712,7 @@ def respond(connection: socket.socket) -> None:
         request_id, operation, payload = parse_request(receive(connection))
         if operation in {"bluetooth.device.connect", "bluetooth.device.disconnect", "bluetooth.device.remove",
                          "bluetooth.pair.begin", "bluetooth.pair.respond", "bluetooth.power", "bluetooth.scan",
-                         "network.connect", "network.disconnect", "network.forget", "network.scan"}:
+                         "network.connect", "network.disconnect", "network.forget", "network.scan", "radio.airplane"}:
             if not _MUTATION_LOCK.acquire(blocking=False): raise ConflictError("another Host network transition is active")
             try: result = apply(operation, payload)
             finally: _MUTATION_LOCK.release()

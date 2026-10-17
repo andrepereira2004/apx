@@ -48,7 +48,7 @@ for token in $(/usr/bin/cat /proc/cmdline); do
     esac
 done
 case "$action" in create|delete) ;; *) action=unknown; fail action ;; esac
-case "$size_gib" in 80|120|160) ;; *) fail size ;; esac
+case "$size_gib" in 80|120|160|170|180|250) ;; *) fail size ;; esac
 case "$generation" in *[!0-9a-f-]*|'') fail generation ;; esac
 test "${#generation}" = 36 || fail generation-length
 case "$(/usr/bin/cat /proc/cmdline)" in *apx.native_windows_lifecycle=1*) ;; *) fail cmdline ;; esac

@@ -22,7 +22,7 @@ OPERATIONS = {
 NAME = re.compile(r"[a-z](?:[a-z0-9]|-(?=[a-z0-9])){0,26}")
 GENERATION = re.compile(r"[0-9a-f]{8}-[0-9a-f-]{27}")
 SYSTEM_KINDS = ("arch", "windows-native")
-NATIVE_WINDOWS_SIZES_GIB = (80, 120, 160)
+NATIVE_WINDOWS_SIZES_GIB = (120, 180, 250)
 
 
 def valid_description(value: object) -> bool:

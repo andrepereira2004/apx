@@ -1,0 +1,265 @@
+{
+  "rofi_layers": [
+    {
+      "address": "0x55ed968d0ca0",
+      "x": 0,
+      "y": 46,
+      "w": 1280,
+      "h": 674,
+      "alpha": 1,
+      "namespace": "rofi",
+      "pid": 138427
+    }
+  ],
+  "all_layers": {
+    "eDP-1": {
+      "levels": {
+        "0": [
+          {
+            "address": "0x55ed972c0bd0",
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 720,
+            "alpha": 1,
+            "namespace": "quickshell",
+            "pid": 402
+          }
+        ],
+        "1": [],
+        "2": [
+          {
+            "address": "0x55ed9673ce60",
+            "x": 0,
+            "y": 46,
+            "w": 1280,
+            "h": 674,
+            "alpha": 1,
+            "namespace": "quickshell",
+            "pid": 402
+          },
+          {
+            "address": "0x55ed972c4550",
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 720,
+            "alpha": 1,
+            "namespace": "quickshell",
+            "pid": 402
+          }
+        ],
+        "3": [
+          {
+            "address": "0x55ed972c4780",
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 720,
+            "alpha": 1,
+            "namespace": "quickshell",
+            "pid": 402
+          },
+          {
+            "address": "0x55ed95b7a100",
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 720,
+            "alpha": 1,
+            "namespace": "quickshell",
+            "pid": 402
+          },
+          {
+            "address": "0x55ed96e44bb0",
+            "x": 8,
+            "y": 0,
+            "w": 1264,
+            "h": 46,
+            "alpha": 1,
+            "namespace": "quickshell",
+            "pid": 402
+          },
+          {
+            "address": "0x55ed968d0ca0",
+            "x": 0,
+            "y": 46,
+            "w": 1280,
+            "h": 674,
+            "alpha": 1,
+            "namespace": "rofi",
+            "pid": 138427
+          }
+        ]
+      }
+    }
+  },
+  "cursor_after_click": {
+    "x": 104,
+    "y": 23
+  },
+  "after_click": {
+    "kind": "calendar",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 500,
+    "height": 410,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 500,
+    "visual_height": 410,
+    "visual_x": 8,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 10,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:12",
+      "JetBrains Mono:14",
+      "JetBrains Mono:22"
+    ],
+    "displayed_controls": {
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 220,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "media_summary_width": 204,
+    "media_summary_x": 8,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "media": {
+        "x": 831,
+        "y": 7,
+        "width": 220,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 38,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "date",
+    "calendar_focus_key": "2026-10-17",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "rofi_one_click": {
+    "kind": "calendar",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 500,
+    "height": 410,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 500,
+    "visual_height": 410,
+    "visual_x": 8,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 10,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:12",
+      "JetBrains Mono:14",
+      "JetBrains Mono:22"
+    ],
+    "displayed_controls": {
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 220,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "media_summary_width": 204,
+    "media_summary_x": 8,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "media": {
+        "x": 831,
+        "y": 7,
+        "width": 220,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 38,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "date",
+    "calendar_focus_key": "2026-10-17",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  }
+}

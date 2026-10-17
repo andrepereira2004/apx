@@ -584,7 +584,7 @@ class Settings(Gtk.Window):
         self.clear(box)
         card = self.card(box, "Navegador predefinido")
         try:
-            current = command(["/usr/bin/xdg-settings", "get", "default-web-browser"]).strip()
+            current = command([str(HOME / ".local/bin/apx-browser-redirect-v1"), "get-browser"]).strip()
         except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
             current = ""
             card.pack_start(label(str(exc), "secondary"), False, False, 0)
@@ -605,8 +605,8 @@ class Settings(Gtk.Window):
         for desktop_id, title in sorted(browsers.items(), key=lambda item: item[1].casefold()):
             card.pack_start(button(("● " if desktop_id == current else "○ ") + title,
                 lambda selected=desktop_id: self.action(
-                    lambda: command(["/usr/bin/xdg-settings", "set",
-                                     "default-web-browser", selected]), self.render_apps)),
+                    lambda: command([str(HOME / ".local/bin/apx-browser-redirect-v1"),
+                                     "set-browser", selected]), self.render_apps)),
                 False, False, 0)
         card = self.card(box, "Ficheiros e tipos")
         try:

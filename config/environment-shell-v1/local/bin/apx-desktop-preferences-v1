@@ -145,7 +145,7 @@ def set_locale(language, formats):
     available = available_locales()
     if language not in available or formats not in available: raise ValueError('Idioma não instalado')
     if any(not re.fullmatch(r'[A-Za-z0-9_.@-]+', x) for x in [language, formats]): raise ValueError('Idioma inválido')
-    content = 'LANG=%s\nLC_TIME=%s\nLC_NUMERIC=%s\nLC_MONETARY=%s\n' % (language,formats,formats,formats)
+    content = 'LANG=%s\nLANGUAGE=%s\nLC_MESSAGES=%s\nLC_TIME=%s\nLC_NUMERIC=%s\nLC_MONETARY=%s\n' % (language,language.split('.')[0],language,formats,formats,formats)
     atomic(CONFIG / 'apx/locale.env',content)
     atomic(CONFIG / 'environment.d/80-apx-locale.conf',content)
 

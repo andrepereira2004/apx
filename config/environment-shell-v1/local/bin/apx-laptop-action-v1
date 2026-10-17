@@ -49,7 +49,7 @@ def files() -> int:
     # existing file window instead of depending on a long-lived Thunar process.
     code = ('local w = hl.get_window("class:^(thunar|Thunar|org.xfce.Thunar)$"); '
             'if w then hl.dispatch(hl.dsp.focus({window=w})) '
-            'else hl.exec_cmd("env USER=apx LOGNAME=apx HOME=/home/Home GIO_USE_VFS=local /usr/bin/thunar /home/Home") end')
+            'else hl.exec_cmd("env -u GIO_USE_VFS USER=apx LOGNAME=apx HOME=/home/apx /usr/bin/thunar /home/apx") end')
     try:
         result = subprocess.run((HYPRCTL, "eval", code), capture_output=True,
                                 text=True, timeout=3, check=False)

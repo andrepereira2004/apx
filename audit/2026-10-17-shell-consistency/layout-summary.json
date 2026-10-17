@@ -1,0 +1,91 @@
+{
+  "menus": {
+    "controls": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "more": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "wifi": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "bluetooth": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "audio": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "microphone": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "shortcuts": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "calendar": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:12",
+        "JetBrains Mono:14",
+        "JetBrains Mono:22"
+      ]
+    },
+    "media": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    },
+    "battery": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:12",
+        "JetBrains Mono:14",
+        "JetBrains Mono:32"
+      ]
+    },
+    "environments": {
+      "y": 65,
+      "fonts": [
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ]
+    }
+  },
+  "outgoing_samples": 1,
+  "incoming_samples": 4
+}

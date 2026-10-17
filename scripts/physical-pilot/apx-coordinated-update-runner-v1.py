@@ -78,7 +78,7 @@ def resolve_and_stage(directory: Path, repository: Path, name: str) -> list[Path
     # Pacman verifies every staged archive and signature against the frozen database.
     if staged:
         run(("/usr/bin/pacman", "--root", str(root), "--dbpath", str(resolver),
-             "--cachedir", str(packages), "-Sw", "--noconfirm"), timeout=1800)
+             "--cachedir", str(packages), "-Suw", "--noconfirm"), timeout=1800)
     return staged
 
 

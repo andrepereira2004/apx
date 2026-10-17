@@ -59,6 +59,18 @@ end)
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
+-- Apply Environment-local language preferences to applications launched by Hyprland.
+local localeFile = io.open("/home/apx/.config/apx/locale.env", "r")
+if localeFile then
+    local localeKeys = { LANG = true, LANGUAGE = true, LC_MESSAGES = true,
+        LC_TIME = true, LC_NUMERIC = true, LC_MONETARY = true }
+    for line in localeFile:lines() do
+        local key, value = line:match("^([A-Z_]+)=([%w_%.@:%-]+)$")
+        if key and localeKeys[key] then hl.env(key, value) end
+    end
+    localeFile:close()
+end
+
 hl.env("XDG_DATA_DIRS", "/home/apx/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
@@ -143,6 +155,11 @@ hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}
 hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
 hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } })
 hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
+-- Overlay fade matches the 160ms OutCubic QuickShell menu transition.
+hl.curve("apxMenuOutCubic", { type = "bezier", points = { {0.215, 0.61}, {0.355, 1} } })
+
+-- Soft window entrance with a small, damped overshoot.
+hl.curve("apxSoftWindowOpen", { type = "spring", mass = 1, stiffness = 220, dampening = 18 })
 
 -- Default springs
 hl.curve("easy",           { type = "spring", mass = 1, stiffness = 238.1191, dampening = 24.21279333 })
@@ -150,19 +167,21 @@ hl.curve("easy",           { type = "spring", mass = 1, stiffness = 238.1191, da
 hl.animation({ leaf = "global",        enabled = true,  speed = 10,   bezier = "default" })
 hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "easeOutQuint" })
 hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
-hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
-hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
-hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
+hl.animation({ leaf = "windowsIn", enabled = true, speed = 2.8, spring = "apxSoftWindowOpen", style = "popin 96%" })
+-- Keep tiled layout reflow in step with window entrances; avoid the inherited spring.
+hl.animation({ leaf = "windowsMove", enabled = true, speed = 2.4, bezier = "apxMenuOutCubic" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.8, bezier = "apxMenuOutCubic", style = "popin 96%" })
+hl.animation({ leaf = "fadeIn", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic" })
+hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.8, bezier = "apxMenuOutCubic" })
 hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
 hl.animation({ leaf = "layers",        enabled = true,  speed = 3.81, bezier = "easeOutQuint" })
-hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "fade" })
-hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
-hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
-hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 3.0, bezier = "apxMenuOutCubic", style = "fade" })
+hl.animation({ leaf = "layersOut", enabled = true, speed = 2.2, bezier = "apxMenuOutCubic", style = "fade" })
+hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 2.0, bezier = "apxMenuOutCubic" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.8, bezier = "apxMenuOutCubic" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic", style = "slidefade 12%" })
+hl.animation({ leaf = "workspacesIn", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic", style = "slidefade 12%" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic", style = "slidefade 12%" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
 -- A lone window needs no focus indicator. Count tiled and floating windows.
@@ -436,3 +455,50 @@ for _, choice in ipairs({"apx-desktop-preferences.lua", "apx-shortcuts.lua", "ap
     local file = io.open(path, "r")
     if file then file:close(); dofile(path) end
 end
+
+-- Small folder customization controls stay out of the tiled application layout.
+hl.window_rule({
+    name = "apx-folder-controls",
+    match = { title = "^(Cor da pasta|Editar etiquetas)$" },
+    float = true,
+})
+
+-- Main file-manager windows enter like the resident menus.
+-- Transient/progress dialogs retain their non-animated rules below.
+hl.window_rule({
+    name = "apx-thunar-menu-animation",
+    match = { class = "^(thunar|Thunar|org.xfce.Thunar)$" },
+    animation = "popin 90%",
+    border_size = 2,
+})
+
+-- APX coordinated motion v2: the launcher rises from the screen bottom.
+-- QuickShell menus animate internally and retain their own content transition.
+hl.layer_rule({
+    name = "apx-rofi-menu-motion",
+    match = { namespace = "^rofi$" },
+    animation = "slide bottom",
+})
+hl.window_rule({
+    name = "apx-thunar-modal-dialogs",
+    match = { class = "^(thunar|Thunar|org.xfce.Thunar)$", modal = true },
+    float = true,
+    center = true,
+    no_anim = true,
+})
+hl.window_rule({
+    name = "apx-thunar-progress-dialog",
+    match = { class = "^(thunar|Thunar|org.xfce.Thunar)$", title = "^(File Operation Progress|Progresso da operação do ficheiro)$" },
+    float = true,
+    no_anim = true,
+})
+
+-- Portal file pickers are dialogs, not another tile beside the document.
+hl.window_rule({
+    name = "apx-portal-file-dialogs",
+    match = { class = "^xdg-desktop-portal-gtk$" },
+    float = true,
+    center = true,
+    size = { "monitor_w*0.78", "monitor_h*0.82" },
+    no_anim = true,
+})

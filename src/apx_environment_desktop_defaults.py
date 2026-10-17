@@ -1,11 +1,11 @@
-"""Pinned Environment-only system defaults for nested Flatpak execution."""
+"""Pinned Environment-only system defaults for nested Flatpak execution and Environment-local authorization."""
 from pathlib import Path
 import hashlib
 import os
 import stat
 
 SEED = Path('/usr/share/apx/config-seeds/environment-flatpak-v1')
-ASSETS = {'apx-flatpak-nesting-v1': '97305e81f99d29f6fd55c675d40c069368ce93bc67b7d2be762eb605edd3e5a5', 'apx-flatpak-nesting-v1.service': '6ac1facb4c407dce57212a23ba273165e2b21ce85ffa0583e779c13f6fe5b2c0'}
+ASSETS = {'apx-flatpak-no-revokefs.conf': '55c91eb9e1e69c1d8318ca96fd6a72e038bbfc802b3c6fea94e589a5531ae507', '49-apx-flatpak-environment.rules': 'f21e2026e16b71789fa529ee65711af445774000adc56b6ea578e81cf82b9375', 'apx-flatpak-nesting-v1': '97305e81f99d29f6fd55c675d40c069368ce93bc67b7d2be762eb605edd3e5a5', 'apx-flatpak-nesting-v1.service': '6ac1facb4c407dce57212a23ba273165e2b21ce85ffa0583e779c13f6fe5b2c0'}
 
 
 def install_flatpak_defaults(root: Path, seed: Path = SEED) -> None:
@@ -23,6 +23,8 @@ def install_flatpak_defaults(root: Path, seed: Path = SEED) -> None:
             raise ValueError('desktop defaults asset digest differs')
         content[name] = data
     paths = {
+        'apx-flatpak-no-revokefs.conf': 'etc/systemd/system/flatpak-system-helper.service.d/50-apx-no-revokefs.conf',
+        '49-apx-flatpak-environment.rules': 'etc/polkit-1/rules.d/49-apx-flatpak-environment.rules',
         'apx-flatpak-nesting-v1': 'usr/local/libexec/apx-flatpak-nesting-v1',
         'apx-flatpak-nesting-v1.service': 'etc/systemd/system/apx-flatpak-nesting-v1.service',
     }
@@ -51,6 +53,6 @@ def install_flatpak_defaults(root: Path, seed: Path = SEED) -> None:
     for name, rel in paths.items():
         p = root / rel
         p.write_bytes(content[name]); os.chown(p,uid,gid)
-        os.chmod(p,0o644 if name.endswith('.service') else 0o755)
+        os.chmod(p,0o644 if name.endswith(('.service', '.rules', '.conf')) else 0o755)
     if not link.is_symlink():
         link.symlink_to('../apx-flatpak-nesting-v1.service');os.lchown(link,uid,gid)

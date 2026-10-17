@@ -79,7 +79,7 @@ def main() -> int:
     parser.add_argument("--preset", choices=("basic", "intermediate", "complete"))
     parser.add_argument("--modules")
     parser.add_argument("--system", choices=("arch", "windows-native"))
-    parser.add_argument("--size-gib", type=int, choices=(80, 120, 160))
+    parser.add_argument("--size-gib", type=int, choices=(120, 180, 250))
     arguments = parser.parse_args(); mode = arguments.mode
     if mode == "hub-menu":
         return hub_menu()

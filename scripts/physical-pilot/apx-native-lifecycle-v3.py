@@ -21,9 +21,9 @@ DISK='/dev/nvme0n1'
 SOURCE=Path(__file__).parent
 RETURN_SOURCE=Path('/usr/share/apx/native-windows-lifecycle-v1/return')
 RETURN_HASHES={
-    'APX-ReturnToHub.ps1':'e81e87d81f2b211cbb86f23a320a409e8423e9e453f72c611622c2c7983ff871',
-    'README.txt':'1cf8618e8976999eebfab111c39ae05eabe7985c507ae493d89afa9c1e0be6e8',
-    'APX-ReturnToHub.vbs':'504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f',
+    'APX-ReturnToHub.ps1':'1a13748584a58cce28f416e6b42b48d34adf5ed56e8683f4b9a7af6ed8af2318',
+    'README.txt':'472fcfa8bd89bdbe2396202fbcd31b50cf290ff0bee26cf4424ed180bad1f170',
+    'APX-ReturnToHub.vbs':'9f0fc5b0f66f1e4564a3c355a89bc776052ffeff805bb27e16a271e662d2586c',
     'APX-ProvisionHardware.cmd':'d6a29f7ca03d07bbfb3affe06825870c66dc9a2f6e5cf4e11e331b047a80785d',
 }
 

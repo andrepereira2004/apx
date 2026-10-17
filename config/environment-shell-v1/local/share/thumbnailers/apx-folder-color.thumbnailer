@@ -1,0 +1,6 @@
+[Thumbnailer Entry]
+Version=1.0
+Type=X-Thumbnailer
+Name=APX Folder Color
+MimeType=inode/directory;
+Exec=/home/apx/.local/bin/apx-folder-color-v1 thumbnail %i %o %s

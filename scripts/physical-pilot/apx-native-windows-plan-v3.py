@@ -33,7 +33,7 @@ def preview(target, description, size_gib, *, generation=None):
         raise ValueError("Escolhe um nome diferente para o novo Windows.")
     if len(description) > 120 or description != description.strip() or any(ord(c) < 32 for c in description):
         raise ValueError("Descrição inválida.")
-    if size_gib not in {80, 120, 160}:
+    if size_gib not in {120, 180, 250}:
         raise ValueError("Tamanho Windows inválido.")
     if Path("/var/lib/apx/environments", target).exists() or Path("/var/lib/apx/native-environments", target + ".json").exists():
         raise ValueError("Já existe um Environment com esse nome.")
@@ -95,7 +95,7 @@ def preview(target, description, size_gib, *, generation=None):
                                    measured_backup_required=True)
     except ValueError as error:
         if "capacity" in str(error):
-            raise ValueError("Esse tamanho não cabe neste SSD mantendo o Windows atual e a reserva APX. Experimenta 80 GiB.") from error
+            raise ValueError("Esse tamanho não cabe neste SSD mantendo o Windows atual e a reserva APX. Experimenta um tamanho menor.") from error
         if "backup budget" in str(error):
             raise ValueError("É necessário libertar espaço no APX para guardar uma cópia do Windows antes da migração.") from error
         raise

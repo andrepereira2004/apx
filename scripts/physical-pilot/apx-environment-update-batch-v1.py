@@ -66,6 +66,12 @@ def latest_status():
     paths = sorted(BASE.glob('*/status.json'), reverse=True)
     if not paths: return {'state': 'idle'}
     value = read_json(paths[0])
+    if value.get('state') == 'awaiting-hub':
+        plan = read_json(paths[0].parent / 'plan.json')
+        current = preview()
+        if current['targets'] != plan['targets']:
+            value.update(state='failed', error='A operação antiga pertence a outra geração dos Environments. É necessária uma nova atualização com cópias de segurança atuais.')
+            atomic(paths[0], value)
     if value.get('state') in ('queued', 'running'):
         operation = value.get('operation', '')
         if OPERATION.fullmatch(operation) is None: raise RuntimeError('Invalid status operation')

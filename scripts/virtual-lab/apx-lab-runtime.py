@@ -69,44 +69,155 @@ DESKTOP_CONFIG_ASSETS = {
 ENVIRONMENT_SHELL_SEED = Path("/usr/share/apx/config-seeds/environment-shell-v1")
 LOCAL_PACKAGE_ARTIFACTS = STATE / "package-artifacts"
 LOCAL_PACKAGE_MANIFESTS = {
+    "localsend-bin": "localsend-bin-v1.json",
+    "gridcraft": "gridcraft-v1.json",
+    "wordcraft": "wordcraft-v1.json",
+    "deckcraft": "deckcraft-v1.json",
     "brave-bin": "brave-bin-v1.json",
     "nvidia-utils": "nvidia-utils-v1.json",
+    "python-dlib": "python-dlib-v1.json",
+    "howdy-apx": "howdy-apx-v1.json",
 }
 ENVIRONMENT_SHELL_ASSETS = {
-    "Thunar/uca.xml": "53566c29b6d6cba38b3bc41117cf74590e3f378215c23c01b801dfe7363b9c74",
+    "quickshell/apx/icons/lucide/square-stack.svg": "9f7550f0db1a934166d8c253613c43151554d69bcacaf36883f817b880f037fe",
+    "quickshell/apx/icons/lucide/audio-lines.svg": "3942b8a5d6bccc927a55f857f0d44b90e2663470cd2d569000c9b60c37578dfa",
+    "quickshell/apx/ControlSlider.qml": "6d0dfca68c8e86621c28830e9fb3362757f988228b0f5b4b5b3137c7db6389ec",
+    "local/bin/apx-lock-date-v1": "79ff3f94b983a3d722450cb62f15407d5f1511e52bb815b29aaa803da33ef6fc",
+    "quickshell/apx/MediaIsland.qml": "ab9b44462bf6b90e4d1c19bd90ca3e7d35c837565ccd7e2286ec002db2f710e9",
+    "quickshell/apx/MediaTimeline.qml": "35e0c65a2be6e4d8c4843db6dd455a0c8bc94720512bb4be0769983cf781d1c1",
+    "hypr/apx-lock-appearance.conf": "0a6f8e7876be85418416e495a77805b733af60ad6a3719a84e875b5b72894d52",
+    "quickshell/apx/GhostLines.js": "d844cd44f44c36fdf7694b6e88be8f3c148e75ac6357550d9b8dbcc5c1b97f03",
+    "quickshell/apx/icons/lucide/skip-forward.svg": "f6bdc4b8d453332bafcf1366a48d5ece4bd4f15eced97c85c3676bd22c5cadf9",
+    "quickshell/apx/icons/lucide/skip-back.svg": "901579624a7d28036a39b3b8bd9e6da0e8cf771a79c67836d8a52b3e2287c031",
+    "quickshell/apx/icons/lucide/pause.svg": "f122ec4ea7f5693a0b1baafa9c708b53980dc87b4aacb297c6e6f71c1a4c115c",
+    "quickshell/apx/icons/lucide/play.svg": "d7c34786135922a92b6896f6c2384ceeb0346afbf6041dc79982011411409833",
+    "quickshell/apx/icons/lucide/bell.svg": "394889e9631fe3a9a63be9a479a95b451b708e432d895978d21d9130b5ee5dbe",
+    "quickshell/apx/icons/lucide/video.svg": "d4fb6587f282c1152b953fe9494cd8ccafdf1e9f44957fbb7fe8dc7af0457597",
+    "quickshell/apx/icons/lucide/music.svg": "8721b8a3594219c1313c4083049e5a5c049f49c47b1cd93fdb61d52a0803e42b",
+    "rofi/apx-appearance.rasi": "e58fd6c0f51e10a0a39868ac26c13cea0a1623f6f5858e3fc8a333eb2213f13c",
+    "kitty/apx-appearance.conf": "cf1b2020a68ee63e95f1ca2d96f669695c2a128d65793662f42f889454a39f7c",
+    "local/bin/apx-desktop-activity-v1": "9b698ffba9d64e9aad73600c5bec37a09c62bafd23626e18295d36bb9f376da7",
+    "local/bin/apx-appearance-v1": "5755ac7ecbcca4f069c572005455f8c4b801e50c484c12e3877c9880fdfec011",
+    "quickshell/apx/qmldir": "9d1abeb211de84093ac38db457560d306193b2ce8e1baa79b5651134ef18ce0e",
+    "quickshell/apx/ActivityPanel.qml": "c7a3c39b738d6f1fe66b420bb1d5724d0393ffb4fb9a8673808aa3db1dfae8bb",
+    "quickshell/apx/ControlDashboard.qml": "98f794e3c130015ef00230996895484b8eefa641c53cff95e92dc93d1507a3c4",
+    "quickshell/apx/ControlTile.qml": "1aaeb00dc1b60489eded083ed2636df3648e2b8e84366dad90162a76f0043a97",
+    "quickshell/apx/DesktopActivity.qml": "682cfd47fa5f9db0a41bf238d7a17e4a5f6ce90a854fffac71ac766c977b17f2",
+    "quickshell/apx/PersonalizationPanel.qml": "9280bd00c032f37556cf07fbb498228c27acf53594c4a640bda0787f971084a2",
+    "quickshell/apx/Appearance.qml": "71616e8773bd2339b00526d34dbce77460994a0f129dd066271cc33ef6c6eca1",
+    "local/share/fonts/jetbrains-mono/OFL.txt": "a76abf002c49097d146e86740a3105a5d00450b1592e820a1109a8c5680cd697",
+    "local/share/fonts/jetbrains-mono/JetBrainsMono-Regular.ttf": "e6fd0d7e91550b3ed2b735d4312474362c4716edc4fc0577a0f61ed782d5aed1",
+    "local/share/fonts/jetbrains-mono/JetBrainsMono-Bold.ttf": "d22c4f3821d725eb01210d278d95dfcfcaadc34699a06658d47c8a5cc5830ada",
+    "quickshell/apx/icons/lucide/check.svg": "7f33acc9a77a61659531044525fc008edebe215bf4dcf1c789c8674ad3277db0",
+    "quickshell/apx/icons/lucide/x.svg": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117",
+    "quickshell/apx/icons/lucide/plus.svg": "7f6af73bf1ff6c4bca3f18351c8d1bdec6749c0c2530c4de5da85d520c21df17",
+    "quickshell/apx/icons/lucide/usb.svg": "6d3feae2abc694973d7dc8000a7016688306b82530426288c163257ac90d3e21",
+    "quickshell/apx/icons/lucide/headphones.svg": "7719585dafa921805aefc21fc3262bbcc621507610a653b84e1632236650b35a",
+    "quickshell/apx/icons/lucide/LICENSE.txt": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+    "quickshell/apx/icons/lucide/plane.svg": "4c775a62a524be78fe20aed8544933d4bd3802c5eca17cd6923509f87671d6d6",
+    "quickshell/apx/icons/lucide/globe.svg": "82c6b8fa0b8e8d775ec9becd86f74a4e50bff7bee4c81f7362de45348504f14d",
+    "quickshell/apx/icons/lucide/circle-alert.svg": "ce3e98b7a03b78c0071131df42466e4e1ff5187fccad30e739ec9ce951cf685a",
+    "quickshell/apx/icons/lucide/circle-check.svg": "9711e045a5999f8a3b0782eb88e09b04e0559bc7b379dcc0a4ae645223e10345",
+    "quickshell/apx/icons/lucide/mouse.svg": "e4238ad7b69d3c3d713fdc2284c8fb20c04781afe0be445539ce4f904c0a0e47",
+    "quickshell/apx/icons/lucide/settings.svg": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b",
+    "quickshell/apx/icons/lucide/search.svg": "283d371c2e433817bb9c0c8310caa6c77fa4177c0f4f1168d9c83b97af7389dc",
+    "quickshell/apx/icons/lucide/shield-check.svg": "8d4fcdbde5bba4abb1a2f6fe53e37ceb6343a1d5449a9d88f6f97c1971d26c4e",
+    "quickshell/apx/icons/lucide/touchpad-off.svg": "101255da206d37e25764520a28ad451a29ce9535b00a2ff290aa8e0a4e799586",
+    "quickshell/apx/icons/lucide/refresh-cw.svg": "2e10dd403c85a24f163d59fc6151aa21147fe9402e1305dfc8979208caee8944",
+    "quickshell/apx/icons/lucide/touchpad.svg": "9d743d5ae640f51599fb006450e07469123aca45c228021610e7bfa78e494547",
+    "quickshell/apx/icons/lucide/camera.svg": "ebbb3178dd80dfd942770a2237fe7bfc3515c55c7daa9d3666933a656d2790e3",
+    "quickshell/apx/icons/lucide/panels-top-left.svg": "321a2a5500f2b814a2e62eb73c4b01dc65c7334fe2e6f7d77517239383e26bb1",
+    "quickshell/apx/icons/lucide/calculator.svg": "a6b191250b1ffabdf9fc9536662309f1b0f65336aa681d75bae9f1708baaefd0",
+    "quickshell/apx/icons/lucide/terminal.svg": "4f9b6488b237757d5cb615ccd07502fa99774826839e2a99017784bdb2596f1a",
+    "quickshell/apx/icons/lucide/rotate-cw.svg": "ddcfe6d87240475946935e77411cd4d15a06f3d28a9b921bafed224ebe953668",
+    "quickshell/apx/icons/lucide/folder.svg": "f0d92b94b797a8ab7d4c4ae33c3236c47f64068351b4e14bdb5014ee42898a39",
+    "quickshell/apx/icons/lucide/log-out.svg": "f24b5b45c05a3acc346af8095408f6ba197ff58ea1641a4f2cb25a9702d2c0ac",
+    "quickshell/apx/icons/lucide/bluetooth-connected.svg": "d39c628c736b13b022f154e9aaa8aad178ef1d090a9bc14f1f4740c24767d828",
+    "quickshell/apx/icons/lucide/power.svg": "1e6b84a659aa43f826cdd8df0a63d349720004e2ccb10c33e415a990a311aa05",
+    "quickshell/apx/icons/lucide/lock-keyhole.svg": "fc0b8b7590d1d9e9bb0112c5c2e15a78ade0bfeca6d6f8c79fbbe149236d74be",
+    "quickshell/apx/icons/lucide/wifi-low.svg": "08629f9524f555100325f1f782105f6f84391e6ace1b41b53e99da2af5dcc733",
+    "quickshell/apx/icons/lucide/wifi-high.svg": "1890bf0a7b7abe57550e817639dd530f2cbc82eb261331e72e3947c589ee2e75",
+    "quickshell/apx/icons/lucide/wifi-off.svg": "318b290106e55c3505933f434d3663524206c7a44165a89508774fba4fdbaadd",
+    "quickshell/apx/icons/lucide/bluetooth.svg": "f2bf3d88cf608834dc389f01b1ee41fdb7bf3656dabef69632c60d5498f3bf29",
+    "quickshell/apx/icons/lucide/bluetooth-off.svg": "61d26b013859d73ddf585d7b6e460ab2a6f02ca3ec2faf4b646cf9054224c22c",
+    "quickshell/apx/icons/lucide/wifi.svg": "5c4c795d014fa95d1e1038362df44a0f0f32ded9cb08c833ae72419ebadc9a91",
+    "quickshell/apx/icons/lucide/hard-drive.svg": "324363c40f54e4ca843de0ad1d023b063b70a26a83bb2e0a9e9f4aad9af37378",
+    "quickshell/apx/icons/lucide/keyboard.svg": "f509925ca81964ed06251ad4702e989bb81a566ffc74d15c2226b4f07ded67be",
+    "quickshell/apx/icons/lucide/mic-off.svg": "bcb5a033b4ecd182ec8d0d0945810ccc5147219b1a21c017b47fd4d5ae3a8320",
+    "quickshell/apx/icons/lucide/volume-x.svg": "f382e421b7aae01172989f2b749ee87e44c0c82c16970b13a9ad5a323b613be0",
+    "quickshell/apx/icons/lucide/sun.svg": "a3955c8b0425fcc5c9ba12d2bdd77fe53b2cd5dd05e7742a56f342e996fb2ef8",
+    "quickshell/apx/icons/lucide/mic.svg": "9b940cd735d1ffa270ba670c4e677d9a09400f3fa81d6b3f405b12a3b67a59a8",
+    "quickshell/apx/icons/lucide/volume-2.svg": "fb404f9c128a0579de67b399177631e5edb3502fdc247ceb30e8b15754b46071",
+    "quickshell/apx/icons/lucide/grid-2x2.svg": "dc1896d3b22e88e0ba45a77bc8e947b7a01d0c9fb5ff77d07d24a5589816bb84",
+    "quickshell/apx/icons/lucide/ghost.svg": "7577ea4e1390a8a8203509dff037fa74791ecebb145cdc5e3f3349de2f009278",
+    "quickshell/apx/icons/lucide/zap.svg": "4c395891eab4d1e5627c5d414a16db037317cb2f12453de0f3a1130964c6d444",
+    "quickshell/apx/icons/lucide/swords.svg": "2dcf7d618baa1fbf21064bc99eb754b8b6d589f444781975a6ea0008be4e2e82",
+    "quickshell/apx/icons/lucide/hexagon.svg": "d6fe215b28eaccc1d50b89b967ae0bd6368ed602a89fd90b3c02688c15f133df",
+    "quickshell/apx/icons/lucide/calendar-days.svg": "9330eb8d7c4989e97b6361314abbf02953243c602874725c9e58ceca00da3bd7",
+    "quickshell/apx/icons/lucide/chevron-left.svg": "83b0681aa38bf55e9d52a1e4b4cced624abe1fe7678ecafda133a574f1161d93",
+    "quickshell/apx/icons/lucide/chevron-right.svg": "2758143d7b2434e4aa7307dfd34405c87909ff4052f21b5f3f40d45224b4f19b",
+    "quickshell/apx/icons/lucide/pickaxe.svg": "b8a9ff74ad1cb09dcaa4b11d2155744a7b61e23d85e01bb4a930ea44aa0dcacc",
+    "quickshell/apx/icons/lucide/battery-low.svg": "a158265a07d3ea60134de7ca88c023ebbe35d9af9c724c410ed251f248987a52",
+    "quickshell/apx/icons/lucide/monitor.svg": "d1a443233345724859de8e4fb48968ba91e885e12ddbd710701548bd91b39428",
+    "quickshell/apx/icons/lucide/battery.svg": "bd0e96da226beca6d150ee25f04bc5ca8466c1ed91e806c2179723e173af2282",
+    "quickshell/apx/icons/lucide/battery-charging.svg": "6a95bf102235d7070121bb8eb21a4836fa7ea9f0dbe8327eadbdf94253acdcbd",
+    "quickshell/apx/icons/lucide/battery-warning.svg": "d59e1af8b6247b59df0535197456fc25df978ae14a9e786c636815ab04c95904",
+    "quickshell/apx/icons/lucide/battery-medium.svg": "f8a79b837f96c801ffc394d1d154c5a792823e3bb506bb98a4379b0647067e0a",
+    "quickshell/apx/icons/lucide/battery-full.svg": "9ef66bd46e676bbcf1e8befca8e904b93be9214abccea4f8a4d20432a0c5ccf8",
+    "quickshell/apx/IconLabel.qml": "37e073d44c73c7cfaa445de1df3a5749493ea8f613373290ab4cbf216bb6d43c",
+    "quickshell/apx/LucideIcon.qml": "17873952b5be593d1f543c66706a7a04fc85d7e8c3c0a2b2ddc19b39f78c3b88",
+    "quickshell/apx/WorkspacePager.js": "86ed3a02b0c0b317d1a3c25907ebda91057dacb6c148439ffbf3f78074f60dfe",
+    "quickshell/apx/WorkspacePreview.qml": "4cdc17fa552e8870865d2f4fbfa2182e2db2ae08910ec494504edccf741075fb",
+    "quickshell/apx/WorkspaceStrip.qml": "4a331701a1a02c4d4a78b81923c85b3ae8ae38496fad654dc94270fef1b6d676",
+    "local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service": "d1f568f71a2961404fb7cea035c1d524d0a811749f5a7499a0dd12515d387446",
+    "local/lib/apx/libchooser-places.so": "23adc03533f0f28db9c299ba3fef37e459f06c0a1355123892b499f59eabd927",
+    "local/lib/apx/chooser-places.c": "287c6f7454111a29d14d937d3adcee326bc6d95767f012f4d352e88a8682c11f",
+    "local/bin/apx-document-templates-v1": "6d300ad6f33d8119dd950a0d1dad73708a64059c2dd920b353af2530d2cd6d84",
+    "local/share/icons/APX-Graphite/scalable/places/apx-folder-tagged.svg": "bca05a5e9a3691fd586fde133f2414ac82d738b4953b997e5c64859540b3aad4",
+    "local/bin/apx-removable-bookmark-v1": "39828754ff29cc507bf7250a375ef705ab0f6a337b565c2e2b45aac8ce24a038",
+    "environment.d/80-apx-locale.conf": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+    "apx/locale.env": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+    "local/share/thumbnailers/apx-folder-color.thumbnailer": "f8306feca643786465607ca5e38dac042b3e8557ff868350131370d08fe18e0f",
+    "local/bin/apx-folder-color-v1": "abf168fbf32431e9e85c06d2427191f5f5ed815d9698d2ea89c113a0c8c9eae4",
+    "local/share/icons/APX-Graphite/scalable/places/apx-file-search.svg": "21328a3e719474b54dfbd799a08bbd5d36da92c2bbc0f6e644f9ba1bc3dad1fd",
+    "local/bin/apx-rofi-files-v1": "7d33e8ebf5ed594e66040a4ff3b4d2c4ad475244e84146cd113c9c458bd5befc",
+    "local/share/icons/APX-Graphite/scalable/places/go-up.svg": "1a4dd9f99a622c3b7382d0365776f915fb751fa09c8138634e89f2945973da12",
+    "local/share/applications/apx-browser-redirect.desktop": "b800a6301a593037dcb80d7bd9140be5cb7f30d05d94f93b23f6dc8a5b395d81",
+    "local/bin/apx-browser-redirect-v1": "12848fee38e1b8dd84d4aec32fbbc17cafb297d61395a959745d1e079b8e8cdf",
+    "Thunar/uca.xml": "ecc0869f622121d9a07fb21948719638a0043548939ae0ca46fc502b8655350f",
     "apx/bashrc": "c92bd4f495294992126c8145ef2990d3042ba4d42c820332881ad08669872c04",
     "apx/wallpapers/alpine-lake.png": "dd5794c56ac03f3befb28b48554222da3a44f8f695fb4f1e9f8ac8c3f14ff09d",
     "apx/wallpapers/atlantic-coast.png": "2204c16ad3f3cea13c2b0af0179800262a0a282685bcea13e2d94d1da7cf1411",
     "apx/wallpapers/rainforest-stream.png": "624a391248bee708ce4195735f9e69937083d0e2f7ba4b9f025d92f231916535",
     "brave-flags.conf": "beed8f20ca3b1de51bfd0a03b862afd62e51933141378c67bd1f34be1443280f",
     "fontconfig/fonts.conf": "ff525fe6d18ebead4e7e1a7ed92ca5d92b8d73f0544a129aa2161ebcc2bc3b24",
-    "gtk-3.0/bookmarks": "3937f6621d3b55203dfe464ade24fe9a14df3cab1f4ae2cfa631d6cbbd26b3b3",
-    "gtk-3.0/gtk.css": "2f115f92ceecf22e4ab8e9cfd968bdcb391517727ef24b915a456416ca705685",
+    "gtk-3.0/bookmarks": "04319388475f0674511ab87d2ea11e52c6407414bd975daa9cf4254ff9c207a2",
+    "gtk-3.0/gtk.css": "84561eaffd8b25fecc91b650cff44363f216243ee665f6c6bce4f78a3ccaafbc",
     "gtk-3.0/settings.ini": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
     "gtk-4.0/settings.ini": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
     "hypr/apx-monitors.lua": "ac3a58b2504062c0faa3b3c452743a5b09f5367cfb2956a4c4d36e9fb0755585",
     "hypr/hypridle.conf": "02a0289df8cf26bb3c537ec40cdc2d3e64b08a52785d2759a6ec1cab1ba04476",
-    "hypr/hyprland.lua": "8d5c101e416137d8f6f5455447b30a94fcea6c10c0486bc42c8b2f62b0a541bc",
-    "hypr/hyprlock.conf": "ebc0d041bc4c3e1772afb46096a3aab32c1dcfa5b610ad6ec0c44516b4910c52",
+    "hypr/hyprland.lua": "1893d6fd2ec9726c7a98e39d3a9132a212ae415cffafb5cef18685bf8be7f18f",
+    "hypr/hyprlock.conf": "83248958d784948fba70f244ef5c0a07939a9822e1931847fe0d5e6b50a4fb62",
     "hyprland/hyprland.conf": "43c9eead30c90654ef7280b5eedf092ec739d04c528784e251292db7e25a6f9f",
-    "kitty/kitty.conf": "bfe0f0dfb7614cda2904c425b4b5bcc24aa5bbe6f7ce98d622857748172abf3f",
-    "local/bin/apx-application-catalog-v1": "6362d85def298ce2f3ba5581e39f0f4aed8b085b00f47b1cd332d34c54934306",
-    "local/bin/apx-application-remove-v1": "6ac8c31d23239a4e07aba8a04e8ff85ae4c5c90b3a56e7a684cd23ee0d5a77bf",
-    "local/bin/apx-desktop-activation-v1": "4e09e66370b44039fd6d16b8945af426b49cdf52c63afd45c24fc19b39c9163a",
+    "kitty/kitty.conf": "730e31722bc7d91f3378f64c6e3908da591d2c2510a4909b598630f88d715b94",
+    "local/bin/apx-application-catalog-v1": "3f1c9975db56b72b0e463ca973f95a47eeda67d9706ffa45857fae5ad6c5f60c",
+    "local/bin/apx-application-remove-v1": "6aafbba4688bcfc34757dae80da0300463523e41e9a64d3cc81f7b9525a336d7",
+    "local/bin/apx-desktop-activation-v1": "2f1749c4ae9591665a9a51d8db5abb5e2f86294f3e0a7d8fad3dafb14f668f3f",
     "local/bin/apx-detached-launch": "40970a9ed235a6799913211dc135c66222ee55e15d5d38e5cfe5d2feafd785ef",
     "local/bin/apx-environment-update-v1": "7cc941774449bef66937693cf3424ee0a71564961d58c2571bdec8a67131ae96",
     "local/bin/apx-face-auth-state-v1": "82ea2de97b0990ebbd7dbdf1c664ee81343aabb84c98fc2f86501f45706da3bb",
     "local/bin/apx-host-console-open": "99c2e22329af1acbebe5c987651353acad76cd1181b946d4c2dbbed706e8c396",
     "local/bin/apx-host-console-terminal": "187025f24fda099acc85a7b82b0e0cacfd979f86feca77219911e661e7ec963e",
     "local/bin/apx-keyring-prepare-v1": "ca3f235fd1598cb8093af6bc48bd6e1d1c77f57271db243d435e8b831e1a89c1",
-    "local/bin/apx-laptop-action-v1": "6ec1dbb32c79ebc816387aa1300560bd3f912d9561e7fb18b6d7d89109a7e4a8",
+    "local/bin/apx-laptop-action-v1": "2517fe5fe364b5c2fe258c8c3eec63db3190333dc8daeae2f6ff4e9ba717001c",
     "local/bin/apx-mouse-sensitivity-v1": "8e6a8286f25c030c5d274f874176e7b12708daeddb0b23191a3159880d16e145",
     "local/bin/apx-legion-brightness-keys-v1.py": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550",
     "local/bin/apx-notification-focus-v1": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
-    "local/bin/apx-shell-v1": "92335d8c03af3505e367384107b352ccb4694fccbfc0223b79b3d296429ee9c3",
+    "local/bin/apx-shell-v1": "55e45c39f93051fddcc95beb957172eba50c31ae6809ba082292f59c1c49955c",
     "local/bin/apx-shortcuts-v1": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
     "local/bin/apx-sysinfo": "1daf4b37c84c855191d2190e2c44a91b95b96b0ce1a46944ea28f580349d14b5",
-    "local/bin/apx-window-apps-v1": "71a5659d131d6d206f0c3a644ffa89ceaad0e4c969ae731b69566aa96928471f",
+    "local/bin/apx-window-apps-v1": "2484dc866f612290efb2f5b5949a3eace0ca0e5562a4e8d251c5296407c5299d",
     "local/bin/apx-workspace-overview-v1": "830c8dd169b2e180bcc2671c52c14ada5037873ebc3152090af466522b76483e",
     "local/libexec/apx-rofi-secondary-v1.so": "1de32d764d0a359a3b6334097a92452155a50d38adc92ac035c213296ffea75d",
     "local/libexec/apx-system-power-client-v1.py": "c037419f59503c255a18a6144e363b146db3238c96b229e44dbfd04cb049e410",
@@ -136,20 +247,21 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/share/icons/APX-Graphite/scalable/places/folder-videos.svg": "1ff0dbfa2d18ab03b727bd2f115da5b9790d6a5a5afb2b45171d2a24bbf428a9",
     "local/share/icons/APX-Graphite/scalable/places/folder.svg": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
     "local/share/icons/APX-Graphite/scalable/places/user-desktop.svg": "d015e06aa73c72e3042568ad2327132acf5176c610abeb7acfa443af51606ab6",
-    "mako/config": "53cda37280ea02455e62879186619aae296b08e8f10bd8cc1c09fd25239cf122",
-    "mimeapps.list": "af6014a10d33380f6fb38f8d042a8d0c5defa51a07c5a4a42d1c0e038edeb01d",
-    "quickshell/apx/BarButton.qml": "3443bd463ecbe3c9c3d3c24774dc76cb06eed6ac2973bdc1a5e21e2794e3a64a",
+    "mako/config": "3b12173118265250fac23f25191178c80f113ee8e1ed5cf4603ed8b5d84d0a60",
+    "mimeapps.list": "3296274c3469bdf7a5bc6e244ab70b02aa4852b986b0c2f6dac67f9c2d15df3b",
+    "quickshell/apx/BarButton.qml": "687bae72734f672e61c080a17a3e144b4203c2511768725f009a4433df778c9c",
     "quickshell/apx/BounceMouseArea.qml": "6d6ea8c4f2d926ca40f157ea0d7443134cc35bbe9c675dc148b4aeaa6275c938",
     "quickshell/apx/ControlIcon.qml": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
-    "quickshell/apx/shell.qml": "4800b555d92f1713d5023c31981369f3817a3a7aaff8eebd4c0d74743932e86e",
-    "rofi/config.rasi": "86c734ba311f6243eb501ff9b715c24a6e25be856a7854ec3e97a9c54deb9ab7",
+    "quickshell/apx/shell.qml": "75a15e6b5cdf0e9d22730945ea4eac2b83126e1ef1f11b539644b3c74b09f9fa",
+    "rofi/config.rasi": "c64fc394fc268a98ea36b759d0dcbd8d9aa6c12d700f51b9d97c0fd8e25cb122",
     "xdg-desktop-portal/portals.conf": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
-    "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "3696963c6abe55635a1c4a2eb96e9b8aba50eacf19a978c469dfc571af565568",
-    "local/bin/apx-settings": "fbb912bc3028cd94fdb8f2bb9d9637cde038ba79569559d1e047f60965536f5c",
-    "local/bin/apx-desktop-preferences-v1": "0a34d67f908d844ec7ec0708ee3de284d130ae88c06b0c231a804031e88bf7b7",
+    "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "4479d56f259731715d38f9231adc4b6491398525648ff99c8f6179083226ea9d",
+    "local/bin/apx-settings": "4ba183b406890e0e3dbbe13afef979f6b1f382c2415d50de28008f460ecc8e9f",
+    "local/bin/apx-desktop-preferences-v1": "5dcba47a6b509d1b5e48063bcd1d4b052b3755fec97552408106d433190ed674",
     "local/bin/apx-clipboard-menu-v1": "8e3e3469bf2b92366000cc20c55f577a85e6243cb719844f089a4b6c7c4d663f",
     "local/share/applications/apx-settings.desktop": "a14f790b359027ba5f844d6c3bd262c95bd955c62647a66a23eafeb7d23e8738",
+    "local/lib/rofi/apx-rofi-files-v1.so": "c848996c6325aa31541fbbd19205c4a8d957cc684c77f660b8ced9c4d7ee5917",
 }
 MAX_GRAPHICAL_CONFIG_BYTES = 1024 * 1024
 MAX_WALLPAPER_BYTES = 4 * 1024 * 1024
@@ -652,6 +764,15 @@ def create(plan_identity: str, approval: str) -> None:
             copy_graphical_config_seed(seed, destination)
             copy_desktop_config_seed(DESKTOP_CONFIG_SEED, destination, role)
             copy_environment_shell_seed(ENVIRONMENT_SHELL_SEED, user_home)
+            # Hide the internal USB bridge; the conditional bookmark exposes a real pen.
+            fstab = root / "etc/fstab"
+            if fstab.is_symlink():
+                raise Refusal("Environment fstab is linked")
+            bridge = "none /media/apx-usb none noauto,x-gvfs-hide 0 0"
+            original_fstab = fstab.read_text() if fstab.exists() else ""
+            if not any(line.split()[1:2] == ["/media/apx-usb"]
+                       for line in original_fstab.splitlines() if not line.lstrip().startswith("#")):
+                fstab.write_text(original_fstab.rstrip() + "\n" + bridge + "\n")
         if role in GRAPHICAL_ROLES | {"hub"}:
             install_flatpak_defaults(root)
         if role == "graphical-base":
@@ -686,8 +807,10 @@ def create(plan_identity: str, approval: str) -> None:
 
 
 def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
-    """Apply the closed package selection and inherit only Hub's password hash."""
+    """Apply packages, APX password and explicitly opted-in face identity."""
     preset, modules = validate_selection(plan.get("desktop_preset"), plan.get("desktop_modules"))
+    from apx_face_auth import load_identity, install_identity
+    face_identity = load_identity(ENVIRONMENTS.parent / "face-auth-v1") if "desktop-integration" in modules else None
     feature_dir = root / "etc/apx"
     feature_dir.mkdir(parents=True, exist_ok=True, mode=0o755)
     atomic_json(feature_dir / "environment-features.json", {
@@ -714,7 +837,7 @@ def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
     # NVIDIA card, including the minimal desktop preset.
     packages = tuple(sorted(set(packages_for(modules)) | {
         "egl-gbm", "egl-wayland", "egl-wayland2", "egl-x11",
-    }))
+    } | ({"python-opencv", "cblas", "lapack"} if face_identity else set())))
     if packages:
         if any(package.startswith("lib32-") for package in packages):
             pacman_config = root / "etc/pacman.conf"
@@ -738,7 +861,11 @@ def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
              "--cachedir", "/var/cache/pacman/pkg", "--config", str(root / "etc/pacman.conf"),
              "--disable-sandbox", "--ignore", "nvidia-utils,lib32-nvidia-utils",
              "-Syu", "--needed", "--noconfirm", *packages])
-    for package in tuple(sorted(set(local_packages_for(modules)) | {"nvidia-utils"})):
+    local_packages = set(local_packages_for(modules)) | {"nvidia-utils"}
+    if face_identity:
+        local_packages.update({"python-dlib", "howdy-apx"})
+    # Howdy depends on the private CPU-only dlib artifact.
+    for package in sorted(local_packages, key=lambda name: (name == "howdy-apx", name)):
         artifact = validated_local_package_artifact(package)
         if package == "nvidia-utils":
             module_version = host_nvidia_version()
@@ -747,6 +874,8 @@ def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
         run(["pacman", "--root", str(root), "--dbpath", str(root / "var/lib/pacman"),
              "--cachedir", "/var/cache/pacman/pkg", "--config", str(root / "etc/pacman.conf"),
             "--disable-sandbox", "-U", "--needed", "--noconfirm", str(artifact)])
+    if face_identity:
+        install_identity(root, face_identity)
 
 
 def host_nvidia_version() -> str:

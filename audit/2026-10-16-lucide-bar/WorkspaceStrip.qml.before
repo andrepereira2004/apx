@@ -1,0 +1,208 @@
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import QtQuick.Controls
+import Quickshell
+import Quickshell.Wayland
+import Quickshell.Hyprland
+import "WorkspacePager.js" as WorkspacePager
+
+Row {
+    id: strip
+    required property var workspaces
+    required property var barWindow
+    required property url wallpaper
+    required property color surfaceColor
+    required property color activeColor
+    required property color mainColor
+    required property color dimColor
+    required property color borderColor
+    property bool menusOpen: false
+    property int offset: 0
+    property var previewTarget: null
+    property bool previewOpen: false
+    readonly property var page: WorkspacePager.page(workspaces, offset)
+    readonly property var previewWorkspace: previewTarget ? previewTarget.modelData : null
+    signal activated()
+    spacing: 4
+
+    onWorkspacesChanged: {
+        if (offset >= workspaces.length || workspaces.length <= 5) offset = 0
+        if (previewWorkspace && workspaces.indexOf(previewWorkspace) < 0) hidePreview()
+    }
+    onVisibleChanged: if (!visible) hidePreview()
+    onMenusOpenChanged: if (menusOpen) hidePreview()
+
+    function hidePreview() {
+        previewDelay.stop()
+        previewClose.stop()
+        previewOpen = false
+        previewTarget = null
+    }
+    function hoverButton(button, hovered) {
+        if (hovered && !menusOpen) {
+            previewClose.stop()
+            previewTarget = button
+            if (!previewOpen) previewDelay.restart()
+            Hyprland.refreshToplevels()
+        } else if (previewTarget === button) {
+            previewDelay.stop()
+            previewClose.restart()
+        }
+    }
+
+    Timer {
+        id: previewDelay
+        interval: 250
+        onTriggered: if (strip.visible && !strip.menusOpen && strip.previewTarget) strip.previewOpen = true
+    }
+    Timer {
+        id: previewClose
+        interval: 180
+        onTriggered: if (!previewHover.hovered) strip.hidePreview()
+    }
+
+    Repeater {
+        model: strip.page
+        delegate: BarButton {
+            id: workspaceButton
+            required property var modelData
+            label: "[ " + modelData.name + " ]"
+            alternateLabel: label
+            alternateActive: modelData.focused
+            activeSurface: strip.activeColor
+            accentColor: strip.mainColor
+            textColor: strip.dimColor
+            Accessible.role: Accessible.Button
+            Accessible.name: "Workspace " + modelData.name + (modelData.focused ? ", atual" : "")
+            Component.onDestruction: if (strip.previewTarget === workspaceButton) strip.hidePreview()
+            HoverHandler {
+                onHoveredChanged: strip.hoverButton(workspaceButton, hovered)
+            }
+            onActivated: {
+                strip.hidePreview()
+                strip.activated()
+                modelData.activate()
+            }
+        }
+    }
+    BarButton {
+        id: nextWorkspaceButton
+        visible: strip.workspaces.length > 5
+        label: ""
+        implicitWidth: 40
+        // Lucide chevron-right: https://lucide.dev/icons/chevron-right
+        /*
+ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+---
+
+The following Lucide icons are derived from the Feather project:
+
+airplay, alert-circle, alert-octagon, alert-triangle, aperture, arrow-down-circle, arrow-down-left, arrow-down-right, arrow-down, arrow-left-circle, arrow-left, arrow-right-circle, arrow-right, arrow-up-circle, arrow-up-left, arrow-up-right, arrow-up, at-sign, calendar, cast, check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-down, chevrons-left, chevrons-right, chevrons-up, circle, clipboard, clock, code, columns, command, compass, corner-down-left, corner-down-right, corner-left-down, corner-left-up, corner-right-down, corner-right-up, corner-up-left, corner-up-right, crosshair, database, divide-circle, divide-square, dollar-sign, download, external-link, feather, frown, hash, headphones, help-circle, info, italic, key, layout, life-buoy, link-2, link, loader, lock, log-in, log-out, maximize, meh, minimize, minimize-2, minus-circle, minus-square, minus, monitor, moon, more-horizontal, more-vertical, move, music, navigation-2, navigation, octagon, pause-circle, percent, plus-circle, plus-square, plus, power, radio, rss, search, server, share, shopping-bag, sidebar, smartphone, smile, square, table-2, tablet, target, terminal, trash-2, trash, triangle, tv, type, upload, x-circle, x-octagon, x-square, x, zoom-in, zoom-out
+
+The MIT License (MIT) (for the icons listed above)
+
+Copyright (c) 2013-present Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+        */
+        Image {
+            anchors.centerIn: parent
+            width: 20; height: 20
+            sourceSize.width: 20; sourceSize.height: 20
+            source: "data:image/svg+xml," + encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%COLOR%\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m9 18 6-6-6-6\" /> </svg>".replace("%COLOR%", nextWorkspaceButton.visuallyActive ? strip.mainColor.toString() : strip.dimColor.toString()))
+        }
+        alternateLabel: label
+        activeSurface: strip.activeColor
+        accentColor: strip.mainColor
+        textColor: strip.dimColor
+        Accessible.role: Accessible.Button
+        Accessible.name: "Mostrar os próximos workspaces"
+        onActivated: {
+            strip.hidePreview()
+            strip.offset = WorkspacePager.nextOffset(strip.workspaces, strip.offset)
+        }
+    }
+
+    // Keep the layer mapped, like the common menus, so hover does not remap
+    // a surface under the pointer. It only accepts input inside the preview.
+    PanelWindow {
+        id: previewWindow
+        screen: strip.barWindow.screen
+        anchors { top: true; bottom: true; left: true; right: true }
+        exclusionMode: ExclusionMode.Ignore
+        exclusiveZone: 0
+        color: "transparent"
+        visible: strip.visible
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+        mask: Region { item: previewInput }
+
+        Item {
+            id: previewInput
+            x: previewLoader.x
+            y: previewLoader.y
+            width: strip.previewOpen ? previewLoader.width : 0
+            height: strip.previewOpen ? previewLoader.height : 0
+        }
+        HoverHandler {
+            id: previewHover
+            parent: previewInput
+            onHoveredChanged: {
+                if (hovered) previewClose.stop()
+                else if (strip.previewOpen) previewClose.restart()
+            }
+        }
+        Loader {
+            id: previewLoader
+            active: strip.previewOpen && strip.previewWorkspace !== null
+            width: Math.min(340, previewWindow.width - 32)
+            x: {
+                var target = strip.previewTarget
+                var left = target ? target.mapToItem(strip.barWindow.contentItem, 0, 0).x + strip.barWindow.margins.left : 16
+                return Math.max(16, Math.min(left, previewWindow.width - width - 16))
+            }
+            y: strip.barWindow.implicitHeight + 6
+            sourceComponent: WorkspacePreview {
+                workspace: strip.previewWorkspace
+                wallpaper: strip.wallpaper
+                surfaceColor: strip.surfaceColor
+                mainColor: strip.mainColor
+                dimColor: strip.dimColor
+                borderColor: strip.borderColor
+                maxHeight: previewWindow.height - previewLoader.y - 16
+            }
+        }
+    }
+}

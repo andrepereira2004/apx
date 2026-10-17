@@ -1,0 +1,3881 @@
+{
+  "sha": "c3ed492cadd5d9ceeba8c440b2eb7a70cc8f8fb9",
+  "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/c3ed492cadd5d9ceeba8c440b2eb7a70cc8f8fb9",
+  "tree": [
+    {
+      "path": ".github",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d5038881dd54fcab0b752b90d665d28cde1fe074",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/d5038881dd54fcab0b752b90d665d28cde1fe074"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f2180c8e52b8fc0a2a3aaea8686e8bb6d8e431b3",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/f2180c8e52b8fc0a2a3aaea8686e8bb6d8e431b3"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2afe7ede7b33340bdc5eac07ec1e482787acb638",
+      "size": 749,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2afe7ede7b33340bdc5eac07ec1e482787acb638"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c09f2d6d89f0e4f9f4f442c354660d596fff4a52",
+      "size": 614,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c09f2d6d89f0e4f9f4f442c354660d596fff4a52"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b24aba6df055d51b1901fa8db94b0b26ccec4fd1",
+      "size": 474,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b24aba6df055d51b1901fa8db94b0b26ccec4fd1"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8be14199393dc3c6b2836344ca3cd5a6353cd2d6",
+      "size": 15912,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8be14199393dc3c6b2836344ca3cd5a6353cd2d6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca2d98b80a40eebecfc8c7c56d4e8209cffe667d",
+      "size": 1315,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ca2d98b80a40eebecfc8c7c56d4e8209cffe667d"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+      "size": 35149,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a94b7253f0a52426d501c0d5cdce86b16cb04f76",
+      "size": 11574,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a94b7253f0a52426d501c0d5cdce86b16cb04f76"
+    },
+    {
+      "path": "assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a383f64e301a1013e0e33306c7ddfdf26a71942f",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/a383f64e301a1013e0e33306c7ddfdf26a71942f"
+    },
+    {
+      "path": "assets/convex.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a09e4ac643da940d4bf9ae428cba057cd9fd2dc",
+      "size": 13730886,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2a09e4ac643da940d4bf9ae428cba057cd9fd2dc"
+    },
+    {
+      "path": "assets/gaming.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c3f0a221268f2206887102fd8cf789e2bd4536a9",
+      "size": 11033568,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c3f0a221268f2206887102fd8cf789e2bd4536a9"
+    },
+    {
+      "path": "assets/island.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e0980912c03540c9884972c83f4b24c5d13e6e2",
+      "size": 13478788,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4e0980912c03540c9884972c83f4b24c5d13e6e2"
+    },
+    {
+      "path": "assets/keybinds.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1dcef60523518f99249d0c976794384988957aaa",
+      "size": 1618274,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1dcef60523518f99249d0c976794384988957aaa"
+    },
+    {
+      "path": "assets/lockscreen.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95f60bfd80158d2fa03811abceeee97315b5e839",
+      "size": 9236136,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/95f60bfd80158d2fa03811abceeee97315b5e839"
+    },
+    {
+      "path": "assets/package-manager.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "244d1fed2e05c816fb19b011cfbcfd06eb91edc3",
+      "size": 1352033,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/244d1fed2e05c816fb19b011cfbcfd06eb91edc3"
+    },
+    {
+      "path": "assets/preview.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d2a44e59f6cb15345b6f90e575eec43aaf8a0ad",
+      "size": 7391102,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5d2a44e59f6cb15345b6f90e575eec43aaf8a0ad"
+    },
+    {
+      "path": "assets/settings.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f4fe35a2f94754637eed12d2b4a55685500300e0",
+      "size": 1458965,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f4fe35a2f94754637eed12d2b4a55685500300e0"
+    },
+    {
+      "path": "config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "403de61434c59d0c3ef2b8e442128d63a1c99983",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/403de61434c59d0c3ef2b8e442128d63a1c99983"
+    },
+    {
+      "path": "config/cava",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ed1bb1c0d9f5614225629e9de128d093c7d55d93",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/ed1bb1c0d9f5614225629e9de128d093c7d55d93"
+    },
+    {
+      "path": "config/cava/config",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed255d2103b62bcb0f87888b6127a7e23771642e",
+      "size": 631,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ed255d2103b62bcb0f87888b6127a7e23771642e"
+    },
+    {
+      "path": "config/fastfetch",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7106773fc1c78e07f0b84466898de8860bcf2f52",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7106773fc1c78e07f0b84466898de8860bcf2f52"
+    },
+    {
+      "path": "config/fastfetch/config.jsonc",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91bb25ef3c28555036b904fcb0fbfa7815bc0827",
+      "size": 2155,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/91bb25ef3c28555036b904fcb0fbfa7815bc0827"
+    },
+    {
+      "path": "config/gtk-3.0",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b4425a405bf0d3818a2c6ee8971d8bedc875d7a9",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/b4425a405bf0d3818a2c6ee8971d8bedc875d7a9"
+    },
+    {
+      "path": "config/gtk-3.0/settings.ini",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "584d19972382ff540ad34569f4c90c44f01df46b",
+      "size": 482,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/584d19972382ff540ad34569f4c90c44f01df46b"
+    },
+    {
+      "path": "config/gtk-4.0",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bb7656e16f0564c73383ad7366f4ef0e81434a79",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/bb7656e16f0564c73383ad7366f4ef0e81434a79"
+    },
+    {
+      "path": "config/gtk-4.0/settings.ini",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75df8e24fed541b95126de0937e5121385932ac5",
+      "size": 213,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/75df8e24fed541b95126de0937e5121385932ac5"
+    },
+    {
+      "path": "config/hypr",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ebbc6656ce7f28ee778a6af83f6c5a4a5d395df2",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/ebbc6656ce7f28ee778a6af83f6c5a4a5d395df2"
+    },
+    {
+      "path": "config/hypr/animations.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d522287d07b214588a1e2089343fb83a64c2c36d",
+      "size": 1217,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d522287d07b214588a1e2089343fb83a64c2c36d"
+    },
+    {
+      "path": "config/hypr/autostart.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f51491c2e7e48f94c6a4e94024dd6ec9d861d94e",
+      "size": 468,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f51491c2e7e48f94c6a4e94024dd6ec9d861d94e"
+    },
+    {
+      "path": "config/hypr/colors.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e26a3cc7935d24292497ff5a34b67979dc6d936",
+      "size": 415,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9e26a3cc7935d24292497ff5a34b67979dc6d936"
+    },
+    {
+      "path": "config/hypr/colors.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72e1318e9e9823b19a62de68d44dcacad8bac7b0",
+      "size": 474,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/72e1318e9e9823b19a62de68d44dcacad8bac7b0"
+    },
+    {
+      "path": "config/hypr/envs.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd20a9dbc8b5cccdd6968a97027f0a883379f017",
+      "size": 202,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/bd20a9dbc8b5cccdd6968a97027f0a883379f017"
+    },
+    {
+      "path": "config/hypr/hypridle.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3f2dc5e1a050b2a787905b931518678adedb10c",
+      "size": 405,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b3f2dc5e1a050b2a787905b931518678adedb10c"
+    },
+    {
+      "path": "config/hypr/hyprland.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c53f756c06bd086311dabf33a0ab5959fe67e9f6",
+      "size": 143,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c53f756c06bd086311dabf33a0ab5959fe67e9f6"
+    },
+    {
+      "path": "config/hypr/keybinds.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6819577cd19a2be7de9801386df3184445140a53",
+      "size": 9830,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6819577cd19a2be7de9801386df3184445140a53"
+    },
+    {
+      "path": "config/hypr/monitors.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06d895c0a78c2f33bd532a18dc6224ce853ca950",
+      "size": 89,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/06d895c0a78c2f33bd532a18dc6224ce853ca950"
+    },
+    {
+      "path": "config/hypr/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8c4e590627f184cd01e662b12865c58f528f7249",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/8c4e590627f184cd01e662b12865c58f528f7249"
+    },
+    {
+      "path": "config/hypr/scripts/brightness.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "eab9d1abc50f308beebd5718a6e71f52f2e4dea2",
+      "size": 536,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/eab9d1abc50f308beebd5718a6e71f52f2e4dea2"
+    },
+    {
+      "path": "config/hypr/scripts/keyboard_lock.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "d985e93502e50b7fb1ca90a8b44a3ee1142ea281",
+      "size": 1655,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d985e93502e50b7fb1ca90a8b44a3ee1142ea281"
+    },
+    {
+      "path": "config/hypr/scripts/media_player.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "94c267c0f3441b1b4e100a1b02b158469961af3f",
+      "size": 223,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/94c267c0f3441b1b4e100a1b02b158469961af3f"
+    },
+    {
+      "path": "config/hypr/scripts/touchpad.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "7dcdd01be01d32b5c88b247832dbb9a86bc43885",
+      "size": 1419,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7dcdd01be01d32b5c88b247832dbb9a86bc43885"
+    },
+    {
+      "path": "config/hypr/scripts/volume.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "50259ed5c6d1aabdc8a141378591f889cbffdb85",
+      "size": 989,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/50259ed5c6d1aabdc8a141378591f889cbffdb85"
+    },
+    {
+      "path": "config/hypr/userprefs.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f4e9bdef6774d5f89f4272e31b171817656d1d0",
+      "size": 1904,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4f4e9bdef6774d5f89f4272e31b171817656d1d0"
+    },
+    {
+      "path": "config/hypr/windowrules.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "205e7f6adf8dd220f63f34fab630e2454c8a4456",
+      "size": 2423,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/205e7f6adf8dd220f63f34fab630e2454c8a4456"
+    },
+    {
+      "path": "config/kitty",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "555c003c880c01af67d3bb56c65cc4a2436df7a2",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/555c003c880c01af67d3bb56c65cc4a2436df7a2"
+    },
+    {
+      "path": "config/kitty/kitty.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3ef070259c55fd8bc04ae3b161af29a6583cc78",
+      "size": 194,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d3ef070259c55fd8bc04ae3b161af29a6583cc78"
+    },
+    {
+      "path": "config/kitty/theme.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "config/lazygit",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1b71d9f8ba5121a06c7df2caef8bc750aa3144d4",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/1b71d9f8ba5121a06c7df2caef8bc750aa3144d4"
+    },
+    {
+      "path": "config/lazygit/config.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "890a397d276f4b6e2b82e9c4ccd11277d303d26a",
+      "size": 449,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/890a397d276f4b6e2b82e9c4ccd11277d303d26a"
+    },
+    {
+      "path": "config/nvim",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "27bc5b93269dc0354d2b638a9e6d540a9eb00d57",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/27bc5b93269dc0354d2b638a9e6d540a9eb00d57"
+    },
+    {
+      "path": "config/nvim/init.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e090fdf717a3d70bcd258e06609b6280e5a5cbdf",
+      "size": 472,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e090fdf717a3d70bcd258e06609b6280e5a5cbdf"
+    },
+    {
+      "path": "config/nvim/lazy-lock.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f7c94e23dd1f8aa2798a343b81420425277aba4c",
+      "size": 4132,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f7c94e23dd1f8aa2798a343b81420425277aba4c"
+    },
+    {
+      "path": "config/nvim/lua",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7add782b3affb1ab4c5c46feecc5f11a78f98461",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7add782b3affb1ab4c5c46feecc5f11a78f98461"
+    },
+    {
+      "path": "config/nvim/lua/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "acc4fd2f71e6cd9ac7ac6ff2a49966797338656b",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/acc4fd2f71e6cd9ac7ac6ff2a49966797338656b"
+    },
+    {
+      "path": "config/nvim/lua/config/autocmds.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53781f946ca29621b134ba185c370685d0c63103",
+      "size": 825,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/53781f946ca29621b134ba185c370685d0c63103"
+    },
+    {
+      "path": "config/nvim/lua/config/keymaps.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a4b9406dc7563fcf67904995c97e8be90a7887c",
+      "size": 7218,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3a4b9406dc7563fcf67904995c97e8be90a7887c"
+    },
+    {
+      "path": "config/nvim/lua/config/options.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab1fe7cc13003e84d37a0295424d8e9792e8b56c",
+      "size": 742,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ab1fe7cc13003e84d37a0295424d8e9792e8b56c"
+    },
+    {
+      "path": "config/nvim/lua/config/theme_sync.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "556893fc014959e63127a3b159443d5640a115b8",
+      "size": 1465,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/556893fc014959e63127a3b159443d5640a115b8"
+    },
+    {
+      "path": "config/nvim/lua/plugins",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "821e7715adbe61709e1218c24804aad820adafa0",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/821e7715adbe61709e1218c24804aad820adafa0"
+    },
+    {
+      "path": "config/nvim/lua/plugins/colorscheme.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca79de42a964dbd568d905bfc920de581c4c35da",
+      "size": 565,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ca79de42a964dbd568d905bfc920de581c4c35da"
+    },
+    {
+      "path": "config/nvim/lua/plugins/conform.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8a92c3159ff095c125beee77a31d6dee0bf40e51",
+      "size": 1150,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8a92c3159ff095c125beee77a31d6dee0bf40e51"
+    },
+    {
+      "path": "config/nvim/lua/plugins/lsp.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2df52092d132bc5a7099a3ae686f51d349356434",
+      "size": 5019,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2df52092d132bc5a7099a3ae686f51d349356434"
+    },
+    {
+      "path": "config/nvim/lua/plugins/match.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f65ec12552806467b638835408c351ecb15bca02",
+      "size": 196,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f65ec12552806467b638835408c351ecb15bca02"
+    },
+    {
+      "path": "config/nvim/lua/plugins/md-render.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8b0be17c1d4ecb201199136110a9c9ee2af7eb18",
+      "size": 231,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8b0be17c1d4ecb201199136110a9c9ee2af7eb18"
+    },
+    {
+      "path": "config/nvim/lua/plugins/quickbuf.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "613218f355e41464152b261a4311242bb36fd5f3",
+      "size": 1947,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/613218f355e41464152b261a4311242bb36fd5f3"
+    },
+    {
+      "path": "config/nvim/lua/plugins/treesitter.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b5617b78641aedbe4b33968ea62478b92551969",
+      "size": 944,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1b5617b78641aedbe4b33968ea62478b92551969"
+    },
+    {
+      "path": "config/nvim/lua/plugins/trouble.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d00fb141f40d6056f3c4aa501bfdb1e9e9b626b",
+      "size": 159,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9d00fb141f40d6056f3c4aa501bfdb1e9e9b626b"
+    },
+    {
+      "path": "config/nvim/lua/plugins/ui.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "875e970db3bc9b09061f736a27f047e04b9b83b3",
+      "size": 6087,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/875e970db3bc9b09061f736a27f047e04b9b83b3"
+    },
+    {
+      "path": "config/nvim/lua/plugins/utils.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4030708dbf7d7000a574db89e5755a2640c5bec3",
+      "size": 1359,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4030708dbf7d7000a574db89e5755a2640c5bec3"
+    },
+    {
+      "path": "config/nvim/spell",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "00fc32888297090b7f2456a3a0e044516b0e4385",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/00fc32888297090b7f2456a3a0e044516b0e4385"
+    },
+    {
+      "path": "config/nvim/spell/en.utf-8.add",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a25fb951bede8d28050437fd58864b4643007ec",
+      "size": 223,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3a25fb951bede8d28050437fd58864b4643007ec"
+    },
+    {
+      "path": "config/nvim/spell/en.utf-8.add.spl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a478e9f1de92bfccdd1746cc70b975aa346a377",
+      "size": 432,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7a478e9f1de92bfccdd1746cc70b975aa346a377"
+    },
+    {
+      "path": "config/nvim/stylua.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6090f425c535ef4aabfade3cfd363c943617e5f0",
+      "size": 142,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6090f425c535ef4aabfade3cfd363c943617e5f0"
+    },
+    {
+      "path": "config/qt5ct",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "eb6ef93300e66b60484d87ddcc472c1710d39d6c",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/eb6ef93300e66b60484d87ddcc472c1710d39d6c"
+    },
+    {
+      "path": "config/qt5ct/qt5ct.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47285a25677e9addc4e341b8de362d9798ad6f6a",
+      "size": 37,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/47285a25677e9addc4e341b8de362d9798ad6f6a"
+    },
+    {
+      "path": "config/qt6ct",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d829ef613ae25841e4f509a4dccd02f731a33bf4",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/d829ef613ae25841e4f509a4dccd02f731a33bf4"
+    },
+    {
+      "path": "config/qt6ct/qt6ct.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47285a25677e9addc4e341b8de362d9798ad6f6a",
+      "size": 37,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/47285a25677e9addc4e341b8de362d9798ad6f6a"
+    },
+    {
+      "path": "config/quickshell",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "09b7572c9b6489f9b9eb054ec7f43b1d8527b901",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/09b7572c9b6489f9b9eb054ec7f43b1d8527b901"
+    },
+    {
+      "path": "config/quickshell/Applications",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f820b3cc65abdd81e80800d1932952cca064fe15",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/f820b3cc65abdd81e80800d1932952cca064fe15"
+    },
+    {
+      "path": "config/quickshell/Applications/minflair-keybinds.desktop",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "754b238c89117a3f02d4ec5e42b82556e005439a",
+      "size": 288,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/754b238c89117a3f02d4ec5e42b82556e005439a"
+    },
+    {
+      "path": "config/quickshell/Applications/minflair-packagemanager.desktop",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f39d0d438bf88c81c3b8f167ac808e7621536463",
+      "size": 312,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f39d0d438bf88c81c3b8f167ac808e7621536463"
+    },
+    {
+      "path": "config/quickshell/Applications/minflair-settings.desktop",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b606da2953ed614db3944e0066ff69467da83dc8",
+      "size": 290,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b606da2953ed614db3944e0066ff69467da83dc8"
+    },
+    {
+      "path": "config/quickshell/Core",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2d553692e639d833b85c375fa10ea073721ee142",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/2d553692e639d833b85c375fa10ea073721ee142"
+    },
+    {
+      "path": "config/quickshell/Core/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6980b27fae2da752877d53bdc69a30995676246c",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/6980b27fae2da752877d53bdc69a30995676246c"
+    },
+    {
+      "path": "config/quickshell/Core/Components/ActionMenu.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa742d9ceed73f690a09ff292ab1334906b5d2a4",
+      "size": 3022,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/fa742d9ceed73f690a09ff292ab1334906b5d2a4"
+    },
+    {
+      "path": "config/quickshell/Core/Components/AnimatedMinflair.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b94323706a97d39283d922e6731f04950b816319",
+      "size": 6599,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b94323706a97d39283d922e6731f04950b816319"
+    },
+    {
+      "path": "config/quickshell/Core/Components/AppContainer.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4790ce00969dafc231ede0d03d2918bbadf10516",
+      "size": 1011,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4790ce00969dafc231ede0d03d2918bbadf10516"
+    },
+    {
+      "path": "config/quickshell/Core/Components/AppGroup.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48ee64222fbc188ec95bc627353ba0ee66062add",
+      "size": 2739,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/48ee64222fbc188ec95bc627353ba0ee66062add"
+    },
+    {
+      "path": "config/quickshell/Core/Components/AppHeader.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eb79c6b2a81e8d8bd3d2a6487ae783705e83e98d",
+      "size": 2395,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/eb79c6b2a81e8d8bd3d2a6487ae783705e83e98d"
+    },
+    {
+      "path": "config/quickshell/Core/Components/AppSidebar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c325563c05574677c40e4641de493327588ebc3f",
+      "size": 2548,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c325563c05574677c40e4641de493327588ebc3f"
+    },
+    {
+      "path": "config/quickshell/Core/Components/Card.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3ef5ef03849aaa6d649f5e00af18503d47fe05a",
+      "size": 1428,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d3ef5ef03849aaa6d649f5e00af18503d47fe05a"
+    },
+    {
+      "path": "config/quickshell/Core/Components/Divider.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8b4a0824e066f74f4fba2cbbc234256a1c38bc1f",
+      "size": 604,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8b4a0824e066f74f4fba2cbbc234256a1c38bc1f"
+    },
+    {
+      "path": "config/quickshell/Core/Components/GhostEmptyState.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "195b0731edd49c4fbaaac35faa585d653e0f2163",
+      "size": 2218,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/195b0731edd49c4fbaaac35faa585d653e0f2163"
+    },
+    {
+      "path": "config/quickshell/Core/Components/InfoRow.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b206bd04b13c3dbb38e8acc955adbbbe745ded2",
+      "size": 852,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0b206bd04b13c3dbb38e8acc955adbbbe745ded2"
+    },
+    {
+      "path": "config/quickshell/Core/Components/PageTransitionView.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "808da7b83b24c57eb040f5b82b57c0f027ad3ffb",
+      "size": 3057,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/808da7b83b24c57eb040f5b82b57c0f027ad3ffb"
+    },
+    {
+      "path": "config/quickshell/Core/Components/SettingRowTemplate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "329334b7e8b113d5515cd652bb3ee44d9f1b4660",
+      "size": 1393,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/329334b7e8b113d5515cd652bb3ee44d9f1b4660"
+    },
+    {
+      "path": "config/quickshell/Core/Components/SidebarNavRow.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b1418c7f284eb95680cc9a86dc4fe56ae8d166d",
+      "size": 2708,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9b1418c7f284eb95680cc9a86dc4fe56ae8d166d"
+    },
+    {
+      "path": "config/quickshell/Core/Components/SvgIcon.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d45d381392c833286eca68a3ff68174727f867f7",
+      "size": 1732,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d45d381392c833286eca68a3ff68174727f867f7"
+    },
+    {
+      "path": "config/quickshell/Core/Components/SvgIconButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01c61ae9d62d23c02b161ee5d62aba86665dbfcd",
+      "size": 4677,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/01c61ae9d62d23c02b161ee5d62aba86665dbfcd"
+    },
+    {
+      "path": "config/quickshell/Core/Components/ThemedSearchBar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4381183b29f94252cdbec62d477efd04e4782cc9",
+      "size": 2200,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4381183b29f94252cdbec62d477efd04e4782cc9"
+    },
+    {
+      "path": "config/quickshell/Core/Components/ThemedSelect.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dba049d95e64ec669588bd0a6aa0c803acb3230",
+      "size": 12642,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3dba049d95e64ec669588bd0a6aa0c803acb3230"
+    },
+    {
+      "path": "config/quickshell/Core/Components/ThemedShadow.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40ed64efa013d966e87c899b4e44b980c395a709",
+      "size": 441,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/40ed64efa013d966e87c899b4e44b980c395a709"
+    },
+    {
+      "path": "config/quickshell/Core/Components/ThemedSlider.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43c396de9cfb7106a3d9cbe9db30518ff9c22de2",
+      "size": 7952,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/43c396de9cfb7106a3d9cbe9db30518ff9c22de2"
+    },
+    {
+      "path": "config/quickshell/Core/Components/ThemedText.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a5758676d4d42dc216dfe39933a2c40312e52600",
+      "size": 240,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a5758676d4d42dc216dfe39933a2c40312e52600"
+    },
+    {
+      "path": "config/quickshell/Core/Components/ThemedTooltip.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0576a297d8f169c134dede57d55b36fd07bf20b5",
+      "size": 394,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0576a297d8f169c134dede57d55b36fd07bf20b5"
+    },
+    {
+      "path": "config/quickshell/Core/Components/TypewriterText.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f89d236050ffa94265d7c94442850559a540f98d",
+      "size": 1975,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f89d236050ffa94265d7c94442850559a540f98d"
+    },
+    {
+      "path": "config/quickshell/Core/Constants.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "467524f7b06b9f4582aaafd90c5c3faa501ab60f",
+      "size": 1053,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/467524f7b06b9f4582aaafd90c5c3faa501ab60f"
+    },
+    {
+      "path": "config/quickshell/Core/Services",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "56cf3ae247a1f0a201875bf4e8da0d0ad26b5f0a",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/56cf3ae247a1f0a201875bf4e8da0d0ad26b5f0a"
+    },
+    {
+      "path": "config/quickshell/Core/Services/AppState.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4ee4c3255d3671098adc6d84cab0e42619123dd9",
+      "size": 5460,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4ee4c3255d3671098adc6d84cab0e42619123dd9"
+    },
+    {
+      "path": "config/quickshell/Core/Services/AudioService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3c0f7163009c2eb08ac08a476c7daa5cf3784e7",
+      "size": 1299,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e3c0f7163009c2eb08ac08a476c7daa5cf3784e7"
+    },
+    {
+      "path": "config/quickshell/Core/Services/CavaService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0c472bfb4840aa84f4fe600ab3277ead7a513e2",
+      "size": 1332,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f0c472bfb4840aa84f4fe600ab3277ead7a513e2"
+    },
+    {
+      "path": "config/quickshell/Core/Services/ClipboardService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b6c1004ffab0fbb06e0025f08e5fd1dadc1aa1e",
+      "size": 6175,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2b6c1004ffab0fbb06e0025f08e5fd1dadc1aa1e"
+    },
+    {
+      "path": "config/quickshell/Core/Services/DisplayProfileService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53929e226f2dbf52924e5b14ec64a3398903152b",
+      "size": 4938,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/53929e226f2dbf52924e5b14ec64a3398903152b"
+    },
+    {
+      "path": "config/quickshell/Core/Services/GithubService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6186c9caee9d2811da28fb8c108f5acf45e9641",
+      "size": 9377,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e6186c9caee9d2811da28fb8c108f5acf45e9641"
+    },
+    {
+      "path": "config/quickshell/Core/Services/HyprlandService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7992b79539d292b46fad44fbe6e88572e139d821",
+      "size": 22406,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7992b79539d292b46fad44fbe6e88572e139d821"
+    },
+    {
+      "path": "config/quickshell/Core/Services/MprisService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49bbc44255f58bfe86ca85f5f8850d97b5f9a77e",
+      "size": 13230,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/49bbc44255f58bfe86ca85f5f8850d97b5f9a77e"
+    },
+    {
+      "path": "config/quickshell/Core/Services/NotificationData.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd40884c9f7336030f9872fb32ef33f8dc806972",
+      "size": 4715,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/dd40884c9f7336030f9872fb32ef33f8dc806972"
+    },
+    {
+      "path": "config/quickshell/Core/Services/NotificationService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "924c5994523f4e7662fb5c60417014c6511c4ac6",
+      "size": 12977,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/924c5994523f4e7662fb5c60417014c6511c4ac6"
+    },
+    {
+      "path": "config/quickshell/Core/Services/OsdService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "def19d491fd5a88bf451d6a43bb0b2d62535ecf7",
+      "size": 4186,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/def19d491fd5a88bf451d6a43bb0b2d62535ecf7"
+    },
+    {
+      "path": "config/quickshell/Core/Services/QuoteService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d1b7a860901c24c0782fe3eb58d87d3b9e5f899",
+      "size": 6799,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7d1b7a860901c24c0782fe3eb58d87d3b9e5f899"
+    },
+    {
+      "path": "config/quickshell/Core/Services/RecorderService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20f9845e75db7f32d5001283d312a1d48dd4082f",
+      "size": 1607,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/20f9845e75db7f32d5001283d312a1d48dd4082f"
+    },
+    {
+      "path": "config/quickshell/Core/Services/SettingsService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32513009960c43bdf10c40e21c70346ee6f95957",
+      "size": 15447,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/32513009960c43bdf10c40e21c70346ee6f95957"
+    },
+    {
+      "path": "config/quickshell/Core/Services/SystemInfoService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3347a425851d40b616fe4162f50731c06cd1bb3",
+      "size": 7574,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d3347a425851d40b616fe4162f50731c06cd1bb3"
+    },
+    {
+      "path": "config/quickshell/Core/Services/SystemStats.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "61bc39639b28d96ce7d6d5f198529f54233e31b9",
+      "size": 2294,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/61bc39639b28d96ce7d6d5f198529f54233e31b9"
+    },
+    {
+      "path": "config/quickshell/Core/Services/UpdateService.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7520a74d24ad5dd7cc5607e43b0caf47a5ceb220",
+      "size": 2855,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7520a74d24ad5dd7cc5607e43b0caf47a5ceb220"
+    },
+    {
+      "path": "config/quickshell/Core/Services/WallpaperManager.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a1ee3759f36ebd939917a0548ec90ba33004a03",
+      "size": 5373,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0a1ee3759f36ebd939917a0548ec90ba33004a03"
+    },
+    {
+      "path": "config/quickshell/Core/Services/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f6f9203036e296f7d1a3bb8fd436ee69315025c1",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/f6f9203036e296f7d1a3bb8fd436ee69315025c1"
+    },
+    {
+      "path": "config/quickshell/Core/Services/scripts/fetch_github_contributions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dda559da63297a90e32e9bfe89f00e1978cb8dfb",
+      "size": 6492,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/dda559da63297a90e32e9bfe89f00e1978cb8dfb"
+    },
+    {
+      "path": "config/quickshell/Core/Services/scripts/fetch_github_info.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3c68ffe1755f52b4ce9599ec9ed6b9972900971",
+      "size": 3477,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f3c68ffe1755f52b4ce9599ec9ed6b9972900971"
+    },
+    {
+      "path": "config/quickshell/Core/Services/scripts/game_mode.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "9148893f307a95e5c5591af50e341d26b946daa3",
+      "size": 2433,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9148893f307a95e5c5591af50e341d26b946daa3"
+    },
+    {
+      "path": "config/quickshell/Core/Services/scripts/read_hypr_prefs.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "c481504fa8a1c438c0f44b9ab97ee90bf3d0c78a",
+      "size": 1725,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c481504fa8a1c438c0f44b9ab97ee90bf3d0c78a"
+    },
+    {
+      "path": "config/quickshell/Core/Services/scripts/update_hypr_prefs.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "ab607d1a3dbeb6dd3309a0ea979be8fc904ece84",
+      "size": 4818,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ab607d1a3dbeb6dd3309a0ea979be8fc904ece84"
+    },
+    {
+      "path": "config/quickshell/Core/Theme.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a23a62990b02675c51fee6fe41bc976c4871143",
+      "size": 9216,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2a23a62990b02675c51fee6fe41bc976c4871143"
+    },
+    {
+      "path": "config/quickshell/Core/Utils",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3d9b3b682959bed76b09bf71f8bbdd9fd00a6b7a",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/3d9b3b682959bed76b09bf71f8bbdd9fd00a6b7a"
+    },
+    {
+      "path": "config/quickshell/Core/Utils/ColorUtils.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80cbc390d6445a393bfb021f9ce897b08c88b189",
+      "size": 208,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/80cbc390d6445a393bfb021f9ce897b08c88b189"
+    },
+    {
+      "path": "config/quickshell/Core/Windows",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8509452638ac86320a080b4268b8063c867a1980",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/8509452638ac86320a080b4268b8063c867a1980"
+    },
+    {
+      "path": "config/quickshell/Core/Windows/AppWindow.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3377d699aab2a9d3dc2e94e0ddd3480a69109df7",
+      "size": 1812,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3377d699aab2a9d3dc2e94e0ddd3480a69109df7"
+    },
+    {
+      "path": "config/quickshell/Core/Windows/OverlayStyles",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7732a4db4d88e2c4371a56ca14ef91735291a876",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7732a4db4d88e2c4371a56ca14ef91735291a876"
+    },
+    {
+      "path": "config/quickshell/Core/Windows/OverlayStyles/IslandOverlayStyle.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1a55cd37f66661564fc5a9b4f3993ea49df4ffd",
+      "size": 7457,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f1a55cd37f66661564fc5a9b4f3993ea49df4ffd"
+    },
+    {
+      "path": "config/quickshell/Core/Windows/OverlayWindow.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d265183916c0d9bcdac4fb820d6a200e6f7df6e",
+      "size": 9362,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6d265183916c0d9bcdac4fb820d6a200e6f7df6e"
+    },
+    {
+      "path": "config/quickshell/Core/Windows/ShellModules.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c86dfe02b6281f2bc6cc624f93aef94f792cf854",
+      "size": 1756,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c86dfe02b6281f2bc6cc624f93aef94f792cf854"
+    },
+    {
+      "path": "config/quickshell/Core/Windows/SidebarWindow.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "991e53c5d434ecfe4ca7128231c4fab48256871b",
+      "size": 8577,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/991e53c5d434ecfe4ca7128231c4fab48256871b"
+    },
+    {
+      "path": "config/quickshell/Core/Windows/WidgetLoader.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dfed545a811f59271a8202273b2b4ee5f4a70116",
+      "size": 3547,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/dfed545a811f59271a8202273b2b4ee5f4a70116"
+    },
+    {
+      "path": "config/quickshell/Modules",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "69dcf2d830baa1d0e5bcb9dee9920df0ad4969cb",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/69dcf2d830baa1d0e5bcb9dee9920df0ad4969cb"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6a210dd77e3fea5141ab6bcec2f93045a3272efa",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/6a210dd77e3fea5141ab6bcec2f93045a3272efa"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Bar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47c734f53b267c8b611b506da3211f50b96a0486",
+      "size": 3319,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/47c734f53b267c8b611b506da3211f50b96a0486"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/BarOverlayWindow.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c0a462de91535154f4374fb41ff1753b76d90c6",
+      "size": 11884,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8c0a462de91535154f4374fb41ff1753b76d90c6"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/BarStyleConfig.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "878470ae5ee2bcc9ad0e5de9b14ba836e055b0df",
+      "size": 1286,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/878470ae5ee2bcc9ad0e5de9b14ba836e055b0df"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "495f3a74007b9c966e8cbf0304f339c8e7e65131",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/495f3a74007b9c966e8cbf0304f339c8e7e65131"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/BarButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "974f6b5b21da072c76b5df89425ee62ac5a0128d",
+      "size": 2290,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/974f6b5b21da072c76b5df89425ee62ac5a0128d"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/BarCenterSection.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c52787ca06df168ce0ffa0a0ba775de4c8199ca1",
+      "size": 2922,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c52787ca06df168ce0ffa0a0ba775de4c8199ca1"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/BarLeftSection.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9dfb468f3e666de40c5d698d3f4b5262a62b9746",
+      "size": 1056,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9dfb468f3e666de40c5d698d3f4b5262a62b9746"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/BarRightSection.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b4b7b497940621d2c2b252690119d561b702be48",
+      "size": 2982,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b4b7b497940621d2c2b252690119d561b702be48"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/BarWidgetLoader.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "abf3980088651dc7b73bd018ae377e5a415be248",
+      "size": 4610,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/abf3980088651dc7b73bd018ae377e5a415be248"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/BaseNotifLayer.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51fb96b54cdebc2179dabbb602f6ee713e4db570",
+      "size": 12827,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/51fb96b54cdebc2179dabbb602f6ee713e4db570"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/ClockButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41d21f0bfba92cdb0218f630f3560db65f73388f",
+      "size": 3766,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/41d21f0bfba92cdb0218f630f3560db65f73388f"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/ControlCenterButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d85f3d4ffdc6073b523030b12f93ad5e94ced24",
+      "size": 1759,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4d85f3d4ffdc6073b523030b12f93ad5e94ced24"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/MediaButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95749aa04bd4264d0bae8f7da092b55f1fae4443",
+      "size": 4776,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/95749aa04bd4264d0bae8f7da092b55f1fae4443"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/MinflairButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "691e8b107a1c01a946a7d3fba5dbf0323934ac00",
+      "size": 707,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/691e8b107a1c01a946a7d3fba5dbf0323934ac00"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/MiniCavaBars.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83a82563689252f355d49c8f750954f7e37998b3",
+      "size": 2315,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/83a82563689252f355d49c8f750954f7e37998b3"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/NotificationsButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a9cec49889b766b9108c7790ffc8e094780a8b2",
+      "size": 1841,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3a9cec49889b766b9108c7790ffc8e094780a8b2"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/NotificationsIcon.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b13816b4602627e6f2fa3e26d4b900a0ba1ba1ce",
+      "size": 342,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b13816b4602627e6f2fa3e26d4b900a0ba1ba1ce"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/PowerButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0960d30dc4ce8fb31fdbe47c858097efca71cfa6",
+      "size": 199,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0960d30dc4ce8fb31fdbe47c858097efca71cfa6"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/RecordingIndicator.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1128d2e753896fa36a9a1dea2937408b73067562",
+      "size": 5228,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1128d2e753896fa36a9a1dea2937408b73067562"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/SystemTrayGroup.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43513927847eda3e82be7051864b2a390da42638",
+      "size": 3828,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/43513927847eda3e82be7051864b2a390da42638"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Components/Workspaces.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c9f9464ec38b6cd8b12d046538e195cc2c04b68",
+      "size": 7513,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3c9f9464ec38b6cd8b12d046538e195cc2c04b68"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a8cb897c17dcf9edff75dcf08cf5d65718d51464",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/a8cb897c17dcf9edff75dcf08cf5d65718d51464"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "59bc534b35d827d58bacef541ba48fc3671bb1e1",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/59bc534b35d827d58bacef541ba48fc3671bb1e1"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexBar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6c2335dc3abb4f69c069d60fc9e9bdd587a5c50",
+      "size": 2530,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c6c2335dc3abb4f69c069d60fc9e9bdd587a5c50"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexBottomHost.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3bba0a8eab5297c4e9829512021b95d7c75ba666",
+      "size": 10282,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3bba0a8eab5297c4e9829512021b95d7c75ba666"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexCenter.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2df9dc9bbaedb31a4334cd16aed07be98686472",
+      "size": 13176,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c2df9dc9bbaedb31a4334cd16aed07be98686472"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexCenterPanel.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ec592a5ec8070221519fd83d3e0af28064a5eda",
+      "size": 1353,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2ec592a5ec8070221519fd83d3e0af28064a5eda"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexDesktop.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "558172a969a68bdb4424940b151d01fa44d702e6",
+      "size": 8250,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/558172a969a68bdb4424940b151d01fa44d702e6"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexDrawerShape.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2b5f5ce5319af74611706b7c16897fec9b6ea24",
+      "size": 4231,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b2b5f5ce5319af74611706b7c16897fec9b6ea24"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexExclusions.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "764fa1a4a1d10fdcbbda1126231083f630767d2b",
+      "size": 1865,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/764fa1a4a1d10fdcbbda1126231083f630767d2b"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexFrameBezel.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fdb7b982956e3b343f1e088d887c50a09126282e",
+      "size": 2844,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/fdb7b982956e3b343f1e088d887c50a09126282e"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexNotifLayer.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dbd1b693aeb24f6b70a01d8af6d6b76640f2f2d8",
+      "size": 183,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/dbd1b693aeb24f6b70a01d8af6d6b76640f2f2d8"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexPanels.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "452b27926724c1e72eaf3d040975df8e508b28a5",
+      "size": 2008,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/452b27926724c1e72eaf3d040975df8e508b28a5"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexRightHost.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "00309b36e1f01a0db864013e1ac752729f793442",
+      "size": 9818,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/00309b36e1f01a0db864013e1ac752729f793442"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Convex/ConvexShape.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ab301eca82ea877749ce2725f2b416f5360d2c9",
+      "size": 4048,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7ab301eca82ea877749ce2725f2b416f5360d2c9"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Gaming",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7d54d542593b77a4b6a19bff53b91241d8cfeca5",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7d54d542593b77a4b6a19bff53b91241d8cfeca5"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Gaming/GamingBar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f4f4eb8e67d71cb1503f1666ce6891f49013b2e1",
+      "size": 4619,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f4f4eb8e67d71cb1503f1666ce6891f49013b2e1"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Gaming/GamingOverlay.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bad2b409b0580b5d3fca4446a280a262a9a331ab",
+      "size": 14597,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/bad2b409b0580b5d3fca4446a280a262a9a331ab"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cc44f64129a2cbb18cde0671a33d6c7a156361cc",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/cc44f64129a2cbb18cde0671a33d6c7a156361cc"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandBackground.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e48842636eb7bd3527aaea7aac4906513beef688",
+      "size": 1007,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e48842636eb7bd3527aaea7aac4906513beef688"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandBar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f13d51bc64bb0efdba6f9defea79c030ffe6aadf",
+      "size": 11321,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f13d51bc64bb0efdba6f9defea79c030ffe6aadf"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandCenterPill.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2138019ec1775b2375f15f4f6978f2d820421ab3",
+      "size": 11814,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2138019ec1775b2375f15f4f6978f2d820421ab3"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandClock.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48eb0fda9d41e2fb31aab58be833fd7ec198f63f",
+      "size": 3363,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/48eb0fda9d41e2fb31aab58be833fd7ec198f63f"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandComponents.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "34a497daec4d08266e0c4eb924abf460f681ee56",
+      "size": 4332,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/34a497daec4d08266e0c4eb924abf460f681ee56"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandLeftPill.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b2edce6e79317b734e4571f5b9fa8c4f262427d",
+      "size": 4421,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6b2edce6e79317b734e4571f5b9fa8c4f262427d"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandMediaArt.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12a158e4e0a9231245dc186556abca9afa2c6422",
+      "size": 3163,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/12a158e4e0a9231245dc186556abca9afa2c6422"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandNotifLayer.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ed86253b48d7fc406a5b91b6742a74c5fce255c",
+      "size": 179,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1ed86253b48d7fc406a5b91b6742a74c5fce255c"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Styles/Island/IslandRightPill.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "779b94fb3ec15d0dbadc5b2b993bc7508a76d986",
+      "size": 5377,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/779b94fb3ec15d0dbadc5b2b993bc7508a76d986"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5c2df304f41885a4196b9ce28791fdba7917776f",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/5c2df304f41885a4196b9ce28791fdba7917776f"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets/Clock",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7ce512d41c04d0d20892a7e844695ea0d6773073",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7ce512d41c04d0d20892a7e844695ea0d6773073"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets/Clock/ClockContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "baf56ad70d8aea991c8b213b9ae43deb7f04c046",
+      "size": 3443,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/baf56ad70d8aea991c8b213b9ae43deb7f04c046"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets/SystemTray",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "253cc330bc6d6167d831549b7de6b017cc5078fc",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/253cc330bc6d6167d831549b7de6b017cc5078fc"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets/SystemTray/SystemTray.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "799c148ae60dced2e75883c6d547ab529f8fb4e9",
+      "size": 3967,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/799c148ae60dced2e75883c6d547ab529f8fb4e9"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets/SystemTray/TrayItem.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74a5c5dff3a3213905bdc3ac926aab3013096884",
+      "size": 5011,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/74a5c5dff3a3213905bdc3ac926aab3013096884"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets/SystemTray/TrayMenu.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9a75dc51751c845bd2677958cc74cefae8ee3e8",
+      "size": 6221,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c9a75dc51751c845bd2677958cc74cefae8ee3e8"
+    },
+    {
+      "path": "config/quickshell/Modules/Bar/Widgets/SystemTray/TrayMenuItemDelegate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a039a0f1d9b72c41fc3a75470a354911bf172499",
+      "size": 4982,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a039a0f1d9b72c41fc3a75470a354911bf172499"
+    },
+    {
+      "path": "config/quickshell/Modules/Clipboard",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cc690d71f4303b5aadf850b7e37090707aa7da45",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/cc690d71f4303b5aadf850b7e37090707aa7da45"
+    },
+    {
+      "path": "config/quickshell/Modules/Clipboard/Clipboard.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "754ff09508ff97edcfc7fcd74112a95ac40e93ef",
+      "size": 478,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/754ff09508ff97edcfc7fcd74112a95ac40e93ef"
+    },
+    {
+      "path": "config/quickshell/Modules/Clipboard/ClipboardContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "796d6c0a4a5b79ec5b326c60ace02514d2ba66a3",
+      "size": 13891,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/796d6c0a4a5b79ec5b326c60ace02514d2ba66a3"
+    },
+    {
+      "path": "config/quickshell/Modules/Clipboard/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6cad0b7d4c63af1437386e46f1a89344ec7a7733",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/6cad0b7d4c63af1437386e46f1a89344ec7a7733"
+    },
+    {
+      "path": "config/quickshell/Modules/Clipboard/Components/ClipboardItemDelegate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "009c3e0c6fe3b26afafb8f71cd75daadd757fabb",
+      "size": 4542,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/009c3e0c6fe3b26afafb8f71cd75daadd757fabb"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0c1b8a9633c8c28304c9e0f49f5dd118a3749dc6",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/0c1b8a9633c8c28304c9e0f49f5dd118a3749dc6"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/ControlCenter.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8cd440f7b23eee92e067a417e4fea5f1fe45895",
+      "size": 1766,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e8cd440f7b23eee92e067a417e4fea5f1fe45895"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/ControlCenterContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecdc67d5ff1b6984d0986cdb58d733264058fe6f",
+      "size": 1358,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ecdc67d5ff1b6984d0986cdb58d733264058fe6f"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "69bcb32962416153e1df74c8e0d272072e39611b",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/69bcb32962416153e1df74c8e0d272072e39611b"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/PerformanceWidget",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a5b6cf8d819c514fb5e8dacfaa85b1b57ab8b51d",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/a5b6cf8d819c514fb5e8dacfaa85b1b57ab8b51d"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/PerformanceWidget/PerformanceWidget.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5ee89dea97d8ce8bb8ddea2a335c0b1683ec822",
+      "size": 2258,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d5ee89dea97d8ce8bb8ddea2a335c0b1683ec822"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "be61801c2c1e488e985176bcf7aa014fc3f0a4ec",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/be61801c2c1e488e985176bcf7aa014fc3f0a4ec"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d94ca47022cc86adf279d2109e47b5de13afff89",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/d94ca47022cc86adf279d2109e47b5de13afff89"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/BatteryLimitControl.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b8dae956da5f9967e97fb69b8f539ebc36de45d1",
+      "size": 2519,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b8dae956da5f9967e97fb69b8f539ebc36de45d1"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/BluetoothControl.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e960c5fad4beb6f75d03b88428bc2432f01726b8",
+      "size": 3811,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e960c5fad4beb6f75d03b88428bc2432f01726b8"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/BluetoothList.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c71f63b2343da467632280b0a060a75af9512627",
+      "size": 7451,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c71f63b2343da467632280b0a060a75af9512627"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/BrightnessSlider.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81ebbfd3a1ea50b362eb6adb3d3cd502a07dc2da",
+      "size": 2101,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/81ebbfd3a1ea50b362eb6adb3d3cd502a07dc2da"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/CaffeineControl.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c658b606ef9c5fdacfc1e05a495a637f9b2eaac",
+      "size": 466,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3c658b606ef9c5fdacfc1e05a495a637f9b2eaac"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/ControlCenterListDelegate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f54a09a3e8e3c161bedbc489eb22e83097b95a9",
+      "size": 4195,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8f54a09a3e8e3c161bedbc489eb22e83097b95a9"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/GameModeControl.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "450563d3d82e40c3f9a469b4609ed58e74ff7085",
+      "size": 516,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/450563d3d82e40c3f9a469b4609ed58e74ff7085"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/NightLightControl.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e364f20e2f817a9f8f8ccc3d0058ea2d7721d69",
+      "size": 463,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6e364f20e2f817a9f8f8ccc3d0058ea2d7721d69"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/QuickSettingsTile.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "31c447f650e78f1c4928920a4d80e3eafb9ddec6",
+      "size": 4110,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/31c447f650e78f1c4928920a4d80e3eafb9ddec6"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/VolumeSlider.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6f7ff029b35168d358de88313e552f5be7919cd",
+      "size": 831,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e6f7ff029b35168d358de88313e552f5be7919cd"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/WifiControl.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8eb536ee643e40122cb2a5415cb5c221d7d25ce5",
+      "size": 3648,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8eb536ee643e40122cb2a5415cb5c221d7d25ce5"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/Components/WifiList.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "384abf2656d3a0f4a2af57cf98e58ce657bf4fb8",
+      "size": 8161,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/384abf2656d3a0f4a2af57cf98e58ce657bf4fb8"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/Widgets/QuickSettings/QuickSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a8a2ebebd848191c085611c5e9bbb536552638d7",
+      "size": 10019,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a8a2ebebd848191c085611c5e9bbb536552638d7"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "eececce6c06e9783d4585dbd4eb5984e8670a9a0",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/eececce6c06e9783d4585dbd4eb5984e8670a9a0"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/scripts/bluetooth.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "58feaf30f64a085221af8326b24223c9d662824a",
+      "size": 4708,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/58feaf30f64a085221af8326b24223c9d662824a"
+    },
+    {
+      "path": "config/quickshell/Modules/ControlCenter/scripts/wifi.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "593f11dedc6bd5e4d47b6acfe29b5c24e6297bcd",
+      "size": 7025,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/593f11dedc6bd5e4d47b6acfe29b5c24e6297bcd"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0d39d54d5868d2954fd0c2e8dbbfe73384d16ff5",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/0d39d54d5868d2954fd0c2e8dbbfe73384d16ff5"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f96fb4cb0c4fa58098816bfc13b2b5df64cd3119",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/f96fb4cb0c4fa58098816bfc13b2b5df64cd3119"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/Components/ThemedButton.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "752d9519eb6c2e7a956260c9c4235d4c45cdd94e",
+      "size": 1682,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/752d9519eb6c2e7a956260c9c4235d4c45cdd94e"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/Dashboard.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4ca2ae03e0f2cb51e23ea33bd573bd4420c2731",
+      "size": 2911,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c4ca2ae03e0f2cb51e23ea33bd573bd4420c2731"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/DashboardContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b93ade09afa36294608ce597a1c2e80c4e6ec20",
+      "size": 2222,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7b93ade09afa36294608ce597a1c2e80c4e6ec20"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/GithubContributionsWidget.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f1996435439f792091325cebf7dd04e540b465a",
+      "size": 6334,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1f1996435439f792091325cebf7dd04e540b465a"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/GithubWidget.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c7cbe9ac11d033164dc501f12dda07d6aa1f837",
+      "size": 12172,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3c7cbe9ac11d033164dc501f12dda07d6aa1f837"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/QuoteWidget.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa0828d87450fc584283d87b710a1ecdc0781d34",
+      "size": 3414,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/fa0828d87450fc584283d87b710a1ecdc0781d34"
+    },
+    {
+      "path": "config/quickshell/Modules/Dashboard/UpdatesCard.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e111712843965d01a265ef595cccd0eea6f5c7d",
+      "size": 6189,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2e111712843965d01a265ef595cccd0eea6f5c7d"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "354c203282d54df3083f221859fad661a6d0ad48",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/354c203282d54df3083f221859fad661a6d0ad48"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2fe912f69a7a4f7a9ceb1f4ed19afe542b1d9db7",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/2fe912f69a7a4f7a9ceb1f4ed19afe542b1d9db7"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/Components/KeybindItem.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd65d85477163c23bf868a26ba3e8c34de310801",
+      "size": 2842,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/fd65d85477163c23bf868a26ba3e8c34de310801"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/Components/KeybindsHeader.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3103a53823e241f1b968f7f496f528cb8d9c582e",
+      "size": 1494,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3103a53823e241f1b968f7f496f528cb8d9c582e"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/Components/KeybindsList.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4037fa395f59e5828ff1834af49f42f6a712c110",
+      "size": 2252,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4037fa395f59e5828ff1834af49f42f6a712c110"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/Components/KeybindsSidebar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a48360892acfb654542ad14f1da2f3da9535d5d9",
+      "size": 1846,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a48360892acfb654542ad14f1da2f3da9535d5d9"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/KeybindsCheatSheet.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "46c7d01b2e9c227d407a2e1ce48a5bb449509c36",
+      "size": 10718,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/46c7d01b2e9c227d407a2e1ce48a5bb449509c36"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3e5ed8d81e32f66b0d3bacb0321570529014342f",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/3e5ed8d81e32f66b0d3bacb0321570529014342f"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/scripts/parse_keybinds.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8a86eacabdd925ce26aa76c0c9454ad558bbf487",
+      "size": 5485,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8a86eacabdd925ce26aa76c0c9454ad558bbf487"
+    },
+    {
+      "path": "config/quickshell/Modules/KeybindsCheatSheet/scripts/toggle_minflair_keybinds.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "d3dce6d6adb5e8ed54b5c5b49da498857781b5ab",
+      "size": 92,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d3dce6d6adb5e8ed54b5c5b49da498857781b5ab"
+    },
+    {
+      "path": "config/quickshell/Modules/Launcher",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c49884513950ab25f5fdf5ab2e973c67267e94d4",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/c49884513950ab25f5fdf5ab2e973c67267e94d4"
+    },
+    {
+      "path": "config/quickshell/Modules/Launcher/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dc000b1df11b99d4c0061b28ac4470aebc5523af",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/dc000b1df11b99d4c0061b28ac4470aebc5523af"
+    },
+    {
+      "path": "config/quickshell/Modules/Launcher/Components/LauncherItemDelegate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "823071a73cec2a158e3b310509a11223789510cf",
+      "size": 9054,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/823071a73cec2a158e3b310509a11223789510cf"
+    },
+    {
+      "path": "config/quickshell/Modules/Launcher/Launcher.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "84403fe6d6170ec957a2b334c27747dd3563f3f8",
+      "size": 475,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/84403fe6d6170ec957a2b334c27747dd3563f3f8"
+    },
+    {
+      "path": "config/quickshell/Modules/Launcher/LauncherContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "555f024e3d533a0196da952d0366545dc7155c8c",
+      "size": 12445,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/555f024e3d533a0196da952d0366545dc7155c8c"
+    },
+    {
+      "path": "config/quickshell/Modules/Launcher/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f20e68504417ddeab563ff003f47af57b43126fa",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/f20e68504417ddeab563ff003f47af57b43126fa"
+    },
+    {
+      "path": "config/quickshell/Modules/Launcher/scripts/get_apps.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "f18e1cdd19a23f94f53e8b855e51ae15710ce275",
+      "size": 3568,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f18e1cdd19a23f94f53e8b855e51ae15710ce275"
+    },
+    {
+      "path": "config/quickshell/Modules/LockScreen",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1b239298ea9500d811602428bbc0108b402ede70",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/1b239298ea9500d811602428bbc0108b402ede70"
+    },
+    {
+      "path": "config/quickshell/Modules/LockScreen/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "525662b1f0ad27e3f964c2fffaf6dc37032626c6",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/525662b1f0ad27e3f964c2fffaf6dc37032626c6"
+    },
+    {
+      "path": "config/quickshell/Modules/LockScreen/Components/AuthBox.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "094c272dc4c216bc628f11d95ecdb04709c5ea8a",
+      "size": 15678,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/094c272dc4c216bc628f11d95ecdb04709c5ea8a"
+    },
+    {
+      "path": "config/quickshell/Modules/LockScreen/Components/Background.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2896a3218ab802bd48bb185dede54f690445f103",
+      "size": 3395,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2896a3218ab802bd48bb185dede54f690445f103"
+    },
+    {
+      "path": "config/quickshell/Modules/LockScreen/Components/ClockGroup.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ced0d36caffd0300933a719015774d4fba014ee2",
+      "size": 5773,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ced0d36caffd0300933a719015774d4fba014ee2"
+    },
+    {
+      "path": "config/quickshell/Modules/LockScreen/Components/LockScreenIpcController.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b9432aea60b01a759c1a664d1759c3faf6f0508",
+      "size": 2427,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3b9432aea60b01a759c1a664d1759c3faf6f0508"
+    },
+    {
+      "path": "config/quickshell/Modules/LockScreen/LockScreen.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "875a404dc7d7e94ed722ca37bd12f6a214dd8777",
+      "size": 13191,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/875a404dc7d7e94ed722ca37bd12f6a214dd8777"
+    },
+    {
+      "path": "config/quickshell/Modules/Music",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "172d706745a0ea70c0325244a61d002695e5d3a8",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/172d706745a0ea70c0325244a61d002695e5d3a8"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bb04519b9f0f931b5d131ea817369e8ec5535ddd",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/bb04519b9f0f931b5d131ea817369e8ec5535ddd"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/Components/MusicCavaBars.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9da262d5683ef18b20fce457b8d39622c104466b",
+      "size": 2215,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9da262d5683ef18b20fce457b8d39622c104466b"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/Components/MusicPlayerControls.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "888cfb27c90dde3bfa86939e3abfa7bd8cf9f301",
+      "size": 3543,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/888cfb27c90dde3bfa86939e3abfa7bd8cf9f301"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/Components/MusicProgressBar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "33a20f2de0f36313cf5d25e9ecd19c613736b784",
+      "size": 6226,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/33a20f2de0f36313cf5d25e9ecd19c613736b784"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/MiniMusicWidget.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23e24640435acfaa76c5715f1c272b506391cffe",
+      "size": 6512,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/23e24640435acfaa76c5715f1c272b506391cffe"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/cava.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2fc45e632156b6205baa3a71b0527aef46b60b83",
+      "size": 207,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2fc45e632156b6205baa3a71b0527aef46b60b83"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "516efa34caf9f19674c5866d377b43f33b0938cc",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/516efa34caf9f19674c5866d377b43f33b0938cc"
+    },
+    {
+      "path": "config/quickshell/Modules/Music/scripts/get_music_players.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "24d65e656cf86f049135fe7f5f2bd74b076a5c13",
+      "size": 6429,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/24d65e656cf86f049135fe7f5f2bd74b076a5c13"
+    },
+    {
+      "path": "config/quickshell/Modules/NotificationCenter",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8920189a92eff51669a4e032345013f473cb1ac4",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/8920189a92eff51669a4e032345013f473cb1ac4"
+    },
+    {
+      "path": "config/quickshell/Modules/NotificationCenter/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2f8aecc7a26b1903b61278afc9b752a75194a17d",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/2f8aecc7a26b1903b61278afc9b752a75194a17d"
+    },
+    {
+      "path": "config/quickshell/Modules/NotificationCenter/Components/NotificationItemDelegate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "125782312f0fb43168c62ec03bff3cc9965caede",
+      "size": 9087,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/125782312f0fb43168c62ec03bff3cc9965caede"
+    },
+    {
+      "path": "config/quickshell/Modules/NotificationCenter/NotificationCenter.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a83cbda4756aa1608ee917ee2abf107a0a8bbd59",
+      "size": 7280,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a83cbda4756aa1608ee917ee2abf107a0a8bbd59"
+    },
+    {
+      "path": "config/quickshell/Modules/Notifications",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a9e461a3ee60fee22fccee5e0e0d2a5f8221eed6",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/a9e461a3ee60fee22fccee5e0e0d2a5f8221eed6"
+    },
+    {
+      "path": "config/quickshell/Modules/Notifications/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "578efe8b2fd800bd4b3a81497ed739e28cc14e5f",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/578efe8b2fd800bd4b3a81497ed739e28cc14e5f"
+    },
+    {
+      "path": "config/quickshell/Modules/Notifications/Components/NotificationIcon.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "64ea07e61406ff2c4cdbc2090bcc70cf2f000a60",
+      "size": 2563,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/64ea07e61406ff2c4cdbc2090bcc70cf2f000a60"
+    },
+    {
+      "path": "config/quickshell/Modules/Notifications/Components/NotificationProgressBar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "527e98d2fd7fd5920072bfa96ac01300b7cef1c5",
+      "size": 562,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/527e98d2fd7fd5920072bfa96ac01300b7cef1c5"
+    },
+    {
+      "path": "config/quickshell/Modules/Notifications/NotificationDelegateContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "320a73469687d01b0ae040d922f5f3db4c882a8a",
+      "size": 4666,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/320a73469687d01b0ae040d922f5f3db4c882a8a"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "96533a3ed0726d87dba05a42b05c01fe305a5a37",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/96533a3ed0726d87dba05a42b05c01fe305a5a37"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c430f974077da5dfd3de65e503a657109109fe9b",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/c430f974077da5dfd3de65e503a657109109fe9b"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageDelegate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee7384ce4fbcdb707b225d654bbfd5c00b8c8e11",
+      "size": 10919,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ee7384ce4fbcdb707b225d654bbfd5c00b8c8e11"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageDependenciesCard.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d0d5d993c0d8975e1c72665fec3b61c682668fe8",
+      "size": 6542,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d0d5d993c0d8975e1c72665fec3b61c682668fe8"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageDetailsHero.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77f694141e14110a02bda683da5f76e265b1843f",
+      "size": 10161,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/77f694141e14110a02bda683da5f76e265b1843f"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageDetailsOverlay.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53ce0aa81a0e65d56fa39fc33cc24b72f3e4fdc2",
+      "size": 9653,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/53ce0aa81a0e65d56fa39fc33cc24b72f3e4fdc2"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageManagerContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef8e4e9dff81602d6e8cc7b221dbd53f4b6fab2e",
+      "size": 9366,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ef8e4e9dff81602d6e8cc7b221dbd53f4b6fab2e"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageManagerController.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3427416bbbdb8e4ef59106bd5e560fc2108a60c",
+      "size": 20713,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a3427416bbbdb8e4ef59106bd5e560fc2108a60c"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageManagerHeader.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ea7e1eb7ddba6f9b3802def94ed0f6b97f441fe",
+      "size": 2885,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5ea7e1eb7ddba6f9b3802def94ed0f6b97f441fe"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageManagerSidebar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ba38cf6f380475dd21c1f9731b08f534f94aed9",
+      "size": 4120,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3ba38cf6f380475dd21c1f9731b08f534f94aed9"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageRelationsCard.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "870172c52ef049dd9b318d97c6748445b71a850f",
+      "size": 3134,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/870172c52ef049dd9b318d97c6748445b71a850f"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageResourcesCard.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6af2b0588c77cec4fe8666848156f49b860ef426",
+      "size": 7926,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6af2b0588c77cec4fe8666848156f49b860ef426"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/Components/PackageSpecsCard.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a60095383141c4cfb8bf8c2a23e21422f74c319",
+      "size": 5373,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7a60095383141c4cfb8bf8c2a23e21422f74c319"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/PackageManager.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05bb38684c60e8e6ad0ccdea4cf4cf4a76efb1e4",
+      "size": 6872,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/05bb38684c60e8e6ad0ccdea4cf4cf4a76efb1e4"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1b103872a686f442e58723403cae8db5732dd03a",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/1b103872a686f442e58723403cae8db5732dd03a"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/scripts/featured_packages.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc0d91b61c2051b4ca7eeaf37cc8563709c10e39",
+      "size": 1689,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/cc0d91b61c2051b4ca7eeaf37cc8563709c10e39"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/scripts/search_packages.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "40b71cef2358e01ba6f7602fa113be1341ce1539",
+      "size": 11100,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/40b71cef2358e01ba6f7602fa113be1341ce1539"
+    },
+    {
+      "path": "config/quickshell/Modules/PackageManager/scripts/toggle_minflair_packagemanager.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "c7eb90146a940b7214ec10e8961755e562a47f6f",
+      "size": 89,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c7eb90146a940b7214ec10e8961755e562a47f6f"
+    },
+    {
+      "path": "config/quickshell/Modules/PowerMenu",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d5968ce5d78928f740ea7a2e99b16592af51709c",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/d5968ce5d78928f740ea7a2e99b16592af51709c"
+    },
+    {
+      "path": "config/quickshell/Modules/PowerMenu/PowerMenuContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "103dd4c9f05c763e8608ea8ab7a1508dcf1a0633",
+      "size": 5305,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/103dd4c9f05c763e8608ea8ab7a1508dcf1a0633"
+    },
+    {
+      "path": "config/quickshell/Modules/ScreenCapture",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "448823474b2a3c3d9688e68fab67beb57cd53370",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/448823474b2a3c3d9688e68fab67beb57cd53370"
+    },
+    {
+      "path": "config/quickshell/Modules/ScreenCapture/ScreenCaptureContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6967e1d31003965d346e366118ab4bf2549d9121",
+      "size": 3925,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6967e1d31003965d346e366118ab4bf2549d9121"
+    },
+    {
+      "path": "config/quickshell/Modules/ScreenCapture/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4a2632b0fae9fa1331ab40c0ae8533ee99c8eb46",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/4a2632b0fae9fa1331ab40c0ae8533ee99c8eb46"
+    },
+    {
+      "path": "config/quickshell/Modules/ScreenCapture/scripts/record.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "d662661fcde76fee14670baf6b54436cd90eefa0",
+      "size": 2160,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d662661fcde76fee14670baf6b54436cd90eefa0"
+    },
+    {
+      "path": "config/quickshell/Modules/ScreenCapture/scripts/screenshot.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "581eed68948af750c8b8b4d8c76e958ea562313e",
+      "size": 3681,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/581eed68948af750c8b8b4d8c76e958ea562313e"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a5bd229055be04a76178eb30f3a16cd0451bc549",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/a5bd229055be04a76178eb30f3a16cd0451bc549"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/BarSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7fd0579adf9c5e2d61ab164242b34b509eb3a61a",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7fd0579adf9c5e2d61ab164242b34b509eb3a61a"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/BarSettings/BarSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e9868d01d6d8d42a237f2333607045447ee5b500",
+      "size": 2525,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e9868d01d6d8d42a237f2333607045447ee5b500"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0c4b2ef32bfc98773f2659d8537ac5521f0254f2",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/0c4b2ef32bfc98773f2659d8537ac5521f0254f2"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/Components/SettingSegmented.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c862c036c9d114533853ff45564a55af135de6a2",
+      "size": 4403,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c862c036c9d114533853ff45564a55af135de6a2"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/Components/SettingSpinBox.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91afcc2df5c124540c4157b691ec5aeca9dba2ef",
+      "size": 6778,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/91afcc2df5c124540c4157b691ec5aeca9dba2ef"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/Components/SettingToggle.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "155460959a523ab3db40baced3c49175e5dd2e1b",
+      "size": 2708,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/155460959a523ab3db40baced3c49175e5dd2e1b"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/Components/SettingsSidebar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "708b04789858c886f7a5d79a3007e6630b81f72b",
+      "size": 5715,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/708b04789858c886f7a5d79a3007e6630b81f72b"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/Components/ThemedTextField.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4516f69f37fc96b97fe8f7e9a44b89acd9e3d91f",
+      "size": 4059,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4516f69f37fc96b97fe8f7e9a44b89acd9e3d91f"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/EffectsSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fd86d4ac4e6a59e5291b12ceede07350eaa0aaba",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/fd86d4ac4e6a59e5291b12ceede07350eaa0aaba"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/EffectsSettings/EffectsSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98d9e083f637db6b40536381b0a5e09411fc5abb",
+      "size": 4442,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/98d9e083f637db6b40536381b0a5e09411fc5abb"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/InputAndClipboardSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "eefa85f441009aac746d13af739ee2065a9a3049",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/eefa85f441009aac746d13af739ee2065a9a3049"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/InputAndClipboardSettings/InputAndClipboardSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d581be2eeb280b56937c0648e7717abaab184367",
+      "size": 4337,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d581be2eeb280b56937c0648e7717abaab184367"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/IntegrationsSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c77ab9b30534e044ca6d8fb09c9ce3986dc9dfa4",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/c77ab9b30534e044ca6d8fb09c9ce3986dc9dfa4"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/IntegrationsSettings/IntegrationsSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "430e6c66c9335c89791dda856bd31431adf3eb1e",
+      "size": 5423,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/430e6c66c9335c89791dda856bd31431adf3eb1e"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/MouseSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "85efc626c0e0471902f81e2af079670b2733751d",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/85efc626c0e0471902f81e2af079670b2733751d"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/MouseSettings/MouseSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "525c4ac9a407068dec644fb3a02798d67522290f",
+      "size": 9141,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/525c4ac9a407068dec644fb3a02798d67522290f"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/PersonalizationSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8f3bd29f93e642c9d547649d6d98ef65c75a78d2",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/8f3bd29f93e642c9d547649d6d98ef65c75a78d2"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/PersonalizationSettings/PersonalizationSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9ff9c223388d92fc48ccdd854a9f5c8932846626",
+      "size": 7897,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9ff9c223388d92fc48ccdd854a9f5c8932846626"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/Settings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ddeb44ad788f7fdd23bfaea38a6b998e1122441c",
+      "size": 6444,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ddeb44ad788f7fdd23bfaea38a6b998e1122441c"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/SystemInfo",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7cb259be7d9aabeade0164a35dbb76b372c96f89",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7cb259be7d9aabeade0164a35dbb76b372c96f89"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/SystemInfo/SystemInfo.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0293add1106e5df2b4a4146709dc593eca44db51",
+      "size": 4363,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0293add1106e5df2b4a4146709dc593eca44db51"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WallpaperSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "444e2250bf3f692230e8d7e9a30ae99f18cd483a",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/444e2250bf3f692230e8d7e9a30ae99f18cd483a"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WallpaperSettings/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7ded8192a4faf4b721d82cc0ff6161e3d30d7188",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/7ded8192a4faf4b721d82cc0ff6161e3d30d7188"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WallpaperSettings/Components/WallpaperCropFrame.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "adcdad59d7cb548d9642199e9d98c12c7b5ba80f",
+      "size": 4636,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/adcdad59d7cb548d9642199e9d98c12c7b5ba80f"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WallpaperSettings/Components/WallpaperCropPositionBar.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "defa862bda3bbd003c88a35448e1546934b9b95c",
+      "size": 1552,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/defa862bda3bbd003c88a35448e1546934b9b95c"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WallpaperSettings/Components/WallpaperCropPreview.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50b7a6739cf6b0230807ee96526423b550d68200",
+      "size": 10593,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/50b7a6739cf6b0230807ee96526423b550d68200"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WallpaperSettings/WallpaperSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "94b710c60e38503966113d7d58bda2db5968ca36",
+      "size": 5928,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/94b710c60e38503966113d7d58bda2db5968ca36"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WindowSettings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ffcbbe3fdf195edb1c8a6a3281839093fa1f023b",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/ffcbbe3fdf195edb1c8a6a3281839093fa1f023b"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/WindowSettings/WindowSettings.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f0d974917439d0cd155a23de26800b278854092",
+      "size": 2866,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4f0d974917439d0cd155a23de26800b278854092"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "651b635fa036bc4d95ace2d2b02162210522404e",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/651b635fa036bc4d95ace2d2b02162210522404e"
+    },
+    {
+      "path": "config/quickshell/Modules/Settings/scripts/toggle_minflair_settings.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "5b7139489de9bee0fa2da4281abbc6e64e8b64c0",
+      "size": 92,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5b7139489de9bee0fa2da4281abbc6e64e8b64c0"
+    },
+    {
+      "path": "config/quickshell/Modules/WallpaperSelector",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bfdaec0cc0b397aed6a39bb995578cf324a1a7c8",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/bfdaec0cc0b397aed6a39bb995578cf324a1a7c8"
+    },
+    {
+      "path": "config/quickshell/Modules/WallpaperSelector/Components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cdfe665dd675112296f3a8005cba012a66d1afd5",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/cdfe665dd675112296f3a8005cba012a66d1afd5"
+    },
+    {
+      "path": "config/quickshell/Modules/WallpaperSelector/Components/WallpaperCardDelegate.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "87c7fc97dab36584a4df73f143c4c09e860105e1",
+      "size": 4751,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/87c7fc97dab36584a4df73f143c4c09e860105e1"
+    },
+    {
+      "path": "config/quickshell/Modules/WallpaperSelector/WallpaperSelector.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1cc05a4dbce1d0c3723f7565a2edf177c43f3961",
+      "size": 516,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1cc05a4dbce1d0c3723f7565a2edf177c43f3961"
+    },
+    {
+      "path": "config/quickshell/Modules/WallpaperSelector/WallpaperSelectorContent.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d0d742ce764e8440e9195a413d6fed7f5b28cb1",
+      "size": 10995,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2d0d742ce764e8440e9195a413d6fed7f5b28cb1"
+    },
+    {
+      "path": "config/quickshell/Scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "486dbe0b82645db0694923046e8754d258cd85dd",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/486dbe0b82645db0694923046e8754d258cd85dd"
+    },
+    {
+      "path": "config/quickshell/Scripts/system",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d3f0bcf3fb342fd9ffddadbc704c182642178786",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/d3f0bcf3fb342fd9ffddadbc704c182642178786"
+    },
+    {
+      "path": "config/quickshell/Scripts/system/auth.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "510aaf7b199255a51d69cd704568b7e9ccdecbca",
+      "size": 577,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/510aaf7b199255a51d69cd704568b7e9ccdecbca"
+    },
+    {
+      "path": "config/quickshell/Scripts/system/get_processes.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "0f71b7fcd778afc584251c0089063a04ffa2d9c1",
+      "size": 20794,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0f71b7fcd778afc584251c0089063a04ffa2d9c1"
+    },
+    {
+      "path": "config/quickshell/Scripts/system/get_system_info.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f5e087f1643dcf054ef168e07cc1f7207aefadc",
+      "size": 14583,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8f5e087f1643dcf054ef168e07cc1f7207aefadc"
+    },
+    {
+      "path": "config/quickshell/Scripts/system/hypr_scale.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "0b6410fd8955642ec80651b0fb853c2d1576e69d",
+      "size": 256,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0b6410fd8955642ec80651b0fb853c2d1576e69d"
+    },
+    {
+      "path": "config/quickshell/Scripts/system/toggle_battery_limit.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "713827d82154b973cf5be576b1fa0ce20b593d7e",
+      "size": 5046,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/713827d82154b973cf5be576b1fa0ce20b593d7e"
+    },
+    {
+      "path": "config/quickshell/Scripts/system/toggle_kb_layout.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "fca978dcacd5dd62386e0a7acbbaf6030593901d",
+      "size": 981,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/fca978dcacd5dd62386e0a7acbbaf6030593901d"
+    },
+    {
+      "path": "config/quickshell/Scripts/system/toggle_widget.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "a2a805af5c98a7eeb3577d258abe6a81ed6d8faf",
+      "size": 531,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a2a805af5c98a7eeb3577d258abe6a81ed6d8faf"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ddc4df75255375b09366e92e4d546ec746108a14",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/ddc4df75255375b09366e92e4d546ec746108a14"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/apply_cursor.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "983809ebc641fc11899126d7cde2d5adb9662db4",
+      "size": 2227,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/983809ebc641fc11899126d7cde2d5adb9662db4"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/apply_font.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "9373ad340c53615f0cbcd2dac5d12ed2bea19ba5",
+      "size": 4578,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9373ad340c53615f0cbcd2dac5d12ed2bea19ba5"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/apply_theme.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "1058ef71b57ad8080c4e452eae336455e7324080",
+      "size": 2930,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1058ef71b57ad8080c4e452eae336455e7324080"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/color_utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a4cb6a1704251e543f57be24f28ae443464f6a7",
+      "size": 4236,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4a4cb6a1704251e543f57be24f28ae443464f6a7"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/generate_theme.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "f54e52ede976df3ab479ce5c57bd32c7d28ab40f",
+      "size": 2974,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f54e52ede976df3ab479ce5c57bd32c7d28ab40f"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "389ad0177ce2a1ddc4fb8dba5ccf97df5e8d2665",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/389ad0177ce2a1ddc4fb8dba5ccf97df5e8d2665"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/btop.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b4bf0a9eda51fd8f7e121371a6823756f1e8c02",
+      "size": 2766,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6b4bf0a9eda51fd8f7e121371a6823756f1e8c02"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/gtk.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d7b7a80abbd8a052a64c3c3801a0636ddf80f648",
+      "size": 7010,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d7b7a80abbd8a052a64c3c3801a0636ddf80f648"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/hyprland.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a1ecccd69f7601790d035c3495c31f15d47ba1cc",
+      "size": 2316,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a1ecccd69f7601790d035c3495c31f15d47ba1cc"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/kitty.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e2f51dfb7fba553373d944fbcea52bafce5b598",
+      "size": 2318,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6e2f51dfb7fba553373d944fbcea52bafce5b598"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/lazygit.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4df9d43c0cde6c6ffb8281c0debff3261148523a",
+      "size": 1444,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4df9d43c0cde6c6ffb8281c0debff3261148523a"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/nvim.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59ab88e9b0e723eb51e763098d518682ef543e5a",
+      "size": 3254,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/59ab88e9b0e723eb51e763098d518682ef543e5a"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/qt.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8fd6e20343d66673b8f00978ad6ddd09fae19805",
+      "size": 2292,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8fd6e20343d66673b8f00978ad6ddd09fae19805"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/sddm.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc6ed89c5ae4bd4ba0c1961e9e3a8742fa455873",
+      "size": 4154,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/bc6ed89c5ae4bd4ba0c1961e9e3a8742fa455873"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/starship.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49e6eba0a9de117e966e7ba6080c6e55ab3a827e",
+      "size": 801,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/49e6eba0a9de117e966e7ba6080c6e55ab3a827e"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_appliers/svg_assets.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e9c7673614ffe104bc223289c12188a3ff09391",
+      "size": 1360,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7e9c7673614ffe104bc223289c12188a3ff09391"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_extractors",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "98b22c3b208c2496f820b31ff418e991be5ec3a3",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/98b22c3b208c2496f820b31ff418e991be5ec3a3"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_extractors/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f39e5e8d683124a6a42b51bed7412499ee7d20cf",
+      "size": 7,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f39e5e8d683124a6a42b51bed7412499ee7d20cf"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_extractors/image_utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98aa07877b7126da9e9feab4c2351423ef233052",
+      "size": 3267,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/98aa07877b7126da9e9feab4c2351423ef233052"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_extractors/magick_utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "720a1b2a51cc325f5a2f3a1d5da05be772110d2b",
+      "size": 1929,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/720a1b2a51cc325f5a2f3a1d5da05be772110d2b"
+    },
+    {
+      "path": "config/quickshell/Scripts/theme/theme_extractors/palette.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d88bd6aa86f0f51fe4b433b704850fa7f0476323",
+      "size": 4195,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d88bd6aa86f0f51fe4b433b704850fa7f0476323"
+    },
+    {
+      "path": "config/quickshell/assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "aa1da68f0e9ae9fde748e912563717aec7949aa1",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/aa1da68f0e9ae9fde748e912563717aec7949aa1"
+    },
+    {
+      "path": "config/quickshell/assets/3s.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cbb7e130aa9adf9fb4656942f775212d4f85618d",
+      "size": 439,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/cbb7e130aa9adf9fb4656942f775212d4f85618d"
+    },
+    {
+      "path": "config/quickshell/assets/apps-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "384eb59f18f274c1a2e7c0930145cf1bd588a360",
+      "size": 728,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/384eb59f18f274c1a2e7c0930145cf1bd588a360"
+    },
+    {
+      "path": "config/quickshell/assets/apps.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e229777f9ad8e2749dd2c20c884df30b69fdbd06",
+      "size": 675,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e229777f9ad8e2749dd2c20c884df30b69fdbd06"
+    },
+    {
+      "path": "config/quickshell/assets/bar-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5932fc12054ec60903841d033702070d18f9cf3f",
+      "size": 575,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5932fc12054ec60903841d033702070d18f9cf3f"
+    },
+    {
+      "path": "config/quickshell/assets/bar.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a6f3340970cf00788c07e893058492c9d2eb17c",
+      "size": 599,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4a6f3340970cf00788c07e893058492c9d2eb17c"
+    },
+    {
+      "path": "config/quickshell/assets/bell-dot.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8590225951cd7322046a385d9c305689967d9267",
+      "size": 444,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8590225951cd7322046a385d9c305689967d9267"
+    },
+    {
+      "path": "config/quickshell/assets/bell-off.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a98ffd7744290232601ce5409a599f92c971b52",
+      "size": 413,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5a98ffd7744290232601ce5409a599f92c971b52"
+    },
+    {
+      "path": "config/quickshell/assets/bell.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "910387b412adc8c592a2139d2f48b1b86d066cf1",
+      "size": 339,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/910387b412adc8c592a2139d2f48b1b86d066cf1"
+    },
+    {
+      "path": "config/quickshell/assets/bluetooth-off.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ed73059135a5e99e10f8fd89eba151c31295f0e",
+      "size": 342,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6ed73059135a5e99e10f8fd89eba151c31295f0e"
+    },
+    {
+      "path": "config/quickshell/assets/bluetooth.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a22dc6335211b18a90f8cf031265ae568387f9df",
+      "size": 291,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a22dc6335211b18a90f8cf031265ae568387f9df"
+    },
+    {
+      "path": "config/quickshell/assets/box.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f74193519fe3f45911a5d2b6e17f050b26ae7128",
+      "size": 487,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f74193519fe3f45911a5d2b6e17f050b26ae7128"
+    },
+    {
+      "path": "config/quickshell/assets/calendar.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3cccf0033113c1d642702b279d84771d65249b83",
+      "size": 558,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3cccf0033113c1d642702b279d84771d65249b83"
+    },
+    {
+      "path": "config/quickshell/assets/caps-lock-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e0fd938fa963f5b0ed50f84d9b3295e6c4a1c7db",
+      "size": 578,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e0fd938fa963f5b0ed50f84d9b3295e6c4a1c7db"
+    },
+    {
+      "path": "config/quickshell/assets/caps-lock.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25d0573d596d98d10fe86918e2a2b23983a959bc",
+      "size": 501,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/25d0573d596d98d10fe86918e2a2b23983a959bc"
+    },
+    {
+      "path": "config/quickshell/assets/capture-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f978e573e02a429a35b6c1084deae6343c8fd2f7",
+      "size": 1039,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f978e573e02a429a35b6c1084deae6343c8fd2f7"
+    },
+    {
+      "path": "config/quickshell/assets/capture.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91fcfc996c641b03c98ca1ba7ccfaffba56b79e6",
+      "size": 541,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/91fcfc996c641b03c98ca1ba7ccfaffba56b79e6"
+    },
+    {
+      "path": "config/quickshell/assets/charger-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b6484566fdef4be4180941ff7b29f3955223f75",
+      "size": 378,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9b6484566fdef4be4180941ff7b29f3955223f75"
+    },
+    {
+      "path": "config/quickshell/assets/charger.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0bd7f82108bc6e81bc7606a095cf03b8c2182a38",
+      "size": 508,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0bd7f82108bc6e81bc7606a095cf03b8c2182a38"
+    },
+    {
+      "path": "config/quickshell/assets/check.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2db494228f0dbd688a74184f72d5486e092e9666",
+      "size": 195,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2db494228f0dbd688a74184f72d5486e092e9666"
+    },
+    {
+      "path": "config/quickshell/assets/chevron-down.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f9751a86ccd7cc1ec885ebbbbfb386c9f4248aae",
+      "size": 306,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f9751a86ccd7cc1ec885ebbbbfb386c9f4248aae"
+    },
+    {
+      "path": "config/quickshell/assets/chevron-left.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3d8a99806e47a32157bb58166c83b989b6bf634",
+      "size": 280,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b3d8a99806e47a32157bb58166c83b989b6bf634"
+    },
+    {
+      "path": "config/quickshell/assets/chevron-right.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e6ebb731b770ab2e10af27f12dfd78aa0673f82",
+      "size": 279,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5e6ebb731b770ab2e10af27f12dfd78aa0673f82"
+    },
+    {
+      "path": "config/quickshell/assets/chevron-up.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "277bcd1ea85718db4f8c24b3b906f68243fdebb6",
+      "size": 280,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/277bcd1ea85718db4f8c24b3b906f68243fdebb6"
+    },
+    {
+      "path": "config/quickshell/assets/circle-medium.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f93f34446854db7510e21afeab3820775bfb5219",
+      "size": 437,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f93f34446854db7510e21afeab3820775bfb5219"
+    },
+    {
+      "path": "config/quickshell/assets/clipboard.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a6b075ecb07a2753d422c928af61536857e0126",
+      "size": 526,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0a6b075ecb07a2753d422c928af61536857e0126"
+    },
+    {
+      "path": "config/quickshell/assets/clock.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6743c05adea86abaf5463e8231ea98ac2f4a7fa9",
+      "size": 437,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6743c05adea86abaf5463e8231ea98ac2f4a7fa9"
+    },
+    {
+      "path": "config/quickshell/assets/code.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea41e21a8ccb94b1feec9de56d5644ff4544fa19",
+      "size": 414,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ea41e21a8ccb94b1feec9de56d5644ff4544fa19"
+    },
+    {
+      "path": "config/quickshell/assets/coffee-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e0750c8f818da485b364ce2a754fb546224b3af6",
+      "size": 474,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e0750c8f818da485b364ce2a754fb546224b3af6"
+    },
+    {
+      "path": "config/quickshell/assets/coffee.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c869c66413e68a11ab6fb177b04274c342e66a7",
+      "size": 482,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3c869c66413e68a11ab6fb177b04274c342e66a7"
+    },
+    {
+      "path": "config/quickshell/assets/color-palette-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec86746a657094fe1ff0634474d928bc15b410f0",
+      "size": 577,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ec86746a657094fe1ff0634474d928bc15b410f0"
+    },
+    {
+      "path": "config/quickshell/assets/color-palette.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7951167efcf530644d0ad5294ec097c8c56d44f9",
+      "size": 670,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7951167efcf530644d0ad5294ec097c8c56d44f9"
+    },
+    {
+      "path": "config/quickshell/assets/commit.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2994d2ef63cb598901acfaa4f11ab0674262e73f",
+      "size": 435,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2994d2ef63cb598901acfaa4f11ab0674262e73f"
+    },
+    {
+      "path": "config/quickshell/assets/cpu.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e03c4f2ffb08342e7159e6dc3445099fce09d15a",
+      "size": 653,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e03c4f2ffb08342e7159e6dc3445099fce09d15a"
+    },
+    {
+      "path": "config/quickshell/assets/cursor-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "feb3ee0de67fc515c456432a6ae5b7cad20a02aa",
+      "size": 433,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/feb3ee0de67fc515c456432a6ae5b7cad20a02aa"
+    },
+    {
+      "path": "config/quickshell/assets/cursor.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72d18032912ad2070098d51fd1d72766172910d0",
+      "size": 454,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/72d18032912ad2070098d51fd1d72766172910d0"
+    },
+    {
+      "path": "config/quickshell/assets/download.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f214688c7d828e9f036b9faff67611e068affed",
+      "size": 301,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0f214688c7d828e9f036b9faff67611e068affed"
+    },
+    {
+      "path": "config/quickshell/assets/eye-off.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebbf065d4396f02f76ff0314ec38e9f22a44e063",
+      "size": 698,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ebbf065d4396f02f76ff0314ec38e9f22a44e063"
+    },
+    {
+      "path": "config/quickshell/assets/eye.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "316105c551f7333a91db7e0f3f66ea62991e1848",
+      "size": 637,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/316105c551f7333a91db7e0f3f66ea62991e1848"
+    },
+    {
+      "path": "config/quickshell/assets/font.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01ada4f5b75baf5708e220e441923043856dd8a3",
+      "size": 493,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/01ada4f5b75baf5708e220e441923043856dd8a3"
+    },
+    {
+      "path": "config/quickshell/assets/fork.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a152560fa14a7f7a2664457103150dffc187d6d0",
+      "size": 564,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a152560fa14a7f7a2664457103150dffc187d6d0"
+    },
+    {
+      "path": "config/quickshell/assets/gamepad-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e7dfc3475fa88acddd736b94fa3f6e2855cfe195",
+      "size": 585,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e7dfc3475fa88acddd736b94fa3f6e2855cfe195"
+    },
+    {
+      "path": "config/quickshell/assets/gamepad.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "895cb5160355336ce5a076579494707bc98e007d",
+      "size": 613,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/895cb5160355336ce5a076579494707bc98e007d"
+    },
+    {
+      "path": "config/quickshell/assets/ghost.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a46a9d82f4bc66d410f4b566eef624416a98e942",
+      "size": 808,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a46a9d82f4bc66d410f4b566eef624416a98e942"
+    },
+    {
+      "path": "config/quickshell/assets/github.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd2ce1c95cf326d8e98e3e704abbc235f7ce329e",
+      "size": 650,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/fd2ce1c95cf326d8e98e3e704abbc235f7ce329e"
+    },
+    {
+      "path": "config/quickshell/assets/hyprland.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "76796271b32d89808d91fc16d7553a0d4e3d6f51",
+      "size": 2624,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/76796271b32d89808d91fc16d7553a0d4e3d6f51"
+    },
+    {
+      "path": "config/quickshell/assets/info-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c590ec101d947dff6940d58101127ddb72101702",
+      "size": 711,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c590ec101d947dff6940d58101127ddb72101702"
+    },
+    {
+      "path": "config/quickshell/assets/info.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f79fc5469618e3ca84b33f32ce7cc34de39a7bf",
+      "size": 440,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/8f79fc5469618e3ca84b33f32ce7cc34de39a7bf"
+    },
+    {
+      "path": "config/quickshell/assets/keybinds-icon.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "44890a778578de8872b106c3633e12e3020bc1bd",
+      "size": 1290,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/44890a778578de8872b106c3633e12e3020bc1bd"
+    },
+    {
+      "path": "config/quickshell/assets/keyboard-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e76d256e2ecf6d212fb2fc107bd60c383cde9f0f",
+      "size": 752,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e76d256e2ecf6d212fb2fc107bd60c383cde9f0f"
+    },
+    {
+      "path": "config/quickshell/assets/keyboard.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6cc02450390b96569593b576c3b4a3b100c4553b",
+      "size": 626,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6cc02450390b96569593b576c3b4a3b100c4553b"
+    },
+    {
+      "path": "config/quickshell/assets/layout-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e2cbb5d0b41cec3978511faf30df76d204a1051",
+      "size": 390,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7e2cbb5d0b41cec3978511faf30df76d204a1051"
+    },
+    {
+      "path": "config/quickshell/assets/lock.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c16e44e929159d75910eb8a16fab7fcfafd5d60",
+      "size": 539,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/4c16e44e929159d75910eb8a16fab7fcfafd5d60"
+    },
+    {
+      "path": "config/quickshell/assets/logout.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d5a813e9419ae9286c3a9f1325dee7ce007da09",
+      "size": 300,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1d5a813e9419ae9286c3a9f1325dee7ce007da09"
+    },
+    {
+      "path": "config/quickshell/assets/microphone-off.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97d78260ba4b5f59584062c49fcc372762e9cee1",
+      "size": 441,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/97d78260ba4b5f59584062c49fcc372762e9cee1"
+    },
+    {
+      "path": "config/quickshell/assets/microphone.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef013c8b57c4a2310b9d7993469cb13643ebeeae",
+      "size": 382,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/ef013c8b57c4a2310b9d7993469cb13643ebeeae"
+    },
+    {
+      "path": "config/quickshell/assets/minus.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0192335c8f9cf7e3e986c554e8946baa2a7bad5d",
+      "size": 355,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0192335c8f9cf7e3e986c554e8946baa2a7bad5d"
+    },
+    {
+      "path": "config/quickshell/assets/monitor-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29c834d054584064b293fda6a85c0efb2302f899",
+      "size": 379,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/29c834d054584064b293fda6a85c0efb2302f899"
+    },
+    {
+      "path": "config/quickshell/assets/monitor.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0788b90546fb00aadf93994b8f79fece8453c062",
+      "size": 509,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/0788b90546fb00aadf93994b8f79fece8453c062"
+    },
+    {
+      "path": "config/quickshell/assets/moon-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3eace25a8929eaf2fe6bd617ef69e172e2a20c17",
+      "size": 374,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3eace25a8929eaf2fe6bd617ef69e172e2a20c17"
+    },
+    {
+      "path": "config/quickshell/assets/moon.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e477d185750c38aac047fd18551d13de88515a3",
+      "size": 506,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2e477d185750c38aac047fd18551d13de88515a3"
+    },
+    {
+      "path": "config/quickshell/assets/music.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9b2be60f3e45311cd35b22e8bafe28720d447be",
+      "size": 361,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a9b2be60f3e45311cd35b22e8bafe28720d447be"
+    },
+    {
+      "path": "config/quickshell/assets/neovim.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c66dbf94a549ec505c5b44545a6130ecdb9ef62",
+      "size": 361,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7c66dbf94a549ec505c5b44545a6130ecdb9ef62"
+    },
+    {
+      "path": "config/quickshell/assets/ocr.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c8931e9e7713acd23219ac88748eab8204fb15e",
+      "size": 563,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5c8931e9e7713acd23219ac88748eab8204fb15e"
+    },
+    {
+      "path": "config/quickshell/assets/packagemanager-icon.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b240848aa31f342c1a753d27c8805e100395c0e7",
+      "size": 1553,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/b240848aa31f342c1a753d27c8805e100395c0e7"
+    },
+    {
+      "path": "config/quickshell/assets/picture-spark.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d892ef7cbc74a5db9d8dec32ce9aa376f68c7ad",
+      "size": 692,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/6d892ef7cbc74a5db9d8dec32ce9aa376f68c7ad"
+    },
+    {
+      "path": "config/quickshell/assets/picture.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a84376ba5a62f01d392804712162e752293da54",
+      "size": 569,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5a84376ba5a62f01d392804712162e752293da54"
+    },
+    {
+      "path": "config/quickshell/assets/player-loop-once.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5790d23934f59d7dd5f891a74136ab3ccbf13138",
+      "size": 479,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5790d23934f59d7dd5f891a74136ab3ccbf13138"
+    },
+    {
+      "path": "config/quickshell/assets/player-loop.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a5c593815c9f3ad853ba00fc73e7fe505c9799a8",
+      "size": 445,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a5c593815c9f3ad853ba00fc73e7fe505c9799a8"
+    },
+    {
+      "path": "config/quickshell/assets/player-next.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "99563ca0d9de55e7feef8b6fcc7d1cb7b6362109",
+      "size": 329,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/99563ca0d9de55e7feef8b6fcc7d1cb7b6362109"
+    },
+    {
+      "path": "config/quickshell/assets/player-pause.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "724484a3c343500270aee1d1c6004b4931defee8",
+      "size": 324,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/724484a3c343500270aee1d1c6004b4931defee8"
+    },
+    {
+      "path": "config/quickshell/assets/player-play.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a3fedca506c314c6ec125131a2d44c2cd9fadf9",
+      "size": 255,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2a3fedca506c314c6ec125131a2d44c2cd9fadf9"
+    },
+    {
+      "path": "config/quickshell/assets/player-previous.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be630b477e09ff2219bd3bc811750fd02edf23fc",
+      "size": 336,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/be630b477e09ff2219bd3bc811750fd02edf23fc"
+    },
+    {
+      "path": "config/quickshell/assets/player-shuffle.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9bea9ca7a8b1cbbd9aea41601496b61e3e2414fa",
+      "size": 531,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9bea9ca7a8b1cbbd9aea41601496b61e3e2414fa"
+    },
+    {
+      "path": "config/quickshell/assets/player-stop.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ae33d89bb2f5a3d17c67fff046fc706fcfe677a",
+      "size": 350,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1ae33d89bb2f5a3d17c67fff046fc706fcfe677a"
+    },
+    {
+      "path": "config/quickshell/assets/plus.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60199df088fc17a2ccc27d99684acf6c687938d8",
+      "size": 361,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/60199df088fc17a2ccc27d99684acf6c687938d8"
+    },
+    {
+      "path": "config/quickshell/assets/power.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5540260464a5dd743d40c3c9cf450a503e96a18d",
+      "size": 395,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/5540260464a5dd743d40c3c9cf450a503e96a18d"
+    },
+    {
+      "path": "config/quickshell/assets/quote.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ae064fbf9bc84011e9c93e79f67bcd14bdf42b5",
+      "size": 364,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2ae064fbf9bc84011e9c93e79f67bcd14bdf42b5"
+    },
+    {
+      "path": "config/quickshell/assets/record-area.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "45d52259a6a39421c89339c7e9bb24c0abb3c6ed",
+      "size": 438,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/45d52259a6a39421c89339c7e9bb24c0abb3c6ed"
+    },
+    {
+      "path": "config/quickshell/assets/record-icon.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80f55e4f0793e225168a5121d62fe6482bbf5b2f",
+      "size": 700,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/80f55e4f0793e225168a5121d62fe6482bbf5b2f"
+    },
+    {
+      "path": "config/quickshell/assets/refresh.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "69597aa9b802e9c0f32732145cf9b3cba6cbe05e",
+      "size": 344,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/69597aa9b802e9c0f32732145cf9b3cba6cbe05e"
+    },
+    {
+      "path": "config/quickshell/assets/reload.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "94b45458edcb8f4cc14a02a9731350e8935ae1b1",
+      "size": 367,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/94b45458edcb8f4cc14a02a9731350e8935ae1b1"
+    },
+    {
+      "path": "config/quickshell/assets/rocket.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c630bdd1d3f25390dddc9bb1b9c3971e232a418e",
+      "size": 592,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c630bdd1d3f25390dddc9bb1b9c3971e232a418e"
+    },
+    {
+      "path": "config/quickshell/assets/screenshot-area.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "15ffe57f27e626af9f4836f034c48db9881ef05f",
+      "size": 586,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/15ffe57f27e626af9f4836f034c48db9881ef05f"
+    },
+    {
+      "path": "config/quickshell/assets/search.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f88d56a2b2a04ce9fad1c9a295646d567ee7ce8",
+      "size": 399,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3f88d56a2b2a04ce9fad1c9a295646d567ee7ce8"
+    },
+    {
+      "path": "config/quickshell/assets/settings-icon.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41271a254493221eb5d1ae804207d093f4816284",
+      "size": 1828,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/41271a254493221eb5d1ae804207d093f4816284"
+    },
+    {
+      "path": "config/quickshell/assets/sparkles-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c20398570b2cdca0e22cef4b73f2d7ccfbe82d6d",
+      "size": 746,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c20398570b2cdca0e22cef4b73f2d7ccfbe82d6d"
+    },
+    {
+      "path": "config/quickshell/assets/sparkles.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7079a6992e6770f6ee71bfb75fb69c3afb7ddae",
+      "size": 552,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/a7079a6992e6770f6ee71bfb75fb69c3afb7ddae"
+    },
+    {
+      "path": "config/quickshell/assets/square-rounded-check-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fdc29f08b473eb0048a375ffc1db13d44f3461cd",
+      "size": 1173,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/fdc29f08b473eb0048a375ffc1db13d44f3461cd"
+    },
+    {
+      "path": "config/quickshell/assets/square-rounded-check.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1f79507dd80cef02697c0e98e72066408c67010",
+      "size": 451,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/d1f79507dd80cef02697c0e98e72066408c67010"
+    },
+    {
+      "path": "config/quickshell/assets/star-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54106245b0b7c8268cbe3f9a754dc3cc6408a4d3",
+      "size": 533,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/54106245b0b7c8268cbe3f9a754dc3cc6408a4d3"
+    },
+    {
+      "path": "config/quickshell/assets/star.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49520383fc19c860dede31c5a7e750527b68c776",
+      "size": 468,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/49520383fc19c860dede31c5a7e750527b68c776"
+    },
+    {
+      "path": "config/quickshell/assets/sun.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1fb35de88dcd7daea7c0a38451dd6a0aaf9fb538",
+      "size": 880,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1fb35de88dcd7daea7c0a38451dd6a0aaf9fb538"
+    },
+    {
+      "path": "config/quickshell/assets/touchpad.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf21d5fa7d431a008472612ad96486fbefecdc42",
+      "size": 670,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/bf21d5fa7d431a008472612ad96486fbefecdc42"
+    },
+    {
+      "path": "config/quickshell/assets/trash.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "846843d31979d5986549489aa09146205e53a411",
+      "size": 537,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/846843d31979d5986549489aa09146205e53a411"
+    },
+    {
+      "path": "config/quickshell/assets/tune.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77092cc827ce6837e74aa0386f21b2e377f53b1f",
+      "size": 335,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/77092cc827ce6837e74aa0386f21b2e377f53b1f"
+    },
+    {
+      "path": "config/quickshell/assets/update-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "504166243f1fd65f281eb77b2abd76eefcede467",
+      "size": 700,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/504166243f1fd65f281eb77b2abd76eefcede467"
+    },
+    {
+      "path": "config/quickshell/assets/update.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "73351b8ae270c796c7fa3080e4d51f1b0810e577",
+      "size": 471,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/73351b8ae270c796c7fa3080e4d51f1b0810e577"
+    },
+    {
+      "path": "config/quickshell/assets/volume-off.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2232e23c0a3cdc4ca0e19b8820a217d66acba9c2",
+      "size": 518,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2232e23c0a3cdc4ca0e19b8820a217d66acba9c2"
+    },
+    {
+      "path": "config/quickshell/assets/volume.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "457d3ba814cfc9725d6f3fcf56f4cef27b307cc5",
+      "size": 354,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/457d3ba814cfc9725d6f3fcf56f4cef27b307cc5"
+    },
+    {
+      "path": "config/quickshell/assets/warning.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48a6a8ca4462079808d6e86bb5e6771e1d783afa",
+      "size": 679,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/48a6a8ca4462079808d6e86bb5e6771e1d783afa"
+    },
+    {
+      "path": "config/quickshell/assets/widgets.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2264b01b9df736e327b7d8a58455d1b11c7b754c",
+      "size": 754,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/2264b01b9df736e327b7d8a58455d1b11c7b754c"
+    },
+    {
+      "path": "config/quickshell/assets/wifi-0.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c8c8cae0a1c402910fae8e754eabe4b2933778b1",
+      "size": 333,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c8c8cae0a1c402910fae8e754eabe4b2933778b1"
+    },
+    {
+      "path": "config/quickshell/assets/wifi-1.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a996b9f41cfdd6424742b1c31bfa5a1caebd3b6",
+      "size": 333,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9a996b9f41cfdd6424742b1c31bfa5a1caebd3b6"
+    },
+    {
+      "path": "config/quickshell/assets/wifi-2.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e580ae591840b75792a2101dc0a19a9f7c33c4ab",
+      "size": 335,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e580ae591840b75792a2101dc0a19a9f7c33c4ab"
+    },
+    {
+      "path": "config/quickshell/assets/wifi-off.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9eef703d18fe38537e496cd23616c98b9e1e102f",
+      "size": 422,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9eef703d18fe38537e496cd23616c98b9e1e102f"
+    },
+    {
+      "path": "config/quickshell/assets/wifi.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ac579a2ef337ee31795876d9b80c46e60bcfb40",
+      "size": 222,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/3ac579a2ef337ee31795876d9b80c46e60bcfb40"
+    },
+    {
+      "path": "config/quickshell/assets/window-filled.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07ea92617be4b32ec1d662fced35078cc22bd0a7",
+      "size": 382,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/07ea92617be4b32ec1d662fced35078cc22bd0a7"
+    },
+    {
+      "path": "config/quickshell/assets/window.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f86a143aefdb6c76811c8ffa99916cf5b1d131f6",
+      "size": 426,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/f86a143aefdb6c76811c8ffa99916cf5b1d131f6"
+    },
+    {
+      "path": "config/quickshell/assets/x.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9727197cc6a2bc5a87923a81e2d75a91c8c2deb",
+      "size": 287,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/c9727197cc6a2bc5a87923a81e2d75a91c8c2deb"
+    },
+    {
+      "path": "config/quickshell/shell.qml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b8c967addaaec827a26cf6075b42ab525b3632e",
+      "size": 3448,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/1b8c967addaaec827a26cf6075b42ab525b3632e"
+    },
+    {
+      "path": "config/starship",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9a0854f1b212ae721bd32c7d05ff01b1a39c862c",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/9a0854f1b212ae721bd32c7d05ff01b1a39c862c"
+    },
+    {
+      "path": "config/starship/starship.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd3bb4d3c7ac9862052de12f04a2aaa9deab5e83",
+      "size": 747,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/dd3bb4d3c7ac9862052de12f04a2aaa9deab5e83"
+    },
+    {
+      "path": "config/zsh",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fe2f7e6fc8f423b2a7d00ba1da606a29ff2ebb53",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/fe2f7e6fc8f423b2a7d00ba1da606a29ff2ebb53"
+    },
+    {
+      "path": "config/zsh/zhistory",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "etc",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3a78aacdd7a02d331b505a9208e1d269a4192016",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/3a78aacdd7a02d331b505a9208e1d269a4192016"
+    },
+    {
+      "path": "etc/sddm.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e28a8b52d53509247fd5c033c46c00423cf7d1c",
+      "size": 31,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/9e28a8b52d53509247fd5c033c46c00423cf7d1c"
+    },
+    {
+      "path": "home",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "996e3ef1df0be2d6341b25b8134c4a539ac71c47",
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/trees/996e3ef1df0be2d6341b25b8134c4a539ac71c47"
+    },
+    {
+      "path": "home/.zshrc",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7f2573cb00017603fa0c6bb39e0c09a5384ef97c",
+      "size": 6516,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/7f2573cb00017603fa0c6bb39e0c09a5384ef97c"
+    },
+    {
+      "path": "install.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "86d3965ce834e6263195071014a9ecbd3c9f47e3",
+      "size": 14353,
+      "url": "https://api.github.com/repos/t4lentles5/minflair/git/blobs/86d3965ce834e6263195071014a9ecbd3c9f47e3"
+    }
+  ],
+  "truncated": false
+}

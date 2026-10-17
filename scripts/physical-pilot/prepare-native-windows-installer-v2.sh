@@ -28,7 +28,7 @@ readonly staging="$backup/staging"
 stage=preflight
 
 fail() { /usr/bin/printf 'APX internal Windows installer v2 refused at %s: %s\n' "$stage" "$1" >&2; exit 2; }
-[[ $size_gib == 80 || $size_gib == 120 || $size_gib == 160 ]] || fail "size differs"
+[[ $size_gib == 80 || $size_gib == 120 || $size_gib == 160 || $size_gib == 170 || $size_gib == 180 || $size_gib == 250 ]] || fail "size differs"
 [[ $generation =~ ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]] || fail "generation differs"
 [[ $(/usr/bin/id -u) == 0 ]] || fail "root is required"
 [[ $(< /etc/hostname) == apx-host && $(< /sys/class/dmi/id/product_name) == 82JU ]] || fail "computer identity differs"

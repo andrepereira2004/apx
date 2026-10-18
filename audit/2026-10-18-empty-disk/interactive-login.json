@@ -1,0 +1,9 @@
+{
+  "path": "official Arch ISO -> empty virtual disk -> installed-disk UEFI boot -> first-boot APX setup -> normal graphical password login",
+  "credential": "fresh synthetic VM-only password, entered through QMP virtual keyboard; never logged",
+  "pointer": "real virtual absolute mouse click focused login field",
+  "observation": "Hub desktop visible after password submission",
+  "authentication_fixture": "not enabled for first-boot or this login",
+  "launch": "start-hyprland with APX recovery wrapper",
+  "hyprland_start_warning_visible": false
+}

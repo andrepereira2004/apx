@@ -1,0 +1,18 @@
+{
+  "state": "passed",
+  "active": {
+    "generation": "4fb684bd-c87c-462e-a419-8c334f9f49fb",
+    "name": "hub",
+    "pid": 682,
+    "profile": "apx-active-graphical-environment-v1",
+    "role": "hub",
+    "schema": 1,
+    "unit": "apx-portable-hub-4fb684bd.service"
+  },
+  "first_boot_service": "disabled",
+  "normal_reboot": true,
+  "unicode_password_login_repeated": true,
+  "auth_bypass_fixture": false,
+  "failed_units": "",
+  "console": "KEYMAP=pt-latin1\n"
+}

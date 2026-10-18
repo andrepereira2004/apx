@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "actual_virtual_keyboard_and_mouse": true,
+  "password_enrollment": "normal first-boot console prompts",
+  "password_login": "normal graphical PAM login",
+  "unicode_and_punctuation_used": true,
+  "console_layout": "pt-latin1",
+  "graphical_layout": "pt",
+  "authentication_bypass_fixture": false,
+  "credentials_recorded": false,
+  "runtime_patches_after_install": false
+}

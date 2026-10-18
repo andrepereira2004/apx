@@ -85,6 +85,26 @@ def latest_status():
     return value
 
 
+def runtime_assets(library=Path('/usr/lib/apx')):
+    """Wrapped portable entrypoints keep the canonical pinned core separately."""
+    import ast
+    import stat
+    path = library / 'apx-lab-runtime-core.py'
+    if not path.exists(): path = library / 'apx-lab-runtime.py'
+    info = path.lstat()
+    if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or info.st_mode & 0o022 \
+            or info.st_size > 256 * 1024:
+        raise RuntimeError('Untrusted canonical runtime source')
+    tree = ast.parse(path.read_text())
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'ENVIRONMENT_SHELL_ASSETS'
+                                               for t in node.targets):
+            assets = ast.literal_eval(node.value)
+            if type(assets) is not dict: break
+            return assets
+    raise RuntimeError('Canonical runtime has no pinned shell asset manifest')
+
+
 def maintenance_command(target, operation_dir):
     name = target['name']
     # Distinct from normal graphical identities; fits Linux's interface limit.
@@ -122,10 +142,7 @@ def execute(operation):
             st = SEED.stat()
             if SEED.is_symlink() or st.st_uid or st.st_gid or st.st_mode & 0o022:
                 raise RuntimeError('Untrusted update helper')
-            import ast
-            tree = ast.parse(Path('/usr/lib/apx/apx-lab-runtime.py').read_text())
-            assets = next(ast.literal_eval(n.value) for n in tree.body if isinstance(n, ast.Assign)
-                          and any(isinstance(t, ast.Name) and t.id == 'ENVIRONMENT_SHELL_ASSETS' for t in n.targets))
+            assets = runtime_assets()
             if hashlib.sha256(SEED.read_bytes()).hexdigest() != assets['local/bin/apx-environment-update-v1']:
                 raise RuntimeError('Update helper digest differs')
             sudoers = directory / 'sudoers'; sudoers.mkdir(mode=0o755); os.chmod(sudoers, 0o755)

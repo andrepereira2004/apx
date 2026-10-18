@@ -1,0 +1,16 @@
+{
+  "state": "ready-for-owner",
+  "generation": "0de1256b-dc39-4b67-82cc-30363819c36a",
+  "environment_retained": true,
+  "vm_disk_retained": true,
+  "builder_removed": true,
+  "kvm_setup_proxy_removed": true,
+  "public_package_pool_removed": true,
+  "launcher": "/var/lib/apx/environments/teste/home/apx/.local/share/applications/apx-testar-vm.desktop",
+  "next_owner_step": "Return to Hub, reopen Teste, launch Testar APX na VM",
+  "free_bytes": 107423473664,
+  "manual_guard_enabled": true,
+  "manual_guard_active": true,
+  "kvm_capability_exact": true,
+  "source_launcher_matches_installed": true
+}

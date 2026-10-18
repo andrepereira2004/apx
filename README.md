@@ -1,16 +1,93 @@
 # APX
 
-Experimental installation on a fresh generic Arch x86_64 Host: see
-[portable headless base](docs/portable-arch-base-v1.md). It creates and manages
-isolated Environments but does **not yet install the current graphical Hub or
-native Windows integration**. Existing physical-pilot installers remain target-bound.
+APX cria Environments isolados sobre Arch Linux, com Hub gráfico, Hyprland e
+QuickShell. **Experimental:** a instalação de raiz foi testada em VMs UEFI e
+BIOS; a compatibilidade de cada família de hardware real ainda exige validação.
+Não precisas de instalar o Codex.
 
-On a fresh installed Arch x86_64 PC with Btrfs and at least 110 GiB free,
-run as root to fetch and install that base directly from GitHub:
+## Instalar de raiz num PC sem sistema
+
+Precisas de uma pen oficial do **Arch Linux x86_64**, internet, Secure Boot
+desativado e um **disco vazio de pelo menos 160 GiB**. O instalador configura
+Arch, Btrfs, GRUB, firmware, microcódigo e drivers conforme os componentes
+detetados, sem restringir a instalação a um modelo de computador. Não configura
+encriptação nem instala Windows. Discos com partições ou dados são recusados.
+
+1. Arranca pela pen do Arch e liga à internet. Na consola de root, obtém esta
+   versão do projeto. Estes comandos de pacman destinam-se apenas ao ambiente
+   temporário da pen, não a um Arch já instalado:
+
+   ```sh
+   pacman -Sy --needed git
+   git clone --single-branch --branch agent/defer-local-model-phase10 https://github.com/andrepereira2004/apx.git
+   cd apx
+   ```
+
+   Usa explicitamente este branch: o branch predefinido pode conter uma versão
+   anterior. Se o GitHub pedir autenticação, utiliza o teu acesso ao repositório.
+
+2. Lista os discos e consulta o plano sem instalar:
+
+   ```sh
+   python scripts/portable/install_apx_disk.py --list-disks
+   python scripts/portable/install_apx_disk.py --disk /dev/DISCO
+   ```
+
+   Substitui `/dev/DISCO` pelo disco vazio correto, identificado pelo tamanho e
+   modelo. Esse texto é um marcador, não um nome de disco para copiar.
+
+3. Executa a instalação no disco escolhido:
+
+   ```sh
+   python scripts/portable/install_apx_disk.py --disk /dev/DISCO --apply
+   ```
+
+   Revê o plano e escreve a frase de confirmação pedida. O teclado passa para
+   português antes de definires uma palavra-passe nova de recuperação de root.
+   O instalador escreve a tabela de partições e instala o sistema nesse disco.
+
+4. Quando terminar, desliga o PC, retira a pen e arranca pelo disco instalado.
+   A instalação do APX continua automaticamente. Define a tua palavra-passe APX
+   e entra no Hub gráfico quando surgir o login. Cria os teus Environments no Hub.
+
+Por cabo, a rede é automática. Para configurar Wi-Fi no primeiro arranque, usa
+**Ctrl+Alt+F3**, entra como root com a palavra-passe de recuperação e executa
+`nmtui`. Regressa com **Ctrl+Alt+F1**.
+
+O instalador recria o sistema APX e os seus padrões versionados. Aplicações,
+documentos, palavras-passe, biometria, discos de VMs e os dados dos Environments
+existentes exigem cópias de segurança próprias; fazer pull não os restaura.
+Drivers NVIDIA fora da lista suportada pelo driver oficial são recusados antes
+de alterar o disco. Não está prometida compatibilidade com qualquer hardware.
+
+- [Guia detalhado em português e recuperação de falhas](docs/install-apx-from-usb-pt.md)
+- [Funcionamento e limites do instalador de disco vazio](docs/empty-disk-install-v1.md)
+- [Resultados dos testes UEFI/BIOS e limitações](docs/empty-disk-validation-2026-10-18.md)
+- [Estado atual do projeto](CURRENT_HANDOFF.md)
+
+## Alternativa: Arch já instalado
+
+Num Arch x86_64 novo, arrancado normalmente, com Btrfs e os requisitos de espaço
+indicados no [guia de reconstrução gráfica](docs/portable-full-rebuild-v1.md),
+obtém o mesmo branch e executa como root:
 
 ```sh
-bash -o pipefail -c 'curl -fsSL https://raw.githubusercontent.com/andrepereira2004/apx/apx-arch-base-v1/install.sh | bash -s -- --apply'
+bash scripts/portable/install-apx-full.sh --check
+bash scripts/portable/install-apx-full.sh --apply
+systemctl start apx-portable-graphical.service
 ```
+
+Este percurso não particiona o disco nem substitui a preparação do Arch. Para
+instalar só a base sem interface, consulta o [guia headless](docs/portable-arch-base-v1.md).
+Os adaptadores em `scripts/physical-pilot/` destinam-se ao piloto físico específico;
+para outro PC usa os instaladores em `scripts/portable/` descritos acima.
+
+## Arquitetura e documentação histórica
+
+As secções seguintes preservam a descrição original da fundação do projeto.
+Referências a SDDM, desenvolvimento apenas headless ou funcionalidades ainda
+planeadas refletem essa fase histórica. Para comportamento atual, usa os guias
+acima, `CURRENT_HANDOFF.md` e `PROJECT_STATE.md`.
 
 APX is a personal operating environment platform built on top of Arch Linux.
 

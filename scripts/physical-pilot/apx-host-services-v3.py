@@ -748,8 +748,11 @@ def connectivity_monitor() -> None:
         time.sleep(interval)
 
 
+EXPECTED_HOSTNAME = "apx-host"
+
+
 def serve() -> None:
-    if os.geteuid() != 0 or Path("/etc/hostname").read_text().strip() != "apx-host":
+    if os.geteuid() != 0 or Path("/etc/hostname").read_text().strip() != EXPECTED_HOSTNAME:
         raise HostServicesV3Error("endpoint requires APX Host root")
     SOCKET.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
     if SOCKET.exists() or SOCKET.is_symlink():

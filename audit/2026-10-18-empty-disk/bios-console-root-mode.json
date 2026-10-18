@@ -1,0 +1,5 @@
+{
+  "vconsole": "KEYMAP=pt-latin1\n",
+  "root_mode": "0o555",
+  "uefi": false
+}

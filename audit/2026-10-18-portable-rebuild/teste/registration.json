@@ -1,0 +1,31 @@
+{
+  "created_at": "2026-10-18T08:28:53+00:00",
+  "description": "Ensaio tempor\u00e1rio da instala\u00e7\u00e3o port\u00e1til do APX",
+  "desktop_modules": [
+    "system",
+    "cli-aur",
+    "graphical",
+    "desktop-integration",
+    "locale-input",
+    "network",
+    "bluetooth",
+    "audio",
+    "graphics",
+    "power",
+    "devices-storage",
+    "files",
+    "web-documents",
+    "multimedia",
+    "communication",
+    "printing-scanning",
+    "shortcuts"
+  ],
+  "desktop_preset": "intermediate",
+  "generation": "6d3bf7be-dcf6-4040-a13e-9fda4c7c8100",
+  "name": "teste",
+  "release": "hyprland-base-v2",
+  "role": "graphical-base",
+  "schema": 1,
+  "state": "stopped",
+  "update_policy": "follow-host"
+}

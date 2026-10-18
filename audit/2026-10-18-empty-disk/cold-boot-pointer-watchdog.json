@@ -1,0 +1,19 @@
+{
+  "before": {
+    "cursor": {
+      "x": -640,
+      "y": 400
+    },
+    "compositor": "/usr/bin/Hyprland --watchdog-fd 4 --config /home/apx/.config/hypr/hyprland.lua ",
+    "parent": "/usr/bin/start-hyprland --path /usr/lib/apx/apx-portable-compositor.sh -- --config /home/apx/.config/hypr/hyprland.lua "
+  },
+  "after": {
+    "cursor": {
+      "x": -304,
+      "y": 146
+    },
+    "compositor": "/usr/bin/Hyprland --watchdog-fd 4 --config /home/apx/.config/hypr/hyprland.lua ",
+    "parent": "/usr/bin/start-hyprland --path /usr/lib/apx/apx-portable-compositor.sh -- --config /home/apx/.config/hypr/hyprland.lua "
+  },
+  "passed": true
+}

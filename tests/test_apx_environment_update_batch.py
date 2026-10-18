@@ -19,6 +19,28 @@ def record(name, **kw):
 
 
 class EnvironmentBatchTests(unittest.TestCase):
+    def test_wrapped_runtime_uses_canonical_manifest(self):
+        with tempfile.TemporaryDirectory() as folder:
+            library = Path(folder)
+            (library / 'apx-lab-runtime.py').write_text('# wrapper without a manifest\n')
+            core = library / 'apx-lab-runtime-core.py'
+            core.write_text("ENVIRONMENT_SHELL_ASSETS = {'shell.qml': 'digest'}\n")
+            self.assertEqual(runner.runtime_assets(library), {'shell.qml': 'digest'})
+            core.unlink()
+            (library / 'apx-lab-runtime.py').write_text("ENVIRONMENT_SHELL_ASSETS = {'legacy': 'digest'}\n")
+            self.assertEqual(runner.runtime_assets(library), {'legacy': 'digest'})
+
+    def test_runtime_manifest_rejects_writable_or_linked_source(self):
+        with tempfile.TemporaryDirectory() as folder:
+            library = Path(folder)
+            core = library / 'apx-lab-runtime-core.py'
+            core.write_text('ENVIRONMENT_SHELL_ASSETS = {}\n')
+            core.chmod(0o666)
+            with self.assertRaises(RuntimeError): runner.runtime_assets(library)
+            core.unlink()
+            core.symlink_to(ROOT / 'scripts/virtual-lab/apx-lab-runtime.py')
+            with self.assertRaises(RuntimeError): runner.runtime_assets(library)
+
     def test_all_environments_even_legacy_excluded_policy_and_no_host(self):
         plan = build_environment_plan([record('work', update_policy='excluded'), record('hub')], 200 * 1024**3)
         self.assertEqual(plan['classification'], 'ready-for-approval')

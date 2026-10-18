@@ -1,0 +1,33 @@
+{
+  "generation": "6d3bf7be-dcf6-4040-a13e-9fda4c7c8100",
+  "environment_absent": true,
+  "lease_absent": true,
+  "maintenance_machine_absent": true,
+  "free_bytes": 114633453568,
+  "other_registrations_before": {
+    "/var/lib/apx/environments/hub/registration.json": "1e733c67122181fd4b59359dd0eb3947295f2f9279a45b63545cff064cc23313",
+    "/var/lib/apx/environments/hytale/registration.json": "8b6d6172d511a7b103f907a37c93f3852673cf899d12e3e1edd3ba99eee0ef16",
+    "/var/lib/apx/environments/steam/registration.json": "521e27d9a793f16defd54a1dda8885ec64559f98ab6a9c811ad2c7afc553ee56",
+    "/var/lib/apx/environments/minecraft/registration.json": "777a8d5fface09332bf2c6ab2f7f7bb829cc1ed27e66d71729eaf3a3139d5b00",
+    "/var/lib/apx/environments/faculdade/registration.json": "e29b62a4eb9bde2446a6e33e65208e24e95e6a0bd801937a56d1e57d10670d62",
+    "/var/lib/apx/native-environments/instances-v3/windows-testes.json": "2478dd11960e4da81a3efba98cc2bc33b8e2625136742727a9376f8fe85f67a5",
+    "/var/lib/apx/native-environments/instances-v3/windows.json": "9bb839928652dbd67b253f284a9755e3b092b447a76473e6f39fa9e83f409eb0",
+    "/var/lib/apx/native-environments/windows.json": "4ded183f043e158490197d6d5dd0ab9e729a96c2efe3a37938c5af49eeb0a5f4"
+  },
+  "other_registrations_after": {
+    "/var/lib/apx/environments/hub/registration.json": "1e733c67122181fd4b59359dd0eb3947295f2f9279a45b63545cff064cc23313",
+    "/var/lib/apx/environments/hytale/registration.json": "8b6d6172d511a7b103f907a37c93f3852673cf899d12e3e1edd3ba99eee0ef16",
+    "/var/lib/apx/environments/steam/registration.json": "521e27d9a793f16defd54a1dda8885ec64559f98ab6a9c811ad2c7afc553ee56",
+    "/var/lib/apx/environments/minecraft/registration.json": "777a8d5fface09332bf2c6ab2f7f7bb829cc1ed27e66d71729eaf3a3139d5b00",
+    "/var/lib/apx/environments/faculdade/registration.json": "e29b62a4eb9bde2446a6e33e65208e24e95e6a0bd801937a56d1e57d10670d62",
+    "/var/lib/apx/native-environments/instances-v3/windows-testes.json": "2478dd11960e4da81a3efba98cc2bc33b8e2625136742727a9376f8fe85f67a5",
+    "/var/lib/apx/native-environments/instances-v3/windows.json": "9bb839928652dbd67b253f284a9755e3b092b447a76473e6f39fa9e83f409eb0",
+    "/var/lib/apx/native-environments/windows.json": "4ded183f043e158490197d6d5dd0ab9e729a96c2efe3a37938c5af49eeb0a5f4"
+  },
+  "other_registrations_unchanged_during_cleanup": true,
+  "partition_table_unchanged": true,
+  "btrfs_device_stats": "[/dev/mapper/cryptroot].write_io_errs    0\n[/dev/mapper/cryptroot].read_io_errs     0\n[/dev/mapper/cryptroot].flush_io_errs    0\n[/dev/mapper/cryptroot].corruption_errs  79\n[/dev/mapper/cryptroot].generation_errs  0\n",
+  "failed_units": "",
+  "partition_table_sha256": "12c727e5fa084f54de5c3da8dd946be846b0a9a7993da0ea64f01e0d160b442a",
+  "partition_hash_normalization": "strip surrounding whitespace, matching the original baseline"
+}

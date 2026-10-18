@@ -79,6 +79,8 @@ LOCAL_PACKAGE_MANIFESTS = {
     "howdy-apx": "howdy-apx-v1.json",
 }
 ENVIRONMENT_SHELL_ASSETS = {
+    "quickshell/apx/icons/lucide/package-open.svg": "261a0676ee3db3e5c64a528ac7f81a4893ddb3dfebd0549562f4ef5033757920",
+    "quickshell/apx/icons/lucide/package.svg": "69d6bc7650d26c4d24dd55eb22791607b982ce7637073944c256f1f61575509d",
     "quickshell/apx/icons/lucide/paintbrush.svg": "b0a958ba9889f89c40df6e1c168b8a7aa20f6309780e795c5bce00a4bc11bff6",
     "quickshell/apx/icons/lucide/satellite-dish.svg": "7ce3938a89d6c2cec3563a1653248c26ad1227ae139b5a2b7d7ae32778928511",
     "quickshell/apx/icons/lucide/square-stack.svg": "9f7550f0db1a934166d8c253613c43151554d69bcacaf36883f817b880f037fe",
@@ -255,7 +257,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "quickshell/apx/BounceMouseArea.qml": "6d6ea8c4f2d926ca40f157ea0d7443134cc35bbe9c675dc148b4aeaa6275c938",
     "quickshell/apx/ControlIcon.qml": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
-    "quickshell/apx/shell.qml": "62750f3858ad8fa88366cdb2afe10a3e4a3497d592000e5f04adeca987077e2c",
+    "quickshell/apx/shell.qml": "3bcf7735a1874dd5d1d08b770a08e61f89493071767023f8f31459eb0640e4c1",
     "rofi/config.rasi": "7871629dc71c763dfabb39fc5a2d4171ab6ba85a0d42b49b11058bd8605c9ddd",
     "xdg-desktop-portal/portals.conf": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
     "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "4479d56f259731715d38f9231adc4b6491398525648ff99c8f6179083226ea9d",

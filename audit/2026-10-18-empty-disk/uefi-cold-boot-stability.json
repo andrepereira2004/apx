@@ -1,0 +1,17 @@
+{
+  "state": "passed",
+  "seconds": 125.05055686799999,
+  "active": {
+    "generation": "0972aa8a-611c-4a44-9fdc-069785edbbde",
+    "name": "hub",
+    "pid": 714,
+    "profile": "apx-active-graphical-environment-v1",
+    "role": "hub",
+    "schema": 1,
+    "unit": "apx-portable-hub-0972aa8a.service"
+  },
+  "cold_boot": true,
+  "first_boot_complete": true,
+  "first_boot_service": "disabled",
+  "vt2_getty": "masked\nmasked"
+}

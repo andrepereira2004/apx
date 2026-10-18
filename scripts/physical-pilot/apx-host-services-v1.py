@@ -128,8 +128,11 @@ def respond(connection: socket.socket) -> None:
     connection.sendall(response_bytes(apply(operation)))
 
 
+EXPECTED_HOSTNAME = "apx-host"
+
+
 def serve() -> None:
-    if os.geteuid() != 0 or Path("/etc/hostname").read_text().strip() != "apx-host":
+    if os.geteuid() != 0 or Path("/etc/hostname").read_text().strip() != EXPECTED_HOSTNAME:
         raise HostServicesError("Host-services endpoint requires the APX Host root identity")
     SOCKET.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
     if SOCKET.exists() or SOCKET.is_symlink():

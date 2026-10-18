@@ -1,0 +1,9 @@
+{
+  "name": "teste",
+  "generation": "0de1256b-dc39-4b67-82cc-30363819c36a",
+  "role": "graphical-base",
+  "preset": "intermediate",
+  "purpose": "Owner hands-on VM test via a local SDL launcher inside Teste",
+  "retention": "Keep until owner finishes manual test; no automatic destruction",
+  "scope": "Own disposable Teste only; existing KVM capability; no Host disks, sockets or homes shared with the guest"
+}

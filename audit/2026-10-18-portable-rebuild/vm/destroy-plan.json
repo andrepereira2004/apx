@@ -1,0 +1,20 @@
+{
+  "action": "destroy",
+  "digest": "13a67b56d623856a85112910ab85a90c1efdf055db8b9df9eeb95b80b5bf3408",
+  "effects": [
+    "stop",
+    "purge-update-rollbacks",
+    "purge-snapshots",
+    "purge-archives",
+    "purge-backups",
+    "purge-local-recovery",
+    "remove-home",
+    "remove-root",
+    "purge-metadata",
+    "unpublish",
+    "purge-plans"
+  ],
+  "generation": "6d3bf7be-dcf6-4040-a13e-9fda4c7c8100",
+  "name": "teste",
+  "schema": 1
+}

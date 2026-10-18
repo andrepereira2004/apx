@@ -380,11 +380,7 @@ ShellRoot {
         return "battery-full"
     }
     readonly property string appsIconName: {
-        var name = String(environmentIdentity.name || "").toLowerCase()
-        if (name === "minecraft") return "pickaxe"
-        if (name === "faculdade") return "zap"
-        if (name === "hytale") return "swords"
-        return "grid-2x2"
+        return "package"
     }
     property string batteryStatus: "Desconhecido"
     property bool batteryDischarging: false
@@ -3506,7 +3502,7 @@ ShellRoot {
         function volumeDown(): void { root.stepVolume(-5) }
         function volumeMute(): void { root.toggleVolumeMute() }
         function microphoneMute(): void { root.toggleMicrophoneMute() }
-        function hotkeyApps(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/grid-2x2.svg"), "Aplicações", "A abrir", -1) }
+        function hotkeyApps(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/package-open.svg"), "Aplicações", "A abrir", -1) }
         function hotkeyAirplaneOff(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/plane.svg"), "Modo de avião", "Desativado", -1) }
         function hotkeyAirplaneOn(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/plane.svg"), "Modo de avião", "Ativado", -1) }
         function hotkeyAirplaneUnavailable(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/circle-alert.svg"), "Modo de avião", "Estado indisponível", -1) }
@@ -4199,6 +4195,7 @@ ShellRoot {
                     textColor: root.textMain
                     label: ""
                     iconName: root.appsIconName
+                    alternateIconName: "package-open"
                     accessibleLabel: "Aplicações"
                     alternateLabel: appsButton.label
                     alternateActive: environmentAppsProcess.running

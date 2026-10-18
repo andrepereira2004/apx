@@ -1,0 +1,6 @@
+{
+  "exit_code": 2,
+  "stdout": "",
+  "stderr": "APX disk installation refused/failed: ambiguous disk identity\n",
+  "request_id": "13a791af4373be51"
+}

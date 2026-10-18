@@ -33,13 +33,13 @@ for (const [text, status, expected] of [
 ]) assert.equal(icon(text, status), expected);
 ''')
 
-    def test_environment_launcher_icons_and_generic_fallback(self):
+    def test_launcher_uses_package_in_every_environment(self):
         self.javascript('function icon(environmentIdentity) {' + self.expression('appsIconName') + '''}
 for (const [name, expected] of [
-    ['minecraft', 'pickaxe'], ['faculdade', 'zap'], ['hytale', 'swords'],
-    ['steam', 'grid-2x2'], ['new-environment', 'grid-2x2']
+    ['minecraft', 'package'], ['faculdade', 'package'], ['hytale', 'package'],
+    ['steam', 'package'], ['new-environment', 'package']
 ]) assert.equal(icon({name}), expected);
-assert.equal(icon({}), 'grid-2x2');
+assert.equal(icon({}), 'package');
 ''')
 
     def test_overflow_keeps_five_slots_and_wraps(self):

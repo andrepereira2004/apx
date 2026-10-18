@@ -1,0 +1,36 @@
+{
+  "action": "create",
+  "description": "Ensaio tempor\u00e1rio da instala\u00e7\u00e3o port\u00e1til do APX",
+  "desktop_modules": [
+    "system",
+    "cli-aur",
+    "graphical",
+    "desktop-integration",
+    "locale-input",
+    "network",
+    "bluetooth",
+    "audio",
+    "graphics",
+    "power",
+    "devices-storage",
+    "files",
+    "web-documents",
+    "multimedia",
+    "communication",
+    "printing-scanning",
+    "shortcuts"
+  ],
+  "desktop_preset": "intermediate",
+  "digest": "554d5abb92c65036ae51a9a2145698aebd9b3fdbad2d6c70b9249dddb9055006",
+  "effects": [
+    "root",
+    "home",
+    "configure",
+    "publish"
+  ],
+  "generation": "6d3bf7be-dcf6-4040-a13e-9fda4c7c8100",
+  "name": "teste",
+  "role": "graphical-base",
+  "schema": 1,
+  "update_policy": "follow-host"
+}

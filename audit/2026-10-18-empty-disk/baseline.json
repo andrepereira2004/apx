@@ -1,0 +1,11 @@
+{
+  "registrations": {
+    "/var/lib/apx/environments/hub/registration.json": "962c5cb254619ab1d30481e15d3ad06927fb3ad2061d342002ab25c3b07fb2ec",
+    "/var/lib/apx/environments/hytale/registration.json": "8b6d6172d511a7b103f907a37c93f3852673cf899d12e3e1edd3ba99eee0ef16",
+    "/var/lib/apx/environments/steam/registration.json": "521e27d9a793f16defd54a1dda8885ec64559f98ab6a9c811ad2c7afc553ee56",
+    "/var/lib/apx/environments/minecraft/registration.json": "777a8d5fface09332bf2c6ab2f7f7bb829cc1ed27e66d71729eaf3a3139d5b00",
+    "/var/lib/apx/environments/faculdade/registration.json": "f9a54fbeee324f1a1a96c1aa18cdf2add1dfe2579eef2200b09d750cacdb389b",
+    "/var/lib/apx/environments/teste/registration.json": "c08ec8808f1c50c0002d2256de6262fcdb16dda6e4c941d5811c4ef847d15f9a"
+  },
+  "partition_sha256": "12c727e5fa084f54de5c3da8dd946be846b0a9a7993da0ea64f01e0d160b442a"
+}

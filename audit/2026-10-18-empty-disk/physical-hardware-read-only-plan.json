@@ -1,0 +1,29 @@
+{
+  "probe": "read only; no packages installed or database sync",
+  "hardware": {
+    "graphics": [
+      {
+        "address": "0000:01:00.0",
+        "vendor": "0x10de",
+        "device": "0x2560"
+      },
+      {
+        "address": "0000:05:00.0",
+        "vendor": "0x1002",
+        "device": "0x1638"
+      }
+    ],
+    "graphics_packages": [
+      "egl-wayland",
+      "mesa",
+      "nvidia-open",
+      "nvidia-utils",
+      "vulkan-radeon",
+      "vulkan-swrast"
+    ],
+    "nvidia_version": "610.43.03-3",
+    "microcode_packages": [
+      "amd-ucode"
+    ]
+  }
+}

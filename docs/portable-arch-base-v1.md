@@ -1,5 +1,11 @@
 # Portable Arch base v1 (experimental)
 
+Storage update, 2026-10-18: the old stopped VM disks and build rootfs mentioned
+in the dated evidence below were removed during owner-authorized cleanup.
+Their logs and commands remain. See [cleanup evidence](storage-cleanup-2026-10-18.md).
+The earlier test results remain historical evidence, not a claim those VM disks
+are still retained or that a full graphical portable installer exists.
+
 The owner requested installation on a different generic PC on 2026-10-04.
 This first adapter reuses the current APX headless lifecycle and typed Hub
 executor. It is independent of Lenovo identity, disk names, EFI and native

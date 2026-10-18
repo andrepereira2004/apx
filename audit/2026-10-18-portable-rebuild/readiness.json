@@ -1,0 +1,4599 @@
+{
+  "schema": 1,
+  "profile": "apx-full-rebuild-readiness-v1",
+  "source_commit": "7441b8b48c99be66d8c189f3c300aa8d8a658e75",
+  "scope": "read-only source comparison; no credentials, personal data, installed root images or service bodies exported",
+  "full_rebuild_verified": false,
+  "active_environment": {
+    "name": "hytale",
+    "role": "graphical-base",
+    "generation": "97014bb7-aa82-41fd-aaff-2833e2e41033",
+    "unit": "apx-graphical-hytale-97014bb7.service"
+  },
+  "test_storage": {
+    "available_bytes": 26673508352,
+    "protected_reserve_bytes": 103079215104,
+    "planned_test_workspace_bytes": 34359738368,
+    "required_available_bytes": 137438953472,
+    "shortfall_bytes": 110765445120,
+    "ready": false
+  },
+  "requested_test": {
+    "name": "teste",
+    "display_name": "Teste",
+    "role": "graphical-base",
+    "desktop_preset": "intermediate",
+    "vm": "fresh Arch Linux x86_64"
+  },
+  "library_summary": {
+    "identical": 159,
+    "differs": 17
+  },
+  "library": [
+    {
+      "installed": "/usr/lib/apx/apx-audio-state-client-v1.py",
+      "sha256": "80aa145118c1a0c7ba14ba98faa63592162578da9e856abf235eb3cab35afb3f",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-audio-state-client-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-audio-state-client-v1.py",
+          "sha256": "80aa145118c1a0c7ba14ba98faa63592162578da9e856abf235eb3cab35afb3f"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-audio-state-v1.py",
+      "sha256": "6acb9b3f20803ed829133883b4f38a551a6ce82c4351948abc50759275631283",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-audio-state-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-audio-state-v1.py",
+          "sha256": "6acb9b3f20803ed829133883b4f38a551a6ce82c4351948abc50759275631283"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-coordinated-update-client-v1.py",
+      "sha256": "0799d79622446d9b6f8e98cf6866e5acf6d712f0912eb70fb4e630dc978d5821",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-coordinated-update-client-v1.py",
+          "sha256": "ea7ce005c47038cb03989070f614297ad818735217d4a415412c07ce5923b951"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-coordinated-update-runner-v1.py",
+      "sha256": "71b6dc75d007fa0b88aa2a13db03232cca7e81e46bbd8253a162481422ede2f1",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-coordinated-update-runner-v1.py",
+          "sha256": "7baad617ca32d504b8ba1416cb554322acaa64334a2bca0931170010fb36cd16"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-coordinated-update-v1.py",
+      "sha256": "97a4a1649ccb34d7da56f32321d6e4add4587f666164794aa54bcf096b8969cd",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-coordinated-update-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-coordinated-update-v1.py",
+          "sha256": "97a4a1649ccb34d7da56f32321d6e4add4587f666164794aa54bcf096b8969cd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-desktop-menu-v2.py",
+      "sha256": "600381f8694d320133d41f72780c74d93872b7ae36bfed7dc947e5e12dea5ab6",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-desktop-menu-v2.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-desktop-menu-v2.py",
+          "sha256": "600381f8694d320133d41f72780c74d93872b7ae36bfed7dc947e5e12dea5ab6"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-hardware-v1.py",
+      "sha256": "ecc60a726d4f50d0ec521e63e7f6d9e2de0bcef311d9b28fdcbd2aca34759f0d",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-hardware-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-hardware-v1.py",
+          "sha256": "ecc60a726d4f50d0ec521e63e7f6d9e2de0bcef311d9b28fdcbd2aca34759f0d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-host-console-v1.py",
+      "sha256": "bac6c2ec2fdcbaf3eef92b3a1e28599f14c9515c8072105b5692ceb27f172ac8",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-host-console-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-host-console-v1.py",
+          "sha256": "bac6c2ec2fdcbaf3eef92b3a1e28599f14c9515c8072105b5692ceb27f172ac8"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-management-runner-v1.py",
+      "sha256": "24cb91f59611f87ff9fad07ebce836aa3ae4965e6e4de7c1acfe2ec4276a3fe9",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-management-runner-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-management-runner-v1.py",
+          "sha256": "24cb91f59611f87ff9fad07ebce836aa3ae4965e6e4de7c1acfe2ec4276a3fe9"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-metadata-runner-v1.py",
+      "sha256": "db8d493d7d9cb9d3b296ab2b26957f578f5b0e45a8a894cb2d688f7fc96c923d",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-metadata-runner-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-metadata-runner-v1.py",
+          "sha256": "db8d493d7d9cb9d3b296ab2b26957f578f5b0e45a8a894cb2d688f7fc96c923d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-network-v1.py",
+      "sha256": "e60eefb90a6dac0cf769303fa3926d48b8c950a5f0a0a30a55be5205e9d1ac01",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-network-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-network-v1.py",
+          "sha256": "e60eefb90a6dac0cf769303fa3926d48b8c950a5f0a0a30a55be5205e9d1ac01"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-storage-runner-v1.py",
+      "sha256": "59fbf2e0069527d14a8aa4eb5e3a1e4587f722238218964f5d92fb1c297fd625",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-storage-runner-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-storage-runner-v1.py",
+          "sha256": "59fbf2e0069527d14a8aa4eb5e3a1e4587f722238218964f5d92fb1c297fd625"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-switch-client-v1.py",
+      "sha256": "c9126d2454a47211a6b6e93964d741b7e80451908fb7af18556addc089be597c",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-switch-client-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-switch-client-v1.py",
+          "sha256": "c9126d2454a47211a6b6e93964d741b7e80451908fb7af18556addc089be597c"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-switch-runner-v1.py",
+      "sha256": "579010c75cdfaa0b654c0ddd1237aeaf223f498c8a6bda5f381c67189939e5fe",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-switch-runner-v1.py",
+          "sha256": "b59b62e6b5fc5bfdb7f58c1f48f9815189d6da55ae39dd6442f3d1c151b04bdd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-switch-v1.py",
+      "sha256": "4990efb765bb991cb7fa871fecbf2c9574c9bcf1f05be24ae2e02dcaa12afe34",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-environment-switch-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-switch-v1.py",
+          "sha256": "4990efb765bb991cb7fa871fecbf2c9574c9bcf1f05be24ae2e02dcaa12afe34"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-environment-update-batch-v1.py",
+      "sha256": "9378a4544345a2a30668314619c26e50cbb62fd406edba4873ac3aeeed3bad26",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-environment-update-batch-v1.py",
+          "sha256": "16a19c1f8c0928a539f1b3bffa27f2a6e1a8cea3231fb126b6169c90017364a0"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-external-input-bridge-v1.py",
+      "sha256": "36c67781e860a3ec50635e312e2be21b61b78c7a686ba39d708d8ad691612a4d",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-external-input-bridge-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-external-input-bridge-v1.py",
+          "sha256": "36c67781e860a3ec50635e312e2be21b61b78c7a686ba39d708d8ad691612a4d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-graphical-environment-v1.py",
+      "sha256": "b390d2f7679b7320c29b5ce7fb54ece4f950b3767bb3e182dbaf2ec325ea5ca4",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-graphical-environment-v1.py",
+          "sha256": "e7f57369f690b193783659e3bb4d0830e386e8367042d02e6ff95a701656908c"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-console-client-v1.py",
+      "sha256": "79659d1d40e72e15c1c0bcf9b6c03e805399f123748aa904655317cc2074f50e",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-console-client-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-console-client-v1.py",
+          "sha256": "79659d1d40e72e15c1c0bcf9b6c03e805399f123748aa904655317cc2074f50e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-console-v1.py",
+      "sha256": "d31e9c558858720c5ec806bdf2d350311fda0c9e0f09d8854c50a44525bd3a28",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-console-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-console-v1.py",
+          "sha256": "d31e9c558858720c5ec806bdf2d350311fda0c9e0f09d8854c50a44525bd3a28"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-services-client-v1.py",
+      "sha256": "ed25c5b96fd238ed8c412b3ef02e13921f0d2f1b9b4d4964c598990636efd0d8",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-services-client-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-services-client-v1.py",
+          "sha256": "ed25c5b96fd238ed8c412b3ef02e13921f0d2f1b9b4d4964c598990636efd0d8"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-services-client-v2.py",
+      "sha256": "b46ac88770d6b4d26ca7cdc6cfe10b6e7e6efb0e53bb9f5e0f8450c44261be45",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-services-client-v2.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-services-client-v2.py",
+          "sha256": "b46ac88770d6b4d26ca7cdc6cfe10b6e7e6efb0e53bb9f5e0f8450c44261be45"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-services-client-v3.py",
+      "sha256": "235ee7ff854fe13801ce4c0edcff78296fdbbbca4d02660eae7740f6f60e2d14",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-services-client-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-services-client-v3.py",
+          "sha256": "235ee7ff854fe13801ce4c0edcff78296fdbbbca4d02660eae7740f6f60e2d14"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-services-ui-v3.py",
+      "sha256": "3f34f7635dfa529009b0ee6f1e36883482b02a0ca57f3d6b4bee99febc0fc0cf",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-services-ui-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-services-ui-v3.py",
+          "sha256": "3f34f7635dfa529009b0ee6f1e36883482b02a0ca57f3d6b4bee99febc0fc0cf"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-services-v1.py",
+      "sha256": "ee0af04aa07fbd40fefb5836faad81b41358e2fc1782ee67ef42a5cc21f0fcf9",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-services-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-services-v1.py",
+          "sha256": "ee0af04aa07fbd40fefb5836faad81b41358e2fc1782ee67ef42a5cc21f0fcf9"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-services-v2.py",
+      "sha256": "c8ea66e8517c6e6882ff23734d1f43581879e58d3145fabcad5e0890ed4d0c38",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-services-v2.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-services-v2.py",
+          "sha256": "c8ea66e8517c6e6882ff23734d1f43581879e58d3145fabcad5e0890ed4d0c38"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-host-services-v3.py",
+      "sha256": "381d5a4ca6f00f79a1a89ec9eadd7abd87a92509bdf1f99b461893eb1669c32d",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-host-services-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-host-services-v3.py",
+          "sha256": "381d5a4ca6f00f79a1a89ec9eadd7abd87a92509bdf1f99b461893eb1669c32d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-lab-client.py",
+      "sha256": "f0169f79a87efdafba88052293cc66103f21be25401aac1e11e5df4ad80959f1",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/virtual-lab/apx-lab-client.py",
+          "sha256": "917e3bbac51acd28a2992c95bd9f85df93fdac08ccda3c25441d185aefb0f17d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-lab-executor.py",
+      "sha256": "485510da3d9edde780317956ec1dd9696046b872bf3b5e3758abb1d23a78de7b",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/virtual-lab/apx-lab-executor.py",
+          "sha256": "952bc14c999eb23a5eda090cc9106bcb045bdbd5b50717b025b6559932587438"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-lab-runtime.py",
+      "sha256": "8ec57c22443dcc16a585cddd668be85aed622d19e1a3d90f12b97bd07f134dae",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/virtual-lab/apx-lab-runtime.py",
+          "sha256": "0d5b6ee4087aa08afd12aba52fa820d75810b6f7d195453f3cb649ced37de700"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-legion-brightness-keys-v1.py",
+      "sha256": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550",
+      "status": "identical",
+      "matching_sources": [
+        "config/environment-shell-v1/local/bin/apx-legion-brightness-keys-v1.py",
+        "scripts/physical-pilot/apx-legion-brightness-keys-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "config/environment-shell-v1/local/bin/apx-legion-brightness-keys-v1.py",
+          "sha256": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550"
+        },
+        {
+          "source": "scripts/physical-pilot/apx-legion-brightness-keys-v1.py",
+          "sha256": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-legion-gpu-profile-build-v1.sh",
+      "sha256": "9ca40c4b2bc57dd50106e944dc4ed2715aba6521e53c8c63434f565c4c8d1833",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-legion-gpu-profile-build-v1.sh"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-legion-gpu-profile-build-v1.sh",
+          "sha256": "9ca40c4b2bc57dd50106e944dc4ed2715aba6521e53c8c63434f565c4c8d1833"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-localsend-network-v1.py",
+      "sha256": "1d0d221c7322a5bfd9f1f58f5f6db400b38426fb79d1fbd5532c8b4c8819a2fc",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-localsend-network-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-localsend-network-v1.py",
+          "sha256": "1d0d221c7322a5bfd9f1f58f5f6db400b38426fb79d1fbd5532c8b4c8819a2fc"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-model-store-client-v1.py",
+      "sha256": "c72fe027cb1916077d19adfe6acf75efbd23c933d4409a88aeed078e61601e17",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-model-store-client-v1.py",
+          "sha256": "7aa3e33054b109287d01d968a1145cd1c5581d79573b273c1fb75b302f4400a3"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-model-store-control-v1.py",
+      "sha256": "c3e88d20e64aa6e791443d4a04bac4cb50eb39300af6e52696711a3c4fc4abad",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-model-store-control-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-model-store-control-v1.py",
+          "sha256": "c3e88d20e64aa6e791443d4a04bac4cb50eb39300af6e52696711a3c4fc4abad"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-model-store-recover-v1.py",
+      "sha256": "38030d29efe5a7cc4d158990bc2f7dc3f5c7b5d3c8ca3950fee717c924dba54a",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-model-store-recover-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-model-store-recover-v1.py",
+          "sha256": "38030d29efe5a7cc4d158990bc2f7dc3f5c7b5d3c8ca3950fee717c924dba54a"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-model-store-v1.py",
+      "sha256": "6d4bd0b11a3ad0e97be12785a586989bd7d74b58c7b760577ef3ab30b8c99ec3",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-model-store-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-model-store-v1.py",
+          "sha256": "6d4bd0b11a3ad0e97be12785a586989bd7d74b58c7b760577ef3ab30b8c99ec3"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-boot-runner-v1.py",
+      "sha256": "2feb8d5c14d87d2c487beb38fa0ac561cfe28d4d5c5592f350697c8e585f6301",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-boot-runner-v1.py",
+          "sha256": "87ff8de4e871b14af5e60406812657721238ac3c57241ff917e28f1d6fd736e1"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-boot-runner-v3.py",
+      "sha256": "d7b1e8212fc19e9f4b6bbe6794e649062e38cd844852de71fe9aa9c553f53542",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-native-boot-runner-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-boot-runner-v3.py",
+          "sha256": "d7b1e8212fc19e9f4b6bbe6794e649062e38cd844852de71fe9aa9c553f53542"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-lifecycle-v3.py",
+      "sha256": "1daf9086a54e9f396b8fa4c9b4ad874e173f163302219b133ea98d3830c07939",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-native-lifecycle-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-lifecycle-v3.py",
+          "sha256": "1daf9086a54e9f396b8fa4c9b4ad874e173f163302219b133ea98d3830c07939"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-offline-layout-v3.py",
+      "sha256": "2ebe501e91412259b7e2d8ebd4bc44674bbf1a1bb38bd7dbd969282e690ad380",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-native-offline-layout-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-offline-layout-v3.py",
+          "sha256": "2ebe501e91412259b7e2d8ebd4bc44674bbf1a1bb38bd7dbd969282e690ad380"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-windows-lifecycle-finalize-v1.py",
+      "sha256": "4f1bdef3c0d6647c5d0aae25a153acdf7705b5abf87461b27b34c68a26de6271",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-windows-lifecycle-finalize-v1.py",
+          "sha256": "fc46899814cefccdc27d08d675ec957fb15eb2446ce73866f51f2ace07b030f8"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-windows-lifecycle-v1.py",
+      "sha256": "bbd495ffbed10a5dc1d71515acfaf155f1c4dbb060b03e83c3a3e1afdd630f90",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-native-windows-lifecycle-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-windows-lifecycle-v1.py",
+          "sha256": "bbd495ffbed10a5dc1d71515acfaf155f1c4dbb060b03e83c3a3e1afdd630f90"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-windows-plan-v3.py",
+      "sha256": "5fb1e25633d1121cadf3b0bd93a4cd2a00d9de344461ab13a44e3321d526cb54",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-native-windows-plan-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-windows-plan-v3.py",
+          "sha256": "5fb1e25633d1121cadf3b0bd93a4cd2a00d9de344461ab13a44e3321d526cb54"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-native-windows-recovery-v1.py",
+      "sha256": "2405d9ddcccfa0a795a844d348d022d6798df804d03bffb36f572ba7461caee0",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-native-windows-recovery-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-native-windows-recovery-v1.py",
+          "sha256": "2405d9ddcccfa0a795a844d348d022d6798df804d03bffb36f572ba7461caee0"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-network-recovery-v1.py",
+      "sha256": "c08a292b1b5abac88c61a4996e7f43162e55611c8702a5aa69226c2721570368",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-network-recovery-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-network-recovery-v1.py",
+          "sha256": "c08a292b1b5abac88c61a4996e7f43162e55611c8702a5aa69226c2721570368"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-official-hub-autostart-v1.py",
+      "sha256": "17bf8c16238e34bcebe7df8e03d546729414930732b1151c7e59f4ef8747be2d",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-official-hub-autostart-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-official-hub-autostart-v1.py",
+          "sha256": "17bf8c16238e34bcebe7df8e03d546729414930732b1151c7e59f4ef8747be2d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-official-hub-graphical-v1.py",
+      "sha256": "a1c491dbde3e3f4a3a7c2b687081db4236967b9cd2e4d822ad93841fd9af0d26",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-official-hub-graphical-v1.py",
+          "sha256": "4325673f923c24d8e154570603c5a5310f995c78ca14641bb8572dd6c7deb033"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-ollama-warmup-v1.py",
+      "sha256": "16b236b5312629402fb4e198e0ed58114365ff24df808331fcc2eff340fcc73e",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-ollama-warmup-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-ollama-warmup-v1.py",
+          "sha256": "16b236b5312629402fb4e198e0ed58114365ff24df808331fcc2eff340fcc73e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-removable-media-v1.py",
+      "sha256": "4d898f0f5a646a09b7d96402f84c7f83ede2556ed0ea7e5b1fee49936b8d2ef6",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-removable-media-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-removable-media-v1.py",
+          "sha256": "4d898f0f5a646a09b7d96402f84c7f83ede2556ed0ea7e5b1fee49936b8d2ef6"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-system-environment-provision-v1.py",
+      "sha256": "754443848fe94177d5e59b11822b6f00efd612c33b1f53e7c3e62068474400a0",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-system-environment-provision-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-system-environment-provision-v1.py",
+          "sha256": "754443848fe94177d5e59b11822b6f00efd612c33b1f53e7c3e62068474400a0"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-system-power-client-v1.py",
+      "sha256": "315366d1944c6a27ed98f05558d385288cd06a091736933e86f8036948340dd9",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-system-power-client-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "config/environment-shell-v1/local/libexec/apx-system-power-client-v1.py",
+          "sha256": "c037419f59503c255a18a6144e363b146db3238c96b229e44dbfd04cb049e410"
+        },
+        {
+          "source": "scripts/physical-pilot/apx-system-power-client-v1.py",
+          "sha256": "315366d1944c6a27ed98f05558d385288cd06a091736933e86f8036948340dd9"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-system-power-runner-v1.py",
+      "sha256": "e048162f931d16643da8e00155857dc1d40952823088c233601a3b09fe8fe1af",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-system-power-runner-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-system-power-runner-v1.py",
+          "sha256": "e048162f931d16643da8e00155857dc1d40952823088c233601a3b09fe8fe1af"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-system-power-v1.py",
+      "sha256": "7aafdf9463640d7f9c7f4b0d442ac64c603377d7dc7e5339fe515be31d64e1eb",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-system-power-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-system-power-v1.py",
+          "sha256": "7aafdf9463640d7f9c7f4b0d442ac64c603377d7dc7e5339fe515be31d64e1eb"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx-timezone-v1.py",
+      "sha256": "3fd44f21b151e0275720498d073478c75d18fdd2a628a9768a8d778bef4af7ed",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-timezone-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-timezone-v1.py",
+          "sha256": "3fd44f21b151e0275720498d073478c75d18fdd2a628a9768a8d778bef4af7ed"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_acquisition.py",
+      "sha256": "e367d4089a3de37b5be20d0b4022a1132e5f724130dabaf793a3dea9e3acb9a7",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_acquisition.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_acquisition.py",
+          "sha256": "e367d4089a3de37b5be20d0b4022a1132e5f724130dabaf793a3dea9e3acb9a7"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_active_shell_peer.py",
+      "sha256": "153775ae8fcad3cc40cf593139b65f45ae7df994eb0b2c7a1211bad206acbde3",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_active_shell_peer.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_active_shell_peer.py",
+          "sha256": "153775ae8fcad3cc40cf593139b65f45ae7df994eb0b2c7a1211bad206acbde3"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_audio_handoff.py",
+      "sha256": "7fdc850eb9a387f9daa8a8737ee891a5d89d346ebf4cfe24673f08c309c984af",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_audio_handoff.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_audio_handoff.py",
+          "sha256": "7fdc850eb9a387f9daa8a8737ee891a5d89d346ebf4cfe24673f08c309c984af"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_audio_state_contract.py",
+      "sha256": "e0b0e11265214c5a30fa52737045c5c66c2393ac266d698d70f8084cf9c66a43",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_audio_state_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_audio_state_contract.py",
+          "sha256": "e0b0e11265214c5a30fa52737045c5c66c2393ac266d698d70f8084cf9c66a43"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_base_candidate_validation.py",
+      "sha256": "fab3903423fb85ff60483a5353f1771f2bf36009c45e4acfcea76e2626255f4c",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_base_candidate_validation.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_base_candidate_validation.py",
+          "sha256": "fab3903423fb85ff60483a5353f1771f2bf36009c45e4acfcea76e2626255f4c"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_base_extraction.py",
+      "sha256": "deea5955984d1e6af1052547deca3274b40967283cb556e9d9079fbf68eca612",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_base_extraction.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_base_extraction.py",
+          "sha256": "deea5955984d1e6af1052547deca3274b40967283cb556e9d9079fbf68eca612"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_brave.py",
+      "sha256": "19b04df3a3c5167844e830a8dee907ece58fbd3ed8d88bbff7fe21f73cb00051",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_brave.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_brave.py",
+          "sha256": "19b04df3a3c5167844e830a8dee907ece58fbd3ed8d88bbff7fe21f73cb00051"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_capacity.py",
+      "sha256": "8a8d9cc8c8076f3fbdf9c3feed0ccc5a5808784a2191acf98e61dd4465909ddc",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_capacity.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_capacity.py",
+          "sha256": "8a8d9cc8c8076f3fbdf9c3feed0ccc5a5808784a2191acf98e61dd4465909ddc"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_captive_portal.py",
+      "sha256": "5b6a9474b3c6e71ccd33f22418c8a37ad20871592d1163ad7345f786cc6bec69",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_captive_portal.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_captive_portal.py",
+          "sha256": "5b6a9474b3c6e71ccd33f22418c8a37ad20871592d1163ad7345f786cc6bec69"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_clean_install_dossier.py",
+      "sha256": "0a7d42d62f69fb33a06caf9583b99ad623e1a339bf8418dfc1299897c59f8ac2",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_clean_install_dossier.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_clean_install_dossier.py",
+          "sha256": "0a7d42d62f69fb33a06caf9583b99ad623e1a339bf8418dfc1299897c59f8ac2"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_clean_install_journal.py",
+      "sha256": "056c8cbf4483bc6f3ad881cbdc18736c5b98873e83330936a82116f1402372d4",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_clean_install_journal.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_clean_install_journal.py",
+          "sha256": "056c8cbf4483bc6f3ad881cbdc18736c5b98873e83330936a82116f1402372d4"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_cleanup.py",
+      "sha256": "2016f8507982be83b5ec895adedc8c6a8b0b786184fc8e757f923eeba033f83b",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "src/apx_cleanup.py",
+          "sha256": "e747bbd83ea1af231374e7a69579a8959f605c0737eaaafe25348961c8ba5c95"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_cli.py",
+      "sha256": "f9ec65fe6ad1c471b8118fe95b34801c64661e1fd57b4ca990b4a66c4c0dce91",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_cli.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_cli.py",
+          "sha256": "f9ec65fe6ad1c471b8118fe95b34801c64661e1fd57b4ca990b4a66c4c0dce91"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_consistency.py",
+      "sha256": "23050598acca18ff8bd663efb3e98f086b5f535f1c34ea2b2b9dffd3577ddd4e",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_consistency.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_consistency.py",
+          "sha256": "23050598acca18ff8bd663efb3e98f086b5f535f1c34ea2b2b9dffd3577ddd4e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_console_gate_assessment.py",
+      "sha256": "2e31c288c8b07e3e1e9614b3e0019af940634c4101a3703f46e4bc6f85083470",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_console_gate_assessment.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_console_gate_assessment.py",
+          "sha256": "2e31c288c8b07e3e1e9614b3e0019af940634c4101a3703f46e4bc6f85083470"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_contracts_package.py",
+      "sha256": "1b5c810442ebced866d8b7e3bf88d74136e004941b41bee838e5dafedb8e65f3",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_contracts_package.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_contracts_package.py",
+          "sha256": "1b5c810442ebced866d8b7e3bf88d74136e004941b41bee838e5dafedb8e65f3"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_control_launch.py",
+      "sha256": "f9ed6a2a5e91195c425e9257a4be661161c6338126ba917f97deb73ac92170bd",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_control_launch.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_control_launch.py",
+          "sha256": "f9ed6a2a5e91195c425e9257a4be661161c6338126ba917f97deb73ac92170bd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_database_acquisition.py",
+      "sha256": "377afc0bac91cf400280731ce098be531e5ad67cb89ae2cd61802a62805cc453",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_database_acquisition.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_database_acquisition.py",
+          "sha256": "377afc0bac91cf400280731ce098be531e5ad67cb89ae2cd61802a62805cc453"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_desktop_session.py",
+      "sha256": "823cb964c624079846e93c1566aa9efeeace31cb837e75a870bd939ea14a4c1d",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_desktop_session.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_desktop_session.py",
+          "sha256": "823cb964c624079846e93c1566aa9efeeace31cb837e75a870bd939ea14a4c1d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_downloader.py",
+      "sha256": "793a6e7db76a394ea40e9cbb51f9a52b1689a69f84f74932f3904826d58cab7b",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_downloader.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_downloader.py",
+          "sha256": "793a6e7db76a394ea40e9cbb51f9a52b1689a69f84f74932f3904826d58cab7b"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_environment.py",
+      "sha256": "c03fb321136288b73bf35669dd070a919c9cf2136354f6f46352e89ac284a044",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_environment.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_environment.py",
+          "sha256": "c03fb321136288b73bf35669dd070a919c9cf2136354f6f46352e89ac284a044"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_environment_desktop_defaults.py",
+      "sha256": "0251c5532df52ea581114a2bcf8f599acbec18f9edf6e7a814117b7cfefa5228",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_environment_desktop_defaults.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_environment_desktop_defaults.py",
+          "sha256": "0251c5532df52ea581114a2bcf8f599acbec18f9edf6e7a814117b7cfefa5228"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_environment_features.py",
+      "sha256": "e72c7141270397118b64dac243e9c3774f3e27e2c07b890621275620dd1bd9ab",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_environment_features.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_environment_features.py",
+          "sha256": "e72c7141270397118b64dac243e9c3774f3e27e2c07b890621275620dd1bd9ab"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_environment_switch_contract.py",
+      "sha256": "3a495f6a525107bedcb27163890100c0e18ab0298bc6ea6ec1ecfe13f052d277",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_environment_switch_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_environment_switch_contract.py",
+          "sha256": "3a495f6a525107bedcb27163890100c0e18ab0298bc6ea6ec1ecfe13f052d277"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_environment_update_batch.py",
+      "sha256": "71244df6940864fa12f633902a1cb20c34f79d957567632422f0a9e77ce7b647",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_environment_update_batch.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_environment_update_batch.py",
+          "sha256": "71244df6940864fa12f633902a1cb20c34f79d957567632422f0a9e77ce7b647"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_authorities.py",
+      "sha256": "aeae1e3d22b58416ea8285adbb0599a37944a6a65567595a1e6f939aa8853998",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_authorities.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_authorities.py",
+          "sha256": "aeae1e3d22b58416ea8285adbb0599a37944a6a65567595a1e6f939aa8853998"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_client.py",
+      "sha256": "3cfe918934e212e64ab4198da50fd8e12e3e4ecedccf109d836b92f54c361f5e",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_client.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_client.py",
+          "sha256": "3cfe918934e212e64ab4198da50fd8e12e3e4ecedccf109d836b92f54c361f5e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_contract.py",
+      "sha256": "942bfd1cdc0cddca23ee5a129097a40cad1275fb0313b31a6417060a4085c94d",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_contract.py",
+          "sha256": "942bfd1cdc0cddca23ee5a129097a40cad1275fb0313b31a6417060a4085c94d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_daemon.py",
+      "sha256": "1409606b229d18ed53826a99f0e3dbdb17ee25f4d9a577de831a53c1e635cf32",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_daemon.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_daemon.py",
+          "sha256": "1409606b229d18ed53826a99f0e3dbdb17ee25f4d9a577de831a53c1e635cf32"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_endpoint.py",
+      "sha256": "8f90154db8e6055cde017eb71305db8447497e1aaec95e7e55251748a1166bb4",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_endpoint.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_endpoint.py",
+          "sha256": "8f90154db8e6055cde017eb71305db8447497e1aaec95e7e55251748a1166bb4"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_journal.py",
+      "sha256": "656dc3f886f0a11bb62f71e6bc0fc7da0be6976f0904167d75bc155a08115f4d",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_journal.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_journal.py",
+          "sha256": "656dc3f886f0a11bb62f71e6bc0fc7da0be6976f0904167d75bc155a08115f4d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_peer.py",
+      "sha256": "bd34465eb25426319ef6cb2614a938cf42d5e18f395303fc4965724916b96766",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_peer.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_peer.py",
+          "sha256": "bd34465eb25426319ef6cb2614a938cf42d5e18f395303fc4965724916b96766"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_server.py",
+      "sha256": "8fb8300c2701d0ff0c4baf84aa942d8ec0e14291d59381442e233ca3e7645b7d",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_server.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_server.py",
+          "sha256": "8fb8300c2701d0ff0c4baf84aa942d8ec0e14291d59381442e233ca3e7645b7d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_executor_store.py",
+      "sha256": "ad2d204910266489b22c72da66223175758d3aaf0ebe693cc39d5c3967706e33",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_executor_store.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_executor_store.py",
+          "sha256": "ad2d204910266489b22c72da66223175758d3aaf0ebe693cc39d5c3967706e33"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_external_model_lifecycle.py",
+      "sha256": "6772923f5da87353b1cfddfa6508ecbedb835a05032baa176535d9ca723f2a41",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_external_model_lifecycle.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_external_model_lifecycle.py",
+          "sha256": "6772923f5da87353b1cfddfa6508ecbedb835a05032baa176535d9ca723f2a41"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_external_model_storage.py",
+      "sha256": "3ec91493400f37c2899420454faca97f0f318fa0553a7ebf4573fd8a487668aa",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_external_model_storage.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_external_model_storage.py",
+          "sha256": "3ec91493400f37c2899420454faca97f0f318fa0553a7ebf4573fd8a487668aa"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_face_auth.py",
+      "sha256": "c263061e5b917d6cd900c6c981bb5859545724e7e383fc5a531883b7ca1e5acc",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_face_auth.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_face_auth.py",
+          "sha256": "c263061e5b917d6cd900c6c981bb5859545724e7e383fc5a531883b7ca1e5acc"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_first_boot_experiment.py",
+      "sha256": "8aa70af8ac0d580db9b7a77880966ad648f1ad3df7115c7744d9a1a7ac4163e5",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_first_boot_experiment.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_first_boot_experiment.py",
+          "sha256": "8aa70af8ac0d580db9b7a77880966ad648f1ad3df7115c7744d9a1a7ac4163e5"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_first_boot_preview.py",
+      "sha256": "8b998897a3831ab378c366020122d8c51c2b99d8a555de2ec8b7d87798a8d0da",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_first_boot_preview.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_first_boot_preview.py",
+          "sha256": "8b998897a3831ab378c366020122d8c51c2b99d8a555de2ec8b7d87798a8d0da"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_acquisition.py",
+      "sha256": "12b2e1a2240e0ffbb5791f1f07f925e5b8c23ba6346df1b478b4637181f14dbd",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_acquisition.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_acquisition.py",
+          "sha256": "12b2e1a2240e0ffbb5791f1f07f925e5b8c23ba6346df1b478b4637181f14dbd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_broker.py",
+      "sha256": "bfc965b0bf40d2438e00d08deb61ae2f95999e9ecfa6aafb6391a053b4f312c6",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_broker.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_broker.py",
+          "sha256": "bfc965b0bf40d2438e00d08deb61ae2f95999e9ecfa6aafb6391a053b4f312c6"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_capabilities.py",
+      "sha256": "2066220afc2f5a1285b1c815a1f80f63c99c4c9aa1f5c23576220d489b055212",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_capabilities.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_capabilities.py",
+          "sha256": "2066220afc2f5a1285b1c815a1f80f63c99c4c9aa1f5c23576220d489b055212"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_effect_adapter.py",
+      "sha256": "cba06b875fc63b01f9c713b09c80417d1b6c2848db0871829d74991ab7e63ddd",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_effect_adapter.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_effect_adapter.py",
+          "sha256": "cba06b875fc63b01f9c713b09c80417d1b6c2848db0871829d74991ab7e63ddd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_handoff.py",
+      "sha256": "80b12725269f30bf59ef9defc35209e744448cad510c63fee237834ed7a7d9dc",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_handoff.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_handoff.py",
+          "sha256": "80b12725269f30bf59ef9defc35209e744448cad510c63fee237834ed7a7d9dc"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_hub_replacement.py",
+      "sha256": "9cbeea51d1eccb09ff4c5936fcd6f1032155775c5a136eab264ca2b6d894d019",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_hub_replacement.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_hub_replacement.py",
+          "sha256": "9cbeea51d1eccb09ff4c5936fcd6f1032155775c5a136eab264ca2b6d894d019"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_input_proof.py",
+      "sha256": "ecd9b1fbc9e6946926f63740ec57448295248628dae883a2032005d50a3e2ad3",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_input_proof.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_input_proof.py",
+          "sha256": "ecd9b1fbc9e6946926f63740ec57448295248628dae883a2032005d50a3e2ad3"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_integration_rehearsal.py",
+      "sha256": "ad0ad25d63fb80bf0cc4fc0daf121bc70d5cf051e7b44a38c0035b361db52397",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_integration_rehearsal.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_integration_rehearsal.py",
+          "sha256": "ad0ad25d63fb80bf0cc4fc0daf121bc70d5cf051e7b44a38c0035b361db52397"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_metadata.py",
+      "sha256": "7d63197b2b218c7f143543115956e76735029f8d0de5d9d2e165928786b4e21d",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_metadata.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_metadata.py",
+          "sha256": "7d63197b2b218c7f143543115956e76735029f8d0de5d9d2e165928786b4e21d"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_resolution.py",
+      "sha256": "a8c1afccbb5898855b06678bd44db241520553680401dd446f0a4ed230b6b9cd",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_resolution.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_resolution.py",
+          "sha256": "a8c1afccbb5898855b06678bd44db241520553680401dd446f0a4ed230b6b9cd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_runtime_plan.py",
+      "sha256": "a076b10846086d992eb2d314baa3fae91141fd6cb5cb041ef191c6b214c51c32",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_runtime_plan.py",
+          "sha256": "8d798b7fa580192a43332666b3508f835114d3aab5968b38b8ff1fabf9fb4dce"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_signature_verification.py",
+      "sha256": "d12265cefa8bbfb62b6c6e1f55f7e3d06965cb3d23877c55905561210c9bd2bd",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_signature_verification.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_signature_verification.py",
+          "sha256": "d12265cefa8bbfb62b6c6e1f55f7e3d06965cb3d23877c55905561210c9bd2bd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_graphical_template.py",
+      "sha256": "edf8bae3b0c799b4c11fd0358bb4871f1b3d0ba81d78091fae648e94848dafec",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_graphical_template.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_graphical_template.py",
+          "sha256": "edf8bae3b0c799b4c11fd0358bb4871f1b3d0ba81d78091fae648e94848dafec"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_host.py",
+      "sha256": "2f822e5fa3db5a108b4790948d8f8704b48f690c7f78cd3db3995b62ea08bed1",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_host.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_host.py",
+          "sha256": "2f822e5fa3db5a108b4790948d8f8704b48f690c7f78cd3db3995b62ea08bed1"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_host_console_contract.py",
+      "sha256": "6d5f011e8496a360767a86d3d6544bd989440e103847b527ddccfdeba6a1135e",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_host_console_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_host_console_contract.py",
+          "sha256": "6d5f011e8496a360767a86d3d6544bd989440e103847b527ddccfdeba6a1135e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_host_services_contract.py",
+      "sha256": "6d28d5f95e0442ef312bc1a381440be2dc6a10e5fbcf26efadb1f6ef0cedadb1",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_host_services_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_host_services_contract.py",
+          "sha256": "6d28d5f95e0442ef312bc1a381440be2dc6a10e5fbcf26efadb1f6ef0cedadb1"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_host_services_peer.py",
+      "sha256": "ec53853b273e566e8c055dafd2c1a771b10276b1d731dbdfa7af94a6e10ed58e",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_host_services_peer.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_host_services_peer.py",
+          "sha256": "ec53853b273e566e8c055dafd2c1a771b10276b1d731dbdfa7af94a6e10ed58e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_host_services_v2_contract.py",
+      "sha256": "dba653f566bdf83e5bc52511f5182e3c66948fa48c922518d67f359eb481c762",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_host_services_v2_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_host_services_v2_contract.py",
+          "sha256": "dba653f566bdf83e5bc52511f5182e3c66948fa48c922518d67f359eb481c762"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_host_services_v3_contract.py",
+      "sha256": "8f176d264b007edcadd671b77586a9b028d880ed5c62f012bfd1bd671c8b0a72",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_host_services_v3_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_host_services_v3_contract.py",
+          "sha256": "8f176d264b007edcadd671b77586a9b028d880ed5c62f012bfd1bd671c8b0a72"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_http.py",
+      "sha256": "208db82882199b749e101aba6c1b50fd72899dfaac3c8a51ffbb7fbf2d636698",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_http.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_http.py",
+          "sha256": "208db82882199b749e101aba6c1b50fd72899dfaac3c8a51ffbb7fbf2d636698"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hub.py",
+      "sha256": "007736a5979565b5fe0b54a7d373e334676ca5de21af62185b495f4b8db41237",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "src/apx_hub.py",
+          "sha256": "b994bb49675e95afb7bfc345e2e3b87d28fa52b059b4b016194dd285fb692cee"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hub_action_protocol.py",
+      "sha256": "744681a9228af99ec04bc12b7422eb19b056eb3f47d535a8936e6ecf74112603",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hub_action_protocol.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hub_action_protocol.py",
+          "sha256": "744681a9228af99ec04bc12b7422eb19b056eb3f47d535a8936e6ecf74112603"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hub_clean_release.py",
+      "sha256": "bd049887417a6c2c19a0450cb394f98f980786544b0827e794722ad2e65daca2",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hub_clean_release.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hub_clean_release.py",
+          "sha256": "bd049887417a6c2c19a0450cb394f98f980786544b0827e794722ad2e65daca2"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hub_client_candidate.py",
+      "sha256": "d9f87520316df0a3a6b749b783b2564de89aff1247ac128caf6b5de9bb020406",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hub_client_candidate.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hub_client_candidate.py",
+          "sha256": "d9f87520316df0a3a6b749b783b2564de89aff1247ac128caf6b5de9bb020406"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_base_release.py",
+      "sha256": "98b745f0cc17094bfe8a421c2226d42347bd0c5c72addaceb64bd9006313d4ca",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_base_release.py",
+          "sha256": "c3b31e9d2c0fdece810a3eb14731376e61dcdfb3347aa9002dada6502a38e48e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_g0_experiment.py",
+      "sha256": "b9a23eb850ae21b0fd5cfe1155f9bfcf5e3d81ed7126b9da5c8deb5f83c5b324",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_g0_experiment.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_g0_experiment.py",
+          "sha256": "b9a23eb850ae21b0fd5cfe1155f9bfcf5e3d81ed7126b9da5c8deb5f83c5b324"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_g1_experiment.py",
+      "sha256": "66995d643bb20e10e0f67cdabac715c733aaed5d41df063f59d47d1345174bea",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_g1_experiment.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_g1_experiment.py",
+          "sha256": "66995d643bb20e10e0f67cdabac715c733aaed5d41df063f59d47d1345174bea"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_g1_preview.py",
+      "sha256": "353a3acc8ac7d586cb3c800650d7414836767aaac633117ed967eb98d4410130",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_g1_preview.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_g1_preview.py",
+          "sha256": "353a3acc8ac7d586cb3c800650d7414836767aaac633117ed967eb98d4410130"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_h0.py",
+      "sha256": "c9ea3b5f542db709beffc97bbfe285b846d194a30a81d89bd3ffc0c294baef3a",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_h0.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_h0.py",
+          "sha256": "c9ea3b5f542db709beffc97bbfe285b846d194a30a81d89bd3ffc0c294baef3a"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_h0_device_lease.py",
+      "sha256": "bec6e63e1773214d4410757019fe579232a13027c1c9750f5236320f77904809",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_h0_device_lease.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_h0_device_lease.py",
+          "sha256": "bec6e63e1773214d4410757019fe579232a13027c1c9750f5236320f77904809"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_h0_journal.py",
+      "sha256": "ff8aa729dc06a1da2d012854b38c478eda41ee1ea51032ae057ccd517aa56877",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_h0_journal.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_h0_journal.py",
+          "sha256": "ff8aa729dc06a1da2d012854b38c478eda41ee1ea51032ae057ccd517aa56877"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_h0_launch.py",
+      "sha256": "26e6e32136b75dd0da6b83b1319e243f037ebfe26a65959053c8415c017840cd",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_h0_launch.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_h0_launch.py",
+          "sha256": "26e6e32136b75dd0da6b83b1319e243f037ebfe26a65959053c8415c017840cd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_h0_launch_plan.py",
+      "sha256": "f620d7832047d5ccfbe919362dee50e5a6d7a3a9b0cbf855d022c22b4ccd6c54",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_h0_launch_plan.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_h0_launch_plan.py",
+          "sha256": "f620d7832047d5ccfbe919362dee50e5a6d7a3a9b0cbf855d022c22b4ccd6c54"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_h0_stage.py",
+      "sha256": "84d7fdce826c57966d934d513243711e335f1a2630c0de9c22215220ceeededf",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_h0_stage.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_h0_stage.py",
+          "sha256": "84d7fdce826c57966d934d513243711e335f1a2630c0de9c22215220ceeededf"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_h0_watchdog.py",
+      "sha256": "3d5cd85103f40f96699ac08604df83e4c563fd223e173540a361af365e591532",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_h0_watchdog.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_h0_watchdog.py",
+          "sha256": "3d5cd85103f40f96699ac08604df83e4c563fd223e173540a361af365e591532"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_offline_build.py",
+      "sha256": "2c23a7f6db58a7ee3d5b234f29aa5b5e6322cd23d45bccadae57c32a702108ee",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_offline_build.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_offline_build.py",
+          "sha256": "2c23a7f6db58a7ee3d5b234f29aa5b5e6322cd23d45bccadae57c32a702108ee"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_release_finalize.py",
+      "sha256": "fa94804474ef09008c31e0bfa3c974c0e52058cca4b279116de4dacb811de89a",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_release_finalize.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_release_finalize.py",
+          "sha256": "fa94804474ef09008c31e0bfa3c974c0e52058cca4b279116de4dacb811de89a"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_release_promote.py",
+      "sha256": "c66c74afb64952c8a016cab95ff214b1012e3f7ef18f6a667ad40a120e31ecfb",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_release_promote.py",
+          "sha256": "79d800dd1760458a8f2a76e63fd5d44d9d0701492128006636f49c25de12b610"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_hyprland_release_promotion.py",
+      "sha256": "991bf75359c79f710feaf622645704893448a8b61fdc866ce005f9cf6fb0d40e",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_hyprland_release_promotion.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_hyprland_release_promotion.py",
+          "sha256": "991bf75359c79f710feaf622645704893448a8b61fdc866ce005f9cf6fb0d40e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_installation.py",
+      "sha256": "15ea1d6372ca406cea8bb3cca33c67ff4d0699358be0c28ba2e68b66318232f7",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_installation.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_installation.py",
+          "sha256": "15ea1d6372ca406cea8bb3cca33c67ff4d0699358be0c28ba2e68b66318232f7"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_isolation.py",
+      "sha256": "90be66e3f9947ec3ca44a970d1f75fb9a0350adbf76ef1fc75f74d6f1c2c5486",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_isolation.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_isolation.py",
+          "sha256": "90be66e3f9947ec3ca44a970d1f75fb9a0350adbf76ef1fc75f74d6f1c2c5486"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_manual_graphical_test.py",
+      "sha256": "71ec930e5d988d20f7b3ae8119cf64c80a3802c4aaaec7aab7cdf9e47bb7f291",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_manual_graphical_test.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_manual_graphical_test.py",
+          "sha256": "71ec930e5d988d20f7b3ae8119cf64c80a3802c4aaaec7aab7cdf9e47bb7f291"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_native_backup_v3.py",
+      "sha256": "800fa9993cb14db3fdba0f297196b262a0ace1feccc2dadabb20349e64d144cd",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_native_backup_v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_native_backup_v3.py",
+          "sha256": "800fa9993cb14db3fdba0f297196b262a0ace1feccc2dadabb20349e64d144cd"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_native_hub_v3.py",
+      "sha256": "a2995dc584d65a9c408302100575950291779a4d19f41667d12ea2aba4532855",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_native_hub_v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_native_hub_v3.py",
+          "sha256": "a2995dc584d65a9c408302100575950291779a4d19f41667d12ea2aba4532855"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_native_instances_v3.py",
+      "sha256": "ef218a4136d9d8e4d7e69167a4442cd8214f1266abb6e7522db057e285b690e5",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_native_instances_v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_native_instances_v3.py",
+          "sha256": "ef218a4136d9d8e4d7e69167a4442cd8214f1266abb6e7522db057e285b690e5"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_native_offline_v3.py",
+      "sha256": "0c0262766ed3b2d390d01438b4feb79086378e78f46c27772141090a377011e3",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_native_offline_v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_native_offline_v3.py",
+          "sha256": "0c0262766ed3b2d390d01438b4feb79086378e78f46c27772141090a377011e3"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_native_slot_wipe_v3.py",
+      "sha256": "6679827da5f351316553948c5d1d2012771e432a05802089ef57c415401fc189",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_native_slot_wipe_v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_native_slot_wipe_v3.py",
+          "sha256": "6679827da5f351316553948c5d1d2012771e432a05802089ef57c415401fc189"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_native_winpe_v3.py",
+      "sha256": "d9a09594d1599de0cecf4772d43a4d1960c0e02df9b8baf19abffeaabcef8d9f",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_native_winpe_v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_native_winpe_v3.py",
+          "sha256": "d9a09594d1599de0cecf4772d43a4d1960c0e02df9b8baf19abffeaabcef8d9f"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_official_hub_cutover.py",
+      "sha256": "324fa879bf4a1c572d85c13400e568c3ae4467ac558bdf27eb40829b806d78a9",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_official_hub_cutover.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_official_hub_cutover.py",
+          "sha256": "324fa879bf4a1c572d85c13400e568c3ae4467ac558bdf27eb40829b806d78a9"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_offline_base_build.py",
+      "sha256": "282ae1b66e73d14dbd5ab889a2c3cef850d235645a0c56309288dc3f34a1686c",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_offline_base_build.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_offline_base_build.py",
+          "sha256": "282ae1b66e73d14dbd5ab889a2c3cef850d235645a0c56309288dc3f34a1686c"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_offline_base_finalize.py",
+      "sha256": "b09e11ff98da52b6df0f3fa67d4bdf3424f7451452a23a422ca4c84db5ab6f30",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_offline_base_finalize.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_offline_base_finalize.py",
+          "sha256": "b09e11ff98da52b6df0f3fa67d4bdf3424f7451452a23a422ca4c84db5ab6f30"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_ownership.py",
+      "sha256": "883f5e869c4b0faa2a45e00bdbdd6e9e4c0467fc9fc796c514b21bf212f34651",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_ownership.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_ownership.py",
+          "sha256": "883f5e869c4b0faa2a45e00bdbdd6e9e4c0467fc9fc796c514b21bf212f34651"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_package_acquisition.py",
+      "sha256": "a1520e2d33876bb564e0aab1b0e826e26920d68104edd24eec068050680c0622",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_package_acquisition.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_package_acquisition.py",
+          "sha256": "a1520e2d33876bb564e0aab1b0e826e26920d68104edd24eec068050680c0622"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_package_metadata.py",
+      "sha256": "f983c43b1bb877f0d7b2c87e05f5425139bea476f10d6cc08261b80fc227e7b6",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_package_metadata.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_package_metadata.py",
+          "sha256": "f983c43b1bb877f0d7b2c87e05f5425139bea476f10d6cc08261b80fc227e7b6"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_physical_runtime_update_apply.py",
+      "sha256": "06f71c20e30c50c6bb1a8234cff236cffdf55fb442d3caa44fe5237a92a68032",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_physical_runtime_update_apply.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_physical_runtime_update_apply.py",
+          "sha256": "06f71c20e30c50c6bb1a8234cff236cffdf55fb442d3caa44fe5237a92a68032"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_physical_update.py",
+      "sha256": "f10babc79f60b5393d713fe8841f54578c24478ffb83c56344e6a7bb2389200e",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_physical_update.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_physical_update.py",
+          "sha256": "f10babc79f60b5393d713fe8841f54578c24478ffb83c56344e6a7bb2389200e"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_physical_update_artifact.py",
+      "sha256": "491d4a12fa96247077286fefdf1a56f2bc66063fb5b9baa905ce62e59349d71f",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_physical_update_artifact.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_physical_update_artifact.py",
+          "sha256": "491d4a12fa96247077286fefdf1a56f2bc66063fb5b9baa905ce62e59349d71f"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_physical_update_effects.py",
+      "sha256": "a14be27a03b5da33bdbb6cdbfa804f19cfb82259639dd57624a8bf202dd2d9e6",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_physical_update_effects.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_physical_update_effects.py",
+          "sha256": "a14be27a03b5da33bdbb6cdbfa804f19cfb82259639dd57624a8bf202dd2d9e6"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_physical_update_journal.py",
+      "sha256": "0fe28e2c147dc20dea12dcfbeb178d23566da30a4198c660c94ccaa0f1195c16",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_physical_update_journal.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_physical_update_journal.py",
+          "sha256": "0fe28e2c147dc20dea12dcfbeb178d23566da30a4198c660c94ccaa0f1195c16"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_policy.py",
+      "sha256": "354d76b8a4052e427b4f2f331f20510ae364ceb881272c2ecd49e7ac1a8d73e7",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_policy.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_policy.py",
+          "sha256": "354d76b8a4052e427b4f2f331f20510ae364ceb881272c2ecd49e7ac1a8d73e7"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_practical.py",
+      "sha256": "36d69920b0a4977d75b9cd5df1bdd60a44df834a9bfd6fcbce44f5c3c688d591",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_practical.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_practical.py",
+          "sha256": "36d69920b0a4977d75b9cd5df1bdd60a44df834a9bfd6fcbce44f5c3c688d591"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_recovery_console.py",
+      "sha256": "3f809ba748f62494e314349a1fafde2f774eb4245b1d3a8af16b7e0f6cdbe382",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_recovery_console.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_recovery_console.py",
+          "sha256": "3f809ba748f62494e314349a1fafde2f774eb4245b1d3a8af16b7e0f6cdbe382"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_registration.py",
+      "sha256": "f8310ef9774ca15af8dc8113340789ada96a373e281a95bff0694dfbabd9aa2b",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_registration.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_registration.py",
+          "sha256": "f8310ef9774ca15af8dc8113340789ada96a373e281a95bff0694dfbabd9aa2b"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_release_artifact.py",
+      "sha256": "39ad5750245ab8e32379edac7f16e492fc9fc35ceb024c2d38857752e3e3330a",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_release_artifact.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_release_artifact.py",
+          "sha256": "39ad5750245ab8e32379edac7f16e492fc9fc35ceb024c2d38857752e3e3330a"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_release_candidate.py",
+      "sha256": "9a4ea80df9a6c97fd715ed274cac6903026f665f5357d136d91988ca76221872",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_release_candidate.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_release_candidate.py",
+          "sha256": "9a4ea80df9a6c97fd715ed274cac6903026f665f5357d136d91988ca76221872"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_release_promotion.py",
+      "sha256": "dfca0cedb6498a6e3d8542ffd946b30e6b960a54d612b265608f4f8328f109e2",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_release_promotion.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_release_promotion.py",
+          "sha256": "dfca0cedb6498a6e3d8542ffd946b30e6b960a54d612b265608f4f8328f109e2"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_removal.py",
+      "sha256": "82eb9d80061ad1f38af34915a14bdce0d501bc44066ca9172bec292bd9975b36",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_removal.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_removal.py",
+          "sha256": "82eb9d80061ad1f38af34915a14bdce0d501bc44066ca9172bec292bd9975b36"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_repository_db.py",
+      "sha256": "9edaffb8d0ed4810bdfcbc4e8004d6e2895994c2eaa7132d917fca9fa223c433",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_repository_db.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_repository_db.py",
+          "sha256": "9edaffb8d0ed4810bdfcbc4e8004d6e2895994c2eaa7132d917fca9fa223c433"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_resolution.py",
+      "sha256": "497a1bed8ed204eca418d45f518b4fefa7f89791a8c3311e96587b6b06d59ae3",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_resolution.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_resolution.py",
+          "sha256": "497a1bed8ed204eca418d45f518b4fefa7f89791a8c3311e96587b6b06d59ae3"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_session_control.py",
+      "sha256": "3d4c2bde02d4ffdac093fd7a6b5efcbfc79b940f5418f709283ed69f8262b846",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_session_control.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_session_control.py",
+          "sha256": "3d4c2bde02d4ffdac093fd7a6b5efcbfc79b940f5418f709283ed69f8262b846"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_session_descriptor_issuer.py",
+      "sha256": "d1ba94543320b77a4a7343bd480ba4c10b1d7812ccb6b7c706a3d39ad4210cd7",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_session_descriptor_issuer.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_session_descriptor_issuer.py",
+          "sha256": "d1ba94543320b77a4a7343bd480ba4c10b1d7812ccb6b7c706a3d39ad4210cd7"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_signature_verification.py",
+      "sha256": "232836f55862dcee008a9b415058412877bb0be80ae0e1cd12bc5af1cf8ad631",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_signature_verification.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_signature_verification.py",
+          "sha256": "232836f55862dcee008a9b415058412877bb0be80ae0e1cd12bc5af1cf8ad631"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_stage2_gate.py",
+      "sha256": "9d391345f05d409cc787f9cdc3bab01a1196b98e90ae67c4440ac83e44e142c4",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_stage2_gate.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_stage2_gate.py",
+          "sha256": "9d391345f05d409cc787f9cdc3bab01a1196b98e90ae67c4440ac83e44e142c4"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_staging.py",
+      "sha256": "1d53fbd23450449cf99292fe1b0013e0f6633a35f9326389e5b470900a100f92",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_staging.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_staging.py",
+          "sha256": "1d53fbd23450449cf99292fe1b0013e0f6633a35f9326389e5b470900a100f92"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_system_power_contract.py",
+      "sha256": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8",
+      "status": "identical",
+      "matching_sources": [
+        "config/environment-shell-v1/local/libexec/apx_system_power_contract.py",
+        "src/apx_system_power_contract.py"
+      ],
+      "candidates": [
+        {
+          "source": "config/environment-shell-v1/local/libexec/apx_system_power_contract.py",
+          "sha256": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8"
+        },
+        {
+          "source": "src/apx_system_power_contract.py",
+          "sha256": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_transfer.py",
+      "sha256": "073649456d4a68c215cbd31d7a5845bd16a20641158b7486cea7119e89961dfa",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_transfer.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_transfer.py",
+          "sha256": "073649456d4a68c215cbd31d7a5845bd16a20641158b7486cea7119e89961dfa"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_trust_evidence.py",
+      "sha256": "d36f9a1f4af3c460e9ed78464a24994eb18e3262fb6da01448b4e8fcd312f427",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_trust_evidence.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_trust_evidence.py",
+          "sha256": "d36f9a1f4af3c460e9ed78464a24994eb18e3262fb6da01448b4e8fcd312f427"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/apx_update_coordinator.py",
+      "sha256": "1e9b483220f70753cc87c71820459749486744c5265f6cb1889b92bfaf8f16fe",
+      "status": "identical",
+      "matching_sources": [
+        "src/apx_update_coordinator.py"
+      ],
+      "candidates": [
+        {
+          "source": "src/apx_update_coordinator.py",
+          "sha256": "1e9b483220f70753cc87c71820459749486744c5265f6cb1889b92bfaf8f16fe"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/build-native-windows-lifecycle-uki-v1.sh",
+      "sha256": "23ed25bb1ea313cd7f813d07a5af5c1e5a6ae376c40e1f8a525eb4d7005f0f7f",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/build-native-windows-lifecycle-uki-v1.sh"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/build-native-windows-lifecycle-uki-v1.sh",
+          "sha256": "23ed25bb1ea313cd7f813d07a5af5c1e5a6ae376c40e1f8a525eb4d7005f0f7f"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/build-native-windows-uki-v3.py",
+      "sha256": "7d34c1c72f515442d44dd5ece0a0bc139ef1cc3d183f1db824e2e80cb071a7dc",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/build-native-windows-uki-v3.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/build-native-windows-uki-v3.py",
+          "sha256": "7d34c1c72f515442d44dd5ece0a0bc139ef1cc3d183f1db824e2e80cb071a7dc"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/prepare-native-windows-installer-v2.sh",
+      "sha256": "3787c6bbb4e3bc1d5a703fce0598561f8f89d8834136b0cc0fa8ae62f94965cb",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/prepare-native-windows-installer-v2.sh"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/prepare-native-windows-installer-v2.sh",
+          "sha256": "3787c6bbb4e3bc1d5a703fce0598561f8f89d8834136b0cc0fa8ae62f94965cb"
+        }
+      ]
+    },
+    {
+      "installed": "/usr/lib/apx/refresh-native-windows-installer-v2.sh",
+      "sha256": "8b2c5330e98a4c162adf61d0950d2e1c17c350a9a539efac000fcdf178396af4",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/refresh-native-windows-installer-v2.sh"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/refresh-native-windows-installer-v2.sh",
+          "sha256": "8b2c5330e98a4c162adf61d0950d2e1c17c350a9a539efac000fcdf178396af4"
+        }
+      ]
+    }
+  ],
+  "canonical_graphical_engine": [
+    {
+      "installed": "/var/lib/apx/official-hub-v1/apx-build-hub-headless-v4.py",
+      "sha256": "f442151427016453ced3c5999ed957864f3b1b6d0b7c0288af9e04488300f434",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-build-hub-headless-v4.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-build-hub-headless-v4.py",
+          "sha256": "f442151427016453ced3c5999ed957864f3b1b6d0b7c0288af9e04488300f434"
+        }
+      ]
+    },
+    {
+      "installed": "/var/lib/apx/official-hub-v1/apx-official-hub-cutover-v1.py",
+      "sha256": "09237c61b413a442a3f3a54f6f8892a536da7a38971a01b6353ed112e25f5aac",
+      "status": "identical",
+      "matching_sources": [
+        "scripts/physical-pilot/apx-official-hub-cutover-v1.py"
+      ],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-official-hub-cutover-v1.py",
+          "sha256": "09237c61b413a442a3f3a54f6f8892a536da7a38971a01b6353ed112e25f5aac"
+        }
+      ]
+    },
+    {
+      "installed": "/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py",
+      "sha256": "c78966929d91c7ca7a8d05fb6151c5754a79a09774a1499b30e6bb8825142b40",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-official-hub-graphical-v1.py",
+          "sha256": "4325673f923c24d8e154570603c5a5310f995c78ca14641bb8572dd6c7deb033"
+        }
+      ]
+    },
+    {
+      "installed": "/var/lib/apx/official-hub-v1/apx-official-hub-session-v1.sh",
+      "sha256": "987dfead621b32dccbf34bd78aa0a575ae5a3a80526605c2a7a55b572c6c57bc",
+      "status": "differs",
+      "matching_sources": [],
+      "candidates": [
+        {
+          "source": "scripts/physical-pilot/apx-official-hub-session-v1.sh",
+          "sha256": "dbdf9b3065feea882c09b14e347e59df421e41850bd77f587d25c1ae7e30abc0"
+        }
+      ]
+    }
+  ],
+  "shell_seed_summary": {
+    "assets": 185,
+    "repository_pins_match": true,
+    "installed_seed_matches": true
+  },
+  "shell_seed": [
+    {
+      "asset": "Thunar/uca.xml",
+      "runtime_sha256": "ecc0869f622121d9a07fb21948719638a0043548939ae0ca46fc502b8655350f",
+      "repository_sha256": "ecc0869f622121d9a07fb21948719638a0043548939ae0ca46fc502b8655350f",
+      "installed_seed_sha256": "ecc0869f622121d9a07fb21948719638a0043548939ae0ca46fc502b8655350f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "apx/bashrc",
+      "runtime_sha256": "c92bd4f495294992126c8145ef2990d3042ba4d42c820332881ad08669872c04",
+      "repository_sha256": "c92bd4f495294992126c8145ef2990d3042ba4d42c820332881ad08669872c04",
+      "installed_seed_sha256": "c92bd4f495294992126c8145ef2990d3042ba4d42c820332881ad08669872c04",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "apx/locale.env",
+      "runtime_sha256": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+      "repository_sha256": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+      "installed_seed_sha256": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "apx/wallpapers/alpine-lake.png",
+      "runtime_sha256": "dd5794c56ac03f3befb28b48554222da3a44f8f695fb4f1e9f8ac8c3f14ff09d",
+      "repository_sha256": "dd5794c56ac03f3befb28b48554222da3a44f8f695fb4f1e9f8ac8c3f14ff09d",
+      "installed_seed_sha256": "dd5794c56ac03f3befb28b48554222da3a44f8f695fb4f1e9f8ac8c3f14ff09d",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "apx/wallpapers/atlantic-coast.png",
+      "runtime_sha256": "2204c16ad3f3cea13c2b0af0179800262a0a282685bcea13e2d94d1da7cf1411",
+      "repository_sha256": "2204c16ad3f3cea13c2b0af0179800262a0a282685bcea13e2d94d1da7cf1411",
+      "installed_seed_sha256": "2204c16ad3f3cea13c2b0af0179800262a0a282685bcea13e2d94d1da7cf1411",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "apx/wallpapers/rainforest-stream.png",
+      "runtime_sha256": "624a391248bee708ce4195735f9e69937083d0e2f7ba4b9f025d92f231916535",
+      "repository_sha256": "624a391248bee708ce4195735f9e69937083d0e2f7ba4b9f025d92f231916535",
+      "installed_seed_sha256": "624a391248bee708ce4195735f9e69937083d0e2f7ba4b9f025d92f231916535",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "brave-flags.conf",
+      "runtime_sha256": "beed8f20ca3b1de51bfd0a03b862afd62e51933141378c67bd1f34be1443280f",
+      "repository_sha256": "beed8f20ca3b1de51bfd0a03b862afd62e51933141378c67bd1f34be1443280f",
+      "installed_seed_sha256": "beed8f20ca3b1de51bfd0a03b862afd62e51933141378c67bd1f34be1443280f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "environment.d/80-apx-locale.conf",
+      "runtime_sha256": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+      "repository_sha256": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+      "installed_seed_sha256": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "fontconfig/fonts.conf",
+      "runtime_sha256": "ff525fe6d18ebead4e7e1a7ed92ca5d92b8d73f0544a129aa2161ebcc2bc3b24",
+      "repository_sha256": "ff525fe6d18ebead4e7e1a7ed92ca5d92b8d73f0544a129aa2161ebcc2bc3b24",
+      "installed_seed_sha256": "ff525fe6d18ebead4e7e1a7ed92ca5d92b8d73f0544a129aa2161ebcc2bc3b24",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "gtk-3.0/bookmarks",
+      "runtime_sha256": "04319388475f0674511ab87d2ea11e52c6407414bd975daa9cf4254ff9c207a2",
+      "repository_sha256": "04319388475f0674511ab87d2ea11e52c6407414bd975daa9cf4254ff9c207a2",
+      "installed_seed_sha256": "04319388475f0674511ab87d2ea11e52c6407414bd975daa9cf4254ff9c207a2",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "gtk-3.0/gtk.css",
+      "runtime_sha256": "84561eaffd8b25fecc91b650cff44363f216243ee665f6c6bce4f78a3ccaafbc",
+      "repository_sha256": "84561eaffd8b25fecc91b650cff44363f216243ee665f6c6bce4f78a3ccaafbc",
+      "installed_seed_sha256": "84561eaffd8b25fecc91b650cff44363f216243ee665f6c6bce4f78a3ccaafbc",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "gtk-3.0/settings.ini",
+      "runtime_sha256": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+      "repository_sha256": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+      "installed_seed_sha256": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "gtk-4.0/settings.ini",
+      "runtime_sha256": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+      "repository_sha256": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+      "installed_seed_sha256": "aedb8ee4ad26b7edda0a2aa9fdbbabd17ebfb23eabebf00182e3d1ef167609e1",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "hypr/apx-lock-appearance.conf",
+      "runtime_sha256": "0a6f8e7876be85418416e495a77805b733af60ad6a3719a84e875b5b72894d52",
+      "repository_sha256": "0a6f8e7876be85418416e495a77805b733af60ad6a3719a84e875b5b72894d52",
+      "installed_seed_sha256": "0a6f8e7876be85418416e495a77805b733af60ad6a3719a84e875b5b72894d52",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "hypr/apx-monitors.lua",
+      "runtime_sha256": "ac3a58b2504062c0faa3b3c452743a5b09f5367cfb2956a4c4d36e9fb0755585",
+      "repository_sha256": "ac3a58b2504062c0faa3b3c452743a5b09f5367cfb2956a4c4d36e9fb0755585",
+      "installed_seed_sha256": "ac3a58b2504062c0faa3b3c452743a5b09f5367cfb2956a4c4d36e9fb0755585",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "hypr/hypridle.conf",
+      "runtime_sha256": "02a0289df8cf26bb3c537ec40cdc2d3e64b08a52785d2759a6ec1cab1ba04476",
+      "repository_sha256": "02a0289df8cf26bb3c537ec40cdc2d3e64b08a52785d2759a6ec1cab1ba04476",
+      "installed_seed_sha256": "02a0289df8cf26bb3c537ec40cdc2d3e64b08a52785d2759a6ec1cab1ba04476",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "hypr/hyprland.lua",
+      "runtime_sha256": "78732354b8f9201cb377709f513505edf2722d194bad5527ff5cf65e2a186216",
+      "repository_sha256": "78732354b8f9201cb377709f513505edf2722d194bad5527ff5cf65e2a186216",
+      "installed_seed_sha256": "78732354b8f9201cb377709f513505edf2722d194bad5527ff5cf65e2a186216",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "hypr/hyprlock.conf",
+      "runtime_sha256": "83248958d784948fba70f244ef5c0a07939a9822e1931847fe0d5e6b50a4fb62",
+      "repository_sha256": "83248958d784948fba70f244ef5c0a07939a9822e1931847fe0d5e6b50a4fb62",
+      "installed_seed_sha256": "83248958d784948fba70f244ef5c0a07939a9822e1931847fe0d5e6b50a4fb62",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "hyprland/hyprland.conf",
+      "runtime_sha256": "43c9eead30c90654ef7280b5eedf092ec739d04c528784e251292db7e25a6f9f",
+      "repository_sha256": "43c9eead30c90654ef7280b5eedf092ec739d04c528784e251292db7e25a6f9f",
+      "installed_seed_sha256": "43c9eead30c90654ef7280b5eedf092ec739d04c528784e251292db7e25a6f9f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "kitty/apx-appearance.conf",
+      "runtime_sha256": "cf1b2020a68ee63e95f1ca2d96f669695c2a128d65793662f42f889454a39f7c",
+      "repository_sha256": "cf1b2020a68ee63e95f1ca2d96f669695c2a128d65793662f42f889454a39f7c",
+      "installed_seed_sha256": "cf1b2020a68ee63e95f1ca2d96f669695c2a128d65793662f42f889454a39f7c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "kitty/kitty.conf",
+      "runtime_sha256": "730e31722bc7d91f3378f64c6e3908da591d2c2510a4909b598630f88d715b94",
+      "repository_sha256": "730e31722bc7d91f3378f64c6e3908da591d2c2510a4909b598630f88d715b94",
+      "installed_seed_sha256": "730e31722bc7d91f3378f64c6e3908da591d2c2510a4909b598630f88d715b94",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-appearance-v1",
+      "runtime_sha256": "e4c31cc192f3bf006765adf8c05a96c5e23ecfc2b357bd9b9315167f1205cfd4",
+      "repository_sha256": "e4c31cc192f3bf006765adf8c05a96c5e23ecfc2b357bd9b9315167f1205cfd4",
+      "installed_seed_sha256": "e4c31cc192f3bf006765adf8c05a96c5e23ecfc2b357bd9b9315167f1205cfd4",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-application-catalog-v1",
+      "runtime_sha256": "3f1c9975db56b72b0e463ca973f95a47eeda67d9706ffa45857fae5ad6c5f60c",
+      "repository_sha256": "3f1c9975db56b72b0e463ca973f95a47eeda67d9706ffa45857fae5ad6c5f60c",
+      "installed_seed_sha256": "3f1c9975db56b72b0e463ca973f95a47eeda67d9706ffa45857fae5ad6c5f60c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-application-remove-v1",
+      "runtime_sha256": "6aafbba4688bcfc34757dae80da0300463523e41e9a64d3cc81f7b9525a336d7",
+      "repository_sha256": "6aafbba4688bcfc34757dae80da0300463523e41e9a64d3cc81f7b9525a336d7",
+      "installed_seed_sha256": "6aafbba4688bcfc34757dae80da0300463523e41e9a64d3cc81f7b9525a336d7",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-browser-redirect-v1",
+      "runtime_sha256": "12848fee38e1b8dd84d4aec32fbbc17cafb297d61395a959745d1e079b8e8cdf",
+      "repository_sha256": "12848fee38e1b8dd84d4aec32fbbc17cafb297d61395a959745d1e079b8e8cdf",
+      "installed_seed_sha256": "12848fee38e1b8dd84d4aec32fbbc17cafb297d61395a959745d1e079b8e8cdf",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-clipboard-menu-v1",
+      "runtime_sha256": "8e3e3469bf2b92366000cc20c55f577a85e6243cb719844f089a4b6c7c4d663f",
+      "repository_sha256": "8e3e3469bf2b92366000cc20c55f577a85e6243cb719844f089a4b6c7c4d663f",
+      "installed_seed_sha256": "8e3e3469bf2b92366000cc20c55f577a85e6243cb719844f089a4b6c7c4d663f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-desktop-activation-v1",
+      "runtime_sha256": "2f1749c4ae9591665a9a51d8db5abb5e2f86294f3e0a7d8fad3dafb14f668f3f",
+      "repository_sha256": "2f1749c4ae9591665a9a51d8db5abb5e2f86294f3e0a7d8fad3dafb14f668f3f",
+      "installed_seed_sha256": "2f1749c4ae9591665a9a51d8db5abb5e2f86294f3e0a7d8fad3dafb14f668f3f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-desktop-activity-v1",
+      "runtime_sha256": "9b698ffba9d64e9aad73600c5bec37a09c62bafd23626e18295d36bb9f376da7",
+      "repository_sha256": "9b698ffba9d64e9aad73600c5bec37a09c62bafd23626e18295d36bb9f376da7",
+      "installed_seed_sha256": "9b698ffba9d64e9aad73600c5bec37a09c62bafd23626e18295d36bb9f376da7",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-desktop-preferences-v1",
+      "runtime_sha256": "5dcba47a6b509d1b5e48063bcd1d4b052b3755fec97552408106d433190ed674",
+      "repository_sha256": "5dcba47a6b509d1b5e48063bcd1d4b052b3755fec97552408106d433190ed674",
+      "installed_seed_sha256": "5dcba47a6b509d1b5e48063bcd1d4b052b3755fec97552408106d433190ed674",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-detached-launch",
+      "runtime_sha256": "40970a9ed235a6799913211dc135c66222ee55e15d5d38e5cfe5d2feafd785ef",
+      "repository_sha256": "40970a9ed235a6799913211dc135c66222ee55e15d5d38e5cfe5d2feafd785ef",
+      "installed_seed_sha256": "40970a9ed235a6799913211dc135c66222ee55e15d5d38e5cfe5d2feafd785ef",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-document-templates-v1",
+      "runtime_sha256": "6d300ad6f33d8119dd950a0d1dad73708a64059c2dd920b353af2530d2cd6d84",
+      "repository_sha256": "6d300ad6f33d8119dd950a0d1dad73708a64059c2dd920b353af2530d2cd6d84",
+      "installed_seed_sha256": "6d300ad6f33d8119dd950a0d1dad73708a64059c2dd920b353af2530d2cd6d84",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-environment-update-v1",
+      "runtime_sha256": "7cc941774449bef66937693cf3424ee0a71564961d58c2571bdec8a67131ae96",
+      "repository_sha256": "7cc941774449bef66937693cf3424ee0a71564961d58c2571bdec8a67131ae96",
+      "installed_seed_sha256": "7cc941774449bef66937693cf3424ee0a71564961d58c2571bdec8a67131ae96",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-face-auth-state-v1",
+      "runtime_sha256": "82ea2de97b0990ebbd7dbdf1c664ee81343aabb84c98fc2f86501f45706da3bb",
+      "repository_sha256": "82ea2de97b0990ebbd7dbdf1c664ee81343aabb84c98fc2f86501f45706da3bb",
+      "installed_seed_sha256": "82ea2de97b0990ebbd7dbdf1c664ee81343aabb84c98fc2f86501f45706da3bb",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-folder-color-v1",
+      "runtime_sha256": "abf168fbf32431e9e85c06d2427191f5f5ed815d9698d2ea89c113a0c8c9eae4",
+      "repository_sha256": "abf168fbf32431e9e85c06d2427191f5f5ed815d9698d2ea89c113a0c8c9eae4",
+      "installed_seed_sha256": "abf168fbf32431e9e85c06d2427191f5f5ed815d9698d2ea89c113a0c8c9eae4",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-host-console-open",
+      "runtime_sha256": "99c2e22329af1acbebe5c987651353acad76cd1181b946d4c2dbbed706e8c396",
+      "repository_sha256": "99c2e22329af1acbebe5c987651353acad76cd1181b946d4c2dbbed706e8c396",
+      "installed_seed_sha256": "99c2e22329af1acbebe5c987651353acad76cd1181b946d4c2dbbed706e8c396",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-host-console-terminal",
+      "runtime_sha256": "187025f24fda099acc85a7b82b0e0cacfd979f86feca77219911e661e7ec963e",
+      "repository_sha256": "187025f24fda099acc85a7b82b0e0cacfd979f86feca77219911e661e7ec963e",
+      "installed_seed_sha256": "187025f24fda099acc85a7b82b0e0cacfd979f86feca77219911e661e7ec963e",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-keyring-prepare-v1",
+      "runtime_sha256": "ca3f235fd1598cb8093af6bc48bd6e1d1c77f57271db243d435e8b831e1a89c1",
+      "repository_sha256": "ca3f235fd1598cb8093af6bc48bd6e1d1c77f57271db243d435e8b831e1a89c1",
+      "installed_seed_sha256": "ca3f235fd1598cb8093af6bc48bd6e1d1c77f57271db243d435e8b831e1a89c1",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-laptop-action-v1",
+      "runtime_sha256": "2517fe5fe364b5c2fe258c8c3eec63db3190333dc8daeae2f6ff4e9ba717001c",
+      "repository_sha256": "2517fe5fe364b5c2fe258c8c3eec63db3190333dc8daeae2f6ff4e9ba717001c",
+      "installed_seed_sha256": "2517fe5fe364b5c2fe258c8c3eec63db3190333dc8daeae2f6ff4e9ba717001c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-legion-brightness-keys-v1.py",
+      "runtime_sha256": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550",
+      "repository_sha256": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550",
+      "installed_seed_sha256": "510443669c26bf7ede73af8d56f37ee04faf9c4a0ca2d7afe3343742cd95b550",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-lock-date-v1",
+      "runtime_sha256": "79ff3f94b983a3d722450cb62f15407d5f1511e52bb815b29aaa803da33ef6fc",
+      "repository_sha256": "79ff3f94b983a3d722450cb62f15407d5f1511e52bb815b29aaa803da33ef6fc",
+      "installed_seed_sha256": "79ff3f94b983a3d722450cb62f15407d5f1511e52bb815b29aaa803da33ef6fc",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-mouse-sensitivity-v1",
+      "runtime_sha256": "8e6a8286f25c030c5d274f874176e7b12708daeddb0b23191a3159880d16e145",
+      "repository_sha256": "8e6a8286f25c030c5d274f874176e7b12708daeddb0b23191a3159880d16e145",
+      "installed_seed_sha256": "8e6a8286f25c030c5d274f874176e7b12708daeddb0b23191a3159880d16e145",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-notification-focus-v1",
+      "runtime_sha256": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
+      "repository_sha256": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
+      "installed_seed_sha256": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-removable-bookmark-v1",
+      "runtime_sha256": "39828754ff29cc507bf7250a375ef705ab0f6a337b565c2e2b45aac8ce24a038",
+      "repository_sha256": "39828754ff29cc507bf7250a375ef705ab0f6a337b565c2e2b45aac8ce24a038",
+      "installed_seed_sha256": "39828754ff29cc507bf7250a375ef705ab0f6a337b565c2e2b45aac8ce24a038",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-rofi-files-v1",
+      "runtime_sha256": "7d33e8ebf5ed594e66040a4ff3b4d2c4ad475244e84146cd113c9c458bd5befc",
+      "repository_sha256": "7d33e8ebf5ed594e66040a4ff3b4d2c4ad475244e84146cd113c9c458bd5befc",
+      "installed_seed_sha256": "7d33e8ebf5ed594e66040a4ff3b4d2c4ad475244e84146cd113c9c458bd5befc",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-settings",
+      "runtime_sha256": "4ba183b406890e0e3dbbe13afef979f6b1f382c2415d50de28008f460ecc8e9f",
+      "repository_sha256": "4ba183b406890e0e3dbbe13afef979f6b1f382c2415d50de28008f460ecc8e9f",
+      "installed_seed_sha256": "4ba183b406890e0e3dbbe13afef979f6b1f382c2415d50de28008f460ecc8e9f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-shell-v1",
+      "runtime_sha256": "55e45c39f93051fddcc95beb957172eba50c31ae6809ba082292f59c1c49955c",
+      "repository_sha256": "55e45c39f93051fddcc95beb957172eba50c31ae6809ba082292f59c1c49955c",
+      "installed_seed_sha256": "55e45c39f93051fddcc95beb957172eba50c31ae6809ba082292f59c1c49955c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-shortcuts-v1",
+      "runtime_sha256": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
+      "repository_sha256": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
+      "installed_seed_sha256": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-sysinfo",
+      "runtime_sha256": "1daf4b37c84c855191d2190e2c44a91b95b96b0ce1a46944ea28f580349d14b5",
+      "repository_sha256": "1daf4b37c84c855191d2190e2c44a91b95b96b0ce1a46944ea28f580349d14b5",
+      "installed_seed_sha256": "1daf4b37c84c855191d2190e2c44a91b95b96b0ce1a46944ea28f580349d14b5",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-window-apps-v1",
+      "runtime_sha256": "2484dc866f612290efb2f5b5949a3eace0ca0e5562a4e8d251c5296407c5299d",
+      "repository_sha256": "2484dc866f612290efb2f5b5949a3eace0ca0e5562a4e8d251c5296407c5299d",
+      "installed_seed_sha256": "2484dc866f612290efb2f5b5949a3eace0ca0e5562a4e8d251c5296407c5299d",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/bin/apx-workspace-overview-v1",
+      "runtime_sha256": "830c8dd169b2e180bcc2671c52c14ada5037873ebc3152090af466522b76483e",
+      "repository_sha256": "830c8dd169b2e180bcc2671c52c14ada5037873ebc3152090af466522b76483e",
+      "installed_seed_sha256": "830c8dd169b2e180bcc2671c52c14ada5037873ebc3152090af466522b76483e",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/lib/apx/chooser-places.c",
+      "runtime_sha256": "287c6f7454111a29d14d937d3adcee326bc6d95767f012f4d352e88a8682c11f",
+      "repository_sha256": "287c6f7454111a29d14d937d3adcee326bc6d95767f012f4d352e88a8682c11f",
+      "installed_seed_sha256": "287c6f7454111a29d14d937d3adcee326bc6d95767f012f4d352e88a8682c11f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/lib/apx/libchooser-places.so",
+      "runtime_sha256": "23adc03533f0f28db9c299ba3fef37e459f06c0a1355123892b499f59eabd927",
+      "repository_sha256": "23adc03533f0f28db9c299ba3fef37e459f06c0a1355123892b499f59eabd927",
+      "installed_seed_sha256": "23adc03533f0f28db9c299ba3fef37e459f06c0a1355123892b499f59eabd927",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/lib/rofi/apx-rofi-files-v1.so",
+      "runtime_sha256": "c848996c6325aa31541fbbd19205c4a8d957cc684c77f660b8ced9c4d7ee5917",
+      "repository_sha256": "c848996c6325aa31541fbbd19205c4a8d957cc684c77f660b8ced9c4d7ee5917",
+      "installed_seed_sha256": "c848996c6325aa31541fbbd19205c4a8d957cc684c77f660b8ced9c4d7ee5917",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/libexec/apx-rofi-secondary-v1.so",
+      "runtime_sha256": "1de32d764d0a359a3b6334097a92452155a50d38adc92ac035c213296ffea75d",
+      "repository_sha256": "1de32d764d0a359a3b6334097a92452155a50d38adc92ac035c213296ffea75d",
+      "installed_seed_sha256": "1de32d764d0a359a3b6334097a92452155a50d38adc92ac035c213296ffea75d",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/libexec/apx-system-power-client-v1.py",
+      "runtime_sha256": "c037419f59503c255a18a6144e363b146db3238c96b229e44dbfd04cb049e410",
+      "repository_sha256": "c037419f59503c255a18a6144e363b146db3238c96b229e44dbfd04cb049e410",
+      "installed_seed_sha256": "c037419f59503c255a18a6144e363b146db3238c96b229e44dbfd04cb049e410",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/libexec/apx_system_power_contract.py",
+      "runtime_sha256": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8",
+      "repository_sha256": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8",
+      "installed_seed_sha256": "ced2405cbc1bd8ed7a49a2061be48ee3ff8f2d5f263e8cea93d219ce7a3622a8",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/applications/apx-browser-redirect.desktop",
+      "runtime_sha256": "b800a6301a593037dcb80d7bd9140be5cb7f30d05d94f93b23f6dc8a5b395d81",
+      "repository_sha256": "b800a6301a593037dcb80d7bd9140be5cb7f30d05d94f93b23f6dc8a5b395d81",
+      "installed_seed_sha256": "b800a6301a593037dcb80d7bd9140be5cb7f30d05d94f93b23f6dc8a5b395d81",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/applications/apx-settings.desktop",
+      "runtime_sha256": "a14f790b359027ba5f844d6c3bd262c95bd955c62647a66a23eafeb7d23e8738",
+      "repository_sha256": "a14f790b359027ba5f844d6c3bd262c95bd955c62647a66a23eafeb7d23e8738",
+      "installed_seed_sha256": "a14f790b359027ba5f844d6c3bd262c95bd955c62647a66a23eafeb7d23e8738",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/applications/apx-terminal.desktop",
+      "runtime_sha256": "10ed8d658f950a562f71e165f8e42661228088e45bc532b75b99bce74745bb44",
+      "repository_sha256": "10ed8d658f950a562f71e165f8e42661228088e45bc532b75b99bce74745bb44",
+      "installed_seed_sha256": "10ed8d658f950a562f71e165f8e42661228088e45bc532b75b99bce74745bb44",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service",
+      "runtime_sha256": "d1f568f71a2961404fb7cea035c1d524d0a811749f5a7499a0dd12515d387446",
+      "repository_sha256": "d1f568f71a2961404fb7cea035c1d524d0a811749f5a7499a0dd12515d387446",
+      "installed_seed_sha256": "d1f568f71a2961404fb7cea035c1d524d0a811749f5a7499a0dd12515d387446",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/cascadia/CascadiaMono-Bold.ttf",
+      "runtime_sha256": "b22cb603ed23cac36e8444846e1841caca21719a5e852780a8d37ae7a49b0a36",
+      "repository_sha256": "b22cb603ed23cac36e8444846e1841caca21719a5e852780a8d37ae7a49b0a36",
+      "installed_seed_sha256": "b22cb603ed23cac36e8444846e1841caca21719a5e852780a8d37ae7a49b0a36",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/cascadia/CascadiaMono-BoldItalic.ttf",
+      "runtime_sha256": "ecaeab55e6334408f8ff1fde78a99ddaeb3bb7fad4fcd177df8475c88a7d240f",
+      "repository_sha256": "ecaeab55e6334408f8ff1fde78a99ddaeb3bb7fad4fcd177df8475c88a7d240f",
+      "installed_seed_sha256": "ecaeab55e6334408f8ff1fde78a99ddaeb3bb7fad4fcd177df8475c88a7d240f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/cascadia/CascadiaMono-Italic.ttf",
+      "runtime_sha256": "8d98a33e7617c14dd1d200b4900bc6c2d5d7165abb5c09e9d2fd51c38ce9c9ff",
+      "repository_sha256": "8d98a33e7617c14dd1d200b4900bc6c2d5d7165abb5c09e9d2fd51c38ce9c9ff",
+      "installed_seed_sha256": "8d98a33e7617c14dd1d200b4900bc6c2d5d7165abb5c09e9d2fd51c38ce9c9ff",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/cascadia/CascadiaMono-Regular.ttf",
+      "runtime_sha256": "06520d032ec274fa5040b22c6f4a1d829081b24ba40b2da56dae89bf10c7b481",
+      "repository_sha256": "06520d032ec274fa5040b22c6f4a1d829081b24ba40b2da56dae89bf10c7b481",
+      "installed_seed_sha256": "06520d032ec274fa5040b22c6f4a1d829081b24ba40b2da56dae89bf10c7b481",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/cascadia/LICENSE.txt",
+      "runtime_sha256": "51882cd3cdba4e16f220f44ddb08a635c38c44ea6e0975db2574f4be6f958238",
+      "repository_sha256": "51882cd3cdba4e16f220f44ddb08a635c38c44ea6e0975db2574f4be6f958238",
+      "installed_seed_sha256": "51882cd3cdba4e16f220f44ddb08a635c38c44ea6e0975db2574f4be6f958238",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/jetbrains-mono/JetBrainsMono-Bold.ttf",
+      "runtime_sha256": "d22c4f3821d725eb01210d278d95dfcfcaadc34699a06658d47c8a5cc5830ada",
+      "repository_sha256": "d22c4f3821d725eb01210d278d95dfcfcaadc34699a06658d47c8a5cc5830ada",
+      "installed_seed_sha256": "d22c4f3821d725eb01210d278d95dfcfcaadc34699a06658d47c8a5cc5830ada",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/jetbrains-mono/JetBrainsMono-Regular.ttf",
+      "runtime_sha256": "e6fd0d7e91550b3ed2b735d4312474362c4716edc4fc0577a0f61ed782d5aed1",
+      "repository_sha256": "e6fd0d7e91550b3ed2b735d4312474362c4716edc4fc0577a0f61ed782d5aed1",
+      "installed_seed_sha256": "e6fd0d7e91550b3ed2b735d4312474362c4716edc4fc0577a0f61ed782d5aed1",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/jetbrains-mono/OFL.txt",
+      "runtime_sha256": "a76abf002c49097d146e86740a3105a5d00450b1592e820a1109a8c5680cd697",
+      "repository_sha256": "a76abf002c49097d146e86740a3105a5d00450b1592e820a1109a8c5680cd697",
+      "installed_seed_sha256": "a76abf002c49097d146e86740a3105a5d00450b1592e820a1109a8c5680cd697",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/selawik/LICENSE.txt",
+      "runtime_sha256": "77b7c2506d4efb22e09c8ccf10159f4956eab3ef7c007fef95de136bcf45300c",
+      "repository_sha256": "77b7c2506d4efb22e09c8ccf10159f4956eab3ef7c007fef95de136bcf45300c",
+      "installed_seed_sha256": "77b7c2506d4efb22e09c8ccf10159f4956eab3ef7c007fef95de136bcf45300c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/selawik/selawk.ttf",
+      "runtime_sha256": "e9d98518d8ac2817782a9a382430463a2e0793ea68350b695bb727d9a830ee1c",
+      "repository_sha256": "e9d98518d8ac2817782a9a382430463a2e0793ea68350b695bb727d9a830ee1c",
+      "installed_seed_sha256": "e9d98518d8ac2817782a9a382430463a2e0793ea68350b695bb727d9a830ee1c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/selawik/selawkb.ttf",
+      "runtime_sha256": "f0db5e174a90e0956ad7d2844bdca1d5e6da92ec65b2c04e57ba9b180668c904",
+      "repository_sha256": "f0db5e174a90e0956ad7d2844bdca1d5e6da92ec65b2c04e57ba9b180668c904",
+      "installed_seed_sha256": "f0db5e174a90e0956ad7d2844bdca1d5e6da92ec65b2c04e57ba9b180668c904",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/selawik/selawkl.ttf",
+      "runtime_sha256": "8e19d073091a1e869b5b0d48b925e605c0a4c6ece7df7b22a364fb065314c4c5",
+      "repository_sha256": "8e19d073091a1e869b5b0d48b925e605c0a4c6ece7df7b22a364fb065314c4c5",
+      "installed_seed_sha256": "8e19d073091a1e869b5b0d48b925e605c0a4c6ece7df7b22a364fb065314c4c5",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/selawik/selawksb.ttf",
+      "runtime_sha256": "0a9e9d0549a10f24bef9b3a29e06fe6e0b5c21e7a784c503b048a307841a7783",
+      "repository_sha256": "0a9e9d0549a10f24bef9b3a29e06fe6e0b5c21e7a784c503b048a307841a7783",
+      "installed_seed_sha256": "0a9e9d0549a10f24bef9b3a29e06fe6e0b5c21e7a784c503b048a307841a7783",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/fonts/selawik/selawksl.ttf",
+      "runtime_sha256": "8620960344f12093482cded984a1aafa5a57d24cbf7e9299da125ccf0e9d4102",
+      "repository_sha256": "8620960344f12093482cded984a1aafa5a57d24cbf7e9299da125ccf0e9d4102",
+      "installed_seed_sha256": "8620960344f12093482cded984a1aafa5a57d24cbf7e9299da125ccf0e9d4102",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/index.theme",
+      "runtime_sha256": "6ec40f1027ef75c09e80d1143779d806ad92cbea920353689994c9beef965b50",
+      "repository_sha256": "6ec40f1027ef75c09e80d1143779d806ad92cbea920353689994c9beef965b50",
+      "installed_seed_sha256": "6ec40f1027ef75c09e80d1143779d806ad92cbea920353689994c9beef965b50",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/apx-file-search.svg",
+      "runtime_sha256": "21328a3e719474b54dfbd799a08bbd5d36da92c2bbc0f6e644f9ba1bc3dad1fd",
+      "repository_sha256": "21328a3e719474b54dfbd799a08bbd5d36da92c2bbc0f6e644f9ba1bc3dad1fd",
+      "installed_seed_sha256": "21328a3e719474b54dfbd799a08bbd5d36da92c2bbc0f6e644f9ba1bc3dad1fd",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/apx-folder-tagged.svg",
+      "runtime_sha256": "bca05a5e9a3691fd586fde133f2414ac82d738b4953b997e5c64859540b3aad4",
+      "repository_sha256": "bca05a5e9a3691fd586fde133f2414ac82d738b4953b997e5c64859540b3aad4",
+      "installed_seed_sha256": "bca05a5e9a3691fd586fde133f2414ac82d738b4953b997e5c64859540b3aad4",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-documents.svg",
+      "runtime_sha256": "0ae5d0547d11f011c2b425338d7f7df6b5a89c9209646b9a994b219ca8fe6eff",
+      "repository_sha256": "0ae5d0547d11f011c2b425338d7f7df6b5a89c9209646b9a994b219ca8fe6eff",
+      "installed_seed_sha256": "0ae5d0547d11f011c2b425338d7f7df6b5a89c9209646b9a994b219ca8fe6eff",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-download.svg",
+      "runtime_sha256": "19321af475280625ed2327c03630a85f4a6a2c81424635f4079f9ce3cde58c3b",
+      "repository_sha256": "19321af475280625ed2327c03630a85f4a6a2c81424635f4079f9ce3cde58c3b",
+      "installed_seed_sha256": "19321af475280625ed2327c03630a85f4a6a2c81424635f4079f9ce3cde58c3b",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-music.svg",
+      "runtime_sha256": "4e7fc7f5ec7fd8ae0b6cb3f489045c85372245000a68a09929457000782f2ce1",
+      "repository_sha256": "4e7fc7f5ec7fd8ae0b6cb3f489045c85372245000a68a09929457000782f2ce1",
+      "installed_seed_sha256": "4e7fc7f5ec7fd8ae0b6cb3f489045c85372245000a68a09929457000782f2ce1",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-open.svg",
+      "runtime_sha256": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+      "repository_sha256": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+      "installed_seed_sha256": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-pictures.svg",
+      "runtime_sha256": "477cd43895a95cd5d64d212f427b8dbc54cbbb847a147ced86da614a3ef606c3",
+      "repository_sha256": "477cd43895a95cd5d64d212f427b8dbc54cbbb847a147ced86da614a3ef606c3",
+      "installed_seed_sha256": "477cd43895a95cd5d64d212f427b8dbc54cbbb847a147ced86da614a3ef606c3",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-publicshare.svg",
+      "runtime_sha256": "bbcad1194e605f0d51e172a1b83c093a271ceb3a31d4418c8978dc064c244bec",
+      "repository_sha256": "bbcad1194e605f0d51e172a1b83c093a271ceb3a31d4418c8978dc064c244bec",
+      "installed_seed_sha256": "bbcad1194e605f0d51e172a1b83c093a271ceb3a31d4418c8978dc064c244bec",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-remote.svg",
+      "runtime_sha256": "337921ce54353749fc9496b0b59e3ab2774e2ca607833a33413f28ac32b3db50",
+      "repository_sha256": "337921ce54353749fc9496b0b59e3ab2774e2ca607833a33413f28ac32b3db50",
+      "installed_seed_sha256": "337921ce54353749fc9496b0b59e3ab2774e2ca607833a33413f28ac32b3db50",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-saved-search.svg",
+      "runtime_sha256": "e371d22b79521f3c4b139322bb12307df50d73e248e96531eaae1b42d47cde7d",
+      "repository_sha256": "e371d22b79521f3c4b139322bb12307df50d73e248e96531eaae1b42d47cde7d",
+      "installed_seed_sha256": "e371d22b79521f3c4b139322bb12307df50d73e248e96531eaae1b42d47cde7d",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-templates.svg",
+      "runtime_sha256": "f036a39e0fcd703fe6081b6ba45fc9164506906ef7f26895e39d0f4429d1ffe6",
+      "repository_sha256": "f036a39e0fcd703fe6081b6ba45fc9164506906ef7f26895e39d0f4429d1ffe6",
+      "installed_seed_sha256": "f036a39e0fcd703fe6081b6ba45fc9164506906ef7f26895e39d0f4429d1ffe6",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder-videos.svg",
+      "runtime_sha256": "1ff0dbfa2d18ab03b727bd2f115da5b9790d6a5a5afb2b45171d2a24bbf428a9",
+      "repository_sha256": "1ff0dbfa2d18ab03b727bd2f115da5b9790d6a5a5afb2b45171d2a24bbf428a9",
+      "installed_seed_sha256": "1ff0dbfa2d18ab03b727bd2f115da5b9790d6a5a5afb2b45171d2a24bbf428a9",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/folder.svg",
+      "runtime_sha256": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+      "repository_sha256": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+      "installed_seed_sha256": "62b238be55d47936d801695dfc19bb66bf6640c19c6a73de54aa27893dbf74a4",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/go-up.svg",
+      "runtime_sha256": "1a4dd9f99a622c3b7382d0365776f915fb751fa09c8138634e89f2945973da12",
+      "repository_sha256": "1a4dd9f99a622c3b7382d0365776f915fb751fa09c8138634e89f2945973da12",
+      "installed_seed_sha256": "1a4dd9f99a622c3b7382d0365776f915fb751fa09c8138634e89f2945973da12",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/icons/APX-Graphite/scalable/places/user-desktop.svg",
+      "runtime_sha256": "d015e06aa73c72e3042568ad2327132acf5176c610abeb7acfa443af51606ab6",
+      "repository_sha256": "d015e06aa73c72e3042568ad2327132acf5176c610abeb7acfa443af51606ab6",
+      "installed_seed_sha256": "d015e06aa73c72e3042568ad2327132acf5176c610abeb7acfa443af51606ab6",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "local/share/thumbnailers/apx-folder-color.thumbnailer",
+      "runtime_sha256": "f8306feca643786465607ca5e38dac042b3e8557ff868350131370d08fe18e0f",
+      "repository_sha256": "f8306feca643786465607ca5e38dac042b3e8557ff868350131370d08fe18e0f",
+      "installed_seed_sha256": "f8306feca643786465607ca5e38dac042b3e8557ff868350131370d08fe18e0f",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "mako/config",
+      "runtime_sha256": "3b12173118265250fac23f25191178c80f113ee8e1ed5cf4603ed8b5d84d0a60",
+      "repository_sha256": "3b12173118265250fac23f25191178c80f113ee8e1ed5cf4603ed8b5d84d0a60",
+      "installed_seed_sha256": "3b12173118265250fac23f25191178c80f113ee8e1ed5cf4603ed8b5d84d0a60",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "mimeapps.list",
+      "runtime_sha256": "3296274c3469bdf7a5bc6e244ab70b02aa4852b986b0c2f6dac67f9c2d15df3b",
+      "repository_sha256": "3296274c3469bdf7a5bc6e244ab70b02aa4852b986b0c2f6dac67f9c2d15df3b",
+      "installed_seed_sha256": "3296274c3469bdf7a5bc6e244ab70b02aa4852b986b0c2f6dac67f9c2d15df3b",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/ActivityPanel.qml",
+      "runtime_sha256": "c7a3c39b738d6f1fe66b420bb1d5724d0393ffb4fb9a8673808aa3db1dfae8bb",
+      "repository_sha256": "c7a3c39b738d6f1fe66b420bb1d5724d0393ffb4fb9a8673808aa3db1dfae8bb",
+      "installed_seed_sha256": "c7a3c39b738d6f1fe66b420bb1d5724d0393ffb4fb9a8673808aa3db1dfae8bb",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/Appearance.qml",
+      "runtime_sha256": "fd98999eee9e12d974f61ac1c2be0a621d6fe23c589c8794c2bc076b4483238c",
+      "repository_sha256": "fd98999eee9e12d974f61ac1c2be0a621d6fe23c589c8794c2bc076b4483238c",
+      "installed_seed_sha256": "fd98999eee9e12d974f61ac1c2be0a621d6fe23c589c8794c2bc076b4483238c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/BarButton.qml",
+      "runtime_sha256": "98d36316192480a87404944d65fb7eb834d4877ca1c3d5b6b5e96d3a051fb6cd",
+      "repository_sha256": "98d36316192480a87404944d65fb7eb834d4877ca1c3d5b6b5e96d3a051fb6cd",
+      "installed_seed_sha256": "98d36316192480a87404944d65fb7eb834d4877ca1c3d5b6b5e96d3a051fb6cd",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/BounceMouseArea.qml",
+      "runtime_sha256": "6d6ea8c4f2d926ca40f157ea0d7443134cc35bbe9c675dc148b4aeaa6275c938",
+      "repository_sha256": "6d6ea8c4f2d926ca40f157ea0d7443134cc35bbe9c675dc148b4aeaa6275c938",
+      "installed_seed_sha256": "6d6ea8c4f2d926ca40f157ea0d7443134cc35bbe9c675dc148b4aeaa6275c938",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/ControlDashboard.qml",
+      "runtime_sha256": "2000bb9f3260926ea35ee30aa7c5b663ffcb9b7b9c46c50423cbd5007f4f2f1d",
+      "repository_sha256": "2000bb9f3260926ea35ee30aa7c5b663ffcb9b7b9c46c50423cbd5007f4f2f1d",
+      "installed_seed_sha256": "2000bb9f3260926ea35ee30aa7c5b663ffcb9b7b9c46c50423cbd5007f4f2f1d",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/ControlIcon.qml",
+      "runtime_sha256": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
+      "repository_sha256": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
+      "installed_seed_sha256": "a567b753b4dc09fca1ef5bcedc55c2dd2138ee69cb1cfac67819a3f2dbe24317",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/ControlSlider.qml",
+      "runtime_sha256": "c52c4da5377e980ce01adcda291ca4ed4daf099ef154476deddd6e0d69598ba2",
+      "repository_sha256": "c52c4da5377e980ce01adcda291ca4ed4daf099ef154476deddd6e0d69598ba2",
+      "installed_seed_sha256": "c52c4da5377e980ce01adcda291ca4ed4daf099ef154476deddd6e0d69598ba2",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/ControlTile.qml",
+      "runtime_sha256": "d175e911d764945f08fa6f4839a650d0821e3099d4e789c33a7ddbd756fb0dea",
+      "repository_sha256": "d175e911d764945f08fa6f4839a650d0821e3099d4e789c33a7ddbd756fb0dea",
+      "installed_seed_sha256": "d175e911d764945f08fa6f4839a650d0821e3099d4e789c33a7ddbd756fb0dea",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/DesktopActivity.qml",
+      "runtime_sha256": "08015b742c97bc9abf704c6cb5ebd62d37e13b481790baa24064bde5eec40766",
+      "repository_sha256": "08015b742c97bc9abf704c6cb5ebd62d37e13b481790baa24064bde5eec40766",
+      "installed_seed_sha256": "08015b742c97bc9abf704c6cb5ebd62d37e13b481790baa24064bde5eec40766",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/GhostLines.js",
+      "runtime_sha256": "2c492329f225bc21c9e53e40cd3eb0a308026cd3b887f7ae96c603bec617c728",
+      "repository_sha256": "2c492329f225bc21c9e53e40cd3eb0a308026cd3b887f7ae96c603bec617c728",
+      "installed_seed_sha256": "2c492329f225bc21c9e53e40cd3eb0a308026cd3b887f7ae96c603bec617c728",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/IconLabel.qml",
+      "runtime_sha256": "37e073d44c73c7cfaa445de1df3a5749493ea8f613373290ab4cbf216bb6d43c",
+      "repository_sha256": "37e073d44c73c7cfaa445de1df3a5749493ea8f613373290ab4cbf216bb6d43c",
+      "installed_seed_sha256": "37e073d44c73c7cfaa445de1df3a5749493ea8f613373290ab4cbf216bb6d43c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/LucideIcon.qml",
+      "runtime_sha256": "17873952b5be593d1f543c66706a7a04fc85d7e8c3c0a2b2ddc19b39f78c3b88",
+      "repository_sha256": "17873952b5be593d1f543c66706a7a04fc85d7e8c3c0a2b2ddc19b39f78c3b88",
+      "installed_seed_sha256": "17873952b5be593d1f543c66706a7a04fc85d7e8c3c0a2b2ddc19b39f78c3b88",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/MediaIsland.qml",
+      "runtime_sha256": "d006f4ec56d45ebb799dab586a9a963da2bad6249ddacd0636ba2c07a366d4b2",
+      "repository_sha256": "d006f4ec56d45ebb799dab586a9a963da2bad6249ddacd0636ba2c07a366d4b2",
+      "installed_seed_sha256": "d006f4ec56d45ebb799dab586a9a963da2bad6249ddacd0636ba2c07a366d4b2",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/MediaTimeline.qml",
+      "runtime_sha256": "586d9a06a2d68a8d77996b4880331ec40abd19905b8d5c934f53f6ef40df8698",
+      "repository_sha256": "586d9a06a2d68a8d77996b4880331ec40abd19905b8d5c934f53f6ef40df8698",
+      "installed_seed_sha256": "586d9a06a2d68a8d77996b4880331ec40abd19905b8d5c934f53f6ef40df8698",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/PersonalizationPanel.qml",
+      "runtime_sha256": "c1c030d05114fd02ed67b5f9cdf8c41f48b336161c53d07bdc270708c6461d0c",
+      "repository_sha256": "c1c030d05114fd02ed67b5f9cdf8c41f48b336161c53d07bdc270708c6461d0c",
+      "installed_seed_sha256": "c1c030d05114fd02ed67b5f9cdf8c41f48b336161c53d07bdc270708c6461d0c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/WorkspacePager.js",
+      "runtime_sha256": "86ed3a02b0c0b317d1a3c25907ebda91057dacb6c148439ffbf3f78074f60dfe",
+      "repository_sha256": "86ed3a02b0c0b317d1a3c25907ebda91057dacb6c148439ffbf3f78074f60dfe",
+      "installed_seed_sha256": "86ed3a02b0c0b317d1a3c25907ebda91057dacb6c148439ffbf3f78074f60dfe",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/WorkspacePreview.qml",
+      "runtime_sha256": "4cdc17fa552e8870865d2f4fbfa2182e2db2ae08910ec494504edccf741075fb",
+      "repository_sha256": "4cdc17fa552e8870865d2f4fbfa2182e2db2ae08910ec494504edccf741075fb",
+      "installed_seed_sha256": "4cdc17fa552e8870865d2f4fbfa2182e2db2ae08910ec494504edccf741075fb",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/WorkspaceStrip.qml",
+      "runtime_sha256": "768ae2e9529c4df8e3fef43785570030faecf4b9b063a2ac18f7ce79e37c7a0b",
+      "repository_sha256": "768ae2e9529c4df8e3fef43785570030faecf4b9b063a2ac18f7ce79e37c7a0b",
+      "installed_seed_sha256": "768ae2e9529c4df8e3fef43785570030faecf4b9b063a2ac18f7ce79e37c7a0b",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/calendar_store.py",
+      "runtime_sha256": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
+      "repository_sha256": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
+      "installed_seed_sha256": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/LICENSE.txt",
+      "runtime_sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+      "repository_sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+      "installed_seed_sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/audio-lines.svg",
+      "runtime_sha256": "3942b8a5d6bccc927a55f857f0d44b90e2663470cd2d569000c9b60c37578dfa",
+      "repository_sha256": "3942b8a5d6bccc927a55f857f0d44b90e2663470cd2d569000c9b60c37578dfa",
+      "installed_seed_sha256": "3942b8a5d6bccc927a55f857f0d44b90e2663470cd2d569000c9b60c37578dfa",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/battery-charging.svg",
+      "runtime_sha256": "6a95bf102235d7070121bb8eb21a4836fa7ea9f0dbe8327eadbdf94253acdcbd",
+      "repository_sha256": "6a95bf102235d7070121bb8eb21a4836fa7ea9f0dbe8327eadbdf94253acdcbd",
+      "installed_seed_sha256": "6a95bf102235d7070121bb8eb21a4836fa7ea9f0dbe8327eadbdf94253acdcbd",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/battery-full.svg",
+      "runtime_sha256": "9ef66bd46e676bbcf1e8befca8e904b93be9214abccea4f8a4d20432a0c5ccf8",
+      "repository_sha256": "9ef66bd46e676bbcf1e8befca8e904b93be9214abccea4f8a4d20432a0c5ccf8",
+      "installed_seed_sha256": "9ef66bd46e676bbcf1e8befca8e904b93be9214abccea4f8a4d20432a0c5ccf8",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/battery-low.svg",
+      "runtime_sha256": "a158265a07d3ea60134de7ca88c023ebbe35d9af9c724c410ed251f248987a52",
+      "repository_sha256": "a158265a07d3ea60134de7ca88c023ebbe35d9af9c724c410ed251f248987a52",
+      "installed_seed_sha256": "a158265a07d3ea60134de7ca88c023ebbe35d9af9c724c410ed251f248987a52",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/battery-medium.svg",
+      "runtime_sha256": "f8a79b837f96c801ffc394d1d154c5a792823e3bb506bb98a4379b0647067e0a",
+      "repository_sha256": "f8a79b837f96c801ffc394d1d154c5a792823e3bb506bb98a4379b0647067e0a",
+      "installed_seed_sha256": "f8a79b837f96c801ffc394d1d154c5a792823e3bb506bb98a4379b0647067e0a",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/battery-warning.svg",
+      "runtime_sha256": "d59e1af8b6247b59df0535197456fc25df978ae14a9e786c636815ab04c95904",
+      "repository_sha256": "d59e1af8b6247b59df0535197456fc25df978ae14a9e786c636815ab04c95904",
+      "installed_seed_sha256": "d59e1af8b6247b59df0535197456fc25df978ae14a9e786c636815ab04c95904",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/battery.svg",
+      "runtime_sha256": "bd0e96da226beca6d150ee25f04bc5ca8466c1ed91e806c2179723e173af2282",
+      "repository_sha256": "bd0e96da226beca6d150ee25f04bc5ca8466c1ed91e806c2179723e173af2282",
+      "installed_seed_sha256": "bd0e96da226beca6d150ee25f04bc5ca8466c1ed91e806c2179723e173af2282",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/bell.svg",
+      "runtime_sha256": "394889e9631fe3a9a63be9a479a95b451b708e432d895978d21d9130b5ee5dbe",
+      "repository_sha256": "394889e9631fe3a9a63be9a479a95b451b708e432d895978d21d9130b5ee5dbe",
+      "installed_seed_sha256": "394889e9631fe3a9a63be9a479a95b451b708e432d895978d21d9130b5ee5dbe",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/bluetooth-connected.svg",
+      "runtime_sha256": "d39c628c736b13b022f154e9aaa8aad178ef1d090a9bc14f1f4740c24767d828",
+      "repository_sha256": "d39c628c736b13b022f154e9aaa8aad178ef1d090a9bc14f1f4740c24767d828",
+      "installed_seed_sha256": "d39c628c736b13b022f154e9aaa8aad178ef1d090a9bc14f1f4740c24767d828",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/bluetooth-off.svg",
+      "runtime_sha256": "61d26b013859d73ddf585d7b6e460ab2a6f02ca3ec2faf4b646cf9054224c22c",
+      "repository_sha256": "61d26b013859d73ddf585d7b6e460ab2a6f02ca3ec2faf4b646cf9054224c22c",
+      "installed_seed_sha256": "61d26b013859d73ddf585d7b6e460ab2a6f02ca3ec2faf4b646cf9054224c22c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/bluetooth.svg",
+      "runtime_sha256": "f2bf3d88cf608834dc389f01b1ee41fdb7bf3656dabef69632c60d5498f3bf29",
+      "repository_sha256": "f2bf3d88cf608834dc389f01b1ee41fdb7bf3656dabef69632c60d5498f3bf29",
+      "installed_seed_sha256": "f2bf3d88cf608834dc389f01b1ee41fdb7bf3656dabef69632c60d5498f3bf29",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/calculator.svg",
+      "runtime_sha256": "a6b191250b1ffabdf9fc9536662309f1b0f65336aa681d75bae9f1708baaefd0",
+      "repository_sha256": "a6b191250b1ffabdf9fc9536662309f1b0f65336aa681d75bae9f1708baaefd0",
+      "installed_seed_sha256": "a6b191250b1ffabdf9fc9536662309f1b0f65336aa681d75bae9f1708baaefd0",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/calendar-days.svg",
+      "runtime_sha256": "9330eb8d7c4989e97b6361314abbf02953243c602874725c9e58ceca00da3bd7",
+      "repository_sha256": "9330eb8d7c4989e97b6361314abbf02953243c602874725c9e58ceca00da3bd7",
+      "installed_seed_sha256": "9330eb8d7c4989e97b6361314abbf02953243c602874725c9e58ceca00da3bd7",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/camera.svg",
+      "runtime_sha256": "ebbb3178dd80dfd942770a2237fe7bfc3515c55c7daa9d3666933a656d2790e3",
+      "repository_sha256": "ebbb3178dd80dfd942770a2237fe7bfc3515c55c7daa9d3666933a656d2790e3",
+      "installed_seed_sha256": "ebbb3178dd80dfd942770a2237fe7bfc3515c55c7daa9d3666933a656d2790e3",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/check.svg",
+      "runtime_sha256": "7f33acc9a77a61659531044525fc008edebe215bf4dcf1c789c8674ad3277db0",
+      "repository_sha256": "7f33acc9a77a61659531044525fc008edebe215bf4dcf1c789c8674ad3277db0",
+      "installed_seed_sha256": "7f33acc9a77a61659531044525fc008edebe215bf4dcf1c789c8674ad3277db0",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/chevron-left.svg",
+      "runtime_sha256": "83b0681aa38bf55e9d52a1e4b4cced624abe1fe7678ecafda133a574f1161d93",
+      "repository_sha256": "83b0681aa38bf55e9d52a1e4b4cced624abe1fe7678ecafda133a574f1161d93",
+      "installed_seed_sha256": "83b0681aa38bf55e9d52a1e4b4cced624abe1fe7678ecafda133a574f1161d93",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/chevron-right.svg",
+      "runtime_sha256": "2758143d7b2434e4aa7307dfd34405c87909ff4052f21b5f3f40d45224b4f19b",
+      "repository_sha256": "2758143d7b2434e4aa7307dfd34405c87909ff4052f21b5f3f40d45224b4f19b",
+      "installed_seed_sha256": "2758143d7b2434e4aa7307dfd34405c87909ff4052f21b5f3f40d45224b4f19b",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/circle-alert.svg",
+      "runtime_sha256": "ce3e98b7a03b78c0071131df42466e4e1ff5187fccad30e739ec9ce951cf685a",
+      "repository_sha256": "ce3e98b7a03b78c0071131df42466e4e1ff5187fccad30e739ec9ce951cf685a",
+      "installed_seed_sha256": "ce3e98b7a03b78c0071131df42466e4e1ff5187fccad30e739ec9ce951cf685a",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/circle-check.svg",
+      "runtime_sha256": "9711e045a5999f8a3b0782eb88e09b04e0559bc7b379dcc0a4ae645223e10345",
+      "repository_sha256": "9711e045a5999f8a3b0782eb88e09b04e0559bc7b379dcc0a4ae645223e10345",
+      "installed_seed_sha256": "9711e045a5999f8a3b0782eb88e09b04e0559bc7b379dcc0a4ae645223e10345",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/folder.svg",
+      "runtime_sha256": "f0d92b94b797a8ab7d4c4ae33c3236c47f64068351b4e14bdb5014ee42898a39",
+      "repository_sha256": "f0d92b94b797a8ab7d4c4ae33c3236c47f64068351b4e14bdb5014ee42898a39",
+      "installed_seed_sha256": "f0d92b94b797a8ab7d4c4ae33c3236c47f64068351b4e14bdb5014ee42898a39",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/ghost.svg",
+      "runtime_sha256": "7577ea4e1390a8a8203509dff037fa74791ecebb145cdc5e3f3349de2f009278",
+      "repository_sha256": "7577ea4e1390a8a8203509dff037fa74791ecebb145cdc5e3f3349de2f009278",
+      "installed_seed_sha256": "7577ea4e1390a8a8203509dff037fa74791ecebb145cdc5e3f3349de2f009278",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/globe.svg",
+      "runtime_sha256": "82c6b8fa0b8e8d775ec9becd86f74a4e50bff7bee4c81f7362de45348504f14d",
+      "repository_sha256": "82c6b8fa0b8e8d775ec9becd86f74a4e50bff7bee4c81f7362de45348504f14d",
+      "installed_seed_sha256": "82c6b8fa0b8e8d775ec9becd86f74a4e50bff7bee4c81f7362de45348504f14d",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/grid-2x2.svg",
+      "runtime_sha256": "dc1896d3b22e88e0ba45a77bc8e947b7a01d0c9fb5ff77d07d24a5589816bb84",
+      "repository_sha256": "dc1896d3b22e88e0ba45a77bc8e947b7a01d0c9fb5ff77d07d24a5589816bb84",
+      "installed_seed_sha256": "dc1896d3b22e88e0ba45a77bc8e947b7a01d0c9fb5ff77d07d24a5589816bb84",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/hard-drive.svg",
+      "runtime_sha256": "324363c40f54e4ca843de0ad1d023b063b70a26a83bb2e0a9e9f4aad9af37378",
+      "repository_sha256": "324363c40f54e4ca843de0ad1d023b063b70a26a83bb2e0a9e9f4aad9af37378",
+      "installed_seed_sha256": "324363c40f54e4ca843de0ad1d023b063b70a26a83bb2e0a9e9f4aad9af37378",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/headphones.svg",
+      "runtime_sha256": "7719585dafa921805aefc21fc3262bbcc621507610a653b84e1632236650b35a",
+      "repository_sha256": "7719585dafa921805aefc21fc3262bbcc621507610a653b84e1632236650b35a",
+      "installed_seed_sha256": "7719585dafa921805aefc21fc3262bbcc621507610a653b84e1632236650b35a",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/hexagon.svg",
+      "runtime_sha256": "d6fe215b28eaccc1d50b89b967ae0bd6368ed602a89fd90b3c02688c15f133df",
+      "repository_sha256": "d6fe215b28eaccc1d50b89b967ae0bd6368ed602a89fd90b3c02688c15f133df",
+      "installed_seed_sha256": "d6fe215b28eaccc1d50b89b967ae0bd6368ed602a89fd90b3c02688c15f133df",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/keyboard.svg",
+      "runtime_sha256": "f509925ca81964ed06251ad4702e989bb81a566ffc74d15c2226b4f07ded67be",
+      "repository_sha256": "f509925ca81964ed06251ad4702e989bb81a566ffc74d15c2226b4f07ded67be",
+      "installed_seed_sha256": "f509925ca81964ed06251ad4702e989bb81a566ffc74d15c2226b4f07ded67be",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/lock-keyhole.svg",
+      "runtime_sha256": "fc0b8b7590d1d9e9bb0112c5c2e15a78ade0bfeca6d6f8c79fbbe149236d74be",
+      "repository_sha256": "fc0b8b7590d1d9e9bb0112c5c2e15a78ade0bfeca6d6f8c79fbbe149236d74be",
+      "installed_seed_sha256": "fc0b8b7590d1d9e9bb0112c5c2e15a78ade0bfeca6d6f8c79fbbe149236d74be",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/log-out.svg",
+      "runtime_sha256": "f24b5b45c05a3acc346af8095408f6ba197ff58ea1641a4f2cb25a9702d2c0ac",
+      "repository_sha256": "f24b5b45c05a3acc346af8095408f6ba197ff58ea1641a4f2cb25a9702d2c0ac",
+      "installed_seed_sha256": "f24b5b45c05a3acc346af8095408f6ba197ff58ea1641a4f2cb25a9702d2c0ac",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/mic-off.svg",
+      "runtime_sha256": "bcb5a033b4ecd182ec8d0d0945810ccc5147219b1a21c017b47fd4d5ae3a8320",
+      "repository_sha256": "bcb5a033b4ecd182ec8d0d0945810ccc5147219b1a21c017b47fd4d5ae3a8320",
+      "installed_seed_sha256": "bcb5a033b4ecd182ec8d0d0945810ccc5147219b1a21c017b47fd4d5ae3a8320",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/mic.svg",
+      "runtime_sha256": "9b940cd735d1ffa270ba670c4e677d9a09400f3fa81d6b3f405b12a3b67a59a8",
+      "repository_sha256": "9b940cd735d1ffa270ba670c4e677d9a09400f3fa81d6b3f405b12a3b67a59a8",
+      "installed_seed_sha256": "9b940cd735d1ffa270ba670c4e677d9a09400f3fa81d6b3f405b12a3b67a59a8",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/monitor.svg",
+      "runtime_sha256": "d1a443233345724859de8e4fb48968ba91e885e12ddbd710701548bd91b39428",
+      "repository_sha256": "d1a443233345724859de8e4fb48968ba91e885e12ddbd710701548bd91b39428",
+      "installed_seed_sha256": "d1a443233345724859de8e4fb48968ba91e885e12ddbd710701548bd91b39428",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/mouse.svg",
+      "runtime_sha256": "e4238ad7b69d3c3d713fdc2284c8fb20c04781afe0be445539ce4f904c0a0e47",
+      "repository_sha256": "e4238ad7b69d3c3d713fdc2284c8fb20c04781afe0be445539ce4f904c0a0e47",
+      "installed_seed_sha256": "e4238ad7b69d3c3d713fdc2284c8fb20c04781afe0be445539ce4f904c0a0e47",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/music.svg",
+      "runtime_sha256": "8721b8a3594219c1313c4083049e5a5c049f49c47b1cd93fdb61d52a0803e42b",
+      "repository_sha256": "8721b8a3594219c1313c4083049e5a5c049f49c47b1cd93fdb61d52a0803e42b",
+      "installed_seed_sha256": "8721b8a3594219c1313c4083049e5a5c049f49c47b1cd93fdb61d52a0803e42b",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/paintbrush.svg",
+      "runtime_sha256": "b0a958ba9889f89c40df6e1c168b8a7aa20f6309780e795c5bce00a4bc11bff6",
+      "repository_sha256": "b0a958ba9889f89c40df6e1c168b8a7aa20f6309780e795c5bce00a4bc11bff6",
+      "installed_seed_sha256": "b0a958ba9889f89c40df6e1c168b8a7aa20f6309780e795c5bce00a4bc11bff6",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/panels-top-left.svg",
+      "runtime_sha256": "321a2a5500f2b814a2e62eb73c4b01dc65c7334fe2e6f7d77517239383e26bb1",
+      "repository_sha256": "321a2a5500f2b814a2e62eb73c4b01dc65c7334fe2e6f7d77517239383e26bb1",
+      "installed_seed_sha256": "321a2a5500f2b814a2e62eb73c4b01dc65c7334fe2e6f7d77517239383e26bb1",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/pause.svg",
+      "runtime_sha256": "f122ec4ea7f5693a0b1baafa9c708b53980dc87b4aacb297c6e6f71c1a4c115c",
+      "repository_sha256": "f122ec4ea7f5693a0b1baafa9c708b53980dc87b4aacb297c6e6f71c1a4c115c",
+      "installed_seed_sha256": "f122ec4ea7f5693a0b1baafa9c708b53980dc87b4aacb297c6e6f71c1a4c115c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/pickaxe.svg",
+      "runtime_sha256": "b8a9ff74ad1cb09dcaa4b11d2155744a7b61e23d85e01bb4a930ea44aa0dcacc",
+      "repository_sha256": "b8a9ff74ad1cb09dcaa4b11d2155744a7b61e23d85e01bb4a930ea44aa0dcacc",
+      "installed_seed_sha256": "b8a9ff74ad1cb09dcaa4b11d2155744a7b61e23d85e01bb4a930ea44aa0dcacc",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/plane.svg",
+      "runtime_sha256": "4c775a62a524be78fe20aed8544933d4bd3802c5eca17cd6923509f87671d6d6",
+      "repository_sha256": "4c775a62a524be78fe20aed8544933d4bd3802c5eca17cd6923509f87671d6d6",
+      "installed_seed_sha256": "4c775a62a524be78fe20aed8544933d4bd3802c5eca17cd6923509f87671d6d6",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/play.svg",
+      "runtime_sha256": "d7c34786135922a92b6896f6c2384ceeb0346afbf6041dc79982011411409833",
+      "repository_sha256": "d7c34786135922a92b6896f6c2384ceeb0346afbf6041dc79982011411409833",
+      "installed_seed_sha256": "d7c34786135922a92b6896f6c2384ceeb0346afbf6041dc79982011411409833",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/plus.svg",
+      "runtime_sha256": "7f6af73bf1ff6c4bca3f18351c8d1bdec6749c0c2530c4de5da85d520c21df17",
+      "repository_sha256": "7f6af73bf1ff6c4bca3f18351c8d1bdec6749c0c2530c4de5da85d520c21df17",
+      "installed_seed_sha256": "7f6af73bf1ff6c4bca3f18351c8d1bdec6749c0c2530c4de5da85d520c21df17",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/power.svg",
+      "runtime_sha256": "1e6b84a659aa43f826cdd8df0a63d349720004e2ccb10c33e415a990a311aa05",
+      "repository_sha256": "1e6b84a659aa43f826cdd8df0a63d349720004e2ccb10c33e415a990a311aa05",
+      "installed_seed_sha256": "1e6b84a659aa43f826cdd8df0a63d349720004e2ccb10c33e415a990a311aa05",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/refresh-cw.svg",
+      "runtime_sha256": "2e10dd403c85a24f163d59fc6151aa21147fe9402e1305dfc8979208caee8944",
+      "repository_sha256": "2e10dd403c85a24f163d59fc6151aa21147fe9402e1305dfc8979208caee8944",
+      "installed_seed_sha256": "2e10dd403c85a24f163d59fc6151aa21147fe9402e1305dfc8979208caee8944",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/rotate-cw.svg",
+      "runtime_sha256": "ddcfe6d87240475946935e77411cd4d15a06f3d28a9b921bafed224ebe953668",
+      "repository_sha256": "ddcfe6d87240475946935e77411cd4d15a06f3d28a9b921bafed224ebe953668",
+      "installed_seed_sha256": "ddcfe6d87240475946935e77411cd4d15a06f3d28a9b921bafed224ebe953668",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/satellite-dish.svg",
+      "runtime_sha256": "7ce3938a89d6c2cec3563a1653248c26ad1227ae139b5a2b7d7ae32778928511",
+      "repository_sha256": "7ce3938a89d6c2cec3563a1653248c26ad1227ae139b5a2b7d7ae32778928511",
+      "installed_seed_sha256": "7ce3938a89d6c2cec3563a1653248c26ad1227ae139b5a2b7d7ae32778928511",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/search.svg",
+      "runtime_sha256": "283d371c2e433817bb9c0c8310caa6c77fa4177c0f4f1168d9c83b97af7389dc",
+      "repository_sha256": "283d371c2e433817bb9c0c8310caa6c77fa4177c0f4f1168d9c83b97af7389dc",
+      "installed_seed_sha256": "283d371c2e433817bb9c0c8310caa6c77fa4177c0f4f1168d9c83b97af7389dc",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/settings.svg",
+      "runtime_sha256": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b",
+      "repository_sha256": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b",
+      "installed_seed_sha256": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/shield-check.svg",
+      "runtime_sha256": "8d4fcdbde5bba4abb1a2f6fe53e37ceb6343a1d5449a9d88f6f97c1971d26c4e",
+      "repository_sha256": "8d4fcdbde5bba4abb1a2f6fe53e37ceb6343a1d5449a9d88f6f97c1971d26c4e",
+      "installed_seed_sha256": "8d4fcdbde5bba4abb1a2f6fe53e37ceb6343a1d5449a9d88f6f97c1971d26c4e",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/skip-back.svg",
+      "runtime_sha256": "901579624a7d28036a39b3b8bd9e6da0e8cf771a79c67836d8a52b3e2287c031",
+      "repository_sha256": "901579624a7d28036a39b3b8bd9e6da0e8cf771a79c67836d8a52b3e2287c031",
+      "installed_seed_sha256": "901579624a7d28036a39b3b8bd9e6da0e8cf771a79c67836d8a52b3e2287c031",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/skip-forward.svg",
+      "runtime_sha256": "f6bdc4b8d453332bafcf1366a48d5ece4bd4f15eced97c85c3676bd22c5cadf9",
+      "repository_sha256": "f6bdc4b8d453332bafcf1366a48d5ece4bd4f15eced97c85c3676bd22c5cadf9",
+      "installed_seed_sha256": "f6bdc4b8d453332bafcf1366a48d5ece4bd4f15eced97c85c3676bd22c5cadf9",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/square-stack.svg",
+      "runtime_sha256": "9f7550f0db1a934166d8c253613c43151554d69bcacaf36883f817b880f037fe",
+      "repository_sha256": "9f7550f0db1a934166d8c253613c43151554d69bcacaf36883f817b880f037fe",
+      "installed_seed_sha256": "9f7550f0db1a934166d8c253613c43151554d69bcacaf36883f817b880f037fe",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/sun.svg",
+      "runtime_sha256": "a3955c8b0425fcc5c9ba12d2bdd77fe53b2cd5dd05e7742a56f342e996fb2ef8",
+      "repository_sha256": "a3955c8b0425fcc5c9ba12d2bdd77fe53b2cd5dd05e7742a56f342e996fb2ef8",
+      "installed_seed_sha256": "a3955c8b0425fcc5c9ba12d2bdd77fe53b2cd5dd05e7742a56f342e996fb2ef8",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/swords.svg",
+      "runtime_sha256": "2dcf7d618baa1fbf21064bc99eb754b8b6d589f444781975a6ea0008be4e2e82",
+      "repository_sha256": "2dcf7d618baa1fbf21064bc99eb754b8b6d589f444781975a6ea0008be4e2e82",
+      "installed_seed_sha256": "2dcf7d618baa1fbf21064bc99eb754b8b6d589f444781975a6ea0008be4e2e82",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/terminal.svg",
+      "runtime_sha256": "4f9b6488b237757d5cb615ccd07502fa99774826839e2a99017784bdb2596f1a",
+      "repository_sha256": "4f9b6488b237757d5cb615ccd07502fa99774826839e2a99017784bdb2596f1a",
+      "installed_seed_sha256": "4f9b6488b237757d5cb615ccd07502fa99774826839e2a99017784bdb2596f1a",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/touchpad-off.svg",
+      "runtime_sha256": "101255da206d37e25764520a28ad451a29ce9535b00a2ff290aa8e0a4e799586",
+      "repository_sha256": "101255da206d37e25764520a28ad451a29ce9535b00a2ff290aa8e0a4e799586",
+      "installed_seed_sha256": "101255da206d37e25764520a28ad451a29ce9535b00a2ff290aa8e0a4e799586",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/touchpad.svg",
+      "runtime_sha256": "9d743d5ae640f51599fb006450e07469123aca45c228021610e7bfa78e494547",
+      "repository_sha256": "9d743d5ae640f51599fb006450e07469123aca45c228021610e7bfa78e494547",
+      "installed_seed_sha256": "9d743d5ae640f51599fb006450e07469123aca45c228021610e7bfa78e494547",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/usb.svg",
+      "runtime_sha256": "6d3feae2abc694973d7dc8000a7016688306b82530426288c163257ac90d3e21",
+      "repository_sha256": "6d3feae2abc694973d7dc8000a7016688306b82530426288c163257ac90d3e21",
+      "installed_seed_sha256": "6d3feae2abc694973d7dc8000a7016688306b82530426288c163257ac90d3e21",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/video.svg",
+      "runtime_sha256": "d4fb6587f282c1152b953fe9494cd8ccafdf1e9f44957fbb7fe8dc7af0457597",
+      "repository_sha256": "d4fb6587f282c1152b953fe9494cd8ccafdf1e9f44957fbb7fe8dc7af0457597",
+      "installed_seed_sha256": "d4fb6587f282c1152b953fe9494cd8ccafdf1e9f44957fbb7fe8dc7af0457597",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/volume-2.svg",
+      "runtime_sha256": "fb404f9c128a0579de67b399177631e5edb3502fdc247ceb30e8b15754b46071",
+      "repository_sha256": "fb404f9c128a0579de67b399177631e5edb3502fdc247ceb30e8b15754b46071",
+      "installed_seed_sha256": "fb404f9c128a0579de67b399177631e5edb3502fdc247ceb30e8b15754b46071",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/volume-x.svg",
+      "runtime_sha256": "f382e421b7aae01172989f2b749ee87e44c0c82c16970b13a9ad5a323b613be0",
+      "repository_sha256": "f382e421b7aae01172989f2b749ee87e44c0c82c16970b13a9ad5a323b613be0",
+      "installed_seed_sha256": "f382e421b7aae01172989f2b749ee87e44c0c82c16970b13a9ad5a323b613be0",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/wifi-high.svg",
+      "runtime_sha256": "1890bf0a7b7abe57550e817639dd530f2cbc82eb261331e72e3947c589ee2e75",
+      "repository_sha256": "1890bf0a7b7abe57550e817639dd530f2cbc82eb261331e72e3947c589ee2e75",
+      "installed_seed_sha256": "1890bf0a7b7abe57550e817639dd530f2cbc82eb261331e72e3947c589ee2e75",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/wifi-low.svg",
+      "runtime_sha256": "08629f9524f555100325f1f782105f6f84391e6ace1b41b53e99da2af5dcc733",
+      "repository_sha256": "08629f9524f555100325f1f782105f6f84391e6ace1b41b53e99da2af5dcc733",
+      "installed_seed_sha256": "08629f9524f555100325f1f782105f6f84391e6ace1b41b53e99da2af5dcc733",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/wifi-off.svg",
+      "runtime_sha256": "318b290106e55c3505933f434d3663524206c7a44165a89508774fba4fdbaadd",
+      "repository_sha256": "318b290106e55c3505933f434d3663524206c7a44165a89508774fba4fdbaadd",
+      "installed_seed_sha256": "318b290106e55c3505933f434d3663524206c7a44165a89508774fba4fdbaadd",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/wifi.svg",
+      "runtime_sha256": "5c4c795d014fa95d1e1038362df44a0f0f32ded9cb08c833ae72419ebadc9a91",
+      "repository_sha256": "5c4c795d014fa95d1e1038362df44a0f0f32ded9cb08c833ae72419ebadc9a91",
+      "installed_seed_sha256": "5c4c795d014fa95d1e1038362df44a0f0f32ded9cb08c833ae72419ebadc9a91",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/x.svg",
+      "runtime_sha256": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117",
+      "repository_sha256": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117",
+      "installed_seed_sha256": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/icons/lucide/zap.svg",
+      "runtime_sha256": "4c395891eab4d1e5627c5d414a16db037317cb2f12453de0f3a1130964c6d444",
+      "repository_sha256": "4c395891eab4d1e5627c5d414a16db037317cb2f12453de0f3a1130964c6d444",
+      "installed_seed_sha256": "4c395891eab4d1e5627c5d414a16db037317cb2f12453de0f3a1130964c6d444",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/qmldir",
+      "runtime_sha256": "9d1abeb211de84093ac38db457560d306193b2ce8e1baa79b5651134ef18ce0e",
+      "repository_sha256": "9d1abeb211de84093ac38db457560d306193b2ce8e1baa79b5651134ef18ce0e",
+      "installed_seed_sha256": "9d1abeb211de84093ac38db457560d306193b2ce8e1baa79b5651134ef18ce0e",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "quickshell/apx/shell.qml",
+      "runtime_sha256": "62750f3858ad8fa88366cdb2afe10a3e4a3497d592000e5f04adeca987077e2c",
+      "repository_sha256": "62750f3858ad8fa88366cdb2afe10a3e4a3497d592000e5f04adeca987077e2c",
+      "installed_seed_sha256": "62750f3858ad8fa88366cdb2afe10a3e4a3497d592000e5f04adeca987077e2c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "rofi/apx-appearance.rasi",
+      "runtime_sha256": "e58fd6c0f51e10a0a39868ac26c13cea0a1623f6f5858e3fc8a333eb2213f13c",
+      "repository_sha256": "e58fd6c0f51e10a0a39868ac26c13cea0a1623f6f5858e3fc8a333eb2213f13c",
+      "installed_seed_sha256": "e58fd6c0f51e10a0a39868ac26c13cea0a1623f6f5858e3fc8a333eb2213f13c",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "rofi/config.rasi",
+      "runtime_sha256": "7871629dc71c763dfabb39fc5a2d4171ab6ba85a0d42b49b11058bd8605c9ddd",
+      "repository_sha256": "7871629dc71c763dfabb39fc5a2d4171ab6ba85a0d42b49b11058bd8605c9ddd",
+      "installed_seed_sha256": "7871629dc71c763dfabb39fc5a2d4171ab6ba85a0d42b49b11058bd8605c9ddd",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "xdg-desktop-portal/portals.conf",
+      "runtime_sha256": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
+      "repository_sha256": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
+      "installed_seed_sha256": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    },
+    {
+      "asset": "xfce4/xfconf/xfce-perchannel-xml/thunar.xml",
+      "runtime_sha256": "4479d56f259731715d38f9231adc4b6491398525648ff99c8f6179083226ea9d",
+      "repository_sha256": "4479d56f259731715d38f9231adc4b6491398525648ff99c8f6179083226ea9d",
+      "installed_seed_sha256": "4479d56f259731715d38f9231adc4b6491398525648ff99c8f6179083226ea9d",
+      "source_is_pinned": true,
+      "seed_matches_source": true
+    }
+  ],
+  "host_services": [
+    {
+      "unit": "apx-audio-state-v1.service",
+      "sha256": "39d0e2069273b79e53ac696420809cdf62f4771a552d481273e36221eb13e94d",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-audio-state-v1.py",
+          "installed": "/usr/lib/apx/apx-audio-state-v1.py",
+          "sha256": "6acb9b3f20803ed829133883b4f38a551a6ce82c4351948abc50759275631283",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-audio-state-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-audio-state-v1.py",
+              "sha256": "6acb9b3f20803ed829133883b4f38a551a6ce82c4351948abc50759275631283"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-boot-console-hide-v1.service",
+      "sha256": "fba141a48827a8fbf5d9e316e2fe1f5f417e5c73a5c1e36f531d5de24169cd16",
+      "executables": [
+        {
+          "path": "/usr/bin/systemctl"
+        }
+      ]
+    },
+    {
+      "unit": "apx-boot-console-recover-v1.service",
+      "sha256": "55bd214a1ceef8904f038cbbed093c6b6b86e670dcffe5ee2155c5a6035ad195",
+      "executables": [
+        {
+          "path": "/usr/bin/systemctl"
+        },
+        {
+          "path": "/usr/bin/systemctl"
+        }
+      ]
+    },
+    {
+      "unit": "apx-coordinated-update-v1.service",
+      "sha256": "7b6c9662faf3dde7bca2658031f7285e0c18a27ac96d6af0051e10d7cf28b726",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-coordinated-update-v1.py",
+          "installed": "/usr/lib/apx/apx-coordinated-update-v1.py",
+          "sha256": "97a4a1649ccb34d7da56f32321d6e4add4587f666164794aa54bcf096b8969cd",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-coordinated-update-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-coordinated-update-v1.py",
+              "sha256": "97a4a1649ccb34d7da56f32321d6e4add4587f666164794aa54bcf096b8969cd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-environment-hardware-v1.service",
+      "sha256": "8e6117ed9832cd8a3ed323b4c0fff61c0ac90046bdbe3340981b4f06f8e6fea0",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-environment-hardware-v1.py",
+          "installed": "/usr/lib/apx/apx-environment-hardware-v1.py",
+          "sha256": "ecc60a726d4f50d0ec521e63e7f6d9e2de0bcef311d9b28fdcbd2aca34759f0d",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-environment-hardware-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-environment-hardware-v1.py",
+              "sha256": "ecc60a726d4f50d0ec521e63e7f6d9e2de0bcef311d9b28fdcbd2aca34759f0d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-environment-host-console-v1.service",
+      "sha256": "3c9d5cf3389e77d49ca9f7618581775a2252abce96452a579d4e53320c1321d9",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-environment-host-console-v1.py",
+          "installed": "/usr/lib/apx/apx-environment-host-console-v1.py",
+          "sha256": "bac6c2ec2fdcbaf3eef92b3a1e28599f14c9515c8072105b5692ceb27f172ac8",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-environment-host-console-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-environment-host-console-v1.py",
+              "sha256": "bac6c2ec2fdcbaf3eef92b3a1e28599f14c9515c8072105b5692ceb27f172ac8"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-environment-storage-v1.service",
+      "sha256": "6152fab853a6a2e08d6dfdc417cd62f00057694827a5624f7a7f66741ffd1c40",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-environment-storage-runner-v1.py",
+          "installed": "/usr/lib/apx/apx-environment-storage-runner-v1.py",
+          "sha256": "59fbf2e0069527d14a8aa4eb5e3a1e4587f722238218964f5d92fb1c297fd625",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-environment-storage-runner-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-environment-storage-runner-v1.py",
+              "sha256": "59fbf2e0069527d14a8aa4eb5e3a1e4587f722238218964f5d92fb1c297fd625"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-environment-switch-v1.service",
+      "sha256": "e8b6c2ae7fc6862875455feda0a2dc86ee6765d9ec448d17308def63b7669905",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-environment-switch-v1.py",
+          "installed": "/usr/lib/apx/apx-environment-switch-v1.py",
+          "sha256": "4990efb765bb991cb7fa871fecbf2c9574c9bcf1f05be24ae2e02dcaa12afe34",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-environment-switch-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-environment-switch-v1.py",
+              "sha256": "4990efb765bb991cb7fa871fecbf2c9574c9bcf1f05be24ae2e02dcaa12afe34"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-executor-v1.service",
+      "sha256": "5ff4c740b5614fb6ec132f84fe9debd7cc760444f36d1c5ef834e22ae66159bc",
+      "executables": [
+        {
+          "path": "/usr/bin/python"
+        }
+      ]
+    },
+    {
+      "unit": "apx-host-console-v1.service",
+      "sha256": "8b712686c5788a677cc430626d8d96f71c8825d2d6eebc28a1c9b3edd5b63a50",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-host-console-v1.py",
+          "installed": "/usr/lib/apx/apx-host-console-v1.py",
+          "sha256": "d31e9c558858720c5ec806bdf2d350311fda0c9e0f09d8854c50a44525bd3a28",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-host-console-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-host-console-v1.py",
+              "sha256": "d31e9c558858720c5ec806bdf2d350311fda0c9e0f09d8854c50a44525bd3a28"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-host-services-v1.service",
+      "sha256": "f63c088db82b4c702a80e1a52bb6158c6b02c8cd5416cbab71c1e2d0f6db8435",
+      "executables": [
+        {
+          "path": "/usr/bin/python"
+        }
+      ]
+    },
+    {
+      "unit": "apx-host-services-v2.service",
+      "sha256": "94ec4a13a93955d539020f49a10f8e31893ccc3c8641904066eccbbb5dc25525",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-host-services-v2.py",
+          "installed": "/usr/lib/apx/apx-host-services-v2.py",
+          "sha256": "c8ea66e8517c6e6882ff23734d1f43581879e58d3145fabcad5e0890ed4d0c38",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-host-services-v2.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-host-services-v2.py",
+              "sha256": "c8ea66e8517c6e6882ff23734d1f43581879e58d3145fabcad5e0890ed4d0c38"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-host-services-v3.service",
+      "sha256": "56516f37910bc556301227ff34bde094162ef340a1e44a9d824b672c01ea012f",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-host-services-v3.py",
+          "installed": "/usr/lib/apx/apx-host-services-v3.py",
+          "sha256": "381d5a4ca6f00f79a1a89ec9eadd7abd87a92509bdf1f99b461893eb1669c32d",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-host-services-v3.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-host-services-v3.py",
+              "sha256": "381d5a4ca6f00f79a1a89ec9eadd7abd87a92509bdf1f99b461893eb1669c32d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-local-snapshots.service",
+      "sha256": "6e156665ad952fb406697d302a3f1ef43614bdc5d1c0d18447bb2c9004c76279",
+      "executables": [
+        {
+          "path": "/usr/local/sbin/apx-local-snapshots"
+        }
+      ]
+    },
+    {
+      "unit": "apx-localsend-network-v1.service",
+      "sha256": "daccdbe682c588359d465c90ca9798aeb69025585fa8f2609c2f195892cfe232",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-localsend-network-v1.py",
+          "installed": "/usr/lib/apx/apx-localsend-network-v1.py",
+          "sha256": "1d0d221c7322a5bfd9f1f58f5f6db400b38426fb79d1fbd5532c8b4c8819a2fc",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-localsend-network-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-localsend-network-v1.py",
+              "sha256": "1d0d221c7322a5bfd9f1f58f5f6db400b38426fb79d1fbd5532c8b4c8819a2fc"
+            }
+          ]
+        },
+        {
+          "path": "/usr/lib/apx/apx-localsend-network-v1.py",
+          "installed": "/usr/lib/apx/apx-localsend-network-v1.py",
+          "sha256": "1d0d221c7322a5bfd9f1f58f5f6db400b38426fb79d1fbd5532c8b4c8819a2fc",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-localsend-network-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-localsend-network-v1.py",
+              "sha256": "1d0d221c7322a5bfd9f1f58f5f6db400b38426fb79d1fbd5532c8b4c8819a2fc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-logitech-recover-v1.service",
+      "sha256": "77203558c8dccbac265bbcf22ad091df9ae47e50d1a615863f16fced040969c8",
+      "executables": [
+        {
+          "path": "/usr/bin/python3"
+        }
+      ]
+    },
+    {
+      "unit": "apx-model-store-control-v1.service",
+      "sha256": "bc20a813ceea741b14956b38128b15a54ca5d1955c75a021528a40caede6daa9",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-model-store-control-v1.py",
+          "installed": "/usr/lib/apx/apx-model-store-control-v1.py",
+          "sha256": "c3e88d20e64aa6e791443d4a04bac4cb50eb39300af6e52696711a3c4fc4abad",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-model-store-control-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-model-store-control-v1.py",
+              "sha256": "c3e88d20e64aa6e791443d4a04bac4cb50eb39300af6e52696711a3c4fc4abad"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-model-store-recover-v1.service",
+      "sha256": "0bee8c268bb60ebb7475c17dba8023afb249c774bbfefa5d52dc14c2fa5e4b93",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-model-store-recover-v1.py",
+          "installed": "/usr/lib/apx/apx-model-store-recover-v1.py",
+          "sha256": "38030d29efe5a7cc4d158990bc2f7dc3f5c7b5d3c8ca3950fee717c924dba54a",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-model-store-recover-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-model-store-recover-v1.py",
+              "sha256": "38030d29efe5a7cc4d158990bc2f7dc3f5c7b5d3c8ca3950fee717c924dba54a"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-model-store-v1.service",
+      "sha256": "e76f025e6887670d63029c23c64e7fd488994597334bb4beaefcce58d59e23d6",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-model-store-v1.py",
+          "installed": "/usr/lib/apx/apx-model-store-v1.py",
+          "sha256": "6d4bd0b11a3ad0e97be12785a586989bd7d74b58c7b760577ef3ab30b8c99ec3",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-model-store-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-model-store-v1.py",
+              "sha256": "6d4bd0b11a3ad0e97be12785a586989bd7d74b58c7b760577ef3ab30b8c99ec3"
+            }
+          ]
+        },
+        {
+          "path": "/usr/lib/apx/apx-model-store-v1.py",
+          "installed": "/usr/lib/apx/apx-model-store-v1.py",
+          "sha256": "6d4bd0b11a3ad0e97be12785a586989bd7d74b58c7b760577ef3ab30b8c99ec3",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-model-store-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-model-store-v1.py",
+              "sha256": "6d4bd0b11a3ad0e97be12785a586989bd7d74b58c7b760577ef3ab30b8c99ec3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-native-finalize-v3.service",
+      "sha256": "179f414e5ff1cb6c7fd68cd22268d2a1be2545918c65fae5a8aa380d0c1e4736",
+      "executables": [
+        {
+          "path": "/usr/bin/python3"
+        }
+      ]
+    },
+    {
+      "unit": "apx-native-windows-lifecycle-finalize-v1.service",
+      "sha256": "8d9de294704efd93833cda1ac99cb4fd3b3416210106c8689d77d5a5d27bc30a",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-native-windows-lifecycle-finalize-v1.py",
+          "installed": "/usr/lib/apx/apx-native-windows-lifecycle-finalize-v1.py",
+          "sha256": "4f1bdef3c0d6647c5d0aae25a153acdf7705b5abf87461b27b34c68a26de6271",
+          "status": "differs",
+          "matching_sources": [],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-native-windows-lifecycle-finalize-v1.py",
+              "sha256": "fc46899814cefccdc27d08d675ec957fb15eb2446ce73866f51f2ace07b030f8"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-network-recovery-v1.service",
+      "sha256": "ff493ae692ab46f2bb9975f252c84d8831820372f421dfd8221651ebfd728307",
+      "executables": [
+        {
+          "path": "/usr/bin/python3"
+        }
+      ]
+    },
+    {
+      "unit": "apx-official-hub-autostart-v1.service",
+      "sha256": "8b586787193f5c6b6c0dd43bf2e82d4b147b0db35af30b6806a18bec452999a8",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-official-hub-autostart-v1.py",
+          "installed": "/usr/lib/apx/apx-official-hub-autostart-v1.py",
+          "sha256": "17bf8c16238e34bcebe7df8e03d546729414930732b1151c7e59f4ef8747be2d",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-official-hub-autostart-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-official-hub-autostart-v1.py",
+              "sha256": "17bf8c16238e34bcebe7df8e03d546729414930732b1151c7e59f4ef8747be2d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-ollama-v1.service",
+      "sha256": "08422e7b73376850799ef8d59a2d7edb5fe730124d9d72d79d83e966bcc5fce1",
+      "executables": [
+        {
+          "path": "/usr/bin/nvidia-modprobe"
+        },
+        {
+          "path": "/usr/bin/nvidia-smi"
+        },
+        {
+          "path": "/usr/bin/ollama"
+        },
+        {
+          "path": "/usr/lib/apx/apx-ollama-warmup-v1.py",
+          "installed": "/usr/lib/apx/apx-ollama-warmup-v1.py",
+          "sha256": "16b236b5312629402fb4e198e0ed58114365ff24df808331fcc2eff340fcc73e",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-ollama-warmup-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-ollama-warmup-v1.py",
+              "sha256": "16b236b5312629402fb4e198e0ed58114365ff24df808331fcc2eff340fcc73e"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-pilot-executor.service",
+      "sha256": "52d472e121f2b6a6db1ff2966c81515f1a283cb6c08949eeecd716b19989627d",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-lab-executor.py",
+          "installed": "/usr/lib/apx/apx-lab-executor.py",
+          "sha256": "485510da3d9edde780317956ec1dd9696046b872bf3b5e3758abb1d23a78de7b",
+          "status": "differs",
+          "matching_sources": [],
+          "candidates": [
+            {
+              "source": "scripts/virtual-lab/apx-lab-executor.py",
+              "sha256": "952bc14c999eb23a5eda090cc9106bcb045bdbd5b50717b025b6559932587438"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-removable-media-v1.service",
+      "sha256": "14ac9eede7213c647ffeeee3e5084cfdff400c0e80562474620395c48f273e6e",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-removable-media-v1.py",
+          "installed": "/usr/lib/apx/apx-removable-media-v1.py",
+          "sha256": "4d898f0f5a646a09b7d96402f84c7f83ede2556ed0ea7e5b1fee49936b8d2ef6",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-removable-media-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-removable-media-v1.py",
+              "sha256": "4d898f0f5a646a09b7d96402f84c7f83ede2556ed0ea7e5b1fee49936b8d2ef6"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-system-power-v1.service",
+      "sha256": "36b185c99dd1926f7d56ac2c36811e428713bc79c28c61c3e78458313f6b685f",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-system-power-v1.py",
+          "installed": "/usr/lib/apx/apx-system-power-v1.py",
+          "sha256": "7aafdf9463640d7f9c7f4b0d442ac64c603377d7dc7e5339fe515be31d64e1eb",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-system-power-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-system-power-v1.py",
+              "sha256": "7aafdf9463640d7f9c7f4b0d442ac64c603377d7dc7e5339fe515be31d64e1eb"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-timezone-v1.service",
+      "sha256": "de8c2eeb67ed60ff0f7c4c08f4aff0c7b183ca604337c9af5aff0907d0c65436",
+      "executables": [
+        {
+          "path": "/usr/lib/apx/apx-timezone-v1.py",
+          "installed": "/usr/lib/apx/apx-timezone-v1.py",
+          "sha256": "3fd44f21b151e0275720498d073478c75d18fdd2a628a9768a8d778bef4af7ed",
+          "status": "identical",
+          "matching_sources": [
+            "scripts/physical-pilot/apx-timezone-v1.py"
+          ],
+          "candidates": [
+            {
+              "source": "scripts/physical-pilot/apx-timezone-v1.py",
+              "sha256": "3fd44f21b151e0275720498d073478c75d18fdd2a628a9768a8d778bef4af7ed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "apx-transition-display-v1.service",
+      "sha256": "ab0cd63d2ead3bc0b3f8efa3eed2d3967db410f47e569904a844cb9c80b44124",
+      "executables": [
+        {
+          "path": "/usr/bin/plymouthd"
+        },
+        {
+          "path": "/usr/bin/plymouth"
+        },
+        {
+          "path": "/usr/bin/plymouth"
+        }
+      ]
+    },
+    {
+      "unit": "apx-windows-grow-finalize-20261007.service",
+      "sha256": "ce50341dc8f644bd232ebcee843bcb663753fb46e527ee445a1a8e683830d686",
+      "executables": [
+        {
+          "path": "/usr/bin/python3"
+        }
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "code": "test-storage",
+      "detail": "Teste creation/VM rehearsal must preserve the 96 GiB Host reserve and allow 32 GiB working space."
+    },
+    {
+      "code": "teste-qemu-not-provisioned",
+      "detail": "QEMU must be installed inside the newly created Teste Environment, not on the Host."
+    },
+    {
+      "code": "graphical-port-not-implemented",
+      "detail": "Existing portable installer covers the headless base only; the graphical device/session/service adapter is hardware-bound."
+    },
+    {
+      "code": "full-vm-rehearsal-pending",
+      "detail": "A clean Arch VM must pass graphical Hub boot, current QuickShell, authenticated lifecycle, isolation, recovery and a second boot."
+    }
+  ],
+  "interpretation": [
+    "Different hashes are review candidates, not proof that the installed version should replace repository code.",
+    "Name matching cannot establish complete transitive dependency coverage.",
+    "Pinned/source-identical files do not prove a working or hardware-independent installation.",
+    "This is not an installer or backup and does not claim Teste or its VM exist."
+  ]
+}

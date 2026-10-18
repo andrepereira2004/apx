@@ -74,3 +74,26 @@ popup hit testing, so it also works with a menu already open. Visibility follows
 Apps, which is hidden in Hub. A physical-protocol pointer click while the control
 centre was open produced a new Thunar window. Backup:
 `/var/lib/apx/backups/20261016T201253Z-bar-files-button/`.
+
+## Apps package icon follow-up — 2026-10-18
+
+The owner selected Lucide `package` for the closed Apps/Rofi launcher and
+`package-open` while its process is running. This replaces the previous
+Environment-dependent launcher pictograms. The existing BarButton alternate
+state follows `environmentAppsProcess.running`; hovering alone keeps the closed
+package. The Apps hotkey OSD uses package-open. Visibility and launcher behavior
+are unchanged.
+
+Canonical SVGs came from the Lucide repository's
+[package](https://github.com/lucide-icons/lucide/blob/main/icons/package.svg) and
+[package-open](https://github.com/lucide-icons/lucide/blob/main/icons/package-open.svg).
+Both assets and shell.qml are digest-pinned in the independent seed. Applied
+narrowly to Hub and all five normal workload homes, including the new Teste,
+without replacing unrelated customization. The active Teste QuickShell was
+reloaded and both states visually verified with cropped bar screenshots.
+Three existing bar tests and eight portable graphical tests passed.
+
+Backup: `/var/lib/apx/backups/20261018T174330Z-apps-package-icons/`.
+Deployment helper: `scripts/physical-pilot/deploy-apps-package-icons-20261018.py`.
+Evidence: `audit/2026-10-18-apps-package-icons/{closed,open}.png`. The retained
+manual VM was built before this UI request and keeps its own independent shell.

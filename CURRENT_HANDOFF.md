@@ -1,5 +1,206 @@
 # APX Current Handoff
 
+## 2026-10-18 Publication checkpoint
+
+Owner explicitly requested commit and push of the completed work. This checkpoint
+includes portable empty-disk/graphical installers, hardware selection, VM harnesses
+and evidence, QuickShell package/package-open icons, and scoped cleanup records.
+README.md now gives Portuguese clean-install instructions directly from the
+GitHub branch agent/defer-local-model-phase10, plus installed-Arch instructions
+and backup/hardware limitations. Earlier no-commit/push statements below describe
+the preceding work stages. Teste and its manual VM remain retained; machine
+credentials, VM disks and the delivered source archive are not repository content.
+
+
+## 2026-10-18 Empty-PC installer rehearsed; extra lab cleaned, Teste retained
+
+Owner confirms the earlier hands-on VM works and requests a PC-with-no-OS path.
+New experimental x86_64 installer: official Arch USB -> explicitly selected empty
+160+ GiB disk -> Arch/Btrfs/GRUB/firmware/detected drivers -> first-boot graphical
+APX setup. No Codex needed. Existing/partitioned disks are refused. Secure Boot,
+encryption and native Windows installation are outside this path. No model allowlist.
+Read docs/install-apx-from-usb-pt.md and docs/empty-disk-install-v1.md.
+
+UEFI/q35 installed from the official ISO, then booted from disk without ISO/kernel
+injection and passed normal login. Its first intermediate switch exposed a ten-
+second registration timeout; bounded 120-second/liveness-aware wait fixes it.
+Patched UEFI runtime passed 15 functional checks, normal reboot/password login and
+125-second Hub stability. A separate final-source BIOS/pc install then passed the
+same 15 checks, Unicode/punctuation password enrollment/login and normal reboot
+WITHOUT runtime patches. All 534 product sources and installed adapter hashes
+match the final checkout; 60 focused tests pass. Console/GUI keyboards now both
+use Portuguese; portable start-hyprland launch preserves APX crash recovery.
+This is bounded VM acceptance, not universal hardware or full physical feature parity.
+
+Extra RAM-backed ISO/disks/credentials, maintenance snapshot/container, KVM proxy,
+HTTP server and own budget guard removed. Physical partition table and measured
+normal registrations unchanged; no failed Host units. About 99 GiB free. Retain
+owner's manual Teste generation 0de1256b-dc39-4b67-82cc-30363819c36a and its VM.
+Delivery in Teste: ~/APX-Instalacao-20261018/ (9.30 MiB source-only archive, checksum,
+Portuguese guide). 538 bundled file hashes verified; fixtures/machine data excluded.
+No new physical runtime/driver deployment and no commit/push in this stage.
+Evidence: audit/2026-10-18-empty-disk/; chronology/limits:
+docs/empty-disk-validation-2026-10-18.md. Do not run old Teste cleanup automatically.
+
+## 2026-10-18 Manual VM ready for owner; KEEP Teste and disk
+
+Owner requested hands-on VM use after the automatic lab had been cleaned.
+New Teste is retained, graphical-base/intermediate, generation 0de1256b-dc39-4b67-82cc-30363819c36a.
+The owner is currently using its normal graphical session; it was not stopped
+for provisioning. A private temporary snapshot/maintenance container prepared
+fresh Arch/APX and was then deleted, along with its KVM proxy and loopback-only
+public package-cache server/artifact copies. No Host directories, physical disks,
+management sockets or credentials are shared with the guest. Independent CoW
+copies of exact official package artifacts accelerated the build; normal Arch
+signature verification remained enabled.
+
+OWNER NEXT STEPS: return to Hub and reopen Teste once (activates the existing
+root-owned kvm-v1 capability); open Applications, search **Testar APX na VM**.
+The desktop entry starts a local Kitty prompt and SDL QEMU window. On first launch,
+the owner chooses a new VM-only password locally, never in chat or logs. The
+private fixture sets it inside the guest, disables the initial authentication
+fixture, and restarts the ordinary graphical login. Later boots use that password.
+The VM has 4 GiB RAM/4 vCPUs, local private files, normal reboot and shutdown.
+Ctrl+Alt+G releases input. A plain guide is in Teste's home: Testar-APX-na-VM.txt.
+Do not automatically destroy the lab before the owner finishes testing.
+
+Manual testing found two real gaps in the initial automated graphical profile:
+libinput had no udev discovery database, and logind's automatic VT2 getty could
+stop the conflicting graphical supervisor after about a minute. The portable
+controller now binds a read-only view containing only admitted character-device
+metadata, input parents and their tags. The installer reserves VT2 by masking its
+getty/autovt instances, retaining VT1 recovery. Applied these fixes in the manual
+guest; a new full fresh replay of this follow-up remains separate. Password login
+was exercised with a synthetic VM-only password through the virtual keyboard,
+and absolute mouse movement was verified. The Hub stayed up beyond 120 seconds
+with VT2 reserved. Eight portable graphical tests pass, including private-udev
+exclusion coverage. No analogous controller change was deployed on the physical
+Host, which already supplies its established input metadata path.
+
+Retained paths: /var/lib/apx/environments/teste/home/apx/VMs/APX-Rebuild and
+.local/bin/apx-testar-vm / .local/share/applications/apx-testar-vm.desktop.
+The root-owned persistent apx-manual-vm-budget.service stops only QEMU in this
+Teste generation when physical free space falls below 97 GiB, preserving the
+96 GiB reserve across Host reboots. Its source is in this root development
+checkout. Future owner-requested cleanup: python scripts/portable/manual-vm-lab.py
+cleanup (removes its owned guard unit before lifecycle destruction). Never run
+that command merely because setup is complete. Intent/evidence:
+audit/2026-10-18-portable-manual/, especially vm/ready-for-owner.json and
+input-login-followup.json. No commit/push in this stage.
+
+## 2026-10-18 Owner-selected Apps package/package-open applied to physical UI
+
+Applied canonical Lucide package (closed) and package-open (Rofi process running)
+to the current physical seed, Hub and all five graphical workload homes, including
+Teste. Only the icon state/hotkey pictogram changed; custom homes were narrowly
+patched. Source/installed seed pins and the source runtime recovery checksum were
+updated. The active Teste QuickShell was reloaded and both cropped icon states
+visually checked. Three existing bar tests and eight portable tests pass.
+Backup: /var/lib/apx/backups/20261018T174330Z-apps-package-icons/.
+Evidence: audit/2026-10-18-apps-package-icons/; deployment helper:
+scripts/physical-pilot/deploy-apps-package-icons-20261018.py. The manual VM keeps
+its independently installed shell from before this non-VM UI request.
+
+## 2026-10-18 Portable graphical Arch rehearsal completed; Teste removed
+
+Created the owner-requested Teste (graphical-base/intermediate), generation
+6d3bf7be-dcf6-4040-a13e-9fda4c7c8100, installed QEMU only in its private root,
+and bootstrapped fresh Arch x86_64 on a disposable virtual Btrfs disk. The new
+experimental full installer built a fresh graphical Hub from 528 selected
+repository source files, without copying the live Hub or personal credentials.
+All 185 pinned QuickShell assets matched. The exact local product source manifest
+still matches the fresh VM input. This work is local and uncommitted/unpublished.
+
+Fresh installation and core lifecycle/isolation ran on QEMU q35. Its last UI
+assertion exposed a missing display variable in the test fixture, not a product
+installation failure. A cold boot with the distinct pc/i440FX profile then passed
+all 15 enhanced checks: graphical readiness, Hub identity, pinned shell, independent
+intermediate workload, switching/return, workload management refusal (socket and
+CLI), real package/private-file isolation, compositor crash recovery to Hub,
+snapshot, archive/restore, deletion, authenticated update preview, overwrite
+refusal and real QuickShell IPC opening Control Centre. Bar/background and Control
+Centre were visually inspected. Full update execution, human login, personalization
+interaction, real GPU/radio/audio/suspend and native Windows remain unverified or
+outside this generic profile. Do not call this full physical-pilot feature parity.
+
+The installer/session/services discover bounded devices and installation-local
+identity rather than the Lenovo model, fixed PCI addresses or pilot generation.
+Physical host-services retain the original hostname default; only the portable
+adapter supplies its root-owned installation identity. No new runtime was deployed
+on this physical Host. Creation had required current source for the installed
+runtime's stale Rofi digest and removal of three unapproved empty seed directories.
+The installed runtime's stale digest remains a separate deployment issue.
+
+Initial image/permission failures were corrected in the generator and replayed on
+fresh Arch. The 97 GiB test guard stopped repetitions before consuming the unchanged
+96 GiB Host reserve. Removed about 1.15 GiB of cached package archives named in
+Host-side test download logs; installed package databases were untouched. The
+second-boot check completed after recovering only its interrupted unpublished
+VM workload. Evidence preserves failures and their scope rather than hiding them.
+
+Final cleanup destroyed Teste and its VM through the generation-bound lifecycle,
+removed the private maintenance container, KVM proxy and budget unit, and left no
+RAM build roots/keyrings. Source and non-secret evidence remain in the repository.
+Other eight normal/native registration hashes were unchanged during cleanup;
+partition table matches the original baseline, APX is healthy, no Host units failed.
+Btrfs I/O error counters remain zero; the pre-existing corruption counter remains 79.
+Free space at cleanup: **106.76 GiB** (about 114.63 GB decimal). The owner changed
+active sessions during the longer run; no assertion of an unchanged active session
+across the whole experiment is made.
+
+Evidence: `audit/2026-10-18-portable-rebuild/vm/pc-result.json`, full installation
+log plus checksum, q35 diagnostic, source manifest/comparison, `pc-controls.png`,
+source-verification.json and cleanup.json. 64 focused unit tests passed; source-only
+bundle SHA checks covered 529 files and excluded VM agents/authentication fixtures.
+Usage and remaining limits: `docs/portable-full-rebuild-v1.md`.
+
+## 2026-10-18 Owner-authorized cleanup completed: 82.30 GiB recovered
+
+Owner explicitly authorized cleaning old/irrelevant data. Removed six retired
+payloads of completed/authorized-retired Windows migration 2770478b (two NTFS
+images, two staged WIMs, two staged EFI images), plus disk/build-rootfs payloads
+of the two October 4 headless VM labs. Metadata, manifests and lab logs retained;
+a retirement sidecar records that historical migration rollback images are gone.
+Created fresh read-only Host system snapshot 20261018T081940Z after lab removal,
+then deleted the two superseded system snapshots and waited for Btrfs cleanup.
+
+Measured pool free space: 24.84 -> 107.14 GiB, net gain 82.30 GiB. Partition table
+and all eight measured normal/native registration hashes unchanged; Hytale
+still active, APX healthy, zero failed units, consistent full-accounting quotas.
+Current Environment roots/homes/snapshots, Windows partitions, boot/encryption
+material, installation templates and package artifacts/cache preserved. Old
+awaiting-hub update rollbacks were not assumed disposable and remain.
+
+Creation's 96 GiB reserve is now satisfied; earlier conservative 32 GiB full-VM
+workspace allowance still exceeds current spare budget by about 21 GiB. Teste,
+QEMU provisioning and full portable graphical installer/rehearsal remain pending.
+Exact evidence/helper and limits: docs/storage-cleanup-2026-10-18.md,
+`audit/2026-10-18-storage-cleanup/`. No commit/push in this step.
+
+## 2026-10-18 Full portable rebuild requested; resource blocker
+
+Owner requests a new graphical Environment named Teste (`teste`), intermediate
+preset, containing QEMU and a fresh Arch VM for full current APX installation
+from repository sources without a model lock. This specific name supersedes the
+temporary-mode codex-test prefix for this experiment. No existing Environment,
+physical partition, bootloader or Windows deletion/change is authorized.
+
+Read-only pilot inspection: expected apx-host/82JU identity; Hytale active;
+Btrfs quotas enabled/consistent; zero failed units; about 25 GiB pool space free.
+Creation requires preserving the existing 96 GiB Host reserve, so Teste/VM have
+NOT been created. Asked owner to provide/free storage; no reserve bypass or
+cleanup performed. Audit estimates 32 GiB additional workspace, not a new policy.
+
+New read-only rebuild audit confirms all 185 pinned shell assets match source
+and installed independent seed. Of 176 direct installed Python/shell library
+files, 159 match source and 17 differ; canonical graphical engine/session also
+differ. Differences require execution-path review, not automatic source copying.
+Full graphical portable adapter/installer and VM acceptance remain unimplemented.
+Existing portable install command still provides only the headless base.
+See docs/portable-full-rebuild-v1.md and
+`audit/2026-10-18-portable-rebuild/readiness.json`. No physical changes,
+commit or push in this preparation step.
+
 ## 2026-10-18 Owner-requested Git checkpoint
 
 Owner explicitly requested committing all accumulated repository work and pushing

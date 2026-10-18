@@ -9,17 +9,26 @@ import subprocess
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[2]
-spec = importlib.util.spec_from_file_location('portable_installer', Path(__file__).with_name('install_apx_arch.py'))
-installer = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(installer)
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('output', type=Path)
+parser.add_argument('--profile', choices=('headless', 'graphical'), default='headless',
+                    help='graphical is an experimental local-source candidate')
 args = parser.parse_args()
-files = sorted(set(installer.SOURCES) | {
+filename = 'install_apx_full.py' if args.profile == 'graphical' else 'install_apx_arch.py'
+spec = importlib.util.spec_from_file_location('portable_installer', Path(__file__).with_name(filename))
+installer = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(installer)
+if args.profile == 'graphical':
+    installer.verify_sources()
+    files = sorted(set(installer.source_files()) | {'docs/portable-full-rebuild-v1.md',
+        'docs/empty-disk-install-v1.md', 'docs/empty-disk-validation-2026-10-18.md',
+        'docs/install-apx-from-usb-pt.md'})
+else:
+    files = sorted(set(installer.SOURCES) | {
     'scripts/portable/install-apx-arch.sh', 'scripts/portable/install_apx_arch.py',
     'docs/portable-arch-base-v1.md', 'LICENSE',
     'audit/2026-10-04-portable/result.json',
-})
+    })
 # Exclusive creation avoids accidentally replacing another bundle/file.
 with args.output.open('xb') as output, tarfile.open(fileobj=output, mode='w:gz') as archive:
     hashes = []

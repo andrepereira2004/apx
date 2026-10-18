@@ -1,0 +1,6 @@
+{
+  "previous_pass_superseded_for_keyboard_fix": true,
+  "virtual_disk_fully_discarded": true,
+  "test_only_live_cache_optimization": "abandoned after live-overlay ENOSPC; temporary public archives removed; no product installation used that optimization",
+  "final_installer_cache": "target-local default pacstrap cache; normal signature verification"
+}

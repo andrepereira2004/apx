@@ -1,0 +1,14 @@
+{
+  "lab_ram_absent": true,
+  "builder_root_absent": true,
+  "kvm_proxy_absent": true,
+  "lab_machine_absent": true,
+  "budget_guard_absent": true,
+  "normal_registrations_unchanged": true,
+  "physical_partition_table_unchanged": true,
+  "owner_manual_vm_retained": true,
+  "owner_teste_generation": "0de1256b-dc39-4b67-82cc-30363819c36a",
+  "failed_host_units": "",
+  "btrfs_device_stats": "[/dev/mapper/cryptroot].write_io_errs    0\n[/dev/mapper/cryptroot].read_io_errs     0\n[/dev/mapper/cryptroot].flush_io_errs    0\n[/dev/mapper/cryptroot].corruption_errs  79\n[/dev/mapper/cryptroot].generation_errs  0\n",
+  "host_free_bytes": 106348376064
+}

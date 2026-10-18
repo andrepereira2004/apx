@@ -1,0 +1,13 @@
+{
+  "environment_absent": true,
+  "kvm_proxy_absent": true,
+  "ram_staging_absent": true,
+  "temporary_bundle_absent": true,
+  "apx-portable-rehearsal-teste.service_inactive": true,
+  "apx-portable-rehearsal-budget.service_inactive": true,
+  "qgroup_query_ok": true,
+  "qgroup_warnings": "",
+  "quota_rescan_status": "no rescan operation in progress\n",
+  "free_bytes": 114634973184,
+  "apx_status": "APX disposable headless runtime\nstate=/var/lib/apx filesystem=btrfs\nbtrfs\nhost_system=healthy\nfaculdade\tgraphical-base\tstopped\te9b08983-4740-4b85-8580-862c4a1d4c54\nhub\thub\trunning\t6f63f9a9-daea-40d1-969f-e25ff0752f4d\nhytale\tgraphical-base\tstopped\t97014bb7-aa82-41fd-aaff-2833e2e41033\nminecraft\tgraphical-base\tstopped\ta79db3e2-4870-4b5f-9367-822adbc18c8b\nsteam\tgraphical-base\tstopped\t72f90ce8-3119-4bdd-8368-7ee431b9f13c\n"
+}

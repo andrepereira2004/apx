@@ -1,0 +1,12 @@
+{
+  "folder_in_teste": "~/APX-Instalacao-20261018",
+  "host_path": "/var/lib/apx/environments/teste/home/apx/APX-Instalacao-20261018",
+  "archive": "/var/lib/apx/environments/teste/home/apx/APX-Instalacao-20261018/APX-instalar-PC-vazio-20261018.tar.gz",
+  "bytes": 9756616,
+  "sha256": "8382994238bf3e75c9216d4cde1a03542cf230b5d1d59b8ae5480381d7952796",
+  "manifest_files": 538,
+  "all_file_hashes_verified": true,
+  "test_fixtures_and_machine_data_excluded": true,
+  "product_sources_match_final_bios_replay": true,
+  "published_to_github": false
+}

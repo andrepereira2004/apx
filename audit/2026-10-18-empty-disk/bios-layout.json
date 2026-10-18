@@ -1,0 +1,57 @@
+{
+   "blockdevices": [
+      {
+         "name": "loop0",
+         "fstype": "squashfs",
+         "fsver": "4.0",
+         "label": null,
+         "uuid": null,
+         "fsavail": "0",
+         "fsuse%": "100%",
+         "mountpoints": [
+             "/run/archiso/airootfs"
+         ]
+      },{
+         "name": "sr0",
+         "fstype": "iso9660",
+         "fsver": "Joliet Extension",
+         "label": "ARCH_202610",
+         "uuid": "2026-10-01-14-49-03-00",
+         "fsavail": "0",
+         "fsuse%": "100%",
+         "mountpoints": [
+             "/run/archiso/bootmnt"
+         ]
+      },{
+         "name": "vda",
+         "fstype": null,
+         "fsver": null,
+         "label": null,
+         "uuid": null,
+         "fsavail": null,
+         "fsuse%": null,
+         "mountpoints": [],
+         "children": [
+            {
+               "name": "vda1",
+               "fstype": null,
+               "fsver": null,
+               "label": null,
+               "uuid": null,
+               "fsavail": null,
+               "fsuse%": null,
+               "mountpoints": []
+            },{
+               "name": "vda2",
+               "fstype": "btrfs",
+               "fsver": null,
+               "label": "APX",
+               "uuid": "4023ac3f-e740-4fdc-b412-8aca111aae9f",
+               "fsavail": null,
+               "fsuse%": null,
+               "mountpoints": []
+            }
+         ]
+      }
+   ]
+}

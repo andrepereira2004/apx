@@ -23,7 +23,7 @@ Rectangle {
     enabled: !showingTransient
     Behavior on presence { NumberAnimation { duration: 320; easing.type: Easing.InOutCubic } }
     height: 32; radius: 16
-    color: pointer.containsMouse || selected ? "#f2292d3a" : grouped ? "transparent" : (Appearance.tintButtons ? Appearance.barSurface : "#ed15171f")
+    color: pointer.containsMouse || selected ? "#f2292d3a" : grouped ? "transparent" : Appearance.capsuleSurface
     border.width: selected || !grouped ? 1 : 0; border.color: selected ? Appearance.iconColor : "#304f566c"
     clip: true
     readonly property bool compact: selected && !showingTransient
@@ -49,8 +49,9 @@ Rectangle {
         Text {
             id: summaryText
             visible: !island.compact && text.length > 0
-            width: Math.min(implicitWidth, Math.max(0, island.width - 38))
+            width: island.showingTransient ? 36 : Math.min(implicitWidth, Math.max(0, island.width - 38))
             anchors.verticalCenter: parent.verticalCenter
+            horizontalAlignment: island.showingTransient ? Text.AlignRight : Text.AlignLeft
             text: island.displayTitle; textFormat: Text.PlainText
             elide: Text.ElideRight; color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: 13
         }

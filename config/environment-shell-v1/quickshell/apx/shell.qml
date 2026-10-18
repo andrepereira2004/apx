@@ -92,9 +92,9 @@ ShellRoot {
     property color cyanDim: "#246879"
     // Keep the bar and menus consistently readable while retaining a modest
     // amount of the background through both surfaces.
-    // Original panel opacity.
-    property color panel: Appearance.tintWindows ? Qt.rgba(Appearance.surface.r, Appearance.surface.g, Appearance.surface.b, 0.85) : "#ed101117"
-    property color popupPanel: Appearance.tintWindows ? Qt.rgba(Appearance.surface.r, Appearance.surface.g, Appearance.surface.b, 0.93) : "#f2101117"
+    // Background alpha is independent of foreground and animation opacity.
+    property color panel: Appearance.backgroundColor("#101117", "menus")
+    property color popupPanel: Appearance.backgroundColor("#101117", "menus")
     // Opaque RGB, identical to Hyprland's inactive window outline.
     property color shellBorder: "#343947"
     property color card: "#f21b1e22"
@@ -226,10 +226,21 @@ ShellRoot {
     property real islandProgress: 0
     property bool popupClosing: false
     property real islandContentOpacity: 1
-    readonly property string menuRoute: [popupKind, controlsWifiOpen, controlsBluetoothOpen, controlsAudioOpen, controlsMicrophoneOpen, controlsMoreOpen, controlsAppearanceOpen, controlsActivityKind, shortcutsOpen, powerConfirmOpen, calendarView, calendarEditor, environmentCreateOpen, environmentEditOpen, environmentDeleteConfirm].join(":")
-    property var renderedControls: ({controlsWifiOpen: false, controlsBluetoothOpen: false, controlsAudioOpen: false, controlsMicrophoneOpen: false, controlsMoreOpen: false, controlsAppearanceOpen: false, controlsActivityKind: "", shortcutsOpen: false, powerConfirmOpen: false})
+    readonly property string menuRoute: [popupKind, controlsBrightnessOpen, controlsConnectivityOpen, controlsWifiOpen, controlsBluetoothOpen, controlsAudioOpen, controlsMicrophoneOpen, controlsMoreOpen, controlsAppearanceOpen, controlsActivityKind, shortcutsOpen, powerConfirmOpen, calendarView, calendarEditor, environmentCreateOpen, environmentEditOpen, environmentDeleteConfirm].join(":")
+    property var renderedControls: ({controlsBrightnessOpen: false, controlsConnectivityOpen: false, controlsWifiOpen: false, controlsBluetoothOpen: false, controlsAudioOpen: false, controlsMicrophoneOpen: false, controlsMoreOpen: false, controlsAppearanceOpen: false, controlsActivityKind: "", shortcutsOpen: false, powerConfirmOpen: false})
     function syncRenderedControls() {
-        renderedControls = {controlsWifiOpen: controlsWifiOpen, controlsBluetoothOpen: controlsBluetoothOpen, controlsAudioOpen: controlsAudioOpen, controlsMicrophoneOpen: controlsMicrophoneOpen, controlsMoreOpen: controlsMoreOpen, controlsAppearanceOpen: controlsAppearanceOpen, controlsActivityKind: controlsActivityKind, shortcutsOpen: shortcutsOpen, powerConfirmOpen: powerConfirmOpen}
+        renderedControls = {controlsBrightnessOpen: controlsBrightnessOpen, controlsConnectivityOpen: controlsConnectivityOpen, controlsWifiOpen: controlsWifiOpen, controlsBluetoothOpen: controlsBluetoothOpen, controlsAudioOpen: controlsAudioOpen, controlsMicrophoneOpen: controlsMicrophoneOpen, controlsMoreOpen: controlsMoreOpen, controlsAppearanceOpen: controlsAppearanceOpen, controlsActivityKind: controlsActivityKind, shortcutsOpen: shortcutsOpen, powerConfirmOpen: powerConfirmOpen}
+    }
+    function visibleControlTiles() {
+        var result = []
+        function visit(item) {
+            if (!item || !item.visible) return
+            if (item.caption !== undefined) result.push({caption: item.caption, enabled: item.enabled, opacity: item.opacity})
+            var children = item.children || []
+            for (var i = 0; i < children.length; ++i) visit(children[i])
+        }
+        visit(menuContent)
+        return result
     }
     function visibleMenuFonts() {
         var fonts = []
@@ -246,7 +257,61 @@ ShellRoot {
         return fonts.sort()
     }
     function renderedControlsAllClosed() {
-        return !renderedControls.controlsWifiOpen && !renderedControls.controlsBluetoothOpen && !renderedControls.controlsAudioOpen && !renderedControls.controlsMicrophoneOpen && !String(renderedControls.controlsActivityKind || "").length
+        return !renderedControls.controlsBrightnessOpen && !renderedControls.controlsConnectivityOpen && !renderedControls.controlsWifiOpen && !renderedControls.controlsBluetoothOpen && !renderedControls.controlsAudioOpen && !renderedControls.controlsMicrophoneOpen && !String(renderedControls.controlsActivityKind || "").length
+    }
+    property string controlPageRequestedRoute: ""
+    property real controlPageProgress: 1
+    readonly property real controlPageMotion: 1 - Math.pow(1 - controlPageProgress, 3)
+    readonly property real controlPageBlend: {
+        var t = Math.min(1, controlPageProgress / 0.5)
+        return t * t * (3 - 2 * t)
+    }
+    property int controlPageDirection: 1
+    property bool controlPageCapturing: false
+    property bool controlPageQueued: false
+    property int controlPageGeneration: 0
+    property var controlPageCapture: null
+    property rect outgoingPageRect: Qt.rect(0, 0, 0, 0)
+    function controlDepth(state) {
+        if (state.controlsAppearanceOpen || state.shortcutsOpen) return 2
+        if (state.controlsWifiOpen || state.controlsBluetoothOpen) return 2
+        if (state.controlsMoreOpen || state.controlsConnectivityOpen || state.controlsBrightnessOpen || state.controlsAudioOpen || state.controlsMicrophoneOpen || state.controlsActivityKind) return 1
+        return 0
+    }
+    function cancelControlTransition() {
+        controlPageGeneration++
+        controlPageRequestedRoute = ""
+        controlPageAnimation.stop()
+        controlPageCapturing = false
+        controlPageQueued = false
+        controlPageCapture = null
+        controlPageProgress = 1
+    }
+    function startControlTransition() {
+        if (controlPageRequestedRoute === menuRoute) { controlPageQueued = false; return }
+        if (controlPageAnimation.running || controlPageCapturing) {
+            controlPageQueued = true
+            return
+        }
+        controlPageQueued = false
+        controlPageRequestedRoute = menuRoute
+        var next = {controlsAppearanceOpen: controlsAppearanceOpen, shortcutsOpen: shortcutsOpen, controlsWifiOpen: controlsWifiOpen, controlsBluetoothOpen: controlsBluetoothOpen, controlsMoreOpen: controlsMoreOpen, controlsConnectivityOpen: controlsConnectivityOpen, controlsBrightnessOpen: controlsBrightnessOpen, controlsAudioOpen: controlsAudioOpen, controlsMicrophoneOpen: controlsMicrophoneOpen, controlsActivityKind: controlsActivityKind}
+        controlPageDirection = controlDepth(next) < controlDepth(renderedControls) ? -1 : 1
+        outgoingPageRect = Qt.rect(popupBackground.x, popupBackground.y, popupBackground.width, popupBackground.height)
+        controlPageCapturing = true
+        popupBackground.forceActiveFocus()
+        var generation = ++controlPageGeneration
+        function reveal(capture) {
+            if (generation !== root.controlPageGeneration || root.popupClosing || !popup.open) return
+            root.controlPageCapture = capture
+            root.controlPageProgress = 0
+            root.syncRenderedControls()
+            menuFlick.contentY = 0
+            controlPageAnimation.restart()
+            root.controlPageCapturing = false
+
+        }
+        if (!popupBackground.grabToImage(function(result) { reveal(result) })) reveal(null)
     }
     onMenuRouteChanged: Qt.callLater(function() {
         if (!popup.open || root.popupClosing || root.popupAnimationPending || root.islandProgress < .99) {
@@ -260,13 +325,22 @@ ShellRoot {
             return
         }
         islandContentAnimation.stop()
-        controlPageAnimation.restart()
+        root.islandContentOpacity = 1
+        root.startControlTransition()
     })
-    SequentialAnimation {
+    NumberAnimation {
         id: controlPageAnimation
-        NumberAnimation { id: controlPageFadeOut; target: root; property: "islandContentOpacity"; to: 0; duration: 90; easing.type: Easing.OutCubic }
-        ScriptAction { script: { root.syncRenderedControls(); menuFlick.contentY = 0; Qt.callLater(function() { var items = root.genericMenuItems(); if (root.menuKeyboardNavigation && items.length) root.focusMenuItem(items[0]) }) } }
-        NumberAnimation { target: root; property: "islandContentOpacity"; to: 1; duration: 220; easing.type: Easing.OutCubic }
+        target: root; property: "controlPageProgress"; from: 0; to: 1
+        duration: 200; easing.type: Easing.Linear
+        onFinished: {
+            root.controlPageCapture = null
+            Qt.callLater(function() {
+                if (!popup.open || root.popupClosing || root.controlPageCapturing || controlPageAnimation.running) return
+                var items = root.genericMenuItems()
+                if (root.menuKeyboardNavigation && items.length) root.focusMenuItem(items[0])
+            })
+            if (root.controlPageQueued) Qt.callLater(function() { root.startControlTransition() })
+        }
     }
 
     property rect islandOrigin: Qt.rect(0, 8, 40, 30)
@@ -280,7 +354,7 @@ ShellRoot {
         var left = bar.margins.left
         var right = left + bar.width - popup.menuWidth
         if (popupKind === "calendar") return left
-        if (popupKind === "controls" || popupKind === "media") return Math.max(left, right)
+        if (popupKind === "controls") return Math.max(left, right)
         if (!popupTarget || !bar) return left
         var targetRect = popupTarget.mapToItem(bar.contentItem, 0, 0)
         var targetCenter = left + targetRect.x + popupTarget.width / 2
@@ -450,6 +524,7 @@ ShellRoot {
     }
 
     function navigateGenericMenu(event) {
+        if (controlPageAnimation.running || controlPageCapturing) { event.accepted = true; return }
         if (popupKind === "calendar" || (popupKind === "environments" && isHub)) return
         var tab = event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab
         var arrow = [Qt.Key_Up, Qt.Key_Down, Qt.Key_Left, Qt.Key_Right].indexOf(event.key) >= 0
@@ -508,8 +583,9 @@ ShellRoot {
     property int keyboardBrightness: 0
     property int keyboardBrightnessMax: 2
     property string hardwareControlError: ""
-    readonly property bool focusedFullscreen: !!(Hyprland.activeToplevel && Hyprland.activeToplevel.lastIpcObject.fullscreen > 0)
+    readonly property bool focusedFullscreen: !!(Hyprland.activeToplevel && Hyprland.activeToplevel.wayland && Hyprland.activeToplevel.wayland.fullscreen)
     readonly property bool filesFocused: !!(Hyprland.activeToplevel && /^(thunar|org\.xfce\.Thunar)$/i.test(String(Hyprland.activeToplevel.wayland ? Hyprland.activeToplevel.wayland.appId : Hyprland.activeToplevel.lastIpcObject.class || "")))
+    readonly property bool fullscreenOsd: focusedFullscreen && !popup.open
     property bool hotkeyOsdVisible: false
     property real hotkeyOsdOpacity: 0
     property string hotkeyOsdIcon: ""
@@ -554,6 +630,7 @@ ShellRoot {
     property string draftReminderAmount: "1"
     property string draftReminderUnit: "Horas"
     property string eventError: ""
+    property bool controlsConnectivityOpen: false
     property bool controlsWifiOpen: false
     property bool shortcutsOpen: false
     property bool controlsMoreOpen: false
@@ -561,7 +638,9 @@ ShellRoot {
     property string controlsActivityKind: ""
     Binding { target: DesktopActivity; property: "detailsVisible"; value: popup.open && root.popupKind === "media" }
     property string ghostMessage: ""
-    property var ghostRecent: []
+    property bool workspacesExpanded: true
+    property bool ghostGreetingVisible: false
+    Timer { id: ghostGreetingTimer; interval: 3000; onTriggered: root.ghostGreetingVisible = false }
     property int mouseSensitivity: 0
     property string mouseSensitivityError: ""
     readonly property var shortcutList: [
@@ -592,6 +671,7 @@ ShellRoot {
         { keys: "Ctrl + Shift + Esc", action: "Gestor de tarefas" }
     ]
     property bool controlsBluetoothOpen: false
+    property bool controlsBrightnessOpen: false
     property bool controlsAudioOpen: false
     property bool controlsMicrophoneOpen: false
     property string wifiSelectedSsid: ""
@@ -836,24 +916,30 @@ ShellRoot {
         controlsActivityKind = ""
         if (wifiPasswordVisible)
             cancelWifiPassword()
-        var wasOpen = section === "wifi" ? controlsWifiOpen
+        var wasOpen = section === "connectivity" ? controlsConnectivityOpen
+                    : section === "wifi" ? controlsWifiOpen
                     : section === "bluetooth" ? controlsBluetoothOpen
+                    : section === "brightness" ? controlsBrightnessOpen
                     : section === "microphone" ? controlsMicrophoneOpen
                     : controlsAudioOpen
+        controlsConnectivityOpen = section === "connectivity" ? !wasOpen : ((section === "wifi" || section === "bluetooth") && wasOpen)
         controlsWifiOpen = section === "wifi" && !wasOpen
         controlsBluetoothOpen = section === "bluetooth" && !wasOpen
+        controlsBrightnessOpen = section === "brightness" && !wasOpen
         controlsAudioOpen = section === "audio" && !wasOpen
         controlsMicrophoneOpen = section === "microphone" && !wasOpen
         if (controlsWifiOpen && !wifiConnectivityProcess.running) wifiConnectivityProcess.running = true
         if (controlsAudioOpen)
             Qt.callLater(function() { if (root.menuKeyboardNavigation) volumeSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
+        else if (controlsBrightnessOpen)
+            Qt.callLater(function() { if (root.menuKeyboardNavigation) displayBrightnessSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
         else if (controlsMicrophoneOpen)
             Qt.callLater(function() { if (root.menuKeyboardNavigation) microphoneSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
     }
 
     function openActivitySection(kind) {
-        controlsWifiOpen = false; controlsBluetoothOpen = false
-        controlsAudioOpen = false; controlsMicrophoneOpen = false
+        controlsConnectivityOpen = false; controlsWifiOpen = false; controlsBluetoothOpen = false
+        controlsBrightnessOpen = false; controlsAudioOpen = false; controlsMicrophoneOpen = false
         controlsActivityKind = kind
         DesktopActivity.refresh()
     }
@@ -871,7 +957,7 @@ ShellRoot {
     }
 
     function controlsAllClosed() {
-        return !controlsWifiOpen && !controlsBluetoothOpen && !controlsAudioOpen && !controlsMicrophoneOpen && !controlsActivityKind.length
+        return !controlsBrightnessOpen && !controlsConnectivityOpen && !controlsWifiOpen && !controlsBluetoothOpen && !controlsAudioOpen && !controlsMicrophoneOpen && !controlsActivityKind.length
     }
 
     function bluetoothConnectedDevices() {
@@ -1423,9 +1509,11 @@ ShellRoot {
     }
 
     function closePopup() {
+        ghostGreetingTimer.stop()
+        ghostGreetingVisible = false
         if (!popup.open || popupClosing) return
         popupClosing = true
-        controlPageAnimation.stop()
+        cancelControlTransition()
         popupAnimationPending = false
         popupKeyboardRequested = false
         popupOpenAnimation.stop()
@@ -1433,6 +1521,8 @@ ShellRoot {
     }
 
     function finishClosePopup() {
+        ghostGreetingTimer.stop()
+        ghostGreetingVisible = false
         var pending = pendingPopupRequest
         pendingPopupRequest = null
         shortcutsOpen = false
@@ -1449,9 +1539,9 @@ ShellRoot {
         popupClosing = false
         popupAnimationPending = false
         popupKind = ""
-        controlsWifiOpen = false
+        controlsConnectivityOpen = false; controlsWifiOpen = false
         controlsBluetoothOpen = false
-        controlsAudioOpen = false
+        controlsBrightnessOpen = false; controlsAudioOpen = false
         controlsMicrophoneOpen = false
         cancelWifiPassword()
         environmentCreateOpen = false
@@ -1469,27 +1559,13 @@ ShellRoot {
     }
 
     function refreshGhostGreeting() {
-        var apps = []; var count = 0
-        var seen = ({})
-        for (var i=0; i<openWorkspaces.length; ++i) {
-            var windows = openWorkspaces[i].toplevels.values
-            for (var j=0; j<windows.length; ++j) {
-                var window = windows[j]
-                var data = window.lastIpcObject || ({})
-                var key = data.address || String(window)
-                if (seen[key]) continue
-                seen[key] = true; ++count
-                apps.push(window.wayland ? window.wayland.appId : (data.class || ""))
-            }
-        }
-        var playing = (DesktopActivity.state.players || []).filter(function(p) {return p.status === "Playing"})
-        var chosen = GhostLines.pick({ now: new Date(), environment: environmentIdentity.name || (isHub ? "hub" : ""), apps: apps, count: count, media: playing.length ? playing[0].kind : "" }, ghostRecent)
-        ghostMessage = chosen.text
-        ghostRecent = ghostRecent.concat([chosen.id]).slice(-200)
+        ghostMessage = GhostLines.greeting
+        ghostGreetingVisible = true
+        ghostGreetingTimer.restart()
     }
 
     function showPopup() {
-        controlPageAnimation.stop()
+        cancelControlTransition()
         syncRenderedControls()
         if (root.popupKind === "controls") root.refreshGhostGreeting()
         if (environmentAppsProcess.running) environmentAppsProcess.running = false
@@ -1585,7 +1661,8 @@ ShellRoot {
             root.closePopup()
             root.selectedBar = targetBar
         }
-        if (popupKind === kind && popup.open && !popupClosing) {
+        if (popupKind === kind && popup.open) {
+            if (popupClosing) return
             popupKeyboardRequested = false
             animatedBarOpenKind = ""
             animatedBarCloseKind = kind
@@ -1603,9 +1680,9 @@ ShellRoot {
             controlsMoreOpen = false
             controlsAppearanceOpen = false
             controlsActivityKind = ""
-            controlsWifiOpen = false
+            controlsConnectivityOpen = false; controlsWifiOpen = false
             controlsBluetoothOpen = false
-            controlsAudioOpen = false
+            controlsBrightnessOpen = false; controlsAudioOpen = false
             controlsMicrophoneOpen = false
             cancelWifiPassword()
         }
@@ -2401,7 +2478,7 @@ ShellRoot {
 
     function applyHardwareControls(state) {
         if (state.display_brightness !== undefined && displayBrightnessPending < 0
-                && !displayBrightnessProcess.running && !compactDashboard.brightnessPressed)
+                && !displayBrightnessProcess.running && !compactDashboard.brightnessPressed && !displayBrightnessSlider.pressed)
             displayBrightness = Number(state.display_brightness)
         if (state.keyboard_brightness !== undefined)
             keyboardBrightness = Number(state.keyboard_brightness)
@@ -3307,12 +3384,15 @@ ShellRoot {
                                     popup_opacity: popupBackground.opacity,
                                     content_opacity: root.islandContentOpacity, visual_width: popupBackground.width, visual_height: popupBackground.height, visual_x: popupBackground.x, fullscreen: root.focusedFullscreen,
                                     panel_y: popupBackground.y, content_y: menuFlick.y, content_font: Appearance.fontFamily, body_size: Appearance.bodySize, title_size: Appearance.titleSize, visible_fonts: root.visibleMenuFonts(),
-                                    displayed_controls: root.renderedControls, page_transition: controlPageAnimation.running,
+                                    displayed_controls: root.renderedControls, page_transition: controlPageAnimation.running || root.controlPageCapturing, page_progress: root.controlPageProgress, page_blend: root.controlPageBlend, page_motion: root.controlPageMotion, menu_content_enabled: menuFlick.enabled, transition_input_blocked: controlTransitionShield.enabled, control_tiles: root.visibleControlTiles(), material_animating: panelMaterialFade.running, panel_color: String(popupBackground.color), target_height: popupBackground.targetHeight, settled_height: popupBackground.settledHeight, outgoing_page_opacity: outgoingControlPage.opacity, outgoing_page_visible: outgoingControlPage.visible, outgoing_page_x: outgoingControlPage.x,
                                     pending_kind: root.pendingPopupRequest ? root.pendingPopupRequest.kind : "",
                                     media_width: root.mediaButton ? root.mediaButton.width : 0, media_selected: root.mediaButton ? root.mediaButton.selected : false,
                                     osd_fallback: hotkeyOsdWindow.visible, launcher_running: environmentAppsProcess.running,
+                                    ghost_visible: root.ghostGreetingVisible, ghost_message: root.ghostMessage,
+                                    ghost_width: root.bar ? root.bar.ghostWidth : 0,
+                                    workspaces_expanded: root.workspacesExpanded, workspace_width: root.bar ? root.bar.workspaceWidth : 0,
                                     media_summary_width: root.mediaButton ? root.mediaButton.summaryWidth : 0, media_summary_x: root.mediaButton ? root.mediaButton.summaryX : 0,
-                                    bar_targets: ({ calendar: root.barTargetRect(root.calendarButton), controls: root.barTargetRect(root.controlCenterButton), media: root.barTargetRect(root.mediaButton) }),
+                                    bar_targets: ({ calendar: root.barTargetRect(root.calendarButton), controls: root.barTargetRect(root.controlCenterButton), apps: root.barTargetRect(root.appsButton), files: root.barTargetRect(root.filesButton), battery: root.barTargetRect(root.batteryButton), media: root.barTargetRect(root.mediaButton) }),
                                     files_active: root.filesFocused, osd_visible: root.hotkeyOsdVisible, island_transient: root.mediaButton ? root.mediaButton.transientActive : false,
                                     keyboard_items: root.genericMenuItems().length,
                                     keyboard_index: root.genericMenuItems().findIndex(function(item) { return item.activeFocus }),
@@ -3339,6 +3419,8 @@ ShellRoot {
                 root.toggleFocusedPopup("model")
         }
 
+        function toggleWorkspaces(): void { root.workspacesExpanded = !root.workspacesExpanded }
+
         function toggleBattery(): void {
             root.toggleFocusedPopup("battery")
         }
@@ -3348,8 +3430,8 @@ ShellRoot {
         function openControls(): void {
             if (root.queueControlPage("")) return
             // APX staged IPC navigation: use the same page transition as pointer actions.
-            root.controlsWifiOpen = false; root.controlsBluetoothOpen = false
-            root.controlsAudioOpen = false; root.controlsMicrophoneOpen = false
+            root.controlsConnectivityOpen = false; root.controlsWifiOpen = false; root.controlsBluetoothOpen = false
+            root.controlsBrightnessOpen = false; root.controlsAudioOpen = false; root.controlsMicrophoneOpen = false
             root.controlsMoreOpen = false; root.controlsAppearanceOpen = false
             root.controlsActivityKind = ""; root.shortcutsOpen = false
             root.popupKeyboardRequested = true
@@ -3359,13 +3441,15 @@ ShellRoot {
             root.showPopup()
         }
 
+        function openConnectivityControls(): void { openControls(); root.openControlSection("connectivity") }
+
         function openWifiControls(): void {
             if (root.queueControlPage("wifi")) return
             openControls()
             root.controlsWifiOpen = true
             if (!wifiConnectivityProcess.running) wifiConnectivityProcess.running = true
             root.controlsBluetoothOpen = false
-            root.controlsAudioOpen = false
+            root.controlsBrightnessOpen = false; root.controlsAudioOpen = false
             root.controlsMicrophoneOpen = false
         }
 
@@ -3380,16 +3464,18 @@ ShellRoot {
         function openBluetoothControls(): void {
             if (root.queueControlPage("bluetooth")) return
             openControls()
-            root.controlsWifiOpen = false
+            root.controlsConnectivityOpen = false; root.controlsWifiOpen = false
             root.controlsBluetoothOpen = true
-            root.controlsAudioOpen = false
+            root.controlsBrightnessOpen = false; root.controlsAudioOpen = false
             root.controlsMicrophoneOpen = false
         }
+
+        function openBrightnessControls(): void { openControls(); root.openControlSection("brightness") }
 
         function openVolumeControls(): void {
             if (root.queueControlPage("audio")) return
             openControls()
-            root.controlsWifiOpen = false
+            root.controlsConnectivityOpen = false; root.controlsWifiOpen = false
             root.controlsBluetoothOpen = false
             root.controlsAudioOpen = true
             root.controlsMicrophoneOpen = false
@@ -3399,9 +3485,9 @@ ShellRoot {
         function openMicrophoneControls(): void {
             if (root.queueControlPage("microphone")) return
             openControls()
-            root.controlsWifiOpen = false
+            root.controlsConnectivityOpen = false; root.controlsWifiOpen = false
             root.controlsBluetoothOpen = false
-            root.controlsAudioOpen = false
+            root.controlsBrightnessOpen = false; root.controlsAudioOpen = false
             root.controlsMicrophoneOpen = true
             Qt.callLater(function() { if (root.menuKeyboardNavigation) microphoneSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
         }
@@ -3935,6 +4021,8 @@ ShellRoot {
         property alias modelStoreButton: modelStoreButton
         property alias batteryButton: batteryButton
         property alias mediaButton: mediaIsland
+        readonly property real ghostWidth: ghostGreeting.width
+        readonly property real workspaceWidth: workspaceStrip.width
         property alias appsButton: appsButton
         property alias filesButton: filesButton
         property alias controlCenterButton: controlCenterButton
@@ -3970,7 +4058,7 @@ ShellRoot {
                     parent: leftActions.parent
                     x: leftActions.x; y: leftActions.y; width: leftActions.width; height: leftActions.height
                     z: -1; radius: height / 2
-                    color: Appearance.tintButtons ? Appearance.barSurface : "#ed15171f"
+                    color: Appearance.capsuleSurface
                     border.width: 1; border.color: "#304f566c"
                 }
                 anchors.left: parent.left
@@ -3995,6 +4083,9 @@ ShellRoot {
                     onActivated: root.togglePopup("calendar", this, true)
                 }
                 WorkspaceStrip {
+                    id: workspaceStrip
+                    expanded: root.workspacesExpanded
+                    onToggleRequested: root.workspacesExpanded = !root.workspacesExpanded
                     grouped: true
                     visible: !root.isHub
                     workspaces: root.openWorkspaces
@@ -4037,13 +4128,18 @@ ShellRoot {
                 readonly property real fixedWidth: [modelStoreButton, microphoneButton, appsButton, filesButton, batteryButton, controlCenterButton].filter(function(item) { return item.visible }).reduce(function(total, item) { return total + item.width + rightActions.spacing }, 0)
             MediaIsland {
                 id: mediaIsland
-                grouped: true
+                parent: rightActions.parent
+                grouped: false
+                // Reveal a separate capsule outward from the central Environment pill.
+                x: environmentButton.x + environmentButton.width / 2 + (environmentButton.width / 2 + 8) * presence
+                y: environmentButton.y
+                z: -0.5
                 // APX transient island v2: resize in one curve, then restore the media title.
-                readonly property real availableWidth: Math.max(0, rightActions.parent.width - (environmentButton.x + environmentButton.width) - rightActions.fixedWidth - 22)
-                width: Math.min(transientActive ? 75 : selected ? 36 : 220, availableWidth) * presence
+                readonly property real availableWidth: Math.max(0, rightActions.x - (environmentButton.x + environmentButton.width) - 16)
+                width: Math.min(showingTransient ? 88 : (selected ? 36 : 220), availableWidth) * presence
                 Behavior on width { enabled: mediaIsland.presence === 1; NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                visible: (!root.isHub || root.hotkeyOsdVisible) && (presence > 0 || width > 1) && availableWidth >= (transientActive ? 75 : selected ? 36 : 90)
-                transientActive: root.hotkeyOsdVisible && root.bar === screenBar && (!root.focusedFullscreen || popup.open)
+                visible: (!root.isHub || showingTransient) && (showingTransient || width > 1) && (showingTransient || availableWidth >= (selected ? 36 : 90))
+                transientActive: root.hotkeyOsdVisible && root.bar === screenBar && !root.fullscreenOsd
                 transientIcon: root.hotkeyOsdIcon
                 transientTitle: root.hotkeyOsdTitle
                 transientDetail: root.hotkeyOsdDetail
@@ -4060,7 +4156,7 @@ ShellRoot {
                     x: rightActions.x; y: rightActions.y
                     width: rightActions.width; height: rightActions.height
                     z: -1; radius: height / 2
-                    color: Appearance.tintButtons ? Appearance.barSurface : "#ed15171f"
+                    color: Appearance.capsuleSurface
                     border.width: 1; border.color: "#304f566c"
                 }
                 anchors.right: parent.right
@@ -4142,9 +4238,38 @@ ShellRoot {
                     animateDeactivation: root.animatedBarCloseKind === "battery"
                     onActivated: root.togglePopup("battery", this, true)
                 }
+                Item {
+                    // Keep the greeting and its trailing gap in one continuous layout slot.
+                    width: ghostGreeting.width + controlCenterButton.width
+                    height: 32
+                Item {
+                    id: ghostGreeting
+                    readonly property real budget: Math.max(0, rightActions.parent.width - (environmentButton.x + environmentButton.width) - rightActions.fixedWidth - 34)
+                    property real reveal: root.ghostGreetingVisible ? 1 : 0
+                    width: Math.min(ghostBarText.implicitWidth + 22, budget) * reveal
+                    height: 32
+                    visible: reveal > 0
+                    clip: true
+                    opacity: reveal
+                    Behavior on reveal { NumberAnimation { duration: 320; easing.type: Easing.InOutCubic } }
+                    Accessible.role: Accessible.StaticText
+                    Accessible.name: "Gosty: " + root.ghostMessage
+                    Item {
+                        id: ghostViewport
+                        x: 8; width: ghostBarText.implicitWidth; height: parent.height; clip: false
+                        Text {
+                            id: ghostBarText
+                            text: root.ghostMessage; textFormat: Text.PlainText
+                            color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: 12
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: 0
+                        }
+                    }
+                }
                 BarButton {
                     grouped: true
                     id: controlCenterButton
+                    x: ghostGreeting.width
                     compactSymbol: false
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === controlCenterButton : null
                     activeSurface: root.controlButtonHover
@@ -4161,6 +4286,7 @@ ShellRoot {
                     animateDeactivation: root.animatedBarCloseKind === "controls"
                     onActivated: root.togglePopup("controls", this, true)
                 }
+                }
             }
         }
     }
@@ -4169,7 +4295,7 @@ ShellRoot {
     PanelWindow {
         id: hotkeyOsdWindow
         screen: root.bar ? root.bar.screen : null
-        visible: root.hotkeyOsdVisible && (!root.mediaButton || !root.mediaButton.visible || (root.focusedFullscreen && !popup.open))
+        visible: root.hotkeyOsdVisible && root.fullscreenOsd
         anchors { bottom: true }
         margins { bottom: 72 }
         implicitWidth: 286
@@ -4328,7 +4454,7 @@ ShellRoot {
     // this Hyprland build. Use the compositor's dismissible focus grab instead.
     HyprlandFocusGrab {
         id: popupFocusGrab
-        windows: [popup]
+        windows: root.bar ? [popup, root.bar] : [popup]
         active: popup.open
         onCleared: root.closePopup()
     }
@@ -4362,7 +4488,7 @@ ShellRoot {
                                                           ? (root.renderedControls.shortcutsOpen ? Math.min(620, popup.height - 74) * root.controlCenterScale
                                                              : root.renderedControls.controlsMoreOpen ? (root.renderedControls.controlsAppearanceOpen ? Math.min(popup.height - 74, menuContent.implicitHeight + (popupBackground.splitControls ? 0 : 20)) : 340) * root.controlCenterScale
                                                              : root.renderedControlsAllClosed() ? Math.min(popup.height - 74, menuContent.implicitHeight + (popupBackground.splitControls ? 0 : 20)) * root.controlCenterScale
-                                                             : ((root.renderedControls.controlsAudioOpen || root.renderedControls.controlsMicrophoneOpen) ? Math.max(232, menuContent.implicitHeight + (popupBackground.splitControls ? 0 : 20))
+                                                             : ((root.renderedControls.controlsBrightnessOpen || root.renderedControls.controlsAudioOpen || root.renderedControls.controlsMicrophoneOpen) ? Math.max(232, menuContent.implicitHeight + (popupBackground.splitControls ? 0 : 20))
                                                                 : (root.renderedControls.controlsBluetoothOpen ? 320 : 480)) * root.controlCenterScale)
                                                           : (root.popupKind === "media" ? Math.min(popup.height - 74, menuContent.implicitHeight + (popupBackground.splitControls ? 0 : 20)) : root.popupKind === "model" ? 370 : (root.popupKind === "environments" ? root.environmentPopupHeight : (root.popupKind === "battery" ? 650 : 440))))
         color: "transparent"
@@ -4414,6 +4540,32 @@ ShellRoot {
             }
         }
 
+        MouseArea {
+            id: controlTransitionShield
+            z: 3
+            x: Math.min(popupBackground.x, root.outgoingPageRect.x)
+            y: Math.min(popupBackground.y, root.outgoingPageRect.y)
+            width: Math.max(popupBackground.width, root.outgoingPageRect.width) + 56
+            height: Math.max(popupBackground.height, root.outgoingPageRect.height)
+            visible: enabled
+            enabled: popup.open && root.popupKind === "controls" && (root.controlPageCapturing || controlPageAnimation.running)
+            acceptedButtons: Qt.AllButtons
+            hoverEnabled: true
+            onWheel: (wheel) => { wheel.accepted = true }
+        }
+
+        Image {
+            id: outgoingControlPage
+            z: 2
+            visible: root.controlPageCapture !== null && root.controlPageBlend < 1
+            source: root.controlPageCapture ? root.controlPageCapture.url : ""
+            x: root.outgoingPageRect.x - root.controlPageDirection * 28 * root.controlPageMotion
+            y: root.outgoingPageRect.y
+            width: root.outgoingPageRect.width; height: root.outgoingPageRect.height
+            opacity: 1 - root.controlPageBlend
+            smooth: true
+        }
+
         Rectangle {
             id: popupBackground
             visible: popup.open
@@ -4423,24 +4575,25 @@ ShellRoot {
                 root.popupKind === "calendar" || root.popupKind === "environments"
                 ? popup.menuHeight : menuContent.implicitHeight + (splitControls ? 0 : 20))
             property real settledHeight: targetHeight
-            Behavior on settledHeight { enabled: root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+            Behavior on settledHeight { enabled: !(root.popupKind === "controls" && (root.controlPageCapturing || controlPageAnimation.running)) && root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
             property real settledX: Math.max(8, Math.min(root.popupLeftMargin, popup.width - targetWidth - 8))
             Behavior on settledX { enabled: popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
-            x: root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress
+            x: root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress + (root.popupKind === "controls" ? root.controlPageDirection * 28 * (1 - root.controlPageMotion) : 0)
             property real settledY: Appearance.menuTop
             Behavior on settledY { enabled: popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
             y: root.islandOrigin.y + (settledY - root.islandOrigin.y) * root.islandProgress
             width: root.islandOrigin.width + (targetWidth - root.islandOrigin.width) * root.islandProgress
             height: root.islandOrigin.height + (settledHeight - root.islandOrigin.height) * root.islandProgress
             Keys.onPressed: function(event) { root.navigateGenericMenu(event) }
+            // All menus emerge from their trigger using the Calendar geometry animation.
             scale: 1
-            opacity: Math.min(1, root.islandProgress * 5)
+            opacity: Math.min(1, root.islandProgress * 5) * (root.popupKind === "controls" ? root.controlPageBlend : 1)
             transformOrigin: Item.TopLeft
             clip: true
             radius: 15 + (20 - 15) * root.islandProgress
             readonly property bool splitControls: root.popupKind === "controls" && root.renderedControlsAllClosed() && !root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.powerConfirmOpen
             color: splitControls ? "transparent" : root.popupPanel
-            Behavior on color { ColorAnimation { id: panelMaterialFade; duration: 180; easing.type: Easing.OutCubic } }
+            Behavior on color { enabled: root.popupKind !== "controls"; ColorAnimation { id: panelMaterialFade; duration: 180; easing.type: Easing.OutCubic } }
             border.width: splitControls ? 0 : 1
             border.color: root.shellBorder
 
@@ -4492,21 +4645,18 @@ ShellRoot {
             Flickable {
                 id: menuFlick
                 x: popupBackground.splitControls ? 0 : 10
-                y: (popupBackground.splitControls ? 0 : 10) + (controlPageFadeOut.running ? 0 : 6 * (1 - root.islandContentOpacity))
+                y: popupBackground.splitControls ? 0 : 10
                 width: popup.menuWidth - (popupBackground.splitControls ? 0 : 20)
                 height: Math.max(0, popupBackground.height - (popupBackground.splitControls ? 0 : 20))
-                opacity: Math.max(0, (root.islandProgress - .3) / .7) * root.islandContentOpacity
-                enabled: !root.popupClosing && root.islandProgress > .8 && !controlPageAnimation.running
+                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "controls" ? 1 : root.islandContentOpacity)
+                enabled: !root.popupClosing && root.islandProgress > .8
                 contentWidth: width
                 contentHeight: menuContent.implicitHeight
                 clip: true
                 boundsBehavior: Flickable.StopAtBounds
                 flickableDirection: Flickable.VerticalFlick
                 pixelAligned: true
-                ScrollBar.vertical: ScrollBar {
-                    policy: menuContent.implicitHeight > popupBackground.height - 20
-                            ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
-                }
+                ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOff }
 
                 Column {
                     id: menuContent
@@ -4668,9 +4818,7 @@ ShellRoot {
                                 clip: true
                                 interactive: count > 4
                                 model: root.sortedEventsForDate(root.calendarDate)
-                                ScrollBar.vertical: ScrollBar {
-                                    policy: dayTimeline.count > 4 ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-                                }
+                                ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOff }
                                 delegate: Item {
                                     required property var modelData
                                     width: dayTimeline.width
@@ -4771,9 +4919,7 @@ ShellRoot {
                             clip: true
                             interactive: count > 4
                             model: root.eventsForDate(root.calendarDate)
-                            ScrollBar.vertical: ScrollBar {
-                                policy: dayEventList.count > 4 ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-                            }
+                            ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOff }
                             delegate: Rectangle {
                                 required property var modelData
                                 width: menuContent.width; height: 42; radius: 6
@@ -5572,6 +5718,15 @@ ShellRoot {
                         visible: root.renderedControlsAllClosed() && !root.renderedControls.powerConfirmOpen
                         controller: root
                     }
+                    Column {
+                        width: parent.width; spacing: 8
+                        visible: root.renderedControls.controlsConnectivityOpen
+                        MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("connectivity") }
+                        Text { text: "Ligações"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
+                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: root.wifiDisplayActive() ? "wifi" : "wifi-off"; caption: "Wi-Fi  ·  " + (root.wifiDisplayActive() ? "Ligado" : "Desligado"); selected: root.wifiDisplayActive(); onActivated: root.openControlSection("wifi") }
+                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: root.bluetoothDisplayPowered() ? "bluetooth" : "bluetooth-off"; caption: "Bluetooth  ·  " + (root.bluetoothDisplayPowered() ? "Ligado" : "Desligado"); selected: root.bluetoothDisplayPowered(); onActivated: root.openControlSection("bluetooth") }
+                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: "plane"; caption: "Modo de avião  ·  " + (root.airplaneMode ? "Ligado" : "Desligado"); selected: root.airplaneMode; enabled: !DesktopActivity.busy; onActivated: DesktopActivity.action(["airplane", root.airplaneMode ? "off" : "on"]) }
+                    }
                     ActivityPanel {
                         width: parent.width
                         visible: root.renderedControls.controlsActivityKind.length > 0
@@ -5833,7 +5988,7 @@ ShellRoot {
                         width: parent.width; height: visible ? 216 : 0
                         contentWidth: width; contentHeight: bluetoothContent.implicitHeight
                         clip: true; boundsBehavior: Flickable.StopAtBounds
-                        ScrollBar.vertical: ScrollBar { policy: bluetoothContent.implicitHeight > 216 ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff }
+                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOff }
 
                         Column {
                             id: bluetoothContent
@@ -5996,6 +6151,34 @@ ShellRoot {
                         width: parent.width; text: root.hardwareControlError; color: "#ff91a4"
                         wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
                     }
+                    Column {
+                        width: parent.width; spacing: 10
+                        visible: root.renderedControls.controlsBrightnessOpen
+                        MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("brightness") }
+                        ControlTile { width: implicitWidth; height: 28; color: "transparent"; showCaption: true; iconName: root.volumeMuted ? "volume-x" : "volume-2"; caption: "Som"; onActivated: root.openControlSection("audio") }
+                        Text { text: root.volumeValue + "%"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                        ControlSlider {
+                            id: combinedVolumeSlider
+                            width: parent.width; height: 36; from: 0; to: 100; stepSize: 1; activeFocusOnTab: true
+                            Accessible.name: "Volume"
+                            onMoved: { root.previewVolume(value); if (!pressed) root.commitVolume(value) }
+                            onPressedChanged: if (!pressed) root.commitVolume(value)
+                            Binding { target: combinedVolumeSlider; property: "value"; value: root.volumeMuted ? 0 : root.volumeValue; when: !combinedVolumeSlider.pressed }
+                        }
+                        IconLabel { iconName: "sun"; text: "Brilho do ecrã"; color: root.textMain; pixelSize: root.menuBodySize }
+                        Text { text: root.displayBrightness + "%"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                        ControlSlider {
+                            id: displayBrightnessSlider
+                            width: parent.width; height: 36
+                            from: 5; to: 100; stepSize: 1; activeFocusOnTab: true
+                            Accessible.name: "Brilho do ecrã"
+                            onMoved: { root.previewDisplayBrightness(value); if (!pressed) root.commitDisplayBrightness(value) }
+                            onPressedChanged: if (!pressed) root.commitDisplayBrightness(value)
+                            Binding { target: displayBrightnessSlider; property: "value"; value: root.displayBrightness; when: !displayBrightnessSlider.pressed }
+                        }
+                        ControlTile { width: parent.width; height: 42; showCaption: true; iconName: root.microphoneMuted ? "mic-off" : "mic"; caption: "Microfone"; onActivated: root.openControlSection("microphone") }
+                        ControlTile { width: parent.width; height: 42; showCaption: true; iconName: "keyboard"; caption: "Iluminação do teclado"; selected: root.keyboardBrightness > 0; onActivated: root.cycleKeyboardBrightness() }
+                    }
                     Rectangle {
                         visible: root.renderedControls.controlsAudioOpen
                         width: parent.width; height: visible ? 44 : 0; radius: 11
@@ -6062,13 +6245,7 @@ ShellRoot {
                                         color: volumeSlider.keyboardEditing ? root.cyan : (root.volumeMuted ? root.textDim : root.textMain)
                                     }
                                 }
-                                handle: Rectangle {
-                                    x: volumeSlider.leftPadding + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
-                                    y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                    width: 16; height: 16; radius: 8
-                                    color: volumeSlider.keyboardEditing ? root.cyan : (volumeSlider.pressed ? "#ffffff" : root.textMain)
-                                    border.width: 2; border.color: root.controlButtonSurface
-                                }
+                                handle: Item { width: 0; height: 0 }
                             }
                         }
 
@@ -6128,11 +6305,7 @@ ShellRoot {
                                     width: microphoneSlider.availableWidth; height: 5; radius: 3; color: microphoneSlider.keyboardEditing ? Qt.darker(root.cyan, 2.5) : root.controlButtonOutline
                                     Rectangle { width: microphoneSlider.visualPosition * parent.width; height: parent.height; radius: 3; color: microphoneSlider.keyboardEditing ? root.cyan : (root.microphoneMuted ? root.textDim : root.textMain) }
                                 }
-                                handle: Rectangle {
-                                    x: microphoneSlider.leftPadding + microphoneSlider.visualPosition * (microphoneSlider.availableWidth - width)
-                                    y: microphoneSlider.topPadding + microphoneSlider.availableHeight / 2 - height / 2
-                                    width: 16; height: 16; radius: 8; color: microphoneSlider.keyboardEditing ? root.cyan : (microphoneSlider.pressed ? "#ffffff" : root.textMain); border.width: 2; border.color: root.controlButtonSurface
-                                }
+                                handle: Item { width: 0; height: 0 }
                             }
                         }
                         Row {
@@ -6201,7 +6374,7 @@ ShellRoot {
                     width: parent.width; spacing: 10
                     visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsAppearanceOpen
                     MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: { root.controlsMoreOpen = false; menuFlick.contentY = 0 } }
-                    MenuButton { outlined: true; iconName: "settings"; label: "Personalização"; onActivated: { Appearance.refresh(); root.controlsAppearanceOpen = true; menuFlick.contentY = 0 } }
+                    MenuButton { outlined: true; iconName: "paintbrush"; label: "Personalização"; onActivated: { Appearance.refresh(); root.controlsAppearanceOpen = true; menuFlick.contentY = 0 } }
                     Column {
                         visible: root.hasExternalDisplay; width: parent.width; spacing: 6
                         Text { text: "Posição do monitor externo"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
@@ -6218,28 +6391,21 @@ ShellRoot {
                         border.width: 1; border.color: root.controlButtonOutline
                         IconLabel { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: "Sensibilidade do rato"; iconName: "mouse"; color: root.textMain; pixelSize: root.menuBodySize }
                         Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: (mouseSensitivitySlider.value > 0 ? "+" : "") + Math.round(mouseSensitivitySlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
-                        MenuSlider {
+                        ControlSlider {
                             id: mouseSensitivitySlider
                             anchors.left: parent.left; anchors.leftMargin: 12; anchors.right: parent.right; anchors.rightMargin: 12
-                            anchors.bottom: parent.bottom; anchors.bottomMargin: 7
-                            height: 28; from: -100; to: 100; stepSize: 1
+                            anchors.bottom: parent.bottom; anchors.bottomMargin: 3
+                            height: 36; from: -100; to: 100; stepSize: 1
+                            activeFocusOnTab: true
+                            Accessible.name: "Sensibilidade do rato"
                             enabled: !mouseSensitivityProcess.running
-                            onKeyboardValueChanged: (nextValue) => root.setMouseSensitivity(nextValue)
-                            onPressedChanged: { if (pressed) forceActiveFocus(); else root.setMouseSensitivity(value) }
+                            onMoved: if (!pressed) root.setMouseSensitivity(value)
+                            onPressedChanged: if (!pressed) root.setMouseSensitivity(value)
                             Binding { target: mouseSensitivitySlider; property: "value"; value: root.mouseSensitivity; when: !mouseSensitivitySlider.pressed }
                             background: Rectangle {
-                                x: mouseSensitivitySlider.leftPadding
-                                y: mouseSensitivitySlider.topPadding + mouseSensitivitySlider.availableHeight / 2 - height / 2
-                                width: mouseSensitivitySlider.availableWidth; height: 3; radius: 2
-                                color: mouseSensitivitySlider.keyboardEditing ? Qt.darker(root.cyan, 2.5) : "#34454e"
-                                Rectangle { width: mouseSensitivitySlider.visualPosition * parent.width; height: parent.height; radius: 2; color: mouseSensitivitySlider.keyboardEditing ? root.cyan : root.textMain }
-                            }
-                            handle: Rectangle {
-                                x: mouseSensitivitySlider.leftPadding + mouseSensitivitySlider.visualPosition * (mouseSensitivitySlider.availableWidth - width)
-                                y: mouseSensitivitySlider.topPadding + mouseSensitivitySlider.availableHeight / 2 - height / 2
-                                width: mouseSensitivitySlider.pressed ? 12 : 10; height: width; radius: width / 2
-                                color: mouseSensitivitySlider.keyboardEditing ? root.cyan : (mouseSensitivitySlider.pressed ? "#ffffff" : root.textMain)
-                                border.width: 2; border.color: root.controlButtonSurface
+                                x: mouseSensitivitySlider.leftPadding; y: (mouseSensitivitySlider.height - height) / 2
+                                width: mouseSensitivitySlider.availableWidth; height: 6; radius: 3; color: "#303644"
+                                Rectangle { width: Math.max(6, parent.width * mouseSensitivitySlider.visualPosition); height: parent.height; radius: 3; color: "#c9d2e5" }
                             }
                         }
                     }

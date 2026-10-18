@@ -14,6 +14,33 @@ QtObject {
     property double pendingSince: 0
     property string sentPlayer: ""
     property string sentStatus: ""
+    property var pendingSeek: null
+    property bool seekInFlight: false
+    function clearSeekFeedback() { pendingSeek = null; seekFeedbackTimeout.stop() }
+    function sendSeek() {
+        if (busy || !pendingSeek || pendingSeek.sent) return
+        var player = state.players.find(function(p) { return p.name === pendingSeek.name && p.track_id === pendingSeek.track })
+        if (!player || !player.can_seek) { clearSeekFeedback(); return }
+        pendingSeek = Object.assign({}, pendingSeek, {sent: true, sentAt: Date.now()})
+        if (readProcess.running) readProcess.running = false
+        seekInFlight = true
+        actionProcess.command = ["/home/apx/.local/bin/apx-desktop-activity-v1", "seek", pendingSeek.name, pendingSeek.track, String(pendingSeek.position), String(player.length)]
+        actionProcess.running = true
+    }
+    function settleSeekFeedback() {
+        if (!pendingSeek) return
+        var player = state.players.find(function(p) { return p.name === pendingSeek.name && p.track_id === pendingSeek.track })
+        if (!player) { clearSeekFeedback(); return }
+        if (pendingSeek.sent && Number(player.sampled_at) >= pendingSeek.sentAt && Math.abs(Number(player.position) - pendingSeek.position) < 1.5)
+            clearSeekFeedback()
+    }
+    property Timer seekFeedbackTimeout: Timer {
+        interval: 1800
+        onTriggered: {
+            if (activity.busy) restart()
+            else { activity.clearSeekFeedback(); activity.refresh() }
+        }
+    }
     function clearPlaybackFeedback() {
         pendingPlayer = ""; pendingStatus = ""; pendingTrack = ""
         feedbackTimeout.stop()
@@ -59,6 +86,10 @@ QtObject {
     }
     function position(player) {
         if (!player) return 0
+        if (pendingSeek && pendingSeek.name === player.name && pendingSeek.track === player.track_id) {
+            var advance = player.status === "Playing" ? Math.max(0, clock - pendingSeek.requestedAt) / 1000 * (Number(player.rate) || 1) : 0
+            return Math.min(Number(player.length), pendingSeek.position + advance)
+        }
         var base = Number(player.position) || 0
         var elapsed = player.status === "Playing" ? Math.max(0, clock - Number(player.sampled_at || clock)) / 1000 * (Number(player.rate) || 1) : 0
         return Math.min(Number(player.length) > 0 ? Number(player.length) : Infinity, Math.max(0, base + elapsed))
@@ -69,7 +100,10 @@ QtObject {
     }
     function seek(player, position) {
         if (!player || !player.can_seek || player.length <= 0) return
-        action(["seek", player.name, player.track_id, String(position), String(player.length)])
+        pendingSeek = {name: player.name, track: player.track_id, position: Math.max(0, Math.min(player.length, position)), requestedAt: Date.now(), sent: false, sentAt: 0}
+        error = ""
+        seekFeedbackTimeout.restart()
+        sendSeek()
     }
     property Timer progressClock: Timer {
         interval: 16; repeat: true
@@ -86,7 +120,7 @@ QtObject {
                 report.players = report.players.map(function(player) {
                     var previous = state.players.find(function(old) { return old.name === player.name && old.track_id === player.track_id })
                     if (previous && Number(previous.sampled_at) > Number(player.sampled_at)) return previous
-                    if (previous && previous.status === "Playing" && player.status === "Playing" && !activity.busy) {
+                    if (previous && previous.status === "Playing" && player.status === "Playing" && !activity.busy && !(pendingSeek && pendingSeek.name === player.name && pendingSeek.track === player.track_id)) {
                         var predicted = position(previous)
                         var measured = position(player)
                         // Ignore sub-frame sampling drift; real seeks remain authoritative.
@@ -100,6 +134,7 @@ QtObject {
             }
             state = Object.assign({}, state, report)
             settlePlaybackFeedback()
+            settleSeekFeedback()
         } catch (e) {}
     }
     function refresh() { if (!busy && !readProcess.running) readProcess.running = true }
@@ -131,7 +166,17 @@ QtObject {
             var completedPlayer = activity.sentPlayer
             var completedStatus = activity.sentStatus
             activity.sentPlayer = ""; activity.sentStatus = ""
-            if (code !== 0) { activity.clearPlaybackFeedback(); activity.refresh(); return }
+            var completedSeek = activity.seekInFlight
+            activity.seekInFlight = false
+            if (code !== 0) {
+                if (completedSeek) activity.clearSeekFeedback()
+                activity.clearPlaybackFeedback(); activity.refresh(); return
+            }
+            activity.settleSeekFeedback()
+            if (activity.pendingSeek && !activity.pendingSeek.sent) {
+                Qt.callLater(function() { activity.sendSeek() })
+                return
+            }
             if (activity.pendingPlayer.length && (!completedPlayer.length || activity.pendingPlayer !== completedPlayer || activity.pendingStatus !== completedStatus)) {
                 Qt.callLater(function() { activity.sendPlayback() })
             } else activity.settlePlaybackFeedback()

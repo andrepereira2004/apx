@@ -19,13 +19,7 @@ Column {
     function updateStyle(key, value) {
         var style = Object.assign({}, selectedStyle)
         style[key] = value
-        Appearance.setStyle(scope, style)
-    }
-    function selectTarget(key) {
-        var style = Object.assign({}, selectedStyle)
-        style.icons = key === "icons"
-        style.buttons = key === "buttons"
-        style.windows = key === "windows"
+        style.icons = true; style.buttons = false; style.windows = false
         Appearance.setStyle(scope, style)
     }
     function applyColor() {
@@ -60,7 +54,7 @@ Column {
     }
 
     Action { text: "Voltar às opções"; iconName: "chevron-left"; onClicked: panel.back() }
-    Caption { text: "Cor e superfícies"; color: "#e1e5f0"; font.pixelSize: Appearance.titleSize }
+    Caption { text: "Cor dos ícones"; color: "#e1e5f0"; font.pixelSize: Appearance.titleSize }
     Row {
         width: parent.width; spacing: 6
         Action { width: (parent.width - 6) / 2; text: "Global"; selected: panel.scope === "global"; onClicked: panel.scope = "global" }
@@ -106,18 +100,6 @@ Column {
         }
         Action { width: 94; text: "Aplicar"; enabled: !Appearance.busy; onClicked: panel.applyColor() }
     }
-    Repeater {
-        model: [{ key: "icons", text: "Ícones e realces", icon: "hexagon" }, { key: "buttons", text: "Fundos dos botões", icon: "grid-2x2" }, { key: "windows", text: "Superfícies das janelas", icon: "monitor" }]
-        Action {
-            required property var modelData
-            text: (panel.selectedStyle[modelData.key] ? "✓  " : "○  ") + modelData.text
-            iconName: modelData.icon
-            selected: !!panel.selectedStyle[modelData.key]
-            enabled: !Appearance.busy
-            onClicked: panel.selectTarget(modelData.key)
-        }
-    }
-    Caption { text: "Janelas: menus APX, Rofi, terminal e Ficheiros. O terminal atualiza já; aplicações GTK abertas podem precisar de ser reabertas."; font.pixelSize: Appearance.metaSize }
     Action {
         visible: panel.scope === "environment"
         height: visible ? implicitHeight : 0
@@ -125,6 +107,31 @@ Column {
         enabled: !Appearance.busy && !!Appearance.state.style
         onClicked: Appearance.change("environment-style", "inherit")
     }
+    Rectangle { width: parent.width; height: 1; color: "#414654" }
+    Caption { text: "Opacidade deste Environment"; color: "#e1e5f0"; font.pixelSize: Appearance.titleSize }
+    Repeater {
+        model: [{key: "bar", label: "Barra"}, {key: "menus", label: "Menus APX"}, {key: "terminal", label: "Terminal"}, {key: "files", label: "Gestor de ficheiros"}, {key: "rofi", label: "Rofi"}]
+        Column {
+            id: opacityRow
+            required property var modelData
+            width: panel.width; spacing: 2
+            Row {
+                width: parent.width
+                Text { width: parent.width - 48; text: opacityRow.modelData.label; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
+                Text { width: 48; horizontalAlignment: Text.AlignRight; text: Math.round(opacitySlider.value) + "%"; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
+            }
+            ControlSlider {
+                id: opacitySlider
+                width: parent.width; height: 36; from: 0; to: 100; stepSize: 1
+                activeFocusOnTab: true
+                Accessible.name: "Opacidade: " + opacityRow.modelData.label
+                Binding { target: opacitySlider; property: "value"; value: Appearance.opacityPercent(opacityRow.modelData.key); when: !opacitySlider.pressed }
+                onMoved: Appearance.setOpacity(opacityRow.modelData.key, value)
+                onPressedChanged: if (!pressed) Appearance.setOpacity(opacityRow.modelData.key, value)
+            }
+        }
+    }
+    Caption { text: "0% transparente · 100% opaco. O gestor de ficheiros pode precisar de ser reaberto."; font.pixelSize: Appearance.metaSize }
     Rectangle { width: parent.width; height: 1; color: "#414654" }
     Caption { text: "Wallpaper deste Environment"; color: "#e1e5f0"; font.pixelSize: Appearance.bodySize }
     Row {

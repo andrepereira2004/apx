@@ -1,5 +1,478 @@
 # APX Current Handoff
 
+## 2026-10-18 Owner-requested Git checkpoint
+
+Owner explicitly requested committing all accumulated repository work and pushing
+it to GitHub, especially the QuickShell changes. This checkpoint includes the
+2026-10-17/18 shell refinements, deployment/revert scripts, audit evidence,
+regression tests and refreshed runtime/recovery seed pins. Earlier “No
+commit/push” entries describe the status at the time of each historical step;
+they do not describe this checkpoint. Current submenu motion is 200ms and the
+owner accepted its continuity before requesting the speed adjustment.
+
+Checkpoint validation: 3 appearance-opacity, 9 media-progress and 14 work-default
+tests pass; git diff whitespace validation passes. This checkpoint does not
+change the documented experimental status or existing acceptance boundaries.
+
+## 2026-10-18 Faster accepted submenu motion
+
+Owner accepted submenu continuity as perfect and requested only faster motion.
+Reduced transition clock from 280ms to 200ms, preserving movement/blend curves
+and input shield. Applied source, seed and five homes; runtime/recovery pins
+updated. Native candidate parse passes; comparison to backup confirms sole QML
+change is transition duration.
+Backup: /var/lib/apx/backups/20261018T073100Z-submenu-speed.
+Deploy/revert: scripts/physical-pilot/deploy-submenu-speed-20261018.py.
+No commit/push.
+
+
+## 2026-10-18 Remove disabled-style snap after submenu motion
+
+Owner still reported final “click” despite fade/height changes. Concrete cause:
+menuFlick.enabled was false during capture/transition. Descendants inherited
+disabled state; ControlTile/MenuButton use opacity enabled?1:.42, so content
+remained dim and jumped to opacity 1 when motion finished. Capture also recorded
+disabled appearance. Removed transition-based disabling of the content tree.
+A transparent input shield now consumes pointer/wheel during capture/slide;
+root keyboard handler blocks navigation, focus returns only on completion.
+Intentional hardware/action disabled states retain normal dimming.
+
+Applied source, independent seed and five homes; runtime/recovery pins updated.
+Native candidate parse, 14 work-default tests and live enter/back/rapid checks
+pass. New live assertions inspect actual Wi-Fi/Bluetooth/main tile enabled and
+opacity every frame: enabled=true and opacity=1 throughout, while transition
+shield blocks input. No competing material/height animations detected.
+Evidence: audit/2026-10-18-submenu-input/live-frames.json and verify-live.py.
+Backup: /var/lib/apx/backups/20261018T072959Z-submenu-input.
+Deploy/revert: scripts/physical-pilot/deploy-submenu-input-20261018.py.
+Owner visual acceptance remains pending. No commit/push.
+
+
+## 2026-10-17 Eliminate independent submenu material/height tail
+
+Owner still perceived a cut before solidification. Removed independently timed
+material color animation for controls; height Behavior is disabled throughout
+capture and slide so new page lays out at full destination height while hidden,
+then enters as a complete page. Capture guard remains set through rendered-state
+swap and animation start, closing the previous one-turn gap where color/height
+Behaviors could begin before the slide. Snapshot overlap/motion timing retained.
+Added live diagnostics for material animation and target/settled height.
+Applied source, seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse, 14 work-default tests and live enter/back/rapid route
+checks pass. Intermediate frames assert material animation inactive and settled
+height equals target, eliminating independent late background/height settlement.
+Evidence: audit/2026-10-17-submenu-continuity/live-frames.json.
+Backup: /var/lib/apx/backups/20261017T213743Z-submenu-continuity.
+Deploy/revert: scripts/physical-pilot/deploy-submenu-continuity-20261017.py.
+Owner perception remains pending. No commit/push.
+
+
+## 2026-10-17 Submenu opacity settles before slide completes
+
+Owner accepted directional motion but reported slow solidification and final
+opacity jump. Separated timeline, movement and blend: linear 280ms clock,
+OutCubic movement and smoothstep opacity completing at 140ms. Incoming panel
+is fully solid during latter movement; outgoing snapshot already invisible
+before final release, avoiding an end-of-motion removal. Rounded smoothstep
+endpoints keep opacity continuous with zero slope.
+Applied source, seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse, 14 work-default tests and live enter/back/rapid route
+checks pass. Samples verify opacity reaches one while motion is still running,
+outgoing fades complement it, and final snapshot cleanup/navigation complete.
+Evidence: audit/2026-10-17-submenu-settle/live-frames.json.
+Backup: /var/lib/apx/backups/20261017T213615Z-submenu-settle.
+Deploy/revert: scripts/physical-pilot/deploy-submenu-settle-20261017.py.
+Owner visual acceptance pending. No commit/push.
+
+
+## 2026-10-17 Overlapping directional submenu slide
+
+Owner rejected sequential fade/snap submenu motion. Replaced it with 340ms
+OutCubic overlapping page slides: outgoing page snapshot moves 28px outward
+while incoming page enters from opposite side. Direction reverses for shallower
+routes. Existing panel height Behavior now interpolates rather than snapping.
+The previous page remains visible during asynchronous grabToImage capture;
+generation guard discards captures after close/reopen. Requests during motion
+coalesce to latest route; repeated route notifications are deduplicated.
+Snapshots are released on completion/cancel; temporary imagery is memory-local.
+Input remains blocked during capture/transition; keyboard focus restored.
+
+Applied source, seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse and 14 work-default tests pass. Live Connections
+enter/back sampling verifies both pages visible concurrently and complementary
+opacity. Rapid navigation reaches Sound/Brightness and releases outgoing image.
+Early live attempts overlapped owner menu changes; settled-state retry passed.
+Evidence: audit/2026-10-17-submenu-slide/live-frames.json and verify-live.py.
+Backup: /var/lib/apx/backups/20261017T213424Z-submenu-slide.
+Deploy/revert: scripts/physical-pilot/deploy-submenu-slide-20261017.py.
+Owner visual acceptance remains pending. No commit/push.
+
+
+## 2026-10-17 Sound/Brightness label capitalization
+
+Owner requested exact caption “Som e Brilho”. Updated source, independent seed
+and five homes; runtime/recovery pins refreshed. Deployment check is idempotent.
+Backup: /var/lib/apx/backups/20261017T213245Z-sound-brightness-label.
+Deploy/revert: scripts/physical-pilot/deploy-sound-brightness-label-20261017.py.
+No commit/push.
+
+
+## 2026-10-17 Official paintbrush and whole-surface submenu transitions
+
+Owner identified desired personalization icon as Lucide paintbrush. Replaced
+earlier custom SVG paths with official upstream icons/paintbrush.svg from
+https://github.com/lucide-icons/lucide (same existing icon rendering pipeline).
+
+Owner requested smoother submenu entrance/return, notably Connections.
+Controls now fade the complete surface, including background and border,
+using existing staged outgoing/swap/incoming sequence. Geometry and material
+switch at hidden midpoint without competing resize/color animations. Incoming
+6px approach moves the whole surface consistently, rather than shifting only
+the inset text. Inner content no longer multiplies the same fade twice.
+Main trigger-origin opening/closing behavior remains.
+Applied source, seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse, 14 work-default tests and live Connections enter/return
+sampling pass: surface opacity agrees with page opacity through intermediate
+frames. Restored owner's More options page after navigation verification.
+Evidence: audit/2026-10-17-submenu-motion/navigation.json.
+Backup: /var/lib/apx/backups/20261017T213156Z-submenu-motion.
+Deploy/revert: scripts/physical-pilot/deploy-submenu-motion-20261017.py.
+Owner perception of revised motion remains pending. No commit/push.
+
+
+## 2026-10-17 Menu scrollbars removed
+
+Owner superseded translucent/conditional white scrollbar request with removal.
+All four explicit shell vertical scrollbars now use AlwaysOff; removed custom
+thumb component. Flickable/ListView content scrolling remains available.
+Applied source, independent seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse passes; live IPC ready.
+Backup: /var/lib/apx/backups/20261017T213017Z-no-scrollbar.
+Deploy/revert: scripts/physical-pilot/deploy-no-scrollbar-20261017.py.
+Intermediate translucent variant backup: 20261017T213002Z-scrollbar-visibility.
+Evidence: audit/2026-10-17-no-scrollbar. No commit/push.
+
+
+## 2026-10-17 White menu scrollbars
+
+Owner requested white rather than gray lateral menu scroll indicators.
+Shared inline MenuScrollBar supplies explicit white rounded 6px thumb to
+all explicit shell vertical scrollbars, preserving their visibility policies.
+Applied source, independent seed and five homes; runtime/recovery pins updated.
+Native candidate parse passes; live IPC ready.
+Backup: /var/lib/apx/backups/20261017T212846Z-white-scrollbar.
+Deploy/revert: scripts/physical-pilot/deploy-white-scrollbar-20261017.py.
+Evidence: audit/2026-10-17-white-scrollbar. No commit/push.
+
+
+## 2026-10-17 More options joins top Control Centre group
+
+Owner requested More options alongside Connections and Sound/Brightness.
+Moved its existing action into the same top card as a matching 64px labelled
+tile with trailing chevron. Session actions retain their separate card.
+Applied source, independent seed and five homes; runtime/recovery pins updated.
+Native candidate parse and 14 work-default tests pass; live IPC ready.
+Backup: /var/lib/apx/backups/20261017T212736Z-more-options-group.
+Deploy/revert: scripts/physical-pilot/deploy-more-options-group-20261017.py.
+Evidence: audit/2026-10-17-more-options-group. No commit/push.
+
+
+## 2026-10-17 Bar-only sliders, stable opacity edits and grouped sound/brightness
+
+Owner requested no slider knobs and thicker personalization tracks. ControlSlider
+now has 6px track and empty handle; detailed audio/microphone and media timeline
+also use empty handles. Opacity editing now keeps optimistic per-target intent,
+debounces writes and batches pending updates after an in-flight operation.
+Old reports cannot overwrite intent; completion clears only matching sent values.
+Sliders remain enabled while saving. Native QML regression exercises stale report,
+older completion, next arrow and acknowledgement; passes. Three backend tests,
+14 work-default tests and nine media tests pass; native candidate parse passes.
+
+Owner additionally requested compact Sound/Brightness like Connections, grouped
+inside the same top card. Both 64px tiles now share that card. Sound/Brightness
+opens existing brightness route extended with volume plus audio-device access,
+microphone and keyboard controls. Updated action coverage for submenu placement.
+Applied source, independent seed and five homes; runtime/recovery pins refreshed.
+Backups: /var/lib/apx/backups/20261017T212530Z-slider-bars and
+/var/lib/apx/backups/20261017T212603Z-sound-brightness (baseline), with timeline
+and grouping revisions 212618Z/212641Z-sound-brightness.
+Deploy/revert: scripts/physical-pilot/deploy-slider-bars-20261017.py and
+scripts/physical-pilot/deploy-sound-brightness-20261017.py.
+Evidence: audit/2026-10-17-slider-bars and audit/2026-10-17-sound-brightness.
+Owner also reported an incorrect icon; identification question remains pending.
+No commit/push.
+
+
+## 2026-10-17 Greeting exit includes layout spacing
+
+Owner still perceived greeting exit stutter. Row removed a fixed 6px spacing
+when greeting became hidden/zero width, causing a final layout jump. Wrapped
+greeting plus Control Centre button in one persistent slot; greeting width now
+includes the extra gap in the same reveal animation. Button follows greeting
+width inside that slot, retaining its right position. Removed early width>1
+visibility cutoff. Existing 320ms reveal and expiry remain.
+Applied source, seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse and 14 work-default tests pass. Live automated entrance
+sampling deferred because owner had the personalization menu open; no owner
+menu closed for validation. Current IPC confirms correct resting positions.
+Owner perception remains pending.
+Backup: /var/lib/apx/backups/20261017T212205Z-greeting-spacing.
+Deploy/revert: scripts/physical-pilot/deploy-greeting-spacing-20261017.py.
+Evidence: audit/2026-10-17-greeting-spacing. No commit/push.
+
+## 2026-10-17 Opacity controls
+
+Owner requested opacity controls alongside icon color and wallpaper. Added five
+Environment-local 0–100% sliders: bar, APX menus, terminal, files and Rofi.
+Typed partial updates preserve other settings; generated Kitty/CSS/Rasi carry
+validated alpha, with Kitty reload using existing signal mechanism. Shell
+background alpha is independent of foreground/entrance animation opacity.
+Applied source, seed and five homes, refreshed asset/runtime/recovery pins.
+Three new isolated backend tests cover persistence, partial updates, color
+preservation, 0/100 endpoints, idempotent generation and invalid inputs.
+14 work-default tests and native candidate parse pass; native PersonalizationPanel
+instantiation passes with 791px content in existing scrollable menu. Live IPC
+shows owner on appearance page with 23 keyboard items. GTK may require reopening.
+Backup: /var/lib/apx/backups/20261017T212127Z-opacity.
+Deploy/revert: scripts/physical-pilot/deploy-opacity-20261017.py.
+Evidence: audit/2026-10-17-opacity. No commit/push.
+
+## 2026-10-17 Match Environment button surface to other bar capsules
+
+Owner perceived Environment button as more opaque. Its standalone BarButton
+fallback used #ed101117 versus shared capsules #ed15171f: alpha was identical
+but RGB darker. Unified fallback with existing shared capsule color, preserving
+hover/selected behavior. Applied source, seed and five homes; asset/runtime and
+recovery pins updated. Native candidate parse and 14 work-default tests pass.
+Live IPC available after bounded bar-only supervised restart.
+Backup: /var/lib/apx/backups/20261017T211957Z-environment-surface.
+Deploy/revert: scripts/physical-pilot/deploy-environment-surface-20261017.py.
+Evidence: audit/2026-10-17-environment-surface. No commit/push.
+
+
+## 2026-10-17 Control Centre grows downward from its own icon
+
+Owner requested Calendar-like opening. Removed dashboard-only fixed geometry,
+scale and short offset; main Control Centre now uses the same trigger-origin
+x/y/width/height interpolation and content reveal as Calendar, preserving cards.
+Applied source, independent seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse, 14 work-default tests and live intermediate geometry
+sampling pass. Backup: /var/lib/apx/backups/20261017T211834Z-controls-origin.
+Deploy/revert: scripts/physical-pilot/deploy-controls-origin-20261017.py.
+Evidence: audit/2026-10-17-controls-origin. Owner visual acceptance pending.
+No commit/push.
+
+## 2026-10-17 Icon-only personalization and compact controls
+
+Owner requested only icon color and wallpaper customization, paintbrush icon,
+compact Sound/Brightness header hit areas, mouse slider matching main volume,
+and original transparent dark Rofi/Thunar surfaces. Removed surface targets;
+style reader normalizes old button/window flags without changing chosen color
+or wallpaper. Restored #0a1014 at existing transparency. Mouse uses ControlSlider
+with 36px interaction height and 6px track. Header width follows actual caption.
+Owner also reported greeting exit stutter: one 320ms InOutCubic reveal now drives
+width and opacity with fixed text geometry, replacing competing animations.
+Applied source, independent seed and five homes, refreshed runtime/recovery pins.
+Native candidate parse and 14 work-default tests pass; deployment idempotent.
+Bar-only supervised restart restored IPC after hot reload; no session restart.
+Live greeting expiry samples captured in audit/2026-10-17-personalization-compact.
+Owner perception remains pending; existing GTK windows may need reopening.
+Backup: /var/lib/apx/backups/20261017T211745Z-personalization-compact.
+Deploy/revert: scripts/physical-pilot/deploy-personalization-compact-20261017.py.
+No commit/push.
+
+
+## 2026-10-17 Compact volume/brightness indicator exit without playback
+
+Owner reported transient capsule growing before vanishing only when playback
+was absent. Width previously switched from 88px transient to 220px media as
+soon as transientActive cleared, before presence finished fading. Width now
+uses showingTransient, retaining 88px geometry for the exit snapshot. Visibility
+also follows that snapshot, including Hub and constrained-width exit cases.
+With real playback, normal transition from compact feedback to media remains.
+Applied source, independent seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse and nine media tests pass. Native offscreen harness
+uses actual installed MediaIsland and exact shell width/Behavior expressions:
+without playback, sampled widths monotonically shrink 86.9→78.5→56.6→22.5→5.5
+→0.35→0, never expanding beyond 88; with playback, 220→88→220 restoration
+passes. No owner playback, volume or brightness changed for validation.
+Evidence: audit/2026-10-17-osd-exit/exit-validation.log.
+Backup: /var/lib/apx/backups/20261017T210831Z-osd-exit.
+Deploy/revert: scripts/physical-pilot/deploy-osd-exit-20261017.py. No commit/push.
+
+## 2026-10-17 Unified Control Centre entrance motion
+
+Owner reported multi-card Control Centre entrance less pleasant/coherent than
+Calendar. Main dashboard now keeps complete settled dimensions during entrance
+and exit; its parent surface applies one .94→1 scale, 10px approach and opacity
+using the existing 300ms OutCubic progress. This avoids sequential card clipping
+from a button-sized viewport. Removed the extra inner entrance displacement/
+progress fade for this split dashboard; submenu page opacity is retained.
+Calendar and other single-surface menu geometry retain existing behavior.
+Applied source, independent seed and five homes; runtime/recovery pins updated.
+Native candidate parse, 14 work-default tests and live frame checks passed.
+Live sampling verifies full dashboard dimensions throughout intermediate fade,
+plus More options/back and Calendar open/close. No bar restart needed.
+Evidence: audit/2026-10-17-controls-motion/live-frames.json.
+Backup: /var/lib/apx/backups/20261017T210321Z-controls-motion.
+Deploy/revert: scripts/physical-pilot/deploy-controls-motion-20261017.py.
+Owner visual acceptance remains pending. No commit/push.
+
+## 2026-10-17 Media menu under its button and workspace button sizing
+
+Owner requested playback menu beneath its independent capsule rather than
+right-aligned. Removed media from the forced-right popup placement branch;
+it now uses existing target-centred positioning with screen-edge clamps.
+Owner also reported undersized workspace button. Removed the 30px override
+so WorkspaceStrip uses normal BarButton intrinsic sizing (41px here, matching
+Apps), preserving the current icon and animated label viewport.
+Applied source, independent seed and five homes; runtime/recovery pins updated.
+Native candidate parse and live checks pass: media menu centre agrees with
+button centre within 1px and sits below it; collapsed workspace width and Apps
+width both 41px. Evidence: audit/2026-10-17-media-menu-anchor/live-results.json.
+Bar-only supervised restart restored IPC after dependency hot reload; no app
+or session restart. Deployment is idempotent. No playback change forced.
+Backups: /var/lib/apx/backups/20261017T210035Z-media-menu-anchor and
+/var/lib/apx/backups/20261017T210107Z-media-menu-anchor.
+Deploy/revert: scripts/physical-pilot/deploy-media-menu-anchor-20261017.py.
+No commit/push.
+
+## 2026-10-17 Smooth Super+W workspace reveal
+
+Owner rejected abrupt workspace label toggling. WorkspaceStrip now retains
+its delegates and clips a single animated viewport beside the fixed 30px icon,
+rather than emptying/rebuilding its Repeater. Width and opacity follow one
+280ms OutCubic reveal; reversing continues from the current value. Hidden
+labels disable input and close previews; paging and workspace activation remain.
+Applied source, independent seed and five homes; runtime/recovery pins updated.
+Native candidate parse passed. Live frame sampling through the Super+W IPC
+endpoint verifies intermediate widths on open/close, monotonic transitions,
+mid-animation reversal and stationary right control button. Three bar tests
+pass; deploy check reports zero pending files. No bar restart required.
+Evidence: audit/2026-10-17-workspaces-motion/live-frames.json.
+Backup: /var/lib/apx/backups/20261017T205937Z-workspaces-motion.
+Deploy/revert: scripts/physical-pilot/deploy-workspaces-motion-20261017.py.
+Owner perception of revised easing remains pending. No commit/push.
+
+## 2026-10-17 Independent media island, stable bar and workspace toggle
+
+Owner requested compact static hello, same-button menu closing, stable entrance
+animation, Super+W workspace label toggle, independent playback emerging from
+the central Environment widget, and responsive timeline dragging. Greeting now
+uses text width plus 16px, with no marquee. Removed Row move transition that
+competed with animated child widths and the right-anchored layout. Playback
+reparents to the bar surface as an independent capsule, revealing outward
+from the Environment pill; its width follows remaining space without moving
+the fixed right-side buttons. Greeting retains its 3-second/close lifetime.
+
+Popup focus grab includes the selected bar. Same-kind activation while already
+closing now stays closed rather than reopening when focus loss precedes the
+completed pointer click. WorkspaceStrip retains a clickable icon and hides
+labels/overflow when collapsed; Super+W invokes toggleWorkspaces. Per-root
+Hyprland configs patched narrowly, preserving other local content.
+
+Timeline seeking now retains immediate pending-position feedback until fresh
+matching track/position confirms it (bounded 1800ms fallback), discards stale
+position feedback and coalesces new seeks while a helper is busy. Slider stays
+usable during in-flight operations. Failure/track loss clears preview. This
+improves UI response; no claim of measured improvement inside the real player.
+
+Applied source, independent seed and five homes, with refreshed asset/recovery
+pins. Active Hyprland reload has no errors and Super+W binding is present.
+Native candidate parse and 26 media/work-default/bar tests passed, including
+new seek regression for immediate preview, queued final intent, stale reports,
+confirmation, reset and track-change cancellation. Existing harnesses updated
+for seek state. Real pointer checks pass same-icon close for control centre,
+calendar, battery and media. Live sampling confirms fixed right-side positions
+during media menu transitions; workspace endpoint toggles to 30px icon only.
+Screenshots inspected: audit/2026-10-17-bar-stability/bar-{default,greeting}.png.
+No owner media transport/seek/volume/brightness changes forced. Bar-only
+supervised restart needed after QML hot reload left IPC unavailable, as in
+previous revision; applications and compositor session retained.
+
+Deploy/revert: scripts/physical-pilot/deploy-bar-stability-20261017.py.
+Baseline backup: /var/lib/apx/backups/20261017T205330Z-bar-stability.
+Subsequent revisions backed up at 20261017T205355Z and 20261017T205638Z with
+the same suffix. Evidence: audit/2026-10-17-bar-stability. No commit/push.
+Owner visual acceptance of revised island motion remains pending.
+
+## 2026-10-17 Control Centre thin levels, icon navigation and short greeting
+
+Owner requested greeting for 3 seconds or until Control Centre closes; timer
+now uses 3000ms and popup close immediately stops/hides it. Main level tracks
+reduced from 20px to 6px, preserving the slider hit area. Sound/brightness
+headers are clickable ControlTiles with transparent resting surfaces, aligned
+to the same icon centre/caption inset as Connections. Removed audio chevron.
+Sound opens existing audio settings; brightness opens a new dedicated page
+using existing brightness preview/commit and keyboard illumination controls.
+Background brightness refresh excludes both active slider drags. Connections
+uses upstream Lucide satellite-dish.svg (lucide-icons/lucide, icons directory).
+
+Applied source, independent seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse and 22 existing work-default/media tests passed. Live
+checks confirm 3-second expiry, immediate hide on close and independent audio/
+brightness navigation; dashboard/brightness screenshots inspected. QuickShell
+hot reload loaded the UI but IPC reported not ready; a bounded bar-only restart
+through its existing supervisor restored IPC. Applications/session retained.
+Evidence: audit/2026-10-17-controls-refine.
+Backup: /var/lib/apx/backups/20261017T180826Z-controls-refine.
+Deploy/revert: scripts/physical-pilot/deploy-controls-refine-20261017.py.
+No actual volume/brightness/network/power action requested for validation.
+No commit/push.
+
+## 2026-10-17 Fixed Gosty hello
+
+Owner accepted the grouped Control Centre and animated greeting placement,
+then requested removal of all phrases except literal “Olá, André!”. Replaced
+the contextual phrase catalogue with that single greeting and removed context
+collection/recent-message bookkeeping. Removed obsolete generator tests.
+The existing 10-second timer and bar positioning/animation remain. Applied
+source, independent seed and five homes; runtime/recovery pins refreshed.
+Native candidate parse and live IPC confirmed exact greeting and visibility.
+Backup: /var/lib/apx/backups/20261017T180450Z-gosty-hello.
+Deploy/revert: scripts/physical-pilot/deploy-gosty-hello-20261017.py. No commit/push.
+
+## 2026-10-17 Gosty greeting beside Control Centre and grouped connections
+
+Owner refined the greeting placement: Rofi/files/battery shift left temporarily,
+with the greeting immediately left of Control Centre, borrowing playback space.
+Opening Control Centre now picks a Gosty line, starts a 10-second timer and
+reveals a width-animated bar item before its button. Long lines scroll; media
+retains its player/state and yields its width until expiry. Bar move transitions
+animate button repositioning. Hotkey feedback retains its higher priority.
+Greeting moved out of the dashboard. Dashboard now exposes one Connections tile
+with status glyphs, leading to a submenu for Wi-Fi, Bluetooth and airplane mode.
+Detailed Wi-Fi/Bluetooth pages and existing airplane helper are reused. Level
+tracks use rounded filled capsules; More options moved beside session actions.
+
+Applied source, independent seed and five homes; asset/recovery pins refreshed.
+Native candidate QML parse, eight media tests and fourteen work-default tests
+pass. Existing work-default assertion updated for nested connectivity access.
+Live checks confirmed greeting visibility/width, expiry after 10 seconds,
+restored bar geometry and Wi-Fi/Bluetooth navigation. Screenshots inspected:
+audit/2026-10-17-control-centre-gosty/{bar-greeting,dashboard,connectivity,bar-restored}.png.
+No media transport, volume, brightness, connectivity or power action triggered.
+Owner visual acceptance remains pending. Deployment check is idempotent.
+Backup: /var/lib/apx/backups/20261017T180311Z-control-centre-gosty.
+Deploy/revert: scripts/physical-pilot/deploy-control-centre-gosty-20261017.py.
+No commit/push.
+
+## 2026-10-17 Grouped Control Centre with visible labels
+
+Owner requested less scattered icons, inspired by macOS grouping. Connectivity
+and options now use labelled tiles; full-width sound and brightness controls
+have visible headings. Microphone/keyboard share a row, and session actions
+occupy their own card below levels. Existing callbacks, confirmation flows,
+Gosty greeting and separate notifications remain. ControlTile labels are opt-in
+so other menus retain their current layout. Applied source, independent seed
+and five homes; runtime/recovery asset pins refreshed. Native candidate QML
+parse passed; live panel opened and screenshot inspected. Deployment check
+reports zero pending files. No volume, brightness, network or power action
+was triggered. Owner visual acceptance pending. Evidence: audit/2026-10-17-control-centre-grouped/after.png.
+Backup: /var/lib/apx/backups/20261017T175519Z-control-centre-grouped.
+Deploy/revert: scripts/physical-pilot/deploy-control-centre-grouped-20261017.py.
+No commit/push.
+
 ## Rofi Flatpak uninstall export-path repair (2026-10-15)
 
 Owner reports attempting removal through Rofi; Modrinth remains installed.
@@ -4982,3 +5455,54 @@ authorized committing and pushing all relevant pending APX structural work and
 dotfiles. Application/game installations and personal credentials are excluded.
 Preserve the accepted interface; experimental pilot limitations remain in force.
 Publication uses the current development branch without rewriting remote history.
+
+
+## 2026-10-17 Stable volume and brightness feedback
+
+Owner requested slightly larger hotkey feedback and a stationary icon for all
+percentages, including 99% and 100%, for both volume and screen brightness.
+Shared MediaIsland transient width increased from 75 to 88 logical pixels; its
+percentage slot is fixed at 36 pixels with right alignment in JetBrains Mono.
+This keeps the centered icon/percentage group and icon position constant while
+numeric values change. Applied to five independent homes, seed and source, with
+runtime/recovery pins refreshed. Backup:
+/var/lib/apx/backups/20261017T174526Z-osd-stability.
+Deploy/revert helper: scripts/physical-pilot/deploy-osd-stability-20261017.py.
+Native candidate compilation and eight media tests passed; Hyprland reports no
+configuration errors. No actual volume or brightness changes during validation.
+
+
+## 2026-10-17 Fullscreen-only standalone hotkey feedback
+
+Owner prefers volume/brightness feedback in QuickShell during normal windowed
+use, retaining the standalone overlay while watching fullscreen content.
+A shared fullscreenOsd binding now routes the overlay only when the focused
+window is fullscreen and no QuickShell menu is open. Normal use always routes
+to the bar, including when media is playing; insufficient bar space no longer
+activates the standalone popup. The 88px transient capsule takes precedence over
+its ordinary media-space limit. An open shell menu retains in-bar feedback as
+previously requested. Fullscreen detection uses compositor window state, not
+media-title matching. Applied five independent homes, seed and source; runtime
+and recovery pins updated. Native QML parse and eight media tests passed;
+Hyprland configuration errors empty. No playback, volume or brightness changed
+for validation. Backup: /var/lib/apx/backups/20261017T174810Z-osd-routing.
+Deploy/revert: scripts/physical-pilot/deploy-osd-routing-20261017.py.
+
+
+## 2026-10-17 Fix stale fullscreen state in hotkey feedback
+
+Owner reproduced windowed YouTube on workspace 2 receiving standalone feedback.
+Diagnosis: hyprctl reported fullscreen=0 and window geometry [20,66]/[1240,634],
+while QuickShell popupStatus incorrectly reported fullscreen=true. The shell
+read lastIpcObject.fullscreen, a cached field which is not automatically refreshed.
+Replaced this with the reactive Wayland Toplevel.fullscreen property (guarded for
+missing active/Wayland handles), preserving menu priority and previous OSD sizing.
+Reference: https://quickshell.org/docs/v0.3.1/types/Quickshell.Hyprland/HyprlandToplevel/
+and https://quickshell.org/docs/v0.3.1/types/Quickshell.Wayland/Toplevel/ .
+Native candidate parse and eight media tests passed; no Hyprland config errors.
+After reload the owner had entered true fullscreen: compositor fullscreen=2 and
+QuickShell fullscreen=true agreed (audit live-state.json). No window state,
+playback, sound or brightness was changed by validation. Applied source, seed,
+five homes and updated runtime/recovery pins. Backup:
+/var/lib/apx/backups/20261017T175002Z-osd-fullscreen-state.
+Deploy/revert: scripts/physical-pilot/deploy-osd-fullscreen-state-20261017.py.

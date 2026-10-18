@@ -10,7 +10,7 @@ Column {
         id: seek
         width: parent.width; height: 24
         from: 0; to: Math.max(1, Number(timeline.player.length) || 0)
-        enabled: timeline.player.can_seek && timeline.player.length > 0 && !DesktopActivity.busy
+        enabled: timeline.player.can_seek && timeline.player.length > 0
         Accessible.name: "Posição da reprodução"
         Binding { target: seek; property: "value"; value: DesktopActivity.position(timeline.player); when: !seek.pressed }
         onMoved: if (!pressed) DesktopActivity.seek(timeline.player, value)
@@ -20,12 +20,7 @@ Column {
             width: seek.availableWidth; height: 4; radius: 2; color: "#455064"
             Rectangle { width: parent.width * seek.visualPosition; height: parent.height; radius: 2; color: Appearance.iconColor }
         }
-        handle: Rectangle {
-            x: seek.leftPadding + seek.visualPosition * (seek.availableWidth - width)
-            y: (seek.height - height) / 2
-            width: seek.pressed ? 12 : 8; height: width; radius: width / 2
-            color: Appearance.iconColor
-        }
+        handle: Item { width: 0; height: 0 }
     }
     Row {
         width: parent.width

@@ -27,7 +27,7 @@ Rectangle {
     implicitHeight: Math.max(32, iconSize + 6)
     scale: pointer.pressed || animateActivation || animateDeactivation ? 0.96 : 1
     radius: 16
-    color: visuallyActive ? activeSurface : (grouped ? "transparent" : (Appearance.tintButtons ? Appearance.barSurface : "#ed101117"))
+    color: visuallyActive ? activeSurface : (grouped ? "transparent" : Appearance.capsuleSurface)
     border.width: visuallyActive ? activeBorderWidth : (grouped ? 0 : 1)
     border.color: visuallyActive ? (alternateActive ? accentColor : hoverBorderColor) : "#304f566c"
     Accessible.role: Accessible.Button

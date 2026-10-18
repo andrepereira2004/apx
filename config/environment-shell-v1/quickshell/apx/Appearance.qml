@@ -11,9 +11,46 @@ QtObject {
     readonly property int metaSize: 11
     readonly property int menuTop: 65
     property var state: ({ icon_color: null, global_icon_color: "#d9dcea", effective_icon_color: "#d9dcea", wallpaper: "", warning: "" })
+    readonly property var opacityDefaults: ({bar: 93, menus: 95, terminal: 85, files: 85, rofi: 85})
+    property var pendingOpacity: ({})
+    property var opacityInFlight: ({})
+    function opacityPercent(key) {
+        if (pendingOpacity[key] !== undefined) return pendingOpacity[key]
+        var values = state.opacity || opacityDefaults
+        return values[key] === undefined ? opacityDefaults[key] : values[key]
+    }
+    function backgroundColor(value, target) {
+        var shade = Qt.color(value)
+        return Qt.rgba(shade.r, shade.g, shade.b, opacityPercent(target) / 100)
+    }
+    readonly property color capsuleSurface: backgroundColor("#15171f", "bar")
+    function setOpacity(key, value) {
+        var pending = Object.assign({}, pendingOpacity)
+        pending[key] = Math.max(0, Math.min(100, Math.round(value)))
+        pendingOpacity = pending
+        opacitySave.restart()
+    }
+    function flushOpacity() {
+        if (busy || !Object.keys(pendingOpacity).length) return
+        opacityInFlight = Object.assign({}, pendingOpacity)
+        change("opacity", JSON.stringify(opacityInFlight))
+    }
+    function finishOpacity() {
+        var pending = Object.assign({}, pendingOpacity)
+        Object.keys(opacityInFlight).forEach(function(key) {
+            if (pending[key] === opacityInFlight[key]) delete pending[key]
+        })
+        pendingOpacity = pending
+        opacityInFlight = ({})
+        if (Object.keys(pending).length) opacitySave.restart()
+    }
+    property Timer opacitySave: Timer {
+        interval: 180
+        onTriggered: appearance.flushOpacity()
+    }
     readonly property color iconColor: state.effective_icon_color || "#d9dcea"
-    readonly property bool tintButtons: !!(state.effective_style && state.effective_style.buttons)
-    readonly property bool tintWindows: !!(state.effective_style && state.effective_style.windows)
+    readonly property bool tintButtons: false
+    readonly property bool tintWindows: false
     readonly property color surface: state.surface || "#262939"
     readonly property color hover: state.hover || "#41475b"
     readonly property color active: state.active || "#454d64"
@@ -57,13 +94,13 @@ QtObject {
     property Process writeProcess: Process {
         stdout: StdioCollector { onStreamFinished: appearance.acceptReport(text) }
         stderr: StdioCollector { onStreamFinished: if (text.trim().length) appearance.error = text.trim() }
-        onExited: (code, status) => { if (code === 0) appearance.refresh() }
+        onExited: (code, status) => { appearance.finishOpacity(); if (code === 0) appearance.refresh() }
     }
     property Process chooserProcess: Process {
         command: ["/home/apx/.local/bin/apx-appearance-v1", "choose-wallpaper"]
         stdout: StdioCollector { onStreamFinished: appearance.acceptReport(text) }
         stderr: StdioCollector { onStreamFinished: if (text.trim().length) appearance.error = text.trim() }
-        onExited: (code, status) => { if (code === 0) appearance.error = "" }
+        onExited: (code, status) => { if (code === 0) appearance.error = ""; if (Object.keys(appearance.pendingOpacity).length) appearance.opacitySave.restart() }
     }
     property Timer refreshTimer: Timer {
         interval: 5000; running: true; repeat: true; triggeredOnStart: true

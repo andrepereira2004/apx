@@ -502,3 +502,6 @@ hl.window_rule({
     size = { "monitor_w*0.78", "monitor_h*0.82" },
     no_anim = true,
 })
+
+-- Toggle workspace labels while keeping their icon in the bar.
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleWorkspaces"))

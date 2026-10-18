@@ -119,8 +119,10 @@ class WorkDefaultsTests(unittest.TestCase):
         tile = (SHELL / "quickshell/apx/ControlTile.qml").read_text()
         self.assertIn("ControlDashboard {", source)
         self.assertIn("Accessible.name: caption", tile)
-        for section in ("wifi", "bluetooth", "audio", "microphone"):
+        for section in ("connectivity", "brightness"):
             self.assertIn('openControlSection("' + section + '")', dashboard)
+        for section in ("wifi", "bluetooth", "audio", "microphone"):
+            self.assertIn('openControlSection("' + section + '")', source)
         for action in ("lock", "reboot", "update", "poweroff"):
             self.assertIn('runControlAction("' + action + '")', dashboard)
         self.assertIn('kind: "notifications"; embedded: true', dashboard)

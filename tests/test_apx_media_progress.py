@@ -56,7 +56,8 @@ class MediaProgressTests(unittest.TestCase):
         accept=source[source.index('    function accept('):source.index('    function refresh(')]
         script="""
 const assert=require('node:assert/strict');
-let clock=12000;
+let clock=12000, pendingSeek=null;
+function settleSeekFeedback() {}
 let state={players:[{name:'test',track_id:'/one',position:10,sampled_at:10000,status:'Playing',rate:1,length:100}],notifications:[{id:1}]};
 const activity={busy:false};
 function settlePlaybackFeedback() {}
@@ -85,7 +86,8 @@ assert.equal(state.players[0].status,'Paused');
         exited=source[source.index('        onExited: function(code, status)'):source.index('        stdout: StdioCollector',source.index('        onExited: function(code, status)'))].replace('onExited: function(code, status)','function exited(code, status)',1)
         script="""
 const assert=require('node:assert/strict');
-let pendingPlayer='',pendingStatus='',pendingTrack='',pendingSince=0,sentPlayer='',sentStatus='',busy=false,error='',clock=1000;
+let pendingPlayer='',pendingStatus='',pendingTrack='',pendingSince=0,sentPlayer='',sentStatus='',busy=false,error='',clock=1000,pendingSeek=null;
+function settleSeekFeedback() {}
 let state={players:[{name:'test',track_id:'/one',status:'Playing',can_control:true,sampled_at:900,position:10,length:120,rate:1}]};
 const readProcess={running:false};
 const feedbackTimeout={restart(){},stop(){}};
@@ -94,7 +96,7 @@ const Qt={callLater(callback){callback();}};
 function refresh() {}
 Date.now=()=>1000;
 """+feedback+icon+position+accept+"""
-const activity={get busy(){return busy;},get sentPlayer(){return sentPlayer;},set sentPlayer(v){sentPlayer=v;},get sentStatus(){return sentStatus;},set sentStatus(v){sentStatus=v;},get pendingPlayer(){return pendingPlayer;},get pendingStatus(){return pendingStatus;},sendPlayback,settlePlaybackFeedback,clearPlaybackFeedback,refresh};
+const activity={get busy(){return busy;},get sentPlayer(){return sentPlayer;},set sentPlayer(v){sentPlayer=v;},get sentStatus(){return sentStatus;},set sentStatus(v){sentStatus=v;},get pendingPlayer(){return pendingPlayer;},get pendingStatus(){return pendingStatus;},sendPlayback,settlePlaybackFeedback,clearPlaybackFeedback,settleSeekFeedback,refresh};
 """+exited+"""
 togglePlayback(state.players[0]);
 assert.equal(playbackIcon(state.players[0]),'play');
@@ -133,5 +135,41 @@ assert.equal(hasMedia({status:'Paused',position:120,length:120}),false);
 assert.equal(hasMedia({status:'Stopped',position:0,length:120}),false);
 assert.equal(hasMedia({status:'Paused',position:0,length:0}),true);
 assert.equal(hasMedia({status:'Playing',position:120,length:120}),true);
+"""
+        subprocess.run(['node','-e',script],check=True,capture_output=True,text=True)
+
+    def test_seek_feedback_is_immediate_queues_last_target_and_ignores_stale_reports(self):
+        import shutil, subprocess
+        if not shutil.which('node'): self.skipTest('node unavailable')
+        source=(ROOT/'config/environment-shell-v1/quickshell/apx/DesktopActivity.qml').read_text()
+        feedback=source[source.index('    function clearSeekFeedback('):source.index('    property Timer seekFeedbackTimeout:')]
+        position=source[source.index('    function position('):source.index('    function timeLabel(')]
+        seek=source[source.index('    function seek('):source.index('    property Timer progressClock:')]
+        script="""
+const assert=require('node:assert/strict');
+let pendingSeek=null, seekInFlight=false, busy=false, clock=1000, error='';
+let state={players:[{name:'test',track_id:'/one',status:'Paused',can_seek:true,position:10,length:120,sampled_at:900}]};
+const seekFeedbackTimeout={restart(){},stop(){}};
+const readProcess={running:false};
+const actionProcess={command:[],set running(value){busy=value;}};
+Date.now=()=>1000;
+"""+feedback+position+seek+"""
+seek(state.players[0],30);
+assert.equal(position(state.players[0]),30);
+assert.equal(actionProcess.command.at(-2),'30');
+seek(state.players[0],80);
+assert.equal(position(state.players[0]),80);
+assert.equal(actionProcess.command.at(-2),'30');
+state.players[0]={...state.players[0],position:30,sampled_at:1001};
+settleSeekFeedback(); assert(pendingSeek);
+busy=false;sendSeek(); assert.equal(actionProcess.command.at(-2),'80');
+settleSeekFeedback(); assert(pendingSeek);
+state.players[0]={...state.players[0],position:80,sampled_at:1002};
+settleSeekFeedback(); assert.equal(pendingSeek,null);
+assert.equal(position(state.players[0]),80);
+busy=false; seek(state.players[0],50); clearSeekFeedback();
+assert.equal(position(state.players[0]),80);
+busy=true;seek(state.players[0],20);state.players[0]={...state.players[0],track_id:'/two'};
+busy=false;sendSeek();assert.equal(pendingSeek,null);
 """
         subprocess.run(['node','-e',script],check=True,capture_output=True,text=True)

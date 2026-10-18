@@ -7,7 +7,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import "WorkspacePager.js" as WorkspacePager
 
-Row {
+Item {
     id: strip
     required property var workspaces
     required property var barWindow
@@ -17,6 +17,8 @@ Row {
     required property color mainColor
     required property color dimColor
     required property color borderColor
+    property bool expanded: true
+    signal toggleRequested()
     property bool grouped: false
     property bool menusOpen: false
     property int offset: 0
@@ -25,12 +27,17 @@ Row {
     readonly property var page: WorkspacePager.page(workspaces, offset)
     readonly property var previewWorkspace: previewTarget ? previewTarget.modelData : null
     signal activated()
-    spacing: 4
+    property real reveal: expanded ? 1 : 0
+    Behavior on reveal { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+    implicitWidth: workspaceSymbol.width + labelsViewport.width
+    implicitHeight: 32
+    width: implicitWidth; height: implicitHeight
 
     onWorkspacesChanged: {
         if (offset >= workspaces.length || workspaces.length <= 5) offset = 0
         if (previewWorkspace && workspaces.indexOf(previewWorkspace) < 0) hidePreview()
     }
+    onExpandedChanged: if (!expanded) hidePreview()
     onVisibleChanged: if (!visible) hidePreview()
     onMenusOpenChanged: if (menusOpen) hidePreview()
 
@@ -63,55 +70,70 @@ Row {
         onTriggered: if (!previewHover.hovered) strip.hidePreview()
     }
 
-    Item {
+    BarButton {
         id: workspaceSymbol
-        width: 30; height: 32
-        LucideIcon { anchors.centerIn: parent; name: "square-stack"; width: 17; height: 17 }
-        Accessible.role: Accessible.StaticText
-        Accessible.name: "Workspaces"
+        grouped: strip.grouped
+        height: 32
+        iconName: "square-stack"
+        accessibleLabel: strip.expanded ? "Ocultar workspaces" : "Mostrar workspaces"
+        onActivated: strip.toggleRequested()
     }
 
-    Repeater {
-        model: strip.page
-        delegate: BarButton {
-            id: workspaceButton
-            grouped: strip.grouped
-            required property var modelData
-            label: modelData.name
-            alternateLabel: label
-            alternateActive: modelData.focused
-            activeSurface: strip.activeColor
-            accentColor: strip.mainColor
-            textColor: strip.dimColor
-            Accessible.role: Accessible.Button
-            Accessible.name: "Workspace " + modelData.name + (modelData.focused ? ", atual" : "")
-            Component.onDestruction: if (strip.previewTarget === workspaceButton) strip.hidePreview()
-            HoverHandler {
-                onHoveredChanged: strip.hoverButton(workspaceButton, hovered)
+    // Keep delegates alive so labels retain their positions throughout reversal.
+    Item {
+        id: labelsViewport
+        x: workspaceSymbol.width
+        width: (labels.implicitWidth > 0 ? labels.implicitWidth + 4 : 0) * strip.reveal
+        height: 32; clip: true
+        opacity: strip.reveal
+        enabled: strip.expanded
+        Row {
+            id: labels
+            x: 4; height: 32; spacing: 4
+            Repeater {
+                model: strip.page
+                delegate: BarButton {
+                    id: workspaceButton
+                    grouped: strip.grouped
+                    required property var modelData
+                    label: modelData.name
+                    alternateLabel: label
+                    alternateActive: modelData.focused
+                    activeSurface: strip.activeColor
+                    accentColor: strip.mainColor
+                    textColor: strip.dimColor
+                    Accessible.role: Accessible.Button
+                    Accessible.name: "Workspace " + modelData.name + (modelData.focused ? ", atual" : "")
+                    Component.onDestruction: if (strip.previewTarget === workspaceButton) strip.hidePreview()
+                    HoverHandler {
+                        onHoveredChanged: strip.hoverButton(workspaceButton, hovered)
+                    }
+                    onActivated: {
+                        strip.hidePreview()
+                        strip.activated()
+                        modelData.activate()
+                    }
+                }
             }
-            onActivated: {
-                strip.hidePreview()
-                strip.activated()
-                modelData.activate()
+            BarButton {
+                id: nextWorkspaceButton
+                grouped: strip.grouped
+                visible: strip.workspaces.length > 5
+                label: ""
+                implicitWidth: 40
+                iconName: "chevron-right"
+                alternateLabel: label
+                activeSurface: strip.activeColor
+                accentColor: strip.mainColor
+                textColor: strip.dimColor
+                Accessible.role: Accessible.Button
+                Accessible.name: "Mostrar os próximos workspaces"
+                onActivated: {
+                    strip.hidePreview()
+                    strip.offset = WorkspacePager.nextOffset(strip.workspaces, strip.offset)
+                }
             }
-        }
-    }
-    BarButton {
-        id: nextWorkspaceButton
-        grouped: strip.grouped
-        visible: strip.workspaces.length > 5
-        label: ""
-        implicitWidth: 40
-        iconName: "chevron-right"
-        alternateLabel: label
-        activeSurface: strip.activeColor
-        accentColor: strip.mainColor
-        textColor: strip.dimColor
-        Accessible.role: Accessible.Button
-        Accessible.name: "Mostrar os próximos workspaces"
-        onActivated: {
-            strip.hidePreview()
-            strip.offset = WorkspacePager.nextOffset(strip.workspaces, strip.offset)
+
         }
     }
 

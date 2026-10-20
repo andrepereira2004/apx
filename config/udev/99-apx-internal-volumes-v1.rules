@@ -1,0 +1,3 @@
+# APX implementation volumes are never user-facing mount/send-to destinations.
+# UDisks/GVfs hint only: does not change mounts, permissions or block access.
+SUBSYSTEM=="block", ENV{ID_FS_LABEL}=="APX_ROOT|APXROOT|APX_EFI|APXEFI|APXWIN*|APXW[0-9]*|APXE[0-9]*", ENV{UDISKS_IGNORE}="1"

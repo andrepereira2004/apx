@@ -1,0 +1,16 @@
+Drive(0): SAMSUNG MZVLB512HBJQ-000L2
+  Type: GProxyDrive (GProxyVolumeMonitorUDisks2)
+  ids:
+   unix-device: '/dev/nvme0n1'
+  themed icons:  [drive-harddisk-solidstate]  [drive-harddisk]  [drive]  [drive-harddisk-solidstate-symbolic]  [drive-harddisk-symbolic]  [drive-symbolic]
+  symbolic themed icons:  [drive-harddisk-solidstate-symbolic]  [drive-harddisk-symbolic]  [drive-symbolic]  [drive-harddisk-solidstate]  [drive-harddisk]  [drive]
+  is_removable=0
+  is_media_removable=0
+  has_media=1
+  is_media_check_automatic=1
+  can_poll_for_media=0
+  can_eject=0
+  can_start=0
+  can_stop=0
+  start_stop_type=shutdown
+  sort_key=00coldplug/00fixed/nvme0

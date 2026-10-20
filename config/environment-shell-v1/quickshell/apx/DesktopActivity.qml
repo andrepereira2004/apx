@@ -144,6 +144,7 @@ QtObject {
             return
         }
         if (busy) return
+        if (args[0] === "notification" && notificationsProcess.running) notificationsProcess.running = false
         error = ""
         if (readProcess.running) readProcess.running = false
         actionProcess.command = ["/home/apx/.local/bin/apx-desktop-activity-v1"].concat(args)
@@ -159,7 +160,7 @@ QtObject {
     }
     property Timer notificationsTimer: Timer {
         interval: 10000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: if (!activity.notificationsProcess.running) activity.notificationsProcess.running = true
+        onTriggered: if (!activity.busy && !activity.notificationsProcess.running) activity.notificationsProcess.running = true
     }
     property Process actionProcess: Process {
         onExited: function(code, status) {

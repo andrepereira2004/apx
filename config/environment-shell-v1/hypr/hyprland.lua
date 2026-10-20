@@ -236,6 +236,7 @@ hl.config({
 
 hl.config({
     misc = {
+        focus_on_activate = true,
         -- QuickShell normally paints the rotating landscape layer. Keep the
         -- compositor fallback plain black while that layer restarts.
         force_default_wallpaper = 0,
@@ -505,3 +506,11 @@ hl.window_rule({
 
 -- Toggle workspace labels while keeping their icon in the bar.
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleWorkspaces"))
+
+-- Environment-local trackpad preference from the Control Centre.
+local trackpadChoice = "/home/apx/.config/hypr/apx-trackpad-sensitivity.lua"
+local trackpadChoiceFile = io.open(trackpadChoice, "r")
+if trackpadChoiceFile then
+    trackpadChoiceFile:close()
+    dofile(trackpadChoice)
+end

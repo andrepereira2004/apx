@@ -21,7 +21,96 @@ LAUNCH_TIMEOUT = 15
 LAUNCH_DEBOUNCE = 2
 LAUNCH_STATE = Path(os.environ.get('XDG_RUNTIME_DIR', str(Path.home()/'.cache'))) / ('apx-app-launches-' + str(os.getuid()))
 
-WINDOW_CLASS_ALIASES = {'minecraft-launcher': {'minecraft launcher'}}
+# Only known ancillary launchers are grouped; newly installed apps stay visible.
+UTILITY_NAMES = {
+    'xgps': 'GPS — posição (xgps)',
+    'xgpsspeed': 'GPS — velocidade (xgpsspeed)',
+    'avahi-discover': 'Descobrir serviços de rede (Avahi)',
+    'bssh': 'Ligações SSH na rede (Avahi)',
+    'bvnc': 'Ligações VNC na rede (Avahi)',
+    'qv4l2': 'Diagnóstico de câmara (qv4l2)',
+    'qvidcap': 'Captura de vídeo (qvidcap)',
+    'lstopo': 'Topologia do hardware (lstopo)',
+    'cmake-gui': 'Configuração de projetos CMake',
+    'rofi': 'Rofi', 'rofi-theme-selector': 'Temas do Rofi',
+    'org.quickshell': 'QuickShell',
+    'foot': 'Terminal Foot', 'foot-server': 'Servidor do terminal Foot',
+    'footclient': 'Cliente do terminal Foot', 'Alacritty': 'Terminal Alacritty',
+    'kitty-open': 'Abrir com Kitty',
+    'cups': 'Administração de impressão (CUPS)',
+    'system-config-printer': 'Configurar impressoras',
+    'thunar-bulk-rename': 'Renomear vários ficheiros',
+    'thunar-settings': 'Preferências do gestor de ficheiros',
+    'org.xfce.mousepad-settings': 'Preferências do editor de texto',
+    'xfce4-about': 'Sobre os componentes Xfce',
+    'org.gnome.Evince-previewer': 'Pré-visualização de impressão',
+    'gcr-viewer': 'Ver certificados', 'uuctl': 'Gestão de atualizações (uuctl)',
+}
+
+FOLDER_STATE = Path.home()/'.local/state/apx-window-apps-v1/folders.json'
+DEFAULT_FOLDERS = {
+    'Ficheiros': {'thunar', 'org.xfce.Catfish', 'org.gnome.FileRoller', 'xarchiver',
+                 'thunar-bulk-rename', 'org.xfce.mousepad'},
+    'Multimédia': {'mpv', 'org.xfce.ristretto', 'org.pulseaudio.pavucontrol'},
+    'Documentos e impressão': {'org.gnome.Evince', 'org.gnome.Evince-previewer',
+                              'org.gnome.SimpleScan', 'cups', 'system-config-printer'},
+    'Sistema': {'apx-terminal', 'apx-settings', 'kitty', 'Alacritty', 'foot', 'foot-server', 'footclient', 'kitty-open',
+                'thunar-settings', 'org.xfce.mousepad-settings', 'xfce4-taskmanager',
+                'xfce4-about', 'rofi', 'rofi-theme-selector', 'org.quickshell',
+                'uuctl', 'gcr-viewer'},
+    'Utilities': set(UTILITY_NAMES),
+}
+
+
+def valid_folder(name):
+    return (isinstance(name, str) and 0 < len(name.strip()) <= 48
+            and not any(ord(c) < 32 or c in '/\\' for c in name))
+
+
+def folder_preferences():
+    try:
+        data = json.loads(FOLDER_STATE.read_text())
+        return {key: value for key, value in data.items()
+                if isinstance(key, str) and (value == '' or valid_folder(value))}
+    except (OSError, ValueError, AttributeError):
+        return {}
+
+
+def folder_for(app_id, preferences):
+    if app_id in preferences:
+        return preferences[app_id]
+    return next((name for name, ids in DEFAULT_FOLDERS.items() if app_id in ids), '')
+
+
+def save_folder(app_id, folder):
+    import fcntl
+    import tempfile
+    if not app_id or (folder and not valid_folder(folder)):
+        raise ValueError('Nome de pasta inválido')
+    FOLDER_STATE.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    with FOLDER_STATE.with_suffix('.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        data = folder_preferences()
+        data[app_id] = folder.strip()
+        fd, temporary = tempfile.mkstemp(prefix='.folders-', dir=FOLDER_STATE.parent)
+        try:
+            with os.fdopen(fd, 'w') as stream:
+                json.dump(data, stream, ensure_ascii=False)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, FOLDER_STATE)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+
+
+def folder_row(label, key):
+    return (label + '\0display\x1f' + html.escape(label)
+            + '\x1ficon\x1ffolder\x1finfo\x1f' + key)
+
+
+WINDOW_CLASS_ALIASES = {'minecraft-launcher': {'minecraft launcher'},
+                        'thunar': {'org.xfce.thunar'}}
 
 WINDOW_PRESENTATION = {'apx-host-console-v1':
                        ('APX Terminal', '/usr/share/icons/Papirus/48x48/apps/utilities-terminal.svg')}
@@ -130,7 +219,9 @@ def resolve_icons(apps):
         cache = {key: value for key, value in cache.items()
                  if type(key) is str and type(value) is str and value.startswith('/')}
         settings = Path.home()/'.config/gtk-3.0/settings.ini'
-        if settings.exists() and settings.stat().st_mtime_ns > ICON_CACHE.stat().st_mtime_ns:
+        theme_index = Path.home()/'.local/share/icons/APX-Graphite/index.theme'
+        if any(path.exists() and path.stat().st_mtime_ns > ICON_CACHE.stat().st_mtime_ns
+               for path in (settings, theme_index)):
             cache = {}
     except (OSError, ValueError):
         cache = {}
@@ -305,7 +396,14 @@ def catalog():
         klass = str(window.get('class', '')).lower()
         if not klass or not window.get('mapped', True):
             continue
-        app = next((item for item in apps.values() if klass in item['aliases']), None)
+        # Prefer the app ID over helpers sharing its executable, e.g. Thunar's
+        # bulk-rename/settings launchers, so the main app owns its windows.
+        matches = [item for item in apps.values() if klass in item['aliases']]
+        app = min(matches, key=lambda item: (
+            0 if klass == item['id'].casefold() else
+            1 if klass in WINDOW_CLASS_ALIASES.get(item['id'], ()) else
+            2 if klass == item['id'].rsplit('.', 1)[-1].casefold() else 3
+        ), default=None)
         if app is None:
             name, icon = WINDOW_PRESENTATION.get(klass, (str(window.get('initialClass') or window.get('class')), klass))
             app = apps.setdefault('window:' + klass, {'id': '', 'name': name,
@@ -361,10 +459,12 @@ def hyprland_eval(code):
         raise RuntimeError('Não foi possível ativar a janela')
 
 def action_row(label, symbol, color, action, value, name):
-    display = (f'<span foreground="{color}"><b>{symbol}</b></span>  '
-               + html.escape(label))
+    display = html.escape(label)
+    icon = {'open': 'copy-plus', 'terminate': 'x', 'nvidia': 'cpu',
+            'uninstall': 'trash-2', 'confirm': 'check', 'cancel': 'undo-2', 'folder': 'copy-plus', 'cycle': 'bring-to-front'}[action]
+    icon_path = str(Path.home() / '.config/quickshell/apx/icons/rofi' / (icon + '.svg'))
     return (label + '\0display\x1f' + display + '\x1finfo\x1faction:'
-            + action + ':' + value + '\x1fmeta\x1f' + name)
+            + action + ':' + value + '\x1fmeta\x1f' + name + '\x1ficon\x1f' + icon_path)
 
 def rofi_rows():
     """Keep the catalogue visible while one application's actions are selected."""
@@ -372,10 +472,26 @@ def rofi_rows():
     selected = os.environ.get('ROFI_INFO', '')
     data = os.environ.get('ROFI_DATA', '')
     retv = os.environ.get('ROFI_RETV', '0')
-    chosen = data.removeprefix('selected:') if data.startswith('selected:') else ''
-    confirming = data.startswith('confirm:')
-    if confirming:
-        chosen = data.removeprefix('confirm:')
+    folder, chosen, panel = '', '', ''
+    confirming = False
+    try:
+        state = json.loads(data)
+        folder, chosen, panel = (state.get(k, '') for k in ('folder', 'chosen', 'panel'))
+        confirming = state.get('confirming', False)
+        if not all(isinstance(value, str) for value in (folder, chosen, panel)):
+            raise ValueError('Invalid menu state')
+    except (ValueError, AttributeError):
+        if data.startswith('utilities|'):
+            folder, data = 'Utilities', data.removeprefix('utilities|')
+        chosen = data.removeprefix('selected:') if data.startswith('selected:') else ''
+        confirming = data.startswith('confirm:')
+        if confirming:
+            chosen = data.removeprefix('confirm:')
+    navigating = False
+    # Discard folder state retained by a launcher opened before the flat menu.
+    folder, panel = '', ''
+    if selected.startswith(('folder:', 'organize:', 'assign:', 'action:folder:')):
+        selected, navigating = '', True
     if retv == '1' and selected.startswith('action:'):
         action, _, value = selected.removeprefix('action:').partition(':')
         if action == 'uninstall' and value == chosen:
@@ -385,7 +501,7 @@ def rofi_rows():
             return
         elif action == 'cancel':
             confirming = False
-        elif action in ('open', 'terminate', 'nvidia') and value:
+        elif action in ('open', 'terminate', 'nvidia', 'cycle') and value:
             execute_and_close(action, value)
             return
     elif retv in ('1', '10') and selected and not selected.startswith('action:'):
@@ -394,24 +510,25 @@ def rofi_rows():
             return
         if retv == '1':
             window = app['windows'][0] if app['windows'] else None
-            execute_and_close('focus' if window else 'open', window['address'] if window else app['id'])
+            execute_and_close('open' if app['id'] else 'focus', app['id'] or window['address'])
             return
         chosen = selected
         confirming = False
-    print('\0prompt\x1fApps')
+    print('\0prompt\x1f' + (folder or 'Apps'))
     print('\0no-custom\x1ftrue')
     print('\0markup-rows\x1ftrue')
     print('\0use-hot-keys\x1ftrue')
     print('\0message\x1fClique esquerdo: abrir ou executar · clique direito: opções · azul: a abrir · verde: com janela · amarelo: minimizada')
-    print('\0data\x1f' + (('confirm:' if confirming else 'selected:') + chosen if chosen else ''))
+    print('\0data\x1f' + json.dumps(dict(folder=folder, chosen=chosen, panel='', confirming=confirming)))
     rows = []
     selected_index = 0
     for app in apps:
+        key = app['id'] or 'window:' + app['name'].lower()
         window = app['windows'][0] if app['windows'] else None
         dot = ('<span foreground="#e4b75c">●</span>' if window['minimized'] else
                '<span foreground="#77c99a">●</span>') if window else (
                '<span foreground="#69a7ff">●</span>' if app.get('opening') else '')
-        name = app['name'].replace('\n', ' ').replace('\r', ' ')
+        name = UTILITY_NAMES.get(app['id'], app['name']).replace('\n', ' ').replace('\r', ' ')
         visible = (name[:49] + '…') if len(name) > 50 else name
         label = html.escape(visible) + ('  ' + dot if dot else '')
         key = app['id'] or 'window:' + app['name'].lower()
@@ -423,8 +540,8 @@ def rofi_rows():
                 rows.append(action_row('Confirmar desinstalação', '✓', '#e4b75c', 'confirm', key, name))
                 rows.append(action_row('Cancelar', '↩', '#9ba3ac', 'cancel', key, name))
             else:
-                if app['id'] and window:
-                    rows.append(action_row('Abrir segunda instância', '+', '#77c99a', 'open', app['id'], name))
+                if window:
+                    rows.append(action_row('Ir para a próxima janela', '', '', 'cycle', key, name))
                 if app['id'] and nvidia_on_demand():
                     rows.append(action_row('Abrir na NVIDIA', '◆', '#77c99a', 'nvidia', app['id'], name))
                 if window:
@@ -432,15 +549,116 @@ def rofi_rows():
                 if app['id']:
                     rows.append(action_row('Desinstalar aplicação', '−', '#d98989', 'uninstall', app['id'], name))
     print('\0keep-selection\x1ftrue')
-    print('\0keep-filter\x1ftrue')
+    print('\0keep-filter\x1f' + ('false' if navigating else 'true'))
     print('\0new-selection\x1f' + str(selected_index))
     if chosen:
         print('\0active\x1f' + str(selected_index))
     for row in rows:
         print(row)
 
+def native_page():
+    import io
+    from contextlib import redirect_stdout
+    apps = catalog()
+    original_catalog = globals()['catalog']
+    globals()['catalog'] = lambda: apps
+    output = io.StringIO()
+    try:
+        with redirect_stdout(output):
+            rofi_rows()
+    finally:
+        globals()['catalog'] = original_catalog
+    headers, rows = {}, []
+    for line in output.getvalue().split('\n'):
+        if not line:
+            continue
+        if line.startswith('\0'):
+            key, _, value = line[1:].partition('\x1f')
+            headers[key] = value
+        else:
+            label, _, extra = line.partition('\0')
+            fields = extra.split('\x1f')
+            row = dict(zip(fields[::2], fields[1::2]))
+            row.update(label=label, browse=True)
+            rows.append(row)
+    try:
+        state = json.loads(headers.get('data', '{}'))
+    except ValueError:
+        state = {}
+    if headers and state.get('panel', '') == '':
+        seen = {r.get('info') for r in rows}
+        for app in apps:
+            key = app['id'] or 'window:' + app['name'].lower()
+            if key not in seen:
+                name = UTILITY_NAMES.get(app['id'], app['name'])
+                window = app['windows'][0] if app['windows'] else None
+                color = ('#e4b75c' if window['minimized'] else '#77c99a') if window else ('#69a7ff' if app.get('opening') else '')
+                display = html.escape(name) + ('  <span foreground="' + color + '">●</span>' if color else '')
+                rows.append(dict(label=name, display=display, icon=app['iconPath'],
+                                 info=key, browse=False))
+        for row in rows:
+            key = row.get('info', '')
+            row['search'] = not key.startswith('folder:')
+            app = next((a for a in apps if (a['id'] or 'window:' + a['name'].lower()) == key), None)
+            row['match'] = row['label'] + ' ' + row.get('meta', '') + (' ' + app['name'] + ' ' + app['id'] if app else '')
+    else:
+        for row in rows:
+            row['search'], row['match'] = True, row['label']
+    print(json.dumps(dict(headers=headers, rows=rows), ensure_ascii=False))
+
+
+def cycle_window(app_key):
+    """Advance through a stable set of live windows, independent of focus order."""
+    import fcntl
+    import tempfile
+    app = next((app for app in catalog()
+                if (app['id'] or 'window:' + app['name'].lower()) == app_key), None)
+    windows = sorted({w['address'] for w in app['windows'] if w.get('address')}) if app else []
+    if not windows:
+        raise SystemExit('Não há janelas abertas desta aplicação')
+    state = launch_state()
+    with (state/'cycle.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        path = state/'window-cycle.json'
+        try:
+            remembered = json.loads(path.read_text())
+            if not isinstance(remembered, dict):
+                remembered = {}
+        except (OSError, ValueError):
+            remembered = {}
+        try:
+            active = json.loads(subprocess.check_output(['/usr/bin/hyprctl', '-j', 'activewindow'], timeout=2)).get('address', '')
+        except (OSError, ValueError, AttributeError, subprocess.SubprocessError):
+            active = ''
+        previous = active if active in windows else remembered.get(app_key, '')
+        target = windows[(windows.index(previous) + 1) % len(windows)] if previous in windows else windows[0]
+        # Re-resolve the live window and retain the existing minimized restore path.
+        perform('focus', target)
+        remembered[app_key] = target
+        fd, temporary = tempfile.mkstemp(prefix='.window-cycle-', dir=state)
+        try:
+            with os.fdopen(fd, 'w') as stream:
+                json.dump(remembered, stream)
+            os.replace(temporary, path)
+        finally:
+            Path(temporary).unlink(missing_ok=True)
+        return target
+
+
+def native_launch_command(app):
+    # Explicit window flags avoid browser/Thunar activation reusing an old window.
+    if app['id'] == 'brave-browser':
+        return ['/usr/bin/brave', '--new-window']
+    if app['id'] == 'thunar':
+        return ['/usr/bin/thunar', '--window', str(Path.home())]
+    return ['/usr/bin/gtk-launch', app['id']]
+
+
 def perform(action, value):
     # Every action resolves the current desktop entry or Hyprland window again.
+    if action == 'cycle':
+        cycle_window(value)
+        return
     if action in ('focus', 'terminate'):
         found = next(((app, w) for app in catalog() for w in app['windows'] if w['address'] == value), None)
         if found is None:
@@ -482,10 +700,10 @@ def perform(action, value):
                                *(f'--env={key}={item}' for key, item in variables.items()), value]
                     environment = None
                 else:
-                    command = ['/usr/bin/gtk-launch', value]
+                    command = native_launch_command(app)
                     environment = dict(os.environ, **variables)
             else:
-                command = ['/usr/bin/gtk-launch', value]
+                command = native_launch_command(app)
                 environment = None
             if start_launch(value, command, environment):
                 record_use(value)
@@ -496,6 +714,10 @@ def perform(action, value):
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == '--native-page':
+        sys.argv.pop(1)
+        native_page()
+        return
     if len(sys.argv) == 5 and sys.argv[1] == 'launch-worker':
         launch_worker(sys.argv[2], sys.argv[3], json.loads(sys.argv[4]))
         return
@@ -506,7 +728,7 @@ def main():
     if sys.argv[1] == 'list':
         print(json.dumps(catalog(), ensure_ascii=False))
         return
-    if len(sys.argv) != 3 or sys.argv[1] not in ('focus', 'open', 'terminate', 'uninstall'):
+    if len(sys.argv) != 3 or sys.argv[1] not in ('focus', 'open', 'terminate', 'uninstall', 'cycle'):
         raise SystemExit(2)
     perform(*sys.argv[1:])
 

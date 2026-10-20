@@ -1,4 +1,971 @@
+# Owner-requested accumulated commit and push — 2026-10-20
+
+Owner explicitly requested committing all changes since the previous commit and
+pushing them. Prepared the accumulated UI/control refinements, Wi-Fi/Bluetooth
+flows, input safety, application installation/catalogue repair, launcher/file
+manager icons, notifications/passkey defaults, deployment tools and evidence.
+Focused suite across all modified/new test modules: 85 tests passed.
+Staged text credential-pattern scan found no matches; whitespace check clean
+after removing one trailing blank line from the trackpad test.
+
+# More-options actions, pointer safety and no hover captions — 2026-10-20
+
+Owner requested a new shortcut-list icon, improved Personalization, aligned
+icons, pointer power on the mouse/trackpad circles and no hover captions; later
+expanded removal of hover captions to all buttons. Personalization and shortcut
+list now use rounded 56px cards with 36px icon circles/16px glyphs centred at x26
+and labels at x54, matching input cards. Shortcut list uses a list glyph. Back
+uses aligned icon/text geometry too. All ToolTip declarations were removed from
+the shared RadioIconButton; accessible names remain.
+
+New session-local apx-pointer-power-v1 helper provides status/toggle using the
+existing compositor device API, serialized with a per-session runtime lock.
+Mouse/trackpad icon actions toggle their groups; card bodies still focus sliders.
+Sliders disable when their group is unavailable/off. State resets for a new
+compositor instance. Disabling a group requires a distinct available fallback
+and explicitly enables that fallback first. Trackpad companion mouse endpoints
+and keyboard mouse endpoints are excluded as false external-mouse fallbacks.
+Failure re-enables the target; a two-second status poll restores the built-in
+trackpad if its external mouse fallback disappears (and vice versa).
+This guard covers these controls; existing independent hardware hotkeys remain
+outside this helper's state tracking. No global input-policy changes were made.
+
+Six Python tests pass (five pointer safety cases plus trackpad helper). Real Qt
+input fixture and wireless/hover fixture pass (3 and 4 results); full candidate
+parse and scroll regression pass. Native fixture confirms icon toggle routing
+and unchanged surrounding-card/slider interaction. Live status correctly sees
+one ELAN trackpad and no physical external mouse, excluding its companion mouse
+and ITE keyboard endpoint. Six live menus captured, More-options image inspected;
+no actual device enable/disable operation was submitted by validation.
+Applied source/seed/graphical homes with digest pins and new helper/icon assets.
+Backup: /var/lib/apx/backups/20261020T210751Z-controls-followup.
+Deployment recheck: zero pending files. No packages, Environment switch or commit.
+Evidence: audit/2026-10-20-more-input-controls/,
+audit/2026-10-20-input-sliders/input-test.log and
+ audit/2026-10-20-unified-card-hover/more.png.
+
+# Narrow interaction strips for input sensitivity — 2026-10-20
+
+Owner requested the same sound/brightness interaction refinement for mouse and
+trackpad sensitivity. Both sliders now use centred 16px input strips with zero
+vertical padding. The surrounding card focuses the relevant slider without
+changing sensitivity; icons keep the same focus action. Busy guards retained.
+Native real-component input fixture: 3 passed, including slider/pointer/keyboard
+commits and clicks above/below both strips focusing the slider without commits.
+Applied source/seed/graphical homes and refreshed runtime/recovery pins.
+Backup: /var/lib/apx/backups/20261020T210252Z-controls-followup.
+No real input settings changed by validation.
+Evidence: audit/2026-10-20-input-sliders/input-test.log.
+
+# Inline sensitivity cards and narrower sound-slider hit regions — 2026-10-20
+
+Owner requested mouse/“keyboard” sensitivity controls to match Sound/Brightness;
+the available pair here is mouse and trackpad, stated in user commentary.
+Both now use 56px rounded cards, 36px circular 16px icons, inline sliders and
+right-aligned signed percentages. Clicking an input icon focuses its slider.
+Ranges and helper APIs remain unchanged. Mouse now uses MenuSlider like trackpad,
+including keyboard commit handling and scroll-through without wheel edits.
+
+Owner also reported the sound/brightness slider hit region extending too far
+above/below the track. Combined sliders now have a centred 16px interaction
+strip instead of 36px; surrounding card clicks route to the existing card action.
+The 5px drawn track and icon/value spacing remain unchanged.
+
+Native Qt fixtures pass (3 results each): actual sensitivity geometry, icon focus,
+mouse/trackpad slider commits, keyboard adjustment, and sound/brightness clicks
+above/below the slider invoking only the card action. Candidate parse/scroll
+checks and trackpad helper unit check passed. Input card image inspected.
+Applied source/seed/graphical homes with runtime/recovery digest pins.
+Backup: /var/lib/apx/backups/20261020T210139Z-controls-followup.
+No actual sensitivity/audio/brightness setting changed by validation.
+Evidence: audit/2026-10-20-input-sliders/ and
+ audit/2026-10-20-inline-sliders/input-test.log.
+
+# Softer action fills and matching Bluetooth search — 2026-10-20
+
+Owner requested slightly darker direct-hover fills now the thicker borders
+supply contrast, and identical treatment for Bluetooth Search. RadioIconButton
+and bright-action MenuHover return from 2.15x to 1.95x direct-hover lightening;
+1.6x normal/card fill and 2px action contours stay unchanged. Bluetooth Search
+now uses the same card-derived normal fill, brighter direct hover and native
+outline as Disconnect. Disabled scanning state and click action are preserved.
+Native shared-component fixture: 4 passed. Applied source/seed/graphical homes
+with runtime/recovery digest pins. Backup:
+/var/lib/apx/backups/20261020T205858Z-controls-followup.
+No scans, connection/radio/device operations performed by validation.
+Evidence: audit/2026-10-20-unified-card-hover/layout-test.log.
+
+# Cleaner action contours — 2026-10-20
+
+Owner reported an odd Disconnect contour and thin Wi-Fi/Bluetooth icon borders.
+Disconnect now draws one native 2px outline on its actual rounded surface
+(radius 10), replacing the separate inset overlay outline for bright actions.
+Shared radio/action circles also use 2px borders with antialiasing. Existing
+whole-card/direct-action brightness and independent actions are preserved.
+Qt native fixture: 4 passed, including 2px direct-hover borders, Disconnect
+radius, nested-hover restoration and action/PIN behaviour. Source/seed/current
+graphical homes deployed with runtime/recovery pins refreshed. No radio/device
+operations submitted during validation. Evidence:
+audit/2026-10-20-unified-card-hover/layout-test.log.
+
+# Disconnect follows current-card hover — 2026-10-20
+
+Owner requested Disconnect to brighten already when hovering the current-network
+card, matching the radio icon. Bright-action MenuButtons now derive normal fill
+from their containing card at 1.6x, preserving the 2.15x direct-hover highlight.
+Wi-Fi binds to its current-network card; connected Bluetooth uses its device row.
+Native Qt fixture: 4 passed, checking card hover brightens Disconnect to match
+the icon, direct hover brightens it further, and leaving restores its idle fill;
+existing action routing, borders and PIN input remain verified.
+Applied source/seed/graphical homes and runtime/recovery digest pins.
+Backup: /var/lib/apx/backups/20261020T205005Z-controls-followup.
+No actual connection, radio or device operations performed.
+Evidence: audit/2026-10-20-unified-card-hover/layout-test.log.
+
+# Disconnect and icon hover outlines — 2026-10-20
+
+Owner requested the same brighter direct hover for Disconnect and a border
+when hovering the Wi-Fi action icon. Wi-Fi and connected Bluetooth Disconnect
+buttons opt into the same 2.15x hover fill through shared MenuHover, preserving
+normal fills and action routing. RadioIconButton now adds the bar-style #69728a
+1px outline on direct pointer hover, retaining its separate keyboard-focus cue.
+This applies consistently to all shared circular action icons.
+Native fixture: 4 passed, covering Disconnect fill/restoration/routing and
+icon direct-hover brightness/border/restoration with whole-card hover intact.
+Applied source, independent seed and graphical homes; digest pins refreshed.
+Backups: /var/lib/apx/backups/20261020T204845Z-controls-followup and
+/var/lib/apx/backups/20261020T204906Z-controls-followup.
+No actual radio, connection or device actions performed by validation.
+Evidence: audit/2026-10-20-unified-card-hover/layout-test.log.
+
+# Slightly brighter icon hover — 2026-10-20
+
+Owner requested a further small increase in direct-icon hover clarity.
+RadioIconButton direct-hover lightening increased from 1.95x to 2.15x;
+normal/card hover stays 1.6x with the same transition and actions.
+Native Qt fixture: 4 passed. Applied source/seed/graphical homes with pins.
+Backup: /var/lib/apx/backups/20261020T204744Z-controls-followup.
+
+# Additional direct-icon hover feedback — 2026-10-20
+
+Owner requested a brighter circle when hovering directly over the actionable
+Wi-Fi icon, while retaining whole-card hover. Shared RadioIconButton now uses
+1.95x lightening for direct hover versus 1.6x for card/body hover, with its existing
+90ms transition. This applies consistently to Bluetooth, airplane, audio and
+microphone action circles too. MenuHover's nonblocking HoverHandler now belongs
+to the card itself, allowing the icon to receive its own hover concurrently.
+
+Native real-component fixture passes all 4 results, checking unchanged whole-card
+fill, brighter direct-icon colour and restoration when returning to the body,
+plus existing action/PIN tests. Applied source/seed/graphical homes and updated
+runtime/recovery pins. Backup:
+/var/lib/apx/backups/20261020T204648Z-controls-followup.
+Deployment recheck: zero files pending; live shell IPC responds after reload.
+No settings, radio or device operations performed. Evidence:
+audit/2026-10-20-unified-card-hover/layout-test.log.
+
+# Whole-card hover matching the bar — 2026-10-20
+
+Owner revised border-only feedback to match QuickShell bar buttons and reported
+split-looking icon/body cards and clipped top/bottom bar outlines. MenuHover now
+owns the complete parent card's pointer feedback, using the bar's #292d3a fill
+(Appearance.hover when tinted) and #69728a outline. Binding restores original
+selected/base fills after pointer exit. BounceMouseArea action geometry remains
+independent from the visual feedback; radio icons defer to the card's shared
+feedback when present. Thus moving between icon and body keeps one full-width
+highlight while preserving distinct icon/body actions. Radio-only headers also
+receive whole-card feedback. Contours are inset 1px and antialiased, including
+BarButton, keeping their top/bottom inside bounds under fractional scaling.
+
+Applied source, independent seed and registered graphical homes; runtime and
+recovery pins refreshed. Backup:
+/var/lib/apx/backups/20261020T204223Z-controls-followup.
+Validation: 11 behaviour tests pass; full native parse and smooth-scroll check
+pass. Native Qt fixture: 4 results passed, including full-card bounds/fill across
+icon/body pointer positions, original fill restoration, hover border colour,
+PIN input and action routing. Six live menu captures succeeded after reload;
+deployment recheck reports zero pending files. Live pointer warping is not
+supported by this compositor's legacy dispatch interface, so actual hover
+geometry was exercised with Qt input fixtures. No real settings/radios/devices
+changed. Evidence: audit/2026-10-20-unified-card-hover/.
+No packages, Environment switch, commit or push.
+
+# Consistent border-only menu hover and unified wireless menus — 2026-10-20
+
+Owner requested Central Control's border-only pointer feedback across menus and
+submenus, aligned active/nearby Wi-Fi icons, and the Wi-Fi design applied to
+Bluetooth. Shared BounceMouseArea now supplies a 1px #9da8c2 pointer outline;
+hover never changes menu action fills. Removed hover fill branches throughout
+calendar, Environment selectors/editors, preset/feature cards and MenuButton.
+Quiet ControlTiles and circular radio/action icons follow the same rule; icon
+opacity remains tied to powered state. Keyboard focus and selected-state fills
+remain independent. Personalization pointer outlines use the same colour.
+Bar-only hover/navigation remains outside this menu change.
+
+Wi-Fi active and nearby glyph centres now align at x26, with names at x54.
+Bluetooth uses the same header and row spacing, disjoint deduplicated connected,
+saved and available groups, explicit Disconnect separate from radio power,
+and dedicated PIN/passkey/forget cards. Pair forms scroll into view before PIN
+focus; completed connections close the form and clear redundant success text.
+No unsupported Bluetooth signal percentage is invented.
+
+Applied source, independent seed and registered graphical homes; runtime and
+recovery digest pins refreshed. Backup:
+/var/lib/apx/backups/20261020T203713Z-controls-followup.
+Validation: 11 Python/Node behaviour tests pass; full native QML parse and smooth
+scroll regression pass. Real-component Qt fixture passes alignment, independent
+action routing, PIN show/hide/Enter, unchanged hovered fills and visible border
+checks for buttons and circular icons. Five live menus opened/captured and
+inspected; Bluetooth had no discovered devices, so device rows/forms were
+validated with fake records. No actual radio/pairing/disconnection/settings
+operation submitted by validation. Deployment recheck: zero pending files.
+Evidence: audit/2026-10-20-hover-consistency/ and
+ audit/2026-10-20-bluetooth-unified/.
+No packages, Environment switch, commit or push.
+
+# Inline Sound/Brightness sliders — 2026-10-20
+
+Owner requested the sliders in front of/beside their icons rather than below.
+Combined Sound/Brightness cards now use a compact 56px single row: icon left,
+slider centre, fixed-width percentage right. Removed the above-slider labels;
+accessible names retain the control meaning. Icon actions and card-body actions
+remain separate, and slider bounds exclude both icon and value/body regions.
+Existing preview/commit behaviour and Enter-to-edit keyboard controls remain.
+
+Applied source, independent seed and current graphical homes; runtime/recovery
+pins refreshed. Backup:
+/var/lib/apx/backups/20261020T202639Z-controls-followup.
+Native QML parse/scroll regression passes. Qt input fixture using real card,
+slider and icon code with fake action callbacks verifies vertical alignment,
+slider width, independent icon/body/slider clicks and keyboard commits. Staged
+and live Sound/Brightness captures inspected. Deployment recheck reports zero
+pending paths. No actual audio/brightness setting changed by validation.
+Evidence: audit/2026-10-20-inline-sliders/.
+No packages, Environment switch, commit or push.
+
+# Lighter control icons and matching glyph sizes — 2026-10-20
+
+Owner revised the earlier darker-circle preference: keep the menu background
+ darkest, cards lighter and the icon circles lighter again. Shared radio/action
+circles now derive a lighter fill from the containing card (1.6x normal, 1.9x
+hover), with the background retained in both powered states. Off glyphs retain
+a quieter but more legible 55% opacity. Symbols use 16px, matching the Central
+Control menu; touch/click target dimensions and separate icon/header actions are
+preserved. Nearby Wi-Fi and credential-header Wi-Fi glyphs also use 16px.
+
+Applied to source, independent seed and current graphical homes with runtime/
+recovery pins refreshed. Backups:
+/var/lib/apx/backups/20261020T202259Z-controls-followup and
+/var/lib/apx/backups/20261020T202325Z-controls-followup.
+Native fixture verifies lighter-than-card normal/hover states, 16px geometry,
+independent icon/body routing and busy-click suppression. Full QML parse and
+scroll regression pass. Live Sound/Brightness, Connectivity and Wi-Fi captures
+verified after reload settled; installed IPC responds and recheck has zero
+pending paths. No controls toggled or settings/connection changed by validation.
+Evidence: audit/2026-10-20-light-control-icons/.
+No packages, Environment switch, commit or push.
+
+# Radio contrast, current signal and integrated sound sliders — 2026-10-20
+
+Owner requested darker Wi-Fi/Bluetooth icon circles in every hover/state, a
+lighter Show password button, signal percentage beside only the current SSID,
+and sound/brightness sliders integrated like the mouse sensitivity control.
+
+RadioIconButton now derives a darker fill from its containing card, including
+when nested inside a header Item; hover stays darker than the surrounding card.
+Powered/off states no longer remove the circle background. Show/Hide uses a
+lighter grey surface with hover feedback. Current SSID reserves a separate
+inline percentage label so a long name elides without hiding the percentage;
+nearby rows retain their simpler layout. Unknown placeholder values are hidden.
+
+Live inspection found iwd get-networks reporting -110 dBm for the associated
+network while station show reported -48 dBm. The Host adapter now prioritizes
+station RSSI for the associated link using the existing 0–100 relative estimate,
+and leaves other network readings unchanged. A source marker distinguishes a
+measured station value from an unknown fallback. The broker update preserved
+peer authorization and refreshed only the active session's fallback socket mount;
+the helper now retires an unlinked older fallback bind before replacing it.
+No radio/power/connection operation was submitted by validation.
+
+Combined Sound/Brightness now uses two 84px cards: circular actionable icon,
+name and right-aligned value on top, with the slider integrated below. Sound
+header opens its submenu; its icon mutes. Brightness header and icon preserve
+the minimum/restore action. Slider input is separate from header/icon hit areas;
+keyboard editing and continuous pointer preview/commit are retained.
+
+Applied source/independent seed/current graphical homes and bounded read-only
+Host measurement update, with runtime/recovery digests refreshed. UI backups:
+/var/lib/apx/backups/20261020T201714Z-controls-followup and
+/var/lib/apx/backups/20261020T201902Z-controls-followup.
+18 focused tests pass (including current-link RSSI precedence and signal bounds/
+unknown handling), native QML parse, smooth-scroll regression, icon contrast/
+click routing, and personal/enterprise/saved credential fixtures pass. Live
+Connectivity, Sound/Brightness and Wi-Fi captures inspected; current signal
+shows the corrected estimate beside the SSID. Final deployment recheck has zero
+pending paths. Evidence: audit/2026-10-20-radio-contrast/ and
+ audit/2026-10-20-sound-cards/; updated form fixture captures remain under
+ audit/2026-10-20-wifi-form/.
+No network/radio/audio/brightness changes, packages, Environment switch,
+commit or push during validation.
+
+# Wi-Fi form and consistent sound/airplane icons — 2026-10-20
+
+Owner requested a clearer Wi-Fi credential form, quiet icon semantics for
+Airplane mode and Sound/Brightness, and no duplicate active-network row/status.
+
+Wi-Fi selection now opens a dedicated card with SSID/security header, persistent
+field labels, 40px inputs, Show/Hide password and 38px Cancel/Connect actions.
+The current-network card/list hide while editing; Back chooses another network.
+Blank card taps no longer silently discard input. Passwords start masked and
+mask/reset on cancel and credential submission. Enterprise controls remain
+available, fit the card width and keep identity/domain/CA requirements intact.
+Saved/open networks show explanatory text without password fields. Inputs and
+navigation are blocked while the submitted connection is pending. Error text is
+inside the form. Successful known/open/credential connections close it, update
+the confirmed active SSID and clear secret/form state without a repeated success
+label. Nearby network data is deduplicated and filtered to exclude the active
+SSID; attempting to open the active SSID does nothing.
+
+Airplane mode uses the same quiet card/circular icon and busy guard. Sound and
+microphone icons mute/unmute in both the combined and individual menus; removed
+separate duplicate mute buttons. Brightness icon dims to 5% and restores its
+previous session level, while the slider retains fine adjustment. Keyboard-light
+card is quiet with its existing cycle action available on the icon.
+
+Applied source, independent seed and current graphical homes; runtime/recovery
+pins refreshed. Backups:
+/var/lib/apx/backups/20261020T200938Z-controls-followup and
+/var/lib/apx/backups/20261020T201038Z-controls-followup.
+Eight focused navigation/radio/scroll/active-filter/secret-clear/dim-restore tests
+pass. Native QML parse and smooth-scroll regression pass. Real form rendering
+with fictional personal, enterprise and saved networks checks field widths,
+show/hide masking and form heights; captures inspected. Live Sound/Brightness,
+Sound, Microphone, Connectivity and Wi-Fi menus captured and verified without
+changing any controls. Final deployment recheck: zero pending paths.
+Evidence: audit/2026-10-20-wifi-form/; shared parse/scroll logs are under
+ audit/2026-10-20-controls-followup/.
+No real credentials used, network/radio/audio/brightness changes, packages,
+Environment switch, commit or push during validation.
+
+# Quiet radio cards and immediate Wi-Fi feedback — 2026-10-20
+
+Owner requested neutral connectivity cards with state shown by Wi-Fi/Bluetooth
+icons, and removal of the Wi-Fi visual delay. Both cards now use quiet surfaces
+without persistent selection fill/border; captions are simply Wi-Fi/Bluetooth.
+Both icon controls toggle their respective radios, while card captions retain
+submenu navigation. Keyboard focus remains visible. Current-network Disconnect
+is unchanged.
+
+Wi-Fi power now changes the displayed icon immediately on click, keeps that
+state through pending/stale status polls, commits the confirmed result and rolls
+back on failure with an error. Completion retires any pre-operation status query
+before starting a fresh one; a confirmed radio-off also clears the stale network
+name. Busy clicks remain blocked without fading the entire icon control.
+
+Applied to source, independent seed and current graphical homes; runtime and
+recovery digests refreshed. Backup:
+/var/lib/apx/backups/20261020T195653Z-controls-followup.
+Six focused JS/navigation tests pass, including immediate off/on, pending stale
+status, repeated-click guard, failure rollback and success. Native QML parse,
+smooth-scroll regression and Qt icon/body routing/quiet-border tests pass.
+Quiet on/off fixture images inspected; installed shell IPC responds and deploy
+recheck has zero pending paths. No physical radio toggle, network disconnection,
+Environment switch, package change, commit or push during validation.
+Evidence: audit/2026-10-20-radio-feedback/; shared native parse/scroll logs remain
+in audit/2026-10-20-controls-followup/.
+
+# ChatGPT installation, checked installs and refined controls — 2026-10-20
+
+ChatGPT 26.1013.40934-1 and its missing vulkan-swrast dependency are installed
+in Faculdade from the signed cached packages; executable, package database and
+desktop entry were confirmed and its application catalogue refreshed. Original
+installer log ends before a transaction; the exact original terminal error was
+not retained and is unproven. Restored only the vendor's signed sync database
+with its existing public keyring; no Arch metadata refresh or broad upgrade.
+
+Added apx-install-v1 for package/local-package/explicit vendor-script installation
+with private logs and receipts, package/executable/desktop validation and catalogue
+refresh. Exit zero with missing expected packages is failure. Ordinary pacman
+transactions also refresh the menu through an Environment-local post-transaction
+hook; new graphical Environment provisioning installs the same hook. No claim
+that arbitrary external vendor commands automatically use the checked wrapper.
+
+Final Wi-Fi design uses a small circular icon action in both connectivity and
+current-network cards; caption navigation and current-network Disconnect remain
+separate. No extra radio-power tile. WLAN power is an authenticated typed Host
+operation under the existing transition lock; Bluetooth retains separate radio
+and per-device actions. Trackpad/mouse sensitivity tracks match volume styling.
+Removed the jerky 70ms-delayed flick injection, using continuously retargeted Qt
+smoothing with a short decelerating tail. Only one trackpad sensitivity setting.
+
+Applied source, independent seed and six graphical homes, bounded Host service
+files and independent package hooks; runtime/recovery pins refreshed. Preserved
+unrelated source/installed runtime differences. Latest UI backup:
+/var/lib/apx/backups/20261020T192931Z-controls-followup.
+31 focused tests, native full-shell parse, smooth-scroll harness and separate
+icon/body Qt pointer routing pass. On/off fixture images inspected. Installed
+shell IPC and zero-pending-path recheck pass. No actual radio toggles or connection
+submissions during tests; actual finger-scroll comfort remains owner acceptance.
+Details, earlier backups and limits:
+docs/controls-installation-followup-20261020.md.
+No Environment switch, Host package installation, commit or push.
+
+# Passkeys in existing and future Environments — 2026-10-20
+
+The owner requested the Brave/iPhone QR correction for every current and future
+Environment. Independent launcher helpers and pacman install/upgrade hooks are
+installed in hub, hytale, steam, minecraft and faculdade. Creation now installs
+these defaults for all roles, including before Brave itself exists. The installed
+runtime and source are updated; the recovery runtime digest was refreshed.
+The existing Host bridge follows the active desktop rather than an Environment
+name. Its source and unit are now recorded in the repository.
+
+37 focused defaults/lifecycle/recovery tests pass. Installed creation defaults
+were exercised against an empty temporary root without installing Brave. A wider
+seed suite still finds one pre-existing shell.qml digest mismatch, reproduced
+unchanged using the pre-change runtime; it is outside this patch. No Environment
+switch or new graphical session was performed. The prior real-browser QR test
+passed; final authentication with the iPhone remains owner-operated.
+Details: docs/passkeys-all-environments-20261020.md. No commit or push.
+
+# Menu inertia; one trackpad setting — 2026-10-20
+
+Owner removed the separate menu-scroll sensitivity option. More options retains
+one trackpad pointer sensitivity control, alongside the existing external-mouse
+control. Removed menu-scroll processes, UI, helper and runtime asset pins from
+source, independent seed and existing homes. Old numeric preference files are
+inert and retained; no user preference cleanup was performed.
+
+Menu wheel input now hands reduced, capped gesture velocity to Flickable after
+70ms without new input, with 3200 px/s² deceleration and a 1200 px/s cap. New
+input cancels previous motion; boundaries stop scrolling. Native ScrollMomentum
+is consumed directly without adding synthetic momentum. Fixed baseline movement
+remains 2.5x; there is no separate scroll setting.
+
+Six focused tests pass, covering direction, limits, repeated gestures, native
+momentum, disabled menus, trackpad-only persistence and Wi-Fi navigation. Native
+QML component parse passes; a real Qt Flickable harness confirms continued motion,
+reduced velocity and settling. Installed More options exposes five keyboard items
+(one fewer slider); More/Wi-Fi render and IPC checks pass. Deployment recheck has
+zero pending paths. Actual finger gesture feel remains owner-observed acceptance.
+Backup: /var/lib/apx/backups/20261020T154641Z-menu-inertia.
+Evidence: audit/2026-10-20-menu-inertia/. No connection submission, packages,
+Environment switch, commit or push.
+
+# Wi-Fi selection and trackpad controls — 2026-10-20
+
+Owner requested a clearer Wi-Fi connection flow and faster trackpad menu scrolling.
+Selecting a network now resets the outer scroll before credential focus, keeps
+its name in a highlighted form, and deduplicates nearby SSIDs. The form derives
+its height from its fields/actions. One Connect action rejects repeated submissions
+while either connection process is running. The form title no longer repeats
+Connect. No authentication/backend changes are part of this update.
+
+The outer menu wheel handler consumes pixel/angle deltas once, clamps scroll to
+content bounds and applies a 2.5x baseline multiplier. More options now exposes
+independent trackpad pointer sensitivity and menu scroll speed (25–300%). Choices
+are private to each Environment. Pointer settings target only touchpad devices
+and are reapplied by its independent Hyprland configuration; mouse settings remain
+separate. New sliders support keyboard editing and disable native wheel changes.
+
+Applied source, independent seed and six existing graphical homes, with runtime
+and recovery pins refreshed. Initial backup:
+/var/lib/apx/backups/20261020T154304Z-wifi-trackpad; slider follow-up:
+/var/lib/apx/backups/20261020T154403Z-wifi-trackpad.
+Five focused tests pass (Wi-Fi focus/scroll/profile, trackpad device isolation,
+zero persistence, compositor rejection, scroll bounds/persistence). Native full
+shell QML parse and installed Wi-Fi/More options IPC/render checks pass.
+Evidence: audit/2026-10-20-wifi-trackpad/. Actual finger-scroll feel and successful
+Wi-Fi authentication still require owner use. No connection was submitted by
+validation. No packages, Environment switch, commit or push.
+
+# Wi-Fi input follow-up — 2026-10-20
+
+Owner retry still failed after prompt timing adjustment. Real iwctl PTY probe
+with a deliberately fictional value reproduced immediate Operation aborted
+when writing a whole line, including after a prompt delay. Pacing input bytes
+changed the result to Operation failed (non-empty input reached the agent);
+no owner credential was read or logged. Source and installed broker now pace
+bytes before Enter, matching iwctl masked-input callbacks. This is a transport
+fix; successful hotspot authentication still requires owner retry. Backup: /var/lib/apx/backups/20261020T152640Z-wifi-input.
+
+# Wi-Fi credential prompt correction — 2026-10-20
+
+Owner reported connection failure to iPhone de Ema despite correct password.
+Host broker is active; existing secret transport matched the introductory
+"passphrase/psk" message before the actual input prompt. A PTY regression
+experiment reproduces lost input after terminal flushing; waiting for the
+colon-terminated prompt passes. Applied to source and installed broker, with
+backup at /var/lib/apx/backups/20261020T150740Z-wifi-prompt. Eight existing physical adapter tests pass. Broker restart required refreshing the active session endpoint: cloned the new socket mount into its existing client fallback path, preserving peer authorization and session/application state. Real hotspot authentication awaits owner retry; no password was read or logged.
+
 # APX Current Handoff
+
+## 2026-10-20 Notification actions
+
+Owner requested useful Control Centre notification actions, including opening
+and marking read. ActivityPanel now exposes per-item Mark read, Open when the
+active notification advertises a default action, and Mark all read. Dismissal
+retains Mako history; batch uses a snapshot of the displayed active IDs so later
+arrivals are not dismissed. Stale IDs/unsupported open actions/backend failures
+produce visible errors. Notification polling is suspended during explicit actions.
+Existing media behavior is retained.
+
+Applied source, independent seed and six homes; runtime/recovery pins refreshed.
+Backup: /var/lib/apx/backups/20261020T125348Z-notifications.
+Five notification tests and nine media tests pass; native full-shell QML parse
+passes and installed shell IPC responds after reload. A synthetic notification
+confirmed native default-action capability detection and successful read action.
+Owner notifications were not acted on. Actual application response to Open was
+not exercised; it depends on the notifying application's supplied default action.
+No packages, Environment switch, commit or push.
+
+
+## 2026-10-20 Minimal Environment menu and Lucide selection
+
+Owner requested a simpler Host/Hub Environment menu matching current controls,
+with a Lucide icon selectable per Environment. Interpreted the repeated
+“description” wording as retaining only the name in the list. Removed list
+subtitles, storage figures and ordinary row borders; compact rounded rows use
+name/icon and retain unavailable-state messages. Hub card has one name line.
+Edit includes 16 existing bundled Lucide icons, mouse selection and keyboard
+Left/Right; save writes the choice only after metadata update succeeds.
+Preferences live in the managing Hub's ~/.config/apx-environment-icons.ini,
+keyed by name and generation so recreated Environments do not inherit old icons.
+These are local presentation preferences, not lifecycle/registration metadata;
+existing and newly created Environments can select an icon through Edit.
+
+Applied source, independent seed and six homes; runtime/recovery digests updated.
+Backup: /var/lib/apx/backups/20261020T095828Z-environments-minimal.
+Native QML parse, staged Hub list/editor screenshots, keyboard icon selection,
+INI persistence and generation fallback passed. Staged UI used fictional records
+inside the current graphical session; no real Environment was opened/changed.
+Installed active shell reloaded and IPC responds. Existing switch suite: 28/30
+pass; two pre-existing stale assertions concern disabled Windows hooks and the
+old popup overflow expression. Evidence: audit/2026-10-20-environments-minimal/.
+No packages, Environment switch, commit or push.
+
+## 2026-10-19 Calendar view-switch animation
+
+Owner noted that switching Day/Month/Year still had no animation. Added queued
+view changes to the existing calendar fade/slide sequence, including pointer and
+keyboard selectors and opening a month from the year grid. Calendar content now
+changes view while faded out, then enters in the navigation direction. Arrow
+navigation during a pending view change uses that requested view.
+Applied source, seed and existing graphical homes with runtime/recovery pins.
+Backup: /var/lib/apx/backups/20261019T194313Z-calendar-minimal.
+Native keyboard switches to year/day/month each verified mid-animation opacity
+and translation, followed by the correct settled view at opacity 1. Evidence:
+audit/2026-10-19-calendar-minimal/view-transitions.json. Selection test passes.
+No event or setting saved, packages, commit or push.
+
+## 2026-10-19 Calendar simplification, navigation and owner follow-ups
+
+Owner requested minimal calendar/submenus and smooth month/year transitions.
+Calendar uses quieter rounded controls and plain labels. Event editor retains
+title/date/time/category up front; notes/sharing and reminders are expandable.
+New events start on the browsed calendar date. Month/day/year arrow and keyboard
+navigation use a 75ms fade/slide out and 150ms fade/slide in; pending dates retain
+rapid repeated navigation. Selected/focused date border is white. The date caption
+uses the explicit Portuguese month list instead of the machine's English locale.
+
+Owner also requested hiding Thunar's lower status bar and removing the reopen
+warning from Personalization. Both applied; live xfconf statusbar value false,
+source/seed/existing home XML preferences verified. Preserved existing home preferences.
+Source, seed and existing graphical homes deployed; source/installed runtime and
+recovery digests refreshed. Latest backup:
+/var/lib/apx/backups/20261019T194118Z-calendar-minimal (preceding steps: 193936Z,
+193948Z, 194006Z, 194110Z with the same suffix).
+
+Native month/year keyboard navigation, settled animation values, new-event form
+and optional details verified; no event saved or category created. White outline
+and Portuguese caption visually verified. Evidence:
+audit/2026-10-19-calendar-minimal/. Selection test and three opacity tests pass.
+Restarted only QuickShell through its supervisor after reload left IPC unavailable;
+no Environment/session/application restart. No packages, commit or push.
+
+## 2026-10-19 Bluetooth repeated search status removed
+
+Owner reported repeated search messaging. Search progress now appears only in
+the search button; removed the separate progress/completion messages and suppress
+the empty-list message while searching or Bluetooth is off. Errors remain visible.
+Source, seed and six homes deployed; runtime/recovery pins refreshed. Backup:
+/var/lib/apx/backups/20261019T193804Z-controls-minimal. Reloaded shell IPC responds.
+No Bluetooth scan or device/power changes triggered during validation.
+
+## 2026-10-19 Minimal control menus
+
+Owner approved the Wi-Fi simplification and requested the same approach for
+Bluetooth, sound, personalization and other control menus. Bluetooth, sound and
+microphone now share simple back/title headers with fewer repeated states.
+Bluetooth uses one power action, conditional device headings without counts,
+quieter device rows and one outer scrolling surface. Sound/microphone retain
+sliders and mute controls without redundant +/-5 buttons. Personalization starts
+with three entries (icon color, transparency, wallpaper), exposing only the
+selected section, with keyboard activation and scroll reset on navigation.
+
+Applied source, independent seed and six graphical homes; runtime/recovery pins
+refreshed. Backup: /var/lib/apx/backups/20261019T193618Z-controls-minimal.
+Native screenshots and IPC validation: audit/2026-10-19-controls-minimal/.
+Verified Bluetooth, sound, microphone, brightness, more options, personalization
+and entry into color settings through the keyboard. No settings/network changed
+by validation. Three Wi-Fi and three opacity tests pass. Existing appearance suite
+has two failures against legacy button/window tint expectations and one outdated
+apply_theme call missing opacity; its helper was not changed by this UI work.
+No packages, commit or push.
+
+## 2026-10-19 Minimal Wi-Fi menu
+
+Owner requested fewer details, following the current Control Centre. Wi-Fi now
+uses a simple back action/title, one current-network card, and single-line nearby
+networks with signal/lock icons. Removed repeated connection labels, signal
+percentages, security prose and network count. Internet warnings/portal action
+remain conditional; credential fields and connection actions remain available.
+Applied source, independent seed and six existing graphical homes; refreshed
+source/installed runtime pins and recovery digest. Backup:
+/var/lib/apx/backups/20261019T193444Z-wifi-minimal.
+Native Wi-Fi IPC and rendered menu verified; screenshot in
+audit/2026-10-19-wifi-minimal/menu.png. Three Wi-Fi form tests pass after adding
+missing existing page-animation stubs to their harness. The older control-centre
+scale suite has five failures against the already redesigned dashboard/layout;
+not claimed passing. No network connection changed, packages, commit or push.
+
+## 2026-10-19 Rofi application folders removed
+
+Owner reversed the folder organization request. All applications now appear in
+one flat list; removed the Add to folder action. Search, launch, next-window,
+window status and uninstall actions remain. Stale folder/picker state returns
+to the flat list. Existing saved assignments are retained but ignored.
+Applied helper to independent seed and all existing graphical homes; source/installed
+runtime pins and recovery digest refreshed. Backup:
+/var/lib/apx/backups/20261019T190414Z-rofi-folders.
+38 launcher tests pass, including flat browsing/search and stale folder state.
+Verified deployed helper bytes match source in seed and all existing graphical homes.
+No packages, commit or push.
+
+## 2026-10-19 Rofi next-window action replaces second instance
+
+Owner requested that the former Abrir segunda instância submenu button cycle
+through the application's already-open windows/workspaces. Replaced it with
+Ir para a próxima janela and the existing Lucide bring-to-front artwork. Primary
+activation remains the new-window launch defined in the preceding checkpoint.
+The action resolves current windows, uses a stable address order, advances from
+the active window or a private per-session remembered cursor, and wraps. Closed
+windows are excluded; the existing focus/minimized-restore behavior is reused.
+It also works for window-only applications without a desktop entry. Executing
+the action closes Rofi like the other existing submenu actions.
+
+Applied helper/icon to independent seed and all six graphical homes; runtime
+and recovery digests refreshed. Backup:
+/var/lib/apx/backups/20261019T180340Z-rofi-folders. Forty launcher tests pass,
+including ordering, wraparound, unrelated active app, closed-window removal,
+one minimized window, corrupt cursor state and submenu dispatch.
+Live Brave cycle verified all existing windows/workspaces, wraparound and an
+unchanged set of owner windows, then restored original focus. Evidence:
+audit/2026-10-19-rofi-lucide-repair/cycle-validation.json and verify-cycle.py.
+No package change, commit or push.
+
+## 2026-10-19 Lucide symbolic rendering and Rofi activation/submenu repair
+
+Owner reports malformed sidebar icons and reasserts that selecting an application
+must open a new instance, with the existing inline action submenu retained.
+GTK3's symbolic stylesheet forced Lucide paths/circles into filled silhouettes
+and removed their strokes. The sidebar generator now marks outline primitives
+with GTK's stroke class and converts lines/polylines to equivalent paths so all
+strokes receive the symbolic foreground color. Source Lucide geometry remains
+unchanged. Native GTK symbolic masks compared to canonical source renders have
+zero pixel-alpha difference for all 33 installed sidebar aliases. Normal folder,
+file and toolbar artwork is unchanged. Empty Thunar daemon quit for fresh cache;
+no file-manager windows were closed for this repair.
+
+Primary activation now always launches a registered application instead of
+focusing its existing window. Native Brave explicitly gets --new-window; Thunar
+gets --window. Window-only entries retain focus as they have no launchable app.
+Secondary expansion keeps the current root/folder and catalogue, adding actions
+under the chosen app. The native mode now honors the helper's active and
+new-selection headers, restoring submenu highlight/selection behavior. Folder
+assignment, global search, confirmed uninstall and activity indicators retained.
+
+Applied to independent seed/all six graphical homes and source/installed runtime
+pins/recovery digest. Backups:
+/var/lib/apx/backups/20261019T174444Z-rofi-folders and
+/var/lib/apx/backups/20261019T174444Z-thunar-lucide.
+39 focused tests pass (37 launcher, 2 GTK symbolic generator). Native plugin
+compiled with -Wall -Wextra -Werror. Live Rofi Enter on Brave created a distinct
+blank Brave window and closed the launcher; original windows remained intact.
+Only the new test window was closed and original Colab focus restored. Inline
+action submenu captured. Evidence: audit/2026-10-19-rofi-lucide-repair/.
+No packages, commit or push.
+
+## 2026-10-19 Thunar window status, sidebar-only Lucide and internal volumes
+
+Owner requested Thunar active status in Rofi, hidden File/Edit/View menubar,
+Lucide icons and no APX implementation volumes in file-manager destinations.
+Owner then clarified explicitly: Lucide ONLY in the sidebar; folder/file icons
+and toolbar must keep their previous artwork. Initial broad icon experiment
+was reverted before completion: all 15 original normal SVGs and the colored/tagged
+folder renderer are byte-identical to the pre-change copies. The final theme adds
+only symbolic sidebar icons (places/devices/eject); no MIME or app icon override.
+
+Rofi's generic executable aliases incorrectly assigned the main Thunar window to
+thunar-bulk-rename. Main app ID/known class matches now take priority. Grouped
+applications with open windows appear at the root with the existing live colored
+dot as well as inside their folder. Icon cache also refreshes on theme-index change.
+Set last-menubar-visible=false while preserving all other per-home preferences;
+applied live through xfconf-query and persisted in source/seed/all six homes.
+
+Thunar Send To enumerates devices independently of the sidebar hidden-device
+preference. Added Host UDisks presentation rule for APX_ROOT/APX_EFI/APXWIN* and
+APXW/APXE numeric implementation labels. Rule sets UDISKS_IGNORE only; it does not
+mount, unmount, relabel, remove or change permissions on storage. Host udev data is
+shared read-only into graphical workloads. Reloaded rules, changed only the six
+matching internal block-device records and restarted only Faculdade's UDisks
+service to refresh its cached hints. Active Gio volume list now has no technical
+APX volumes; future/stopped Environments read the same hints at startup.
+Canonical rule: config/udev/99-apx-internal-volumes-v1.rules; installed in
+/etc/udev/rules.d/. Deployment helper includes that rule and scoped home updates.
+
+Source/independent seed/all six graphical homes updated, runtime/recovery pins
+refreshed. Backups: /var/lib/apx/backups/20261019T110345Z-thunar-lucide,
+110633Z, 110730Z, 110855Z-sidebar-only-correction, 110856Z and 111000Z.
+55 focused tests pass (35 launcher, 6 folder-color, 14 work-default). Verified
+native main-window association while a Thunar window was open, and GTK icon
+resolution selects original normal folders versus Lucide symbolic sidebar names.
+Checked every seed path/digest including absence of reverted surplus assets;
+normal icon hashes verified in all six homes. Validation report:
+audit/2026-10-19-thunar-sidebar/validation.json. Temporary screenshots removed.
+No package change, Environment switch, commit or push.
+
+## 2026-10-19 Yazi trial removed at owner request
+
+Owner disliked Yazi and requested removal. Removed only the six packages added
+for this trial in Faculdade: yazi, oniguruma, fd, ripgrep, fzf and jq (48.68 MiB).
+Pacman dependency validation passed. Closed Yazi windows and removed the local
+yazi.desktop launcher/catalogue link. Verified Yazi absent from Rofi's fresh
+native page. Original file-manager defaults remain unchanged. No commit/push.
+
+## 2026-10-19 Owner trial of Yazi in Faculdade
+
+Installed Environment-local yazi 26.9.1-2, oniguruma and optional search/navigation
+helpers fd, ripgrep, fzf and jq. Added only Faculdade's user-level yazi.desktop
+override to launch Yazi inside Kitty at /home/apx, Terminal=false and matching
+StartupWMClass=yazi. Appears unfiled in Rofi main list/global search as a new app.
+Native Yazi navigation/icons visually verified. No default file-manager, MIME or
+shortcut changes; no Host/other-Environment packages, commit or push.
+Temporary screenshot removed.
+
+## 2026-10-19 Rofi base folders, personal organization and global search
+
+Owner expanded the request: group base applications by purpose, allow personal
+folder assignment/new folders inside Rofi, and find an application directly by
+name across all folders. Supersedes the Utilities-only organization below.
+Base groups: Ficheiros, Multimédia, Documentos e impressão, Sistema, Utilities.
+Unclassified/new applications appear first at the root; populated folders follow.
+Right-click -> Adicionar à pasta -> existing folder, create a named folder, or
+return to the main list. Preferences are atomically saved with a lock in each
+Environment's ~/.local/state/apx-window-apps-v1/folders.json; no package or desktop
+file is moved or modified. Empty custom groups disappear when unassigned.
+
+New Rofi ABI 7 native apps mode switches between folder browsing and global
+application-only search. Typing filters in memory, with no helper subprocess per
+keystroke. Python retains catalogue, focus/launch, pending/window indicators and
+existing actions. The folder picker searches destinations; creating a folder
+accepts a typed name and Enter. Folder navigation clears the preceding filter.
+QuickShell and the alternate laptop-action launcher both use the native mode.
+
+Deployed source, independent seed and six homes, with installed/source runtime
+asset pins and recovery digest refreshed. Deployment helper:
+scripts/physical-pilot/deploy-rofi-folders-20261019.py. First backup:
+/var/lib/apx/backups/20261019T094105Z-rofi-folders; incremental backups at
+094246Z, 094502Z and 094525Z. Native C built with -Wall -Wextra -Werror against
+installed Environment headers; reproducible build helper is alongside the source.
+47 launcher/work-default tests pass. Existing native-files Host test is skipped
+because Host build tools are unavailable. Native UI verified empty/root layout,
+Xarchiver global search excluding folders, actual secondary mouse action, picker,
+folder creation and persisted assignment after closing/reopening. Temporary test
+preference removed and launcher closed. Screenshots and validation report:
+audit/2026-10-19-rofi-utilities/. No additional package removals, commit or push.
+
+## 2026-10-19 Rofi Utilities and scoped orphan cleanup
+
+Owner requested a quieter application menu and removal of unnecessary packages.
+Added a navigable Utilities folder for explicitly identified diagnostic, advanced
+configuration and alternate-terminal launchers; common/new applications remain
+at the root. Utilities have descriptive Portuguese labels. Folder navigation
+clears the search filter; per-app actions preserve folder state.
+Applied helper to independent seed and all six graphical homes; refreshed source
+and installed runtime asset pins and recovery digest. Backup:
+/var/lib/apx/backups/20261019T092937Z-menu-icons-behavior.
+Faculdade only: removed 28 orphan library packages (85.84 MiB), with pacman
+checking dependencies; retained standalone CLI tools and all required packages.
+gpsd is required by waybar; Avahi, hwloc and v4l-utils also have installed
+consumers and were retained. Package inventory/removal log is in the backup.
+Active Environment script protocol verifies root -> Utilities -> back. Evidence:
+audit/2026-10-19-rofi-utilities/validation.json. 31 launcher tests pass, including
+folder state and actions. Updated four old action-label expectations to match
+the previously delivered SVG icons. No commit/push or session restart.
+
+
+## 2026-10-19 Rofi icon states inverted
+
+Owner requested inversion: layout-grid when closed, layout-panel-left when open.
+Applied source, independent seed and six graphical homes, including opening
+feedback and runtime/recovery pins. Three bar tests pass; active QuickShell
+restarted and IPC responds. Backup:
+/var/lib/apx/backups/20261019T085617Z-menu-icons-behavior. No commit/push.
+
+
+## 2026-10-19 Rofi open icon changed to layout-grid
+
+Owner replaced the open icon with Lucide layout-grid; closed remains
+layout-panel-left. Source, seed and six graphical homes applied with updated
+runtime/recovery pins. Three bar tests pass; active QuickShell restarted and
+IPC responds. Backup: /var/lib/apx/backups/20261019T085327Z-menu-icons-behavior.
+No commit/push.
+
+
+## 2026-10-19 Rofi layout icons
+
+Owner replaced the previous book pair with Lucide layout-panel-left (closed)
+and layout-dashboard (open), including opening feedback. Applied source, seed
+and six graphical homes; runtime/recovery pins refreshed. Three bar tests pass;
+active QuickShell restarted and IPC responds. Backup:
+/var/lib/apx/backups/20261019T074338Z-menu-icons-behavior. No commit/push.
+
+
+## 2026-10-18 Rofi book icons
+
+Owner requested Lucide book-a for the closed Applications button and book-open
+while the launcher is open. Applied source, independent seed and six graphical
+homes, including launcher opening feedback; refreshed runtime/recovery pins.
+Three existing bar tests pass. Active QuickShell restarted through its existing
+supervisor and IPC responds. Backup: /var/lib/apx/backups/20261018T225656Z-menu-icons-behavior.
+No commit/push.
+
+## 2026-10-18 Static icon live reload correction
+
+Owner still saw the temporary workspace icon. Disk files were already static in
+source/seed/all six homes, but the running QuickShell retained its earlier
+component (last configuration reload predated the component-only edits).
+Restarted only the active Faculdade QuickShell using quickshell kill -c apx;
+its existing supervisor restored the bar, IPC and Hyprland event connection.
+Owner application processes and Environment session were not restarted.
+
+Verified actual workspace switching using cropped native screenshots before,
+250ms after and 1350ms after the switch, then restored original workspace.
+Evidence/script: audit/2026-10-18-menu-icons/verify-static-workspace.py and
+static-before/during/after.png. Component-only on-disk changes must not be
+reported live solely from file hashes; verify rendered behavior/reload.
+No commit/push.
+
+
+## 2026-10-18 Static workspace symbol
+
+Owner requested removal of workspace icon animation. Removed the workspace-change
+timer and temporary bring-to-front swap. workspaceSymbol always uses square-stack
+with border.width zero. Applied source, seed and six homes using the existing
+menu-icons deployment helper; three bar tests pass. No commit/push.
+
+
+## 2026-10-18 General application activation focus
+
+Owner reports images open in Brave without following the destination, and asks
+for general handoff behavior. Native misc:focus_on_activate was false/unset.
+Enabled it in source, independent installed seed and six graphical homes; live
+Faculdade option is true/set and compositor configerrors is empty. Applications
+that issue activation requests can now receive focus across workspaces; this
+is not a custom MIME handler or a promise for clients issuing no request.
+Existing browser handoff notification logic and MIME choices are unchanged.
+
+Physical test created one dedicated Brave window and temporary PNG, switched to
+workspace 9, invoked xdg-open and observed the exact receiving Brave window focus
+on workspace 3. Closed only test-created window, deleted fixture and restored
+original workspace/window. Evidence: audit/2026-10-18-application-focus/.
+Fourteen work-default tests pass. Deployment/rollback inventory:
+scripts/physical-pilot/enable-application-focus-20261018.py and
+/var/lib/apx/backups/20261018T214647Z-menu-icons-behavior. Activation requests are
+now honored globally, including requests from background applications. No
+session restart, package install, commit or push.
+
+
+## 2026-10-18 Workspace symbol border removed unconditionally
+
+Owner still observed a border after the previous timer-only fix. Shared BarButton
+also supplies a pointer-hover border. Set workspaceSymbol.border.width to zero
+explicitly, covering hover and idle as well as the temporary icon swap. Scoped to
+the symbol; numbered workspace selection remains unchanged. Applied source, seed
+and six homes. Backup: /var/lib/apx/backups/20261018T214239Z-menu-icons-behavior.
+Three existing bar tests pass. No commit/push.
+
+
+## 2026-10-18 Workspace icon swap without selected styling
+
+Owner requests no highlight when switching workspaces. Workspace symbol now
+changes iconName directly for its existing 1000ms timer, without alternateActive;
+there is no timer-driven selected background, border or accent. Normal pointer
+hover remains. Source, seed and six homes deployed with the menu-icons helper;
+three bar tests pass. No commit/push.
+
+
+## 2026-10-18 Final owner clarification: workspace flash and compact white actions
+
+Owner corrects trigger to workspace changes (not Environment entry). Restored
+focusedWorkspace change timer in WorkspaceStrip: square-stack normally,
+bring-to-front for 1000ms, restarting on another change. Removed Environment
+startup timer/binding. Rofi secondary-action SVGs now use white strokes and a
+36-unit canvas around the original 24-unit geometry: about 14.7px drawing inside
+the existing 22px icon slot, preserving application icons and row alignment.
+Removed the media panel subtitle; notification subtitles remain visible.
+
+Applied source, independent seed and six graphical homes. Backup:
+/var/lib/apx/backups/20261018T213321Z-menu-icons-behavior. Native Faculdade shell
+reload succeeded. 17 bar/work-default tests pass; SVG color/dimensions checked in
+audit/2026-10-18-menu-icons/small-white-icons.json. Workspace timing follows the
+reactive focusedWorkspace signal; no owner workspace or Environment switch was
+forced. No commit/push. Earlier Environment-trigger/color descriptions superseded.
+
+
+## 2026-10-18 Menu follow-up: corrected installed helpers and Environment feedback
+
+Owner reports Super+P still reused a window and clarifies workspace marker must
+retain square-stack, showing bring-to-front for one second on Environment entry,
+not on workspace changes. Corrected deployment of local/bin assets to ~/.local/bin
+(the earlier helper incorrectly checked ~/.config/local/bin). This also delivers
+all Rofi secondary-action Lucide icons, including confirm/cancel, to real homes.
+Rofi uses dedicated colored SVG copies because currentColor renders dark outside
+QuickShell tinting. Canonical Lucide source geometry is preserved.
+
+Source, seed and six homes patched with per-file backups at
+/var/lib/apx/backups/20261018T212831Z-menu-icons-behavior and 212907Z.
+Native Faculdade openFiles invoked twice produced two distinct Thunar windows;
+only the two test-created addresses were closed. Evidence: file-windows.json and
+live-action-icons.json under audit/2026-10-18-menu-icons/. 17 tests pass; native
+QML reload succeeded; Escape checks pass again. Workspace marker uses shell
+startupReady (new Environment session ready) for the one-second arrival timer;
+no owner Environment switch was forced. Previous workspace-change behavior is
+superseded. No commit/push. Existing owner windows and retained Teste/VM preserved.
+
+
+## 2026-10-18 Owner-requested menu icons and shortcuts
+
+Applied source, independent seed and six graphical homes: closed Apps uses Lucide
+box, open launcher retains package-open; file button uses folder-open whenever
+any Thunar window exists, independent of focus; Calendar uses calendar-search.
+Super+P requests Thunar --window each time instead of focusing an existing window.
+Super+R now toggles the launcher. Workspace box highlights for 1000ms on focused
+workspace changes. Rofi secondary actions use local Lucide SVG icons.
+
+Popup keyboard focus now uses Exclusive and disables the conflicting compositor
+focus grab; same-monitor outside clicks remain handled by the input mask. Native
+Escape injection passed Calendar/Controls/Battery/Media/Rofi; repeated launcher
+IPC passed open/close. 17 existing tests and action SVG checks pass. Other-monitor
+click dismissal needs revalidation (historical Exclusive limitation); actual
+repeated file-window creation and workspace flash remain owner visual checks.
+Active Faculdade shell reloaded successfully. No session restart, commit or push.
+Backups: /var/lib/apx/backups/20261018T212244Z-menu-icons-behavior plus incremental
+212301Z, 212344Z, 212404Z and final helper inventory. Evidence:
+audit/2026-10-18-menu-icons/results.json; deployment helper:
+scripts/physical-pilot/deploy-menu-icons-20261018.py. Teste/manual VM retained.
+
 
 ## 2026-10-18 Publication checkpoint
 

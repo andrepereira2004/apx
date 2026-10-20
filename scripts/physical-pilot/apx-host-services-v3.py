@@ -46,7 +46,7 @@ CAPABILITIES = {
                    "bluetooth.power", "bluetooth.scan", "bluetooth.status",
                    "capabilities.get", "events.subscribe", "network.connect", "network.disconnect",
                    "network.connectivity-check", "network.forget", "network.portal.open",
-                   "network.scan", "network.status", "radio.status", "radio.airplane", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save"],
+                   "network.scan", "network.status", "network.power", "radio.status", "radio.airplane", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save"],
     "security": {"bluetooth_pairing_agent": "KeyboardDisplay", "enterprise_wifi": True,
                  "secret_transport": "unix-socket-body", "shell": False},
 }
@@ -134,6 +134,15 @@ def _network_state() -> tuple[dict[str, object], str | None]:
     if current and not any(item["ssid"] == current for item in networks):
         networks.insert(0, {"connected": True, "known": current in known_networks(), "security": "unknown",
                             "signal": 0, "ssid": current})
+    # iwd's network scan cache may retain -110 dBm for a connected BSS.
+    # Station RSSI is the live associated-link measurement and takes priority.
+    rssi = re.fullmatch(r"(-?\d+(?:\.\d+)?)\s*dBm", station.get("RSSI", ""))
+    if current and rssi and -127 <= float(rssi.group(1)) <= 0:
+        for item in networks:
+            if item["ssid"] == current:
+                item["signal"] = max(0, min(100, round(2 * (float(rssi.group(1)) + 100))))
+                item["signal_source"] = "station"
+                break
     identity = f"{WIFI_INTERFACE}\0{current}\0{station.get('ConnectedBss', '')}" if connected and current else None
     return ({"backend": "iwd" if Path("/usr/bin/iwctl").is_file() else "unavailable",
              "connected": connected, "interface": WIFI_INTERFACE, "network": current,
@@ -152,11 +161,15 @@ def _cached_connectivity(identity: str | None, connected: bool) -> dict[str, obj
 def network_state() -> dict[str, object]:
     state, identity = _network_state()
     state.update(_cached_connectivity(identity, bool(state["connected"])))
+    radio = radio_state()
+    state["powered"] = radio["wlan_present"] and not radio["wlan_soft_blocked"]
+    state["hardware_blocked"] = radio["wlan_hard_blocked"]
     return state
 
 
 def radio_state() -> dict[str, object]:
     radios: dict[str, list[bool]] = {"wlan": [], "bluetooth": []}
+    wlan_hard_blocked = False
     for directory in sorted(RFKILL_ROOT.glob("rfkill*")):
         try:
             kind = (directory / "type").read_text(encoding="ascii").strip()
@@ -165,13 +178,31 @@ def radio_state() -> dict[str, object]:
             continue
         if kind in radios:
             radios[kind].append(blocked)
+            if kind == "wlan":
+                try: wlan_hard_blocked = wlan_hard_blocked or (directory / "hard").read_text().strip() == "1"
+                except OSError: pass
     present = bool(radios["wlan"]) and bool(radios["bluetooth"])
     return {
+        "wlan_present": bool(radios["wlan"]),
+        "wlan_hard_blocked": wlan_hard_blocked,
         "airplane_mode": present and all(radios["wlan"] + radios["bluetooth"]),
         "bluetooth_soft_blocked": bool(radios["bluetooth"]) and all(radios["bluetooth"]),
         "radios_present": present,
         "wlan_soft_blocked": bool(radios["wlan"]) and all(radios["wlan"]),
     }
+
+
+def set_wifi_power(powered: bool) -> dict[str, object]:
+    before = radio_state()
+    if not before["wlan_present"]:
+        raise UnsupportedError("O rádio Wi-Fi não está disponível")
+    if powered and before["wlan_hard_blocked"]:
+        raise ConflictError("O Wi-Fi está bloqueado pelo interruptor físico")
+    result = run((RFKILL, "unblock" if powered else "block", "wlan"))
+    if result.returncode or radio_state()["wlan_soft_blocked"] == powered:
+        raise HostServicesV3Error("Não foi possível confirmar a alimentação do Wi-Fi")
+    emit("network.changed")
+    return network_state()
 
 
 def set_airplane(enabled: bool) -> dict[str, object]:
@@ -511,8 +542,14 @@ def secret_connect(ssid: str, secret: str) -> None:
                 output.extend(chunk)
                 if len(output) > 16384:
                     del output[:-16384]
-                if not sent and any(word in output.lower() for word in (b"passphrase", b"password", b"psk")):
-                    os.write(master, secret.encode() + b"\n"); sent = True
+                if not sent and any(prompt in output.lower() for prompt in (b"passphrase:", b"password:", b"psk:")):
+                    # iwctl updates its masked passphrase after each input callback.
+                    # A whole-line write can submit Enter before that update.
+                    for byte in secret.encode():
+                        os.write(master, bytes((byte,)))
+                        time.sleep(0.05)
+                    time.sleep(0.1)
+                    os.write(master, b"\r"); sent = True
         if process.poll() is None: process.kill()
         process.wait(timeout=2)
     finally:
@@ -623,6 +660,7 @@ def apply(operation: str, payload: dict[str, object]) -> object:
         emit("bluetooth.scan_completed" if operation == "bluetooth.scan" else "bluetooth.changed")
         return state if operation == "bluetooth.power" else bluetooth_state()
     if operation == "network.status": return network_state()
+    if operation == "network.power": return set_wifi_power(bool(payload["powered"]))
     if operation == "radio.status": return radio_state()
     if operation == "radio.airplane": return set_airplane(bool(payload["enabled"]))
     if operation == "network.connectivity-check": return perform_connectivity_check()
@@ -712,7 +750,7 @@ def respond(connection: socket.socket) -> None:
         request_id, operation, payload = parse_request(receive(connection))
         if operation in {"bluetooth.device.connect", "bluetooth.device.disconnect", "bluetooth.device.remove",
                          "bluetooth.pair.begin", "bluetooth.pair.respond", "bluetooth.power", "bluetooth.scan",
-                         "network.connect", "network.disconnect", "network.forget", "network.scan", "radio.airplane"}:
+                         "network.connect", "network.disconnect", "network.power", "network.forget", "network.scan", "radio.airplane"}:
             if not _MUTATION_LOCK.acquire(blocking=False): raise ConflictError("another Host network transition is active")
             try: result = apply(operation, payload)
             finally: _MUTATION_LOCK.release()

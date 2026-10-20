@@ -151,5 +151,15 @@ class HostServicesV3PhysicalTests(unittest.TestCase):
             self.assertIn(required, source)
         self.assertNotIn("systemctl restart apx-host-services-v3.service", source)
 
+    def test_current_link_rssi_overrides_stale_network_scan_strength(self):
+        subject=load_daemon()
+        for current_rssi,expected in [('-48 dBm',100),('-72 dBm',56),('-100 dBm',0)]:
+            networks=[{'ssid':'current','signal':0,'security':'psk'},{'ssid':'other','signal':80,'security':'psk'}]
+            with mock.patch.object(subject,'_properties',side_effect=[{'State':'connected','Connected network':'current','RSSI':current_rssi},{'Powered':'on'}]),mock.patch.object(subject,'available_networks',return_value=networks):
+                state,identity=subject._network_state()
+            self.assertEqual(state['networks'][0]['signal'],expected)
+            self.assertEqual(state['networks'][0]['signal_source'],'station')
+            self.assertEqual(state['networks'][1]['signal'],80)
+
 
 if __name__ == "__main__": unittest.main()

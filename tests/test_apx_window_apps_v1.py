@@ -20,6 +20,98 @@ def load_module():
 
 
 class WindowApplicationsTests(unittest.TestCase):
+    def test_flat_menu_ignores_saved_folders_and_stale_navigation(self):
+        m = load_module()
+        apps = [dict(id=k, name=k, windows=[], iconPath='/icon')
+                for k in ('new.app', 'mpv', 'xgps', 'xarchiver')]
+        for state, info, retv in [({}, '', '0'),
+                ({'folder':'Utilities','panel':'pick','chosen':'mpv'}, '', '0'),
+                ({}, 'folder:Utilities', '1'), ({}, 'mpv', '10')]:
+            output = io.StringIO()
+            with patch.dict(m.os.environ, {'ROFI_DATA':json.dumps(state), 'ROFI_INFO':info,
+                    'ROFI_RETV':retv}, clear=True), patch.object(m,'catalog',return_value=apps), redirect_stdout(output):
+                m.native_page()
+            page = json.loads(output.getvalue())
+            self.assertEqual({r['info'] for r in page['rows'] if not r['info'].startswith('action:')},
+                             {a['id'] for a in apps})
+            self.assertTrue(all(r['browse'] and r['search'] for r in page['rows']))
+            self.assertFalse(any(r['info'].startswith(('folder:', 'action:folder:')) for r in page['rows']))
+            self.assertEqual(page['headers']['prompt'], 'Apps')
+
+    def test_thunar_helpers_do_not_steal_main_window(self):
+        m = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ('thunar', 'thunar-bulk-rename', 'thunar-settings'):
+                (root/(name+'.desktop')).write_text('[Desktop Entry]\nType=Application\nName='+name+'\nExec=thunar\n')
+            for klass in ('thunar', 'org.xfce.Thunar'):
+                windows = json.dumps([dict(mapped=True, **{'class': klass}, address='0xabc')]).encode()
+                with patch.object(m, 'SOURCES', (root,)), patch.object(m, 'CATALOG_CACHE', root/'cache.json'), patch.object(m, 'resolve_icons'), patch.object(m.subprocess, 'check_output', return_value=windows):
+                    apps = {a['id']: a for a in m.catalog()}
+                self.assertEqual(len(apps['thunar']['windows']), 1)
+                self.assertFalse(apps['thunar-bulk-rename']['windows'])
+                self.assertFalse(apps['thunar-settings']['windows'])
+
+    def test_running_filed_app_is_visible_at_root_with_live_dot(self):
+        m = load_module()
+        app = dict(id='thunar', name='Thunar', windows=[dict(address='0xabc', minimized=False)],
+                   opening=False, iconPath='/icon')
+        output=io.StringIO()
+        with patch.dict(m.os.environ, {}, clear=True), patch.object(m, 'catalog', return_value=[app]), patch.object(m, 'folder_preferences', return_value={}), redirect_stdout(output):
+            m.native_page()
+        page=json.loads(output.getvalue())
+        row=next(r for r in page['rows'] if r['info']=='thunar')
+        self.assertTrue(row['browse'])
+        self.assertIn('#77c99a', row['display'])
+
+    def test_primary_launch_commands_explicitly_request_new_windows(self):
+        m=load_module()
+        self.assertEqual(m.native_launch_command({'id':'brave-browser'}), ['/usr/bin/brave','--new-window'])
+        self.assertEqual(m.native_launch_command({'id':'thunar'}), ['/usr/bin/thunar','--window',str(Path.home())])
+
+    def test_secondary_actions_preserve_current_folder_and_catalogue(self):
+        m=load_module()
+        apps=[dict(id='brave-browser',name='Brave',windows=[],iconPath='/icon'),
+              dict(id='thunar',name='Thunar',windows=[],iconPath='/icon')]
+        output=io.StringIO()
+        with patch.dict(m.os.environ, {'ROFI_RETV':'10','ROFI_INFO':'thunar'},clear=True), patch.object(m,'catalog',return_value=apps), patch.object(m,'folder_preferences',return_value={}), redirect_stdout(output):
+            m.native_page()
+        page=json.loads(output.getvalue())
+        self.assertEqual(json.loads(page['headers']['data'])['folder'],'')
+        self.assertTrue(any(r['info']=='brave-browser' and r['browse'] for r in page['rows']))
+        self.assertFalse(any(r['info']=='action:folder:thunar' for r in page['rows']))
+        self.assertEqual(page['headers']['new-selection'],page['headers']['active'])
+
+    def test_cycle_visits_each_window_and_wraps_despite_catalog_reordering(self):
+        m=load_module()
+        windows=[dict(address=a) for a in ('0xc','0xa','0xb')]
+        app=dict(id='sample',name='Sample',windows=windows)
+        with tempfile.TemporaryDirectory() as tmp, patch.object(m,'launch_state',return_value=Path(tmp)), patch.object(m,'catalog',return_value=[app]), patch.object(m,'perform') as action:
+            for active,expected in [('0xa','0xb'),('0xb','0xc'),('0xc','0xa')]:
+                app['windows'].reverse()
+                with patch.object(m.subprocess,'check_output',return_value=json.dumps({'address':active}).encode()):
+                    self.assertEqual(m.cycle_window('sample'),expected)
+                action.assert_called_with('focus',expected)
+            app['windows']=[dict(address='0xc'),dict(address='0xa')]
+            with patch.object(m.subprocess,'check_output',return_value=b'{"address":"other-app"}'):
+                self.assertEqual(m.cycle_window('sample'),'0xc')
+            app['windows']=[]
+            with self.assertRaises(SystemExit):m.cycle_window('sample')
+
+    def test_cycle_supports_one_minimized_window_and_broken_session_state(self):
+        m=load_module()
+        app=dict(id='sample',name='Sample',windows=[dict(address='0xa',minimized=True)])
+        with tempfile.TemporaryDirectory() as tmp, patch.object(m,'launch_state',return_value=Path(tmp)), patch.object(m,'catalog',return_value=[app]), patch.object(m,'perform') as action, patch.object(m.subprocess,'check_output',return_value=b'{}'):
+            (Path(tmp)/'window-cycle.json').write_text('[]')
+            self.assertEqual(m.cycle_window('sample'),'0xa')
+            action.assert_called_once_with('focus','0xa')
+
+    def test_cycle_submenu_click_dispatches_without_opening_an_instance(self):
+        m=load_module()
+        with patch.dict(m.os.environ,{'ROFI_RETV':'1','ROFI_INFO':'action:cycle:sample','ROFI_DATA':'selected:sample'},clear=True), patch.object(m,'catalog',return_value=[]), patch.object(m,'execute_and_close') as execute:
+            m.rofi_rows()
+        execute.assert_called_once_with('cycle','sample')
+
     def test_metadata_cache_reuses_only_desktop_metadata_and_keeps_windows_live(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as directory:
@@ -292,9 +384,9 @@ class WindowApplicationsTests(unittest.TestCase):
              patch.dict(module.os.environ, {'ROFI_RETV': '10', 'ROFI_INFO': 'sample'}, clear=True), \
              patch.object(module, 'perform') as perform, redirect_stdout(output):
             module.rofi_rows()
-        self.assertIn('Abrir segunda instância\0display\x1f<span foreground="#77c99a"><b>+</b></span>  Abrir segunda instância\x1finfo\x1faction:open:sample', output.getvalue())
-        self.assertIn('Terminar tarefa\0display\x1f<span foreground="#e4b75c"><b>×</b></span>  Terminar tarefa\x1finfo\x1faction:terminate:0xabc', output.getvalue())
-        self.assertIn('Desinstalar aplicação\0display\x1f<span foreground="#d98989"><b>−</b></span>  Desinstalar aplicação\x1finfo\x1faction:uninstall:sample', output.getvalue())
+        self.assertIn('Ir para a próxima janela\0display\x1fIr para a próxima janela\x1finfo\x1faction:cycle:sample', output.getvalue())
+        self.assertIn('Terminar tarefa\0display\x1fTerminar tarefa\x1finfo\x1faction:terminate:0xabc', output.getvalue())
+        self.assertIn('Desinstalar aplicação\0display\x1fDesinstalar aplicação\x1finfo\x1faction:uninstall:sample', output.getvalue())
         self.assertIn('Sample\0display', output.getvalue())
         perform.assert_not_called()
 
@@ -322,7 +414,7 @@ class WindowApplicationsTests(unittest.TestCase):
              patch.dict(module.os.environ, {'ROFI_RETV': '1', 'ROFI_INFO': 'sample'}, clear=True), \
              patch.object(module, 'perform') as perform:
             module.rofi_rows()
-        perform.assert_called_once_with('focus', '0xabc')
+        perform.assert_called_once_with('open', 'sample')
         with patch.object(module, 'catalog', return_value=[app]), \
              patch.dict(module.os.environ, {'ROFI_RETV': '1', 'ROFI_INFO': 'action:nvidia:sample',
                                             'ROFI_DATA': 'selected:sample'}, clear=True), \
@@ -368,7 +460,7 @@ class WindowApplicationsTests(unittest.TestCase):
              redirect_stdout(output):
             module.rofi_rows()
         self.assertIn('Desinstalar aplicação', output.getvalue())
-        self.assertNotIn('Abrir segunda instância', output.getvalue())
+        self.assertNotIn('Ir para a próxima janela', output.getvalue())
         self.assertNotIn('Terminar tarefa', output.getvalue())
 
     def test_hybrid_mode_offers_nvidia_launch_on_selected_application(self):
@@ -380,7 +472,7 @@ class WindowApplicationsTests(unittest.TestCase):
              patch.dict(module.os.environ, {'ROFI_RETV': '10', 'ROFI_INFO': 'sample'}, clear=True), \
              redirect_stdout(output):
             module.rofi_rows()
-        self.assertIn('Abrir na NVIDIA\0display\x1f<span foreground="#77c99a"><b>◆</b></span>  Abrir na NVIDIA\x1finfo\x1faction:nvidia:sample', output.getvalue())
+        self.assertIn('Abrir na NVIDIA\0display\x1fAbrir na NVIDIA\x1finfo\x1faction:nvidia:sample', output.getvalue())
 
     def test_nvidia_action_is_limited_to_game_environments_in_hybrid_mode(self):
         module = load_module()
@@ -454,7 +546,7 @@ class WindowApplicationsTests(unittest.TestCase):
              patch.object(module.sys, 'argv', ['apx-window-apps-v1', 'Sample']), \
              redirect_stdout(output):
             module.main()
-        self.assertIn('Abrir segunda instância', output.getvalue())
+        self.assertIn('Ir para a próxima janela', output.getvalue())
 
     def test_focus_restores_minimized_window_to_active_workspace(self):
         module = load_module()

@@ -1,0 +1,18 @@
+[Unit]
+Description=Filtered Bluetooth access for APX browser passkeys
+After=dbus.service bluetooth.service
+Wants=bluetooth.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /usr/local/lib/apx-passkeys/bridge.py
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

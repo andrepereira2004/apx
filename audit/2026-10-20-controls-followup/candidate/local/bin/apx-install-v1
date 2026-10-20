@@ -1,0 +1,113 @@
+#!/usr/bin/python3
+"""Checked installation inside one APX Environment; retain errors and verify results."""
+from pathlib import Path
+import argparse
+import datetime
+import json
+import os
+import re
+import subprocess
+import sys
+
+PACMAN = '/usr/bin/pacman'
+PACKAGE = re.compile(r'[A-Za-z0-9][A-Za-z0-9@._+:-]*\Z')
+
+
+def require_environment():
+    if os.geteuid() == 0 or Path('/run/systemd/container').read_text().strip() != 'systemd-nspawn':
+        raise RuntimeError('Executa como utilizador dentro do Environment onde queres instalar.')
+
+
+def query(*args):
+    return subprocess.run([PACMAN, *args], capture_output=True, text=True, check=True).stdout
+
+
+def verify(packages):
+    result = []
+    for package in packages:
+        if not PACKAGE.fullmatch(package): raise ValueError('Nome de pacote inválido')
+        version = query('-Q', '--', package).strip()
+        files = query('-Qlq', '--', package).splitlines()
+        desktops = [f for f in files if f.startswith('/usr/share/applications/') and f.endswith('.desktop')]
+        missing = [f for f in desktops if not Path(f).is_file()]
+        binaries = [f for f in files if f.startswith('/usr/bin/') and not f.endswith('/')]
+        missing += [f for f in binaries if not Path(f).exists() or not os.access(f, os.X_OK)]
+        if missing: raise RuntimeError('Instalação incompleta; faltam ficheiros: ' + ', '.join(missing))
+        result.append({'package': package, 'version': version, 'desktop_entries': desktops, 'executables': binaries})
+    catalog = Path.home()/'.local/bin/apx-application-catalog-v1'
+    subprocess.run([str(catalog)], check=True)
+    return result
+
+
+def install(command, expected, directory):
+    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
+    log = directory/(stamp+'.log')
+    summary = directory/(stamp+'.json')
+    report = {'expected': expected, 'status': 'running', 'log': str(log)}
+    summary.write_text(json.dumps(report, indent=2)+'\n')
+    os.chmod(summary, 0o600)
+    try:
+        if command:
+            with log.open('x') as stream:
+                os.chmod(log, 0o600)
+                # Inherit stdin/TTY for installer questions; never record typed passwords.
+                process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+                try:
+                    for line in process.stdout:
+                        print(line, end='', flush=True);stream.write(line);stream.flush()
+                    code = process.wait()
+                except BaseException:
+                    process.terminate();process.wait();raise
+                finally:
+                    process.stdout.close()
+            report['exit_code'] = code
+            if code: raise RuntimeError(f'O instalador terminou com erro {code}. Consulta {log}')
+        report['verified'] = verify(expected)
+        report['status'] = 'verified'
+        print('Instalação verificada: ' + ', '.join(expected), flush=True)
+    except BaseException as error:
+        report['status'] = 'failed';report['error'] = str(error)
+        raise
+    finally:
+        summary.write_text(json.dumps(report, indent=2)+'\n')
+        print('Resultado: '+str(summary), flush=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--package', nargs='+', metavar='NOME')
+    mode.add_argument('--file', type=Path, metavar='PACOTE')
+    mode.add_argument('--script', type=Path, metavar='INSTALADOR')
+    mode.add_argument('--script-root', type=Path, metavar='INSTALADOR')
+    mode.add_argument('--check', nargs='+', metavar='NOME')
+    parser.add_argument('--expect', nargs='+', metavar='NOME')
+    args = parser.parse_args()
+    require_environment()
+    if args.package:
+        expected = args.package
+        # Keep Host-coupled GPU libraries on their accepted version, as the updater does.
+        command = ['/usr/bin/sudo', PACMAN, '-Syu', '--needed', '--ignore', 'nvidia-utils,lib32-nvidia-utils,opencl-nvidia', '--', *expected]
+    elif args.file:
+        path = args.file.resolve(strict=True)
+        expected = query('-Qp', '--print-format', '%n', '--', str(path)).splitlines()
+        command = ['/usr/bin/sudo', PACMAN, '-U', '--', str(path)]
+    elif args.script or args.script_root:
+        if not args.expect: parser.error('--script exige --expect com os pacotes esperados')
+        expected = args.expect
+        selected = args.script or args.script_root
+        command = (['/usr/bin/sudo'] if args.script_root else []) + ['/usr/bin/bash', str(selected.resolve(strict=True))]
+    else:
+        expected = args.check;command = []
+    if not expected or any(not PACKAGE.fullmatch(p) for p in expected):
+        raise ValueError('Lista de pacotes inválida')
+    install(command, expected, Path.home()/'.local/state/apx/installations')
+    return 0
+
+
+if __name__ == '__main__':
+    try: raise SystemExit(main())
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError, KeyboardInterrupt) as error:
+        print('Instalação não concluída: '+str(error), file=sys.stderr)
+        raise SystemExit(1)

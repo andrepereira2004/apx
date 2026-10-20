@@ -20,7 +20,7 @@ OPERATIONS = (
     "bluetooth.power", "bluetooth.scan", "bluetooth.status",
     "capabilities.get", "events.subscribe", "network.connect",
     "network.connectivity-check", "network.disconnect", "network.forget",
-    "network.portal.open", "network.scan", "network.status", "radio.status", "radio.airplane",
+    "network.portal.open", "network.scan", "network.status", "network.power", "radio.status", "radio.airplane",
     "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save",
 )
 SECRET_FIELDS = frozenset({"credential", "passphrase", "password", "pin", "secret"})
@@ -117,7 +117,7 @@ def validate_payload(operation: str, payload: object) -> dict[str, object]:
                 raise HostServicesV3ContractError("calendar event metadata is invalid")
             events.append(dict(event))
         return {"events": events, "categories": categories}
-    if operation == "bluetooth.power":
+    if operation in {"bluetooth.power", "network.power"}:
         if set(payload) != {"powered"} or type(payload.get("powered")) is not bool:
             raise HostServicesV3ContractError("Bluetooth power payload differs")
         return {"powered": payload["powered"]}

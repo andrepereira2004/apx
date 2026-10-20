@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtCore
 import QtQuick.Window
 import QtQuick.Controls
 import Quickshell
@@ -69,6 +70,29 @@ ShellRoot {
         }
         onExited: (code, status) => { root.displayLayoutError = code === 0 ? "" : "Não foi possível alterar os ecrãs." }
     }
+    property var pointerDevices: ({mouse:{enabled:true,available:false},trackpad:{enabled:true,available:false}})
+    property string pointerPowerError: ""
+    function togglePointer(kind) {
+        if (pointerPowerProcess.running) return
+        pointerPowerError = ""
+        pointerPowerProcess.command = ["/home/apx/.local/bin/apx-pointer-power-v1", "toggle", kind]
+        pointerPowerProcess.running = true
+    }
+    Process {
+        id: pointerPowerProcess
+        command: ["/home/apx/.local/bin/apx-pointer-power-v1", "status"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { try { root.pointerDevices = JSON.parse(text) } catch(e) {} } }
+        stderr: StdioCollector { onStreamFinished: { if (text.trim().length) root.pointerPowerError = text.trim() } }
+        onExited: (code, status) => { if (code !== 0) pointerRefreshTimer.restart() }
+    }
+    Timer {
+        id: pointerRefreshTimer; interval: 2000; repeat: true; running: true
+        onTriggered: if (!pointerPowerProcess.running) {
+            pointerPowerProcess.command = ["/home/apx/.local/bin/apx-pointer-power-v1", "status"]
+            pointerPowerProcess.running = true
+        }
+    }
     function setMouseSensitivity(value) {
         if (mouseSensitivityProcess.running) return
         mouseSensitivityError = ""
@@ -86,6 +110,25 @@ ShellRoot {
         stdout: StdioCollector { onStreamFinished: root.mouseSensitivity = Number(text.trim()) || 0 }
         stderr: StdioCollector { onStreamFinished: if (text.trim().length) root.mouseSensitivityError = text.trim() }
         onExited: (code, status) => { if (code !== 0 && !root.mouseSensitivityError.length) root.mouseSensitivityError = "Não foi possível alterar a sensibilidade." }
+    }
+
+    function setTrackpadSensitivity(value) {
+        if (trackpadSensitivityProcess.running) return
+        trackpadSensitivityError = ""
+        trackpadSensitivityProcess.command = ["/home/apx/.local/bin/apx-trackpad-sensitivity-v1", "set", String(Math.round(value))]
+        trackpadSensitivityProcess.running = true
+    }
+    Process {
+        id: trackpadSensitivityStatusProcess
+        command: ["/home/apx/.local/bin/apx-trackpad-sensitivity-v1", "get"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: root.trackpadSensitivity = Number.isFinite(Number(text.trim())) ? Number(text.trim()) : -30 }
+    }
+    Process {
+        id: trackpadSensitivityProcess
+        stdout: StdioCollector { onStreamFinished: root.trackpadSensitivity = Number.isFinite(Number(text.trim())) ? Number(text.trim()) : -30 }
+        stderr: StdioCollector { onStreamFinished: if (text.trim().length) root.trackpadSensitivityError = text.trim() }
+        onExited: (code, status) => { if (code !== 0 && !root.trackpadSensitivityError.length) root.trackpadSensitivityError = "Não foi possível alterar a sensibilidade." }
     }
 
     property color cyan: "#55e6ff"
@@ -137,6 +180,33 @@ ShellRoot {
     property string environmentDraftDescription: ""
     property string environmentEditTitle: ""
     property string environmentEditDescription: ""
+    property string environmentEditIcon: "box"
+    property string environmentPendingIconKey: ""
+    property string environmentPendingIcon: "box"
+    readonly property var environmentIconChoices: ["box", "monitor", "terminal", "book-open", "swords", "shield-check", "globe", "folder", "cpu", "music", "camera", "paintbrush", "pickaxe", "hexagon", "zap", "satellite-dish"]
+    Settings {
+        id: environmentIcons
+        location: "file:///home/apx/.config/apx-environment-icons.ini"
+        category: "Environments"
+        property string choices: "{}"
+    }
+    function environmentIconKey(item) {
+        return String(item.name) + ":" + String(item.generation)
+    }
+    function environmentIcon(item) {
+        try {
+            var icon = JSON.parse(environmentIcons.choices)[environmentIconKey(item)]
+            if (environmentIconChoices.indexOf(icon) >= 0) return icon
+        } catch (error) {}
+        return "box"
+    }
+    function storeEnvironmentIcon(key, icon) {
+        var choices = {}
+        try { choices = JSON.parse(environmentIcons.choices) } catch (error) {}
+        choices[key] = icon
+        environmentIcons.choices = JSON.stringify(choices)
+        environmentIcons.sync()
+    }
     property string environmentSystemKind: "arch"
     property int environmentNativeWindowsSizeGib: 120
     property var nativeCreationPreview: ({})
@@ -215,8 +285,8 @@ ShellRoot {
     readonly property string environmentLabel: isHub ? "Hub" : String(environmentIdentity.display_name || environmentIdentity.name || "Environment")
     readonly property int environmentPopupHeight: !isHub ? 214
         : (environmentCreateOpen ? (environmentSystemKind === "windows-native" && nativeCreationPreview.target ? 620 : 540) + (environmentManagementBusy ? 42 : 0)
-           : (environmentEditOpen ? 276
-           : 216 + Math.max(1, Math.min(5, environmentCatalog.length)) * 66
+           : (environmentEditOpen ? 430
+           : 200 + Math.max(1, Math.min(5, environmentCatalog.length)) * 51
              + (environmentDeleteConfirm ? 88 : 0) + (environmentManagementBusy ? 42 : 0)
              + (nativeWindowsRecoveryAvailable() ? 100 : 0) + (environmentManagementState.native_v3 ? (environmentManagementState.native_v3_delete_retry ? 180 : 130) : 0)))
     // APX queued main menu switch: never reveal a new page at the old anchor.
@@ -380,7 +450,7 @@ ShellRoot {
         return "battery-full"
     }
     readonly property string appsIconName: {
-        return "package"
+        return "layout-grid"
     }
     property string batteryStatus: "Desconhecido"
     property bool batteryDischarging: false
@@ -474,6 +544,7 @@ ShellRoot {
     }
 
     function focusMenuItem(item) {
+        menuFlick.stopWheel()
         if (focusedMenuItem !== item) clearPendingMenuFocus()
         focusedMenuItem = item
         item.forceActiveFocus(Qt.TabFocusReason)
@@ -580,6 +651,9 @@ ShellRoot {
     property int keyboardBrightnessMax: 2
     property string hardwareControlError: ""
     readonly property bool focusedFullscreen: !!(Hyprland.activeToplevel && Hyprland.activeToplevel.wayland && Hyprland.activeToplevel.wayland.fullscreen)
+    readonly property bool filesOpen: Hyprland.toplevels.values.some(function(window) {
+        return /^(thunar|org\.xfce\.Thunar)$/i.test(String(window.wayland ? window.wayland.appId : window.lastIpcObject.class || ""))
+    })
     readonly property bool filesFocused: !!(Hyprland.activeToplevel && /^(thunar|org\.xfce\.Thunar)$/i.test(String(Hyprland.activeToplevel.wayland ? Hyprland.activeToplevel.wayland.appId : Hyprland.activeToplevel.lastIpcObject.class || "")))
     readonly property bool fullscreenOsd: focusedFullscreen && !popup.open
     property bool hotkeyOsdVisible: false
@@ -609,6 +683,31 @@ ShellRoot {
     property var calendarLocalCategories: []
     property var calendarSharedCategories: []
     property bool calendarEditor: false
+    property bool calendarDetailsOpen: false
+    property bool calendarRemindersOpen: false
+    property string calendarPendingView: ""
+    property var calendarPendingDate: null
+    property int calendarMoveDirection: 1
+    property real calendarPageOpacity: 1
+    property real calendarPageOffset: 0
+    SequentialAnimation {
+        id: calendarNavigationAnimation
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "calendarPageOpacity"; to: 0; duration: 75; easing.type: Easing.InQuad }
+            NumberAnimation { target: root; property: "calendarPageOffset"; to: -root.calendarMoveDirection * 10; duration: 75; easing.type: Easing.InQuad }
+        }
+        ScriptAction { script: {
+            if (root.calendarPendingView.length) root.calendarView = root.calendarPendingView
+            root.calendarPendingView = ""
+            if (root.calendarPendingDate) root.calendarDate = root.calendarPendingDate
+            root.calendarPendingDate = null
+            root.calendarPageOffset = root.calendarMoveDirection * 10
+        } }
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "calendarPageOpacity"; to: 1; duration: 150; easing.type: Easing.OutCubic }
+            NumberAnimation { target: root; property: "calendarPageOffset"; to: 0; duration: 150; easing.type: Easing.OutCubic }
+        }
+    }
     property string calendarSelectedDateKey: ""
     property var calendarFocusAction: ({ kind: "", key: "" })
     property string editingEventId: ""
@@ -637,6 +736,8 @@ ShellRoot {
     property bool workspacesExpanded: true
     property bool ghostGreetingVisible: false
     Timer { id: ghostGreetingTimer; interval: 3000; onTriggered: root.ghostGreetingVisible = false }
+    property int trackpadSensitivity: -30
+    property string trackpadSensitivityError: ""
     property int mouseSensitivity: 0
     property string mouseSensitivityError: ""
     readonly property var shortcutList: [
@@ -677,6 +778,7 @@ ShellRoot {
     property string wifiCaCert: "/etc/ssl/certs/ca-certificates.crt"
     property string wifiEnterpriseMethod: "PEAP"
     property string wifiMessage: ""
+    property bool wifiShowPassword: false
     property bool wifiPasswordVisible: false
     property bool wifiSelectionTap: false
     property string wifiLastNetwork: ""
@@ -696,6 +798,7 @@ ShellRoot {
     property string bluetoothPairPhase: ""
     property string bluetoothPairChallenge: ""
     property string bluetoothPairPasskey: ""
+    property bool bluetoothShowPin: false
     property string bluetoothPairPin: ""
     property string bluetoothPairResponsePin: ""
     property string bluetoothRemoveAddress: ""
@@ -767,6 +870,20 @@ ShellRoot {
         return ({ ssid: name, signal: 0, security: "unknown", known: false })
     }
 
+    function wifiCurrentSignal() {
+        if (!wifiDisplayActive()) return -1
+        var details = hostState.network_details || []
+        for (var i = 0; i < details.length; ++i) {
+            var item = details[i]
+            // The backend's unknown-security placeholder carries a zero,
+            // not a measured signal; leave that value out of the UI.
+            if (item.ssid === hostState.network_name && (item.security !== "unknown" || item.signal_source === "station")
+                    && typeof item.signal === "number" && Number.isFinite(item.signal))
+                return Math.max(0, Math.min(100, Math.round(item.signal)))
+        }
+        return -1
+    }
+
     function wifiSignalBars(signal) {
         if (signal >= 75) return "▂▄▆█"
         if (signal >= 50) return "▂▄▆·"
@@ -792,12 +909,19 @@ ShellRoot {
     }
 
     function beginWifiConnect(name) {
+        if (name === hostState.network_name) return
+        wifiShowPassword = false
         wifiMessage = ""
         wifiSelectedSsid = name
         wifiPassword = ""
         wifiUsername = ""
         wifiDomain = ""
         wifiPasswordVisible = true
+        Qt.callLater(function() {
+            if (!root.wifiPasswordVisible || root.wifiSelectedSsid !== name) return
+            menuFlick.stopWheel()
+            menuFlick.contentY = 0
+        })
         if (!wifiIsKnown(name) && !wifiIsOpen(name)) {
             Qt.callLater(function() {
                 if (!root.wifiPasswordVisible || root.wifiSelectedSsid !== name) return
@@ -807,7 +931,17 @@ ShellRoot {
         }
     }
 
+    function wifiAvailableNetworks() {
+        return Array.from(new Set(hostState.available_networks || []))
+            .filter(function(name) { return name !== hostState.network_name })
+    }
+    function completeWifiConnection() {
+        hostState = Object.assign({}, hostState, {network_name: wifiSelectedSsid})
+        cancelWifiPassword()
+    }
     function cancelWifiPassword() {
+        wifiShowPassword = false
+        wifiMessage = ""
         wifiPassword = ""
         wifiUsername = ""
         wifiDomain = ""
@@ -816,6 +950,7 @@ ShellRoot {
     }
 
     function submitWifiPassword() {
+        if (wifiCredentialProcess.running || hostActionProcess.running) return
         if (wifiIsKnown(wifiSelectedSsid) || wifiIsOpen(wifiSelectedSsid)) {
             wifiMessage = "A ligar a " + wifiSelectedSsid + "…"
             hostAction("wifi-connect", wifiSelectedSsid)
@@ -882,8 +1017,38 @@ ShellRoot {
         }
     }
 
+    property bool wifiPowerOverride: false
+    property bool wifiPowerActive: true
+    function wifiDisplayPowered() { return wifiPowerOverride ? wifiPowerActive : hostState.wifi_powered !== false }
+    function toggleWifiPower() {
+        if (wifiPowerProcess.running) return
+        cancelWifiPassword()
+        wifiMessage = ""
+        wifiPowerActive = !wifiDisplayPowered()
+        wifiPowerOverride = true
+        wifiPowerProcess.command = ["/run/apx/host-services-ui-v3.py", "wifi-power", wifiPowerActive ? "on" : "off"]
+        wifiPowerProcess.running = true
+    }
+    function finishWifiPower(success) {
+        // Retire any status request begun before this operation completed.
+        // Its stale reply must not briefly undo the immediate icon feedback.
+        if (hostStatusProcess.running) hostStatusProcess.running = false
+        if (success) hostState = Object.assign({}, hostState, {
+            wifi_powered: wifiPowerActive,
+            network_name: wifiPowerActive ? hostState.network_name : null
+        })
+        wifiPowerOverride = false
+        if (!success && !wifiMessage.length) wifiMessage = "Não foi possível alterar o Wi-Fi."
+        hostStatusProcess.running = true
+    }
+    Process {
+        id: wifiPowerProcess
+        stderr: StdioCollector { onStreamFinished: if (text.trim()) root.wifiMessage = text.trim() }
+        onExited: (code, status) => root.finishWifiPower(code === 0)
+    }
+
     function wifiDisplayActive() {
-        return wifiOptimisticOverride ? wifiOptimisticActive : !!hostState.network_name
+        return wifiDisplayPowered() && (wifiOptimisticOverride ? wifiOptimisticActive : !!hostState.network_name)
     }
 
     function bluetoothDisplayPowered() {
@@ -956,34 +1121,41 @@ ShellRoot {
         return !controlsBrightnessOpen && !controlsConnectivityOpen && !controlsWifiOpen && !controlsBluetoothOpen && !controlsAudioOpen && !controlsMicrophoneOpen && !controlsActivityKind.length
     }
 
+    function bluetoothDevicesUnique() {
+        var seen = new Set()
+        return (hostState.bluetooth_devices || []).filter(function(device) {
+            if (!device || !device.address || seen.has(device.address)) return false
+            seen.add(device.address)
+            return true
+        })
+    }
     function bluetoothConnectedDevices() {
         if (!bluetoothDisplayPowered()) return []
-        return (hostState.bluetooth_devices || []).filter(function(device) {
-            return device.paired === true && device.connected === true
-                   && !(bluetoothDevicePendingAction === "bluetooth-disconnect" && bluetoothDevicePendingAddress === device.address)
-        })
+        return bluetoothDevicesUnique().filter(function(device) { return device.connected === true })
     }
-
     function bluetoothKnownDevices() {
         if (!bluetoothDisplayPowered()) return []
-        return (hostState.bluetooth_devices || []).filter(function(device) {
-            if (device.paired !== true) return false
-            if (bluetoothDevicePendingAction === "bluetooth-disconnect" && bluetoothDevicePendingAddress === device.address) return true
-            return device.connected !== true
-        })
+        return bluetoothDevicesUnique().filter(function(device) { return device.paired === true && device.connected !== true })
     }
-
     function bluetoothAvailableDevices() {
         if (!bluetoothDisplayPowered()) return []
-        return (hostState.bluetooth_devices || []).filter(function(device) { return device.paired !== true })
+        return bluetoothDevicesUnique().filter(function(device) { return device.paired !== true && device.connected !== true })
     }
-
+    function revealBluetoothForm() {
+        Qt.callLater(function() {
+            menuFlick.stopWheel()
+            menuFlick.contentY = 0
+            if (root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin")
+                bluetoothPinInput.forceActiveFocus()
+        })
+    }
     function applyBluetoothPairResult(payload) {
         bluetoothPairSessionId = payload.session_id || bluetoothPairSessionId
         bluetoothPairPhase = payload.phase || "waiting"
         bluetoothPairChallenge = payload.challenge || ""
         bluetoothPairPasskey = payload.passkey === undefined || payload.passkey === null ? "" : String(payload.passkey)
         bluetoothMessage = payload.message || ""
+        if (bluetoothPairPhase === "needs-response") revealBluetoothForm()
         if (bluetoothPairPhase === "completed") {
             bluetoothMessage = payload.message || bluetoothPairName + " emparelhado com sucesso."
             bluetoothPairPin = ""
@@ -997,6 +1169,7 @@ ShellRoot {
 
     function beginBluetoothPair(device) {
         if (bluetoothPairBeginProcess.running || bluetoothPairSessionId.length) return
+        bluetoothShowPin = false
         bluetoothMessage = "A iniciar o emparelhamento…"
         bluetoothPairAddress = device.address
         bluetoothPairName = device.name || device.address
@@ -1006,6 +1179,7 @@ ShellRoot {
         bluetoothPairPin = ""
         bluetoothPairBeginProcess.command = ["/run/apx/host-services-client-v3.py", "bluetooth-pair", device.address]
         bluetoothPairBeginProcess.running = true
+        revealBluetoothForm()
     }
 
     function respondBluetoothPair(accepted, pin) {
@@ -1020,6 +1194,7 @@ ShellRoot {
     }
 
     function cancelBluetoothPairing() {
+        bluetoothShowPin = false
         if (bluetoothPairPhase === "needs-response") {
             respondBluetoothPair(false, "")
             return
@@ -1035,6 +1210,7 @@ ShellRoot {
     }
 
     function dismissBluetoothPairing() {
+        bluetoothShowPin = false
         bluetoothPairSessionId = ""
         bluetoothPairAddress = ""
         bluetoothPairName = ""
@@ -1048,6 +1224,7 @@ ShellRoot {
         bluetoothRemoveAddress = device.address
         bluetoothRemoveName = device.name || device.address
         bluetoothMessage = ""
+        revealBluetoothForm()
     }
 
     function confirmBluetoothRemove() {
@@ -1059,7 +1236,7 @@ ShellRoot {
     function beginEvent() {
         editingEventId = ""
         draftTitle = ""
-        draftDate = dateKey(new Date())
+        draftDate = dateKey(calendarDate)
         draftTime = "09:00"
         draftCategory = calendarCategories.length ? calendarCategories[0] : ""
         draftNotes = ""
@@ -1071,7 +1248,10 @@ ShellRoot {
         eventError = ""
         categoryPickerOpen = false
         newCategoryOpen = false
+        calendarDetailsOpen = false
+        calendarRemindersOpen = false
         calendarEditor = true
+        menuFlick.contentY = 0
         Qt.callLater(function() { calendarTitleField.focusInput() })
     }
 
@@ -1089,7 +1269,10 @@ ShellRoot {
         eventError = ""
         categoryPickerOpen = false
         newCategoryOpen = false
+        calendarDetailsOpen = false
+        calendarRemindersOpen = false
         calendarEditor = true
+        menuFlick.contentY = 0
         Qt.callLater(function() { calendarTitleField.focusInput() })
     }
 
@@ -1258,14 +1441,28 @@ ShellRoot {
         return days
     }
 
+    function changeCalendarView(view, date) {
+        var previous = calendarPendingView || calendarView
+        if (view === previous && !date) return
+        calendarNavigationAnimation.stop()
+        var order = ["day", "month", "year"]
+        calendarMoveDirection = order.indexOf(view) >= order.indexOf(previous) ? 1 : -1
+        calendarPendingView = view
+        if (date) calendarPendingDate = date
+        calendarNavigationAnimation.restart()
+    }
+
     function moveCalendar(direction) {
-        var d = calendarDate
-        if (calendarView === "day")
-            calendarDate = new Date(d.getFullYear(), d.getMonth(), d.getDate() + direction)
-        else if (calendarView === "year")
-            calendarDate = new Date(d.getFullYear() + direction, d.getMonth(), 1)
+        var d = calendarPendingDate || calendarDate
+        calendarNavigationAnimation.stop()
+        calendarMoveDirection = direction
+        if ((calendarPendingView || calendarView) === "day")
+            calendarPendingDate = new Date(d.getFullYear(), d.getMonth(), d.getDate() + direction)
+        else if ((calendarPendingView || calendarView) === "year")
+            calendarPendingDate = new Date(d.getFullYear() + direction, d.getMonth(), 1)
         else
-            calendarDate = new Date(d.getFullYear(), d.getMonth() + direction, 1)
+            calendarPendingDate = new Date(d.getFullYear(), d.getMonth() + direction, 1)
+        calendarNavigationAnimation.restart()
     }
 
     function calendarTitle() {
@@ -1433,13 +1630,12 @@ ShellRoot {
         }
         if (action.kind === "previous") moveCalendar(-1)
         else if (action.kind === "next") moveCalendar(1)
-        else if (action.kind === "view") calendarView = action.key
+        else if (action.kind === "view") changeCalendarView(action.key)
         else if (action.kind === "date") {
             var parts = action.key.split("-")
             selectCalendarDate(new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])))
         } else if (action.kind === "month") {
-            calendarDate = new Date(calendarDate.getFullYear(), Number(action.key), 1)
-            calendarView = "month"
+            changeCalendarView("month", new Date(calendarDate.getFullYear(), Number(action.key), 1))
         } else if (action.kind === "today") {
             selectCalendarDate(currentDate)
         } else if (action.kind === "new") beginEvent()
@@ -1960,6 +2156,7 @@ ShellRoot {
         environmentEditOpen = true
         environmentEditTitle = String(selected.display_name || selected.name)
         environmentEditDescription = String(selected.description || "")
+        environmentEditIcon = environmentIcon(selected)
         environmentEditFocusIndex = 1
         environmentSwitchError = ""
         Qt.callLater(function() { environmentEditTitleInput.forceActiveFocus() })
@@ -1989,6 +2186,8 @@ ShellRoot {
             return
         }
         environmentSwitchError = ""
+        environmentPendingIconKey = environmentIconKey(environmentSelection())
+        environmentPendingIcon = environmentEditIcon
         environmentMetadataBusy = true
         environmentMetadataProcess.command = [root.environmentClient, "edit",
                                               "--target", selectedEnvironmentName,
@@ -2001,16 +2200,21 @@ ShellRoot {
     function handleEnvironmentEditKey(event) {
         if (event.key === Qt.Key_Escape) cancelEnvironmentEdit()
         else if (event.key === Qt.Key_Up || event.key === Qt.Key_Backtab)
-            environmentEditFocusIndex = (environmentEditFocusIndex + 3) % 4
+            environmentEditFocusIndex = (environmentEditFocusIndex + 4) % 5
         else if (event.key === Qt.Key_Down || event.key === Qt.Key_Tab)
-            environmentEditFocusIndex = (environmentEditFocusIndex + 1) % 4
+            environmentEditFocusIndex = (environmentEditFocusIndex + 1) % 5
+        else if (environmentEditFocusIndex === 3 && (event.key === Qt.Key_Left || event.key === Qt.Key_Right)) {
+            var choices = environmentIconChoices
+            environmentEditIcon = choices[(choices.indexOf(environmentEditIcon) + (event.key === Qt.Key_Left ? choices.length - 1 : 1)) % choices.length]
+        }
         else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
             if (environmentEditFocusIndex === 0) cancelEnvironmentEdit()
             else if (environmentEditFocusIndex === 1) environmentEditTitleInput.forceActiveFocus()
             else if (environmentEditFocusIndex === 2) environmentEditDescriptionInput.forceActiveFocus()
+            else if (environmentEditFocusIndex === 3) { environmentEditFocusIndex = 4 }
             else saveEnvironmentMetadata()
         } else return
-        if (environmentEditFocusIndex === 0 || environmentEditFocusIndex === 3)
+        if (environmentEditFocusIndex === 0 || environmentEditFocusIndex >= 3)
             environmentMenu.forceActiveFocus()
         event.accepted = true
     }
@@ -2513,6 +2717,15 @@ ShellRoot {
         dispatchDisplayBrightness()
     }
 
+    property int displayBrightnessBeforeDim: 70
+    function toggleDisplayDim() {
+        if (displayBrightnessProcess.running) return
+        if (displayBrightness > 5) {
+            displayBrightnessBeforeDim = displayBrightness
+            commitDisplayBrightness(5)
+        } else commitDisplayBrightness(Math.max(6, displayBrightnessBeforeDim))
+    }
+
     function stepDisplayBrightness(delta) {
         commitDisplayBrightness(displayBrightness + delta)
     }
@@ -2651,6 +2864,10 @@ ShellRoot {
             onStreamFinished: {
                 try {
                     root.hostState = JSON.parse(text)
+                    if (root.bluetoothPairPhase === "completed" && (root.hostState.bluetooth_devices || []).some(function(device) { return device.address === root.bluetoothPairAddress && device.connected === true })) {
+                        root.dismissBluetoothPairing()
+                        root.bluetoothMessage = ""
+                    }
                     if (root.hostState.network_name) {
                         root.wifiLastNetwork = root.hostState.network_name
                         root.wifiManualOff = false
@@ -2699,7 +2916,14 @@ ShellRoot {
 
     Process {
         id: hostActionProcess
-        onExited: hostStatusProcess.running = true
+        stderr: StdioCollector { onStreamFinished: if (hostActionProcess.command[1] === "wifi-connect" && text.trim()) root.wifiMessage = text.trim() }
+        onExited: (code, status) => {
+            if (hostActionProcess.command[1] === "wifi-connect" && root.wifiPasswordVisible) {
+                if (code === 0) { root.completeWifiConnection() }
+                else if (!root.wifiMessage.length || root.wifiMessage.indexOf("A ligar") === 0) root.wifiMessage = "Não foi possível estabelecer a ligação."
+            }
+            hostStatusProcess.running = true
+        }
     }
 
     Process {
@@ -2745,9 +2969,9 @@ ShellRoot {
         id: bluetoothScanProcess
         command: ["/run/apx/host-services-client-v3.py", "bluetooth-scan"]
         stderr: StdioCollector { onStreamFinished: if (text.trim().length) root.bluetoothMessage = text.trim() }
-        onStarted: root.bluetoothMessage = "A procurar dispositivos…"
+        onStarted: root.bluetoothMessage = ""
         onExited: (exitCode, exitStatus) => {
-            root.bluetoothMessage = exitCode === 0 ? "Pesquisa concluída." : (root.bluetoothMessage || "Não foi possível procurar dispositivos.")
+            root.bluetoothMessage = exitCode === 0 ? "" : (root.bluetoothMessage || "Não foi possível procurar dispositivos.")
             hostStatusProcess.running = true
         }
     }
@@ -2782,6 +3006,7 @@ ShellRoot {
         id: bluetoothPairRespondProcess
         stdinEnabled: true
         onStarted: {
+            root.bluetoothShowPin = false
             if (root.bluetoothPairResponsePin.length) write(root.bluetoothPairResponsePin + "\n")
             root.bluetoothPairResponsePin = ""
             root.bluetoothPairPin = ""
@@ -2814,6 +3039,7 @@ ShellRoot {
             onStreamFinished: if (text.trim().length) root.wifiMessage = text.trim()
         }
         onStarted: {
+            root.wifiShowPassword = false
             write(root.wifiIsEnterprise(root.wifiSelectedSsid)
                   ? JSON.stringify({kind: "enterprise", method: root.wifiEnterpriseMethod,
                                     identity: root.wifiUsername, password: root.wifiPassword,
@@ -2823,9 +3049,7 @@ ShellRoot {
         }
         onExited: (exitCode, exitStatus) => {
             if (exitCode === 0) {
-                root.wifiMessage = "Ligação efetuada."
-                root.wifiPasswordVisible = false
-                root.wifiSelectedSsid = ""
+                root.completeWifiConnection()
             } else if (!root.wifiMessage.length) {
                 root.wifiMessage = "Não foi possível estabelecer a ligação."
             }
@@ -3256,6 +3480,7 @@ ShellRoot {
         onExited: function(exitCode) {
             root.environmentMetadataBusy = false
             if (exitCode === 0) {
+                root.storeEnvironmentIcon(root.environmentPendingIconKey, root.environmentPendingIcon)
                 root.environmentEditOpen = false
                 root.environmentEditTitle = ""
                 root.environmentEditDescription = ""
@@ -3270,7 +3495,7 @@ ShellRoot {
     }
     Process { id: environmentFilesProcess; command: ["/home/apx/.local/bin/apx-laptop-action-v1", "files"] }
     Process { id: fileShortcutProcess; command: ["/home/apx/.local/bin/apx-laptop-action-v1", "files"] }
-    Process { id: environmentAppsProcess; command: ["/usr/bin/env", "LD_PRELOAD=/home/apx/.local/libexec/apx-rofi-secondary-v1.so", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", "/usr/bin/rofi", "-modi", "apps:/home/apx/.local/bin/apx-window-apps-v1,files", "-show", "apps", "-me-select-entry", "", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary", "-kb-cancel", "Escape,Control+g,Control+bracketleft"] }
+    Process { id: environmentAppsProcess; command: ["/usr/bin/env", "LD_PRELOAD=/home/apx/.local/libexec/apx-rofi-secondary-v1.so", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", "/usr/bin/rofi", "-modi", "apps,files", "-show", "apps", "-me-select-entry", "", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary", "-kb-cancel", "Escape,Control+g,Control+bracketleft"] }
     Process { id: updateUiProcess; command: root.isHub
         ? ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/run/apx/coordinated-update-client-v1.py", "environments-ui"]
         : ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/home/apx/.local/bin/apx-environment-update-v1", "--unattended"] }
@@ -3339,9 +3564,7 @@ ShellRoot {
                 root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/circle-alert.svg"), "Aplicações", "Launcher não instalado no Hub", -1)
                 return
             }
-            // Repeated shortcut requests must not cancel a pending launch.
-            if (popup.open) root.closePopup()
-            if (!environmentAppsProcess.running) environmentAppsProcess.running = true
+            root.toggleApplicationLauncher()
         }
 
         function toggleApplications(): void { root.toggleApplicationLauncher() }
@@ -3380,7 +3603,7 @@ ShellRoot {
                                     popup_opacity: popupBackground.opacity,
                                     content_opacity: root.islandContentOpacity, visual_width: popupBackground.width, visual_height: popupBackground.height, visual_x: popupBackground.x, fullscreen: root.focusedFullscreen,
                                     panel_y: popupBackground.y, content_y: menuFlick.y, content_font: Appearance.fontFamily, body_size: Appearance.bodySize, title_size: Appearance.titleSize, visible_fonts: root.visibleMenuFonts(),
-                                    displayed_controls: root.renderedControls, page_transition: controlPageAnimation.running || root.controlPageCapturing, page_progress: root.controlPageProgress, page_blend: root.controlPageBlend, page_motion: root.controlPageMotion, menu_content_enabled: menuFlick.enabled, transition_input_blocked: controlTransitionShield.enabled, control_tiles: root.visibleControlTiles(), material_animating: panelMaterialFade.running, panel_color: String(popupBackground.color), target_height: popupBackground.targetHeight, settled_height: popupBackground.settledHeight, outgoing_page_opacity: outgoingControlPage.opacity, outgoing_page_visible: outgoingControlPage.visible, outgoing_page_x: outgoingControlPage.x,
+                                    displayed_controls: root.renderedControls, wifi_powered: root.wifiDisplayPowered(), wifi_connected: root.wifiDisplayActive(), bluetooth_powered: root.bluetoothDisplayPowered(), page_transition: controlPageAnimation.running || root.controlPageCapturing, page_progress: root.controlPageProgress, page_blend: root.controlPageBlend, page_motion: root.controlPageMotion, menu_content_enabled: menuFlick.enabled, transition_input_blocked: controlTransitionShield.enabled, control_tiles: root.visibleControlTiles(), material_animating: panelMaterialFade.running, panel_color: String(popupBackground.color), target_height: popupBackground.targetHeight, settled_height: popupBackground.settledHeight, outgoing_page_opacity: outgoingControlPage.opacity, outgoing_page_visible: outgoingControlPage.visible, outgoing_page_x: outgoingControlPage.x,
                                     pending_kind: root.pendingPopupRequest ? root.pendingPopupRequest.kind : "",
                                     media_width: root.mediaButton ? root.mediaButton.width : 0, media_selected: root.mediaButton ? root.mediaButton.selected : false,
                                     osd_fallback: hotkeyOsdWindow.visible, launcher_running: environmentAppsProcess.running,
@@ -3392,6 +3615,9 @@ ShellRoot {
                                     files_active: root.filesFocused, osd_visible: root.hotkeyOsdVisible, island_transient: root.mediaButton ? root.mediaButton.transientActive : false,
                                     keyboard_items: root.genericMenuItems().length,
                                     keyboard_index: root.genericMenuItems().findIndex(function(item) { return item.activeFocus }),
+                                    calendar_view: root.calendarView, calendar_date: root.dateKey(root.calendarDate),
+                                    calendar_editor: root.calendarEditor, calendar_navigation_running: calendarNavigationAnimation.running,
+                                    calendar_page_opacity: root.calendarPageOpacity, calendar_page_offset: root.calendarPageOffset,
                                     calendar_focus_kind: root.calendarFocusAction.kind,
                                     calendar_focus_key: root.calendarFocusAction.key,
                                     calendar_selected_date: root.calendarSelectedDateKey,
@@ -3502,7 +3728,7 @@ ShellRoot {
         function volumeDown(): void { root.stepVolume(-5) }
         function volumeMute(): void { root.toggleVolumeMute() }
         function microphoneMute(): void { root.toggleMicrophoneMute() }
-        function hotkeyApps(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/package-open.svg"), "Aplicações", "A abrir", -1) }
+        function hotkeyApps(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/layout-panel-left.svg"), "Aplicações", "A abrir", -1) }
         function hotkeyAirplaneOff(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/plane.svg"), "Modo de avião", "Desativado", -1) }
         function hotkeyAirplaneOn(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/plane.svg"), "Modo de avião", "Ativado", -1) }
         function hotkeyAirplaneUnavailable(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/circle-alert.svg"), "Modo de avião", "Estado indisponível", -1) }
@@ -3798,11 +4024,65 @@ ShellRoot {
         z: 2
     }
 
+    component BluetoothDeviceRow: Rectangle {
+        id: deviceRow
+        required property var device
+        property bool connected: false
+        property bool paired: false
+        property bool pending: root.bluetoothDevicePendingAddress === device.address
+        signal activated()
+        signal forgetRequested()
+        width: parent ? parent.width : 300; height: connected ? 56 : 44; radius: connected ? 14 : 10
+        color: root.controlButtonSurface
+        LucideIcon {
+            name: "bluetooth"; width: 16; height: 16
+            anchors.left: parent.left; anchors.leftMargin: 18; anchors.verticalCenter: parent.verticalCenter
+            opacity: deviceRow.connected ? 1 : .65
+        }
+        Text {
+            anchors.left: parent.left; anchors.leftMargin: 54
+            anchors.right: deviceActions.left; anchors.rightMargin: 8
+            anchors.verticalCenter: parent.verticalCenter; elide: Text.ElideRight
+            text: deviceRow.device.name || deviceRow.device.address
+            color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
+        }
+        BounceMouseArea {
+            id: deviceMouse
+            anchors.fill: parent; anchors.rightMargin: deviceActions.width + 16
+            enabled: !deviceRow.connected && !root.bluetoothDevicePendingAddress.length && !bluetoothPairBeginProcess.running && !bluetoothPairRespondProcess.running
+            hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onClicked: deviceRow.activated()
+        }
+        Row {
+            id: deviceActions
+            anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; spacing: 6
+            MenuButton {
+                width: deviceRow.connected || !deviceRow.paired ? 108 : 68; height: 32
+                brightActionHover: deviceRow.connected
+                actionSurface: deviceRow.color
+                label: deviceRow.pending ? (deviceRow.connected ? "A desligar…" : "A ligar…") : (deviceRow.connected ? "Desconectar" : (deviceRow.paired ? "Ligar" : "Emparelhar"))
+                enabled: !root.bluetoothDevicePendingAddress.length && !bluetoothPairBeginProcess.running && !bluetoothPairRespondProcess.running
+                onActivated: deviceRow.activated()
+            }
+            MenuButton {
+                visible: deviceRow.paired && !deviceRow.connected
+                width: visible ? 30 : 0; height: 32; label: "…"
+                enabled: !root.bluetoothDevicePendingAddress.length
+                Accessible.name: "Esquecer " + (deviceRow.device.name || deviceRow.device.address)
+                onActivated: deviceRow.forgetRequested()
+            }
+        }
+    }
+
     component MenuButton: Rectangle {
         id: menuButton
         property string label: ""
         property string iconName: ""
         property bool accent: false
+        property bool lighterSurface: false
+        property bool alignedIcon: false
+        property bool brightActionHover: false
+        property color actionSurface: root.controlButtonSurface
         property bool selected: false
         property bool outlined: false
         property bool keyboardFocused: false
@@ -3810,20 +4090,27 @@ ShellRoot {
         width: parent ? parent.width : 250
         height: 34
         opacity: enabled ? 1 : 0.42
-        radius: 6
-        color: keyboardFocused ? root.controlButtonActive : (menuMouse.containsMouse ? root.controlButtonHover : (accent ? root.controlButtonActive : root.controlButtonSurface))
-        border.width: keyboardFocused || outlined ? 1 : 0
-        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
+        radius: brightActionHover ? 10 : 6
+        antialiasing: true
+        HoverHandler { id: actionPointer; blocking: false }
+        color: brightActionHover ? Qt.lighter(actionSurface, 1.6) : keyboardFocused ? root.controlButtonActive : (lighterSurface ? Qt.lighter(root.controlButtonActive, 1.5) : ((accent ? root.controlButtonActive : root.controlButtonSurface)))
+        border.width: brightActionHover && actionPointer.hovered && enabled ? 2 : (keyboardFocused || outlined ? 1 : 0)
+        border.color: keyboardFocused ? root.cyan : (brightActionHover && actionPointer.hovered ? "#69728a" : root.controlButtonOutline)
+        Rectangle {
+            visible: menuButton.alignedIcon
+            x: 8; anchors.verticalCenter: parent.verticalCenter; width: 36; height: 36; radius: 18
+            color: Qt.lighter(menuButton.color, 1.6)
+        }
         LucideIcon {
             visible: menuButton.iconName.length > 0
             name: menuButton.iconName; tint: root.textMain
-            width: 17; height: 17
-            anchors.left: parent.left; anchors.leftMargin: 11
+            width: menuButton.alignedIcon ? 16 : 17; height: width
+            anchors.left: parent.left; anchors.leftMargin: menuButton.alignedIcon ? 18 : 11
             anchors.verticalCenter: parent.verticalCenter
         }
         Text {
             anchors.left: parent.left
-            anchors.leftMargin: menuButton.iconName.length ? 36 : 11
+            anchors.leftMargin: menuButton.alignedIcon ? 54 : (menuButton.iconName.length ? 36 : 11)
             anchors.right: parent.right
             anchors.rightMargin: 11
             elide: Text.ElideRight
@@ -3919,7 +4206,7 @@ ShellRoot {
         signal activated()
         opacity: enabled ? 1 : 0.42
         radius: 8
-        color: keyboardFocused ? root.controlButtonActive : (presetMouse.containsMouse ? root.controlButtonHover : (selected ? root.controlButtonActive : root.controlButtonSurface))
+        color: keyboardFocused ? root.controlButtonActive : ((selected ? root.controlButtonActive : root.controlButtonSurface))
         border.width: keyboardFocused ? 1 : 0
         border.color: keyboardFocused ? root.cyan : root.cyan
         Column {
@@ -3944,7 +4231,7 @@ ShellRoot {
         signal infoRequested()
         height: infoVisible ? 72 : 34
         radius: 7
-        color: keyboardFocused ? root.controlButtonActive : (featureMouse.containsMouse ? root.controlButtonHover : (checked ? root.controlButtonActive : root.controlButtonSurface))
+        color: keyboardFocused ? root.controlButtonActive : ((checked ? root.controlButtonActive : root.controlButtonSurface))
         border.width: keyboardFocused ? 1 : 0
         border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
         Rectangle {
@@ -4032,6 +4319,11 @@ ShellRoot {
         WlrLayershell.layer: popup.open || environmentAppsProcess.running ? WlrLayer.Overlay : WlrLayer.Top
         // APX shared launcher pointer focus: Hyprland hits only exclusive surfaces while Rofi owns focus.
         WlrLayershell.keyboardFocus: environmentAppsProcess.running ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+        Shortcut {
+            sequence: "Escape"
+            enabled: environmentAppsProcess.running
+            onActivated: environmentAppsProcess.running = false
+        }
 
         Rectangle {
             anchors.fill: parent
@@ -4071,6 +4363,7 @@ ShellRoot {
                     activeBorderWidth: 1
                     label: root.clockText
                     iconName: "calendar-days"
+                    alternateIconName: "calendar-search"
                     accessibleLabel: "Calendário, " + root.clockText
                     alternateLabel: calendarButton.label
                     alternateActive: root.bar === screenBar && popup.open && root.popupKind === "calendar"
@@ -4195,7 +4488,7 @@ ShellRoot {
                     textColor: root.textMain
                     label: ""
                     iconName: root.appsIconName
-                    alternateIconName: "package-open"
+                    alternateIconName: "layout-panel-left"
                     accessibleLabel: "Aplicações"
                     alternateLabel: appsButton.label
                     alternateActive: environmentAppsProcess.running
@@ -4210,8 +4503,9 @@ ShellRoot {
                     accentColor: root.textMain
                     textColor: root.textMain
                     iconName: "folder"
+                    alternateIconName: "folder-open"
                     accessibleLabel: "Abrir gestor de ficheiros"
-                    alternateActive: root.filesFocused && !popup.open && !environmentAppsProcess.running
+                    alternateActive: root.filesOpen
                     alternateLabel: filesButton.label
                     onActivated: {
                         root.closePopup()
@@ -4447,12 +4741,12 @@ ShellRoot {
 
     }
 
-    // Layer-shell Exclusive traps pointer delivery on the other monitor in
-    // this Hyprland build. Use the compositor's dismissible focus grab instead.
+    // Exclusive keyboard input closes menus reliably with Escape.
+    // Outside clicks on this monitor use the full-screen popup input mask.
     HyprlandFocusGrab {
         id: popupFocusGrab
         windows: root.bar ? [popup, root.bar] : [popup]
-        active: popup.open
+        active: false // The full-screen input mask handles outside clicks.
         onCleared: root.closePopup()
     }
 
@@ -4470,8 +4764,8 @@ ShellRoot {
         // with OnDemand when the popup opens.
         mask: Region { item: popupInputRegion }
         WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.keyboardFocus: open && root.popupKeyboardRequested
-                                     ? WlrKeyboardFocus.OnDemand
+        WlrLayershell.keyboardFocus: open
+                                     ? WlrKeyboardFocus.Exclusive
                                      : WlrKeyboardFocus.None
         property real menuWidth: root.popupKind === "calendar" ? 500
                                                      : (root.popupKind === "environments" ? (root.environmentCreateOpen ? 620 : 460)
@@ -4619,26 +4913,6 @@ ShellRoot {
                 id: popupHover
             }
 
-            TapHandler {
-                acceptedButtons: Qt.LeftButton
-                onTapped: function(eventPoint) {
-                    if (root.popupKind !== "controls" || !root.wifiPasswordVisible)
-                        return
-                    var corner = wifiPasswordCard.mapToItem(popupBackground, 0, 0)
-                    var insidePassword = eventPoint.position.x >= corner.x
-                                      && eventPoint.position.x <= corner.x + wifiPasswordCard.width
-                                      && eventPoint.position.y >= corner.y
-                                      && eventPoint.position.y <= corner.y + wifiPasswordCard.height
-                    if (!insidePassword) {
-                        Qt.callLater(function() {
-                            if (!root.wifiSelectionTap)
-                                root.cancelWifiPassword()
-                            root.wifiSelectionTap = false
-                        })
-                    }
-                }
-            }
-
             Flickable {
                 id: menuFlick
                 x: popupBackground.splitControls ? 0 : 10
@@ -4653,6 +4927,49 @@ ShellRoot {
                 boundsBehavior: Flickable.StopAtBounds
                 flickableDirection: Flickable.VerticalFlick
                 pixelAligned: true
+                // Retarget one continuous animation instead of stopping/restarting
+                // Flickable on every event and injecting a delayed second impulse.
+                property real wheelPosition: 0
+                property real wheelDestination: 0
+                property bool wheelAnimating: false
+                onWheelPositionChanged: if (wheelAnimating) contentY = wheelPosition
+                function stopWheel() {
+                    wheelAnimating = false
+                    menuWheelAnimation.stop()
+                    cancelFlick()
+                }
+                function scrollWheel(delta) {
+                    if (!delta) return
+                    cancelFlick()
+                    if (!menuWheelAnimation.running) {
+                        wheelAnimating = false
+                        wheelPosition = contentY
+                        wheelDestination = contentY
+                    }
+                    wheelDestination = Math.max(0, Math.min(Math.max(0, contentHeight - height), wheelDestination - delta * 2.5))
+                    wheelAnimating = true
+                    wheelPosition = wheelDestination
+                }
+                onEnabledChanged: if (!enabled) stopWheel()
+                onContentHeightChanged: stopWheel()
+                onDraggingChanged: if (dragging) stopWheel()
+                Behavior on wheelPosition {
+                    enabled: menuFlick.wheelAnimating
+                    SmoothedAnimation {
+                        id: menuWheelAnimation
+                        velocity: -1; duration: 160; maximumEasingTime: 80
+                        reversingMode: SmoothedAnimation.Immediate
+                    }
+                }
+                WheelHandler {
+                    target: null
+                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                    onWheel: event => {
+                        var delta = event.pixelDelta.y || event.angleDelta.y / 120 * 48
+                        menuFlick.scrollWheel(delta)
+                        event.accepted = true
+                    }
+                }
                 ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOff }
 
                 Column {
@@ -4665,7 +4982,7 @@ ShellRoot {
                     Column {
                         id: calendarMenu
                         width: parent.width
-                        spacing: 5
+                        spacing: 8
                         visible: root.popupKind === "calendar" && !root.calendarEditor
                         focus: visible
                         Keys.onPressed: function(event) { root.handleCalendarKey(event) }
@@ -4676,8 +4993,8 @@ ShellRoot {
                             width: parent.width
                             spacing: 4
                             Rectangle {
-                                    width: 32; height: 28; radius: 6
-                                    color: root.calendarActionIsFocused("previous", "previous") ? root.controlButtonActive : (previousMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                    width: 32; height: 28; radius: 10
+                                    color: root.calendarActionIsFocused("previous", "previous") ? root.controlButtonActive : (root.controlButtonSurface)
                                     border.width: root.calendarActionIsFocused("previous", "previous") ? 1 : 0; border.color: root.cyan
                                 Text { font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "‹"; color: root.textMain; font.pixelSize: 22 }
                                 BounceMouseArea { id: previousMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.moveCalendar(-1) }
@@ -4688,8 +5005,8 @@ ShellRoot {
                                 font.family: Appearance.fontFamily; font.pixelSize: root.menuTitleSize; font.weight: Font.DemiBold
                             }
                             Rectangle {
-                                    width: 32; height: 28; radius: 6
-                                    color: root.calendarActionIsFocused("next", "next") ? root.controlButtonActive : (nextMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                    width: 32; height: 28; radius: 10
+                                    color: root.calendarActionIsFocused("next", "next") ? root.controlButtonActive : (root.controlButtonSurface)
                                     border.width: root.calendarActionIsFocused("next", "next") ? 1 : 0; border.color: root.cyan
                                 Text { font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "›"; color: root.textMain; font.pixelSize: 22 }
                                 BounceMouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.moveCalendar(1) }
@@ -4703,16 +5020,20 @@ ShellRoot {
                                 model: [{ key: "day", label: "Dia" }, { key: "month", label: "Mês" }, { key: "year", label: "Ano" }]
                                 Rectangle {
                                     required property var modelData
-                                    width: (menuContent.width - 10) / 3; height: 25; radius: 6
+                                    width: (menuContent.width - 10) / 3; height: 25; radius: 10
                                     color: root.calendarActionIsFocused("view", modelData.key) ? root.controlButtonActive : (root.calendarView === modelData.key ? root.controlButtonActive : root.controlButtonSurface)
                                     border.width: root.calendarActionIsFocused("view", modelData.key) ? 1 : 0
                                     border.color: root.calendarActionIsFocused("view", modelData.key) ? root.cyan : root.cyan
                                     Text { anchors.centerIn: parent; text: modelData.label; color: root.calendarView === modelData.key ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
-                                    BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.calendarView = modelData.key }
+                                    BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.changeCalendarView(modelData.key) }
                                 }
                             }
                         }
 
+                        Column {
+                            width: parent.width; spacing: 8
+                            opacity: root.calendarPageOpacity
+                            transform: Translate { x: root.calendarPageOffset }
                         Rectangle {
                             id: calendarMonthDaysSurface
                             width: parent.width
@@ -4743,13 +5064,13 @@ ShellRoot {
                                         required property var modelData
                                         property bool today: modelData !== null && root.sameDay(modelData, root.currentDate)
                                         property bool selected: modelData !== null && root.dateKey(modelData) === root.calendarSelectedDateKey
-                                        width: (calendarMonthGrid.width - 18) / 7; height: 30; radius: 6
-                                        color: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? root.controlButtonActive : (selected ? root.controlButtonActive : (dayMouse.containsMouse && modelData !== null ? root.controlButtonHover : "transparent"))
-                                        SelectionIndicator { visible: parent.selected }
-                                        border.width: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? 1 : 0
-                                        border.color: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? root.cyan : root.cyan
+                                        width: (calendarMonthGrid.width - 18) / 7; height: 30; radius: 10
+                                        color: modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData)) ? root.controlButtonActive : (selected ? root.controlButtonActive : ("transparent"))
+                                        SelectionIndicator { visible: parent.selected; color: "#ffffff" }
+                                        border.width: selected || (modelData !== null && root.calendarActionIsFocused("date", root.dateKey(modelData))) ? 1 : 0
+                                        border.color: "#ffffff"
                                         Rectangle {
-                                            visible: parent.today && !parent.selected
+                                            visible: parent.today && !parent.selected && !root.calendarActionIsFocused("date", root.dateKey(modelData))
                                             anchors.fill: parent; anchors.margins: parent.selected ? 4 : 2
                                             radius: 4; color: "transparent"
                                             border.width: 1; border.color: "#ffb15a"
@@ -4784,14 +5105,14 @@ ShellRoot {
                                     required property string modelData
                                     required property int index
                                     property bool currentMonth: index === root.currentDate.getMonth() && root.calendarDate.getFullYear() === root.currentDate.getFullYear()
-                                    width: (menuContent.width - 8) / 3; height: 44; radius: 7
-                                    color: root.calendarActionIsFocused("month", index) ? root.controlButtonActive : (currentMonth ? root.controlButtonActive : (monthMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface))
+                                    width: (menuContent.width - 8) / 3; height: 44; radius: 12
+                                    color: root.calendarActionIsFocused("month", index) ? root.controlButtonActive : (currentMonth ? root.controlButtonActive : (root.controlButtonSurface))
                                     border.width: root.calendarActionIsFocused("month", index) ? 1 : 0
                                     border.color: root.calendarActionIsFocused("month", index) ? root.cyan : root.cyan
                                     Text { anchors.centerIn: parent; text: modelData.slice(0, 3); color: parent.currentMonth ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                     BounceMouseArea {
                                         id: monthMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                        onClicked: { root.calendarDate = new Date(root.calendarDate.getFullYear(), index, 1); root.calendarView = "month" }
+                                        onClicked: root.changeCalendarView("month", new Date(root.calendarDate.getFullYear(), index, 1))
                                     }
                                 }
                             }
@@ -4804,7 +5125,7 @@ ShellRoot {
 
                             Text {
                                 visible: root.eventsForDate(root.calendarDate).length === 0
-                                text: "Nenhum Evento neste Dia"
+                                text: "Sem eventos"
                                 color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                             }
                             ListView {
@@ -4840,7 +5161,7 @@ ShellRoot {
                                     Rectangle {
                                         anchors.left: parent.left; anchors.leftMargin: 80
                                         anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                                        height: 44; radius: 7; color: root.controlButtonSurface
+                                        height: 44; radius: 12; color: root.controlButtonSurface
                                         Text {
                                             anchors.left: parent.left; anchors.leftMargin: 11; anchors.top: parent.top; anchors.topMargin: 7
                                             width: parent.width - 112
@@ -4859,7 +5180,7 @@ ShellRoot {
                                             id: timelineEdit
                                             anchors.right: timelineRemove.left; anchors.rightMargin: 5; anchors.verticalCenter: parent.verticalCenter
                                             width: 54; height: 28; radius: 5
-                                            color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (timelineEditMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                            color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (root.controlButtonSurface)
                                             border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: root.cyan
                                             Text { anchors.centerIn: parent; text: "Editar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                             BounceMouseArea { id: timelineEditMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEditEvent(modelData) }
@@ -4868,7 +5189,7 @@ ShellRoot {
                                             id: timelineRemove
                                             anchors.right: parent.right; anchors.rightMargin: 7; anchors.verticalCenter: parent.verticalCenter
                                             width: 28; height: 28; radius: 5
-                                            color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (timelineRemoveMouse.containsMouse ? "#743541" : root.controlButtonSurface)
+                                            color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (root.controlButtonSurface)
                                             border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffd3da"
                                             Text { font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 16 }
                                             BounceMouseArea { id: timelineRemoveMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.deleteEvent(modelData.id) }
@@ -4878,33 +5199,35 @@ ShellRoot {
                             }
                         }
 
+                        }
+
                         Row {
                             width: parent.width
                             spacing: 6
                             Rectangle {
-                                width: (parent.width - 6) / 2; height: 34; radius: 6
-                                color: root.calendarActionIsFocused("today", "today") ? root.controlButtonActive : (todayMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                width: (parent.width - 6) / 2; height: 34; radius: 10
+                                color: root.calendarActionIsFocused("today", "today") ? root.controlButtonActive : (root.controlButtonSurface)
                                 border.width: root.calendarActionIsFocused("today", "today") ? 1 : 0; border.color: root.cyan
-                                Text { anchors.centerIn: parent; text: "[ Hoje ]"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+                                Text { anchors.centerIn: parent; text: "Hoje"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                 BounceMouseArea { id: todayMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectCalendarDate(root.currentDate) }
                             }
                             Rectangle {
-                                width: (parent.width - 6) / 2; height: 34; radius: 6
-                                color: root.calendarActionIsFocused("new", "new") ? root.controlButtonActive : (addMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                width: (parent.width - 6) / 2; height: 34; radius: 10
+                                color: root.calendarActionIsFocused("new", "new") ? root.controlButtonActive : (root.controlButtonSurface)
                                 border.width: root.calendarActionIsFocused("new", "new") ? 1 : 0; border.color: root.cyan
-                                Text { anchors.centerIn: parent; text: "[ + ] Novo evento"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+                                Text { anchors.centerIn: parent; text: "Novo evento"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                 BounceMouseArea { id: addMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEvent() }
                             }
                         }
 
                         Text {
                             visible: root.calendarView !== "day"
-                            text: "Eventos : " + root.dateKey(root.calendarDate)
+                            text: root.calendarDate.getDate() + " de " + root.monthNames[root.calendarDate.getMonth()].toLowerCase()
                             color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal
                         }
                         Text {
                             visible: root.calendarView !== "day" && root.eventsForDate(root.calendarDate).length === 0
-                            text: "Nenhum Evento neste Dia"
+                            text: "Sem eventos"
                             color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                         }
                         ListView {
@@ -4919,20 +5242,20 @@ ShellRoot {
                             ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOff }
                             delegate: Rectangle {
                                 required property var modelData
-                                width: menuContent.width; height: 42; radius: 6
+                                width: menuContent.width; height: 42; radius: 10
                                 color: root.controlButtonSurface; opacity: modelData.active ? 1 : 0.55
                                 Rectangle { width: 4; height: parent.height; radius: 2; color: root.textMain }
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width - 108
-                                    text: modelData.time + "  " + modelData.title + "  [" + modelData.category + "]"
+                                    text: modelData.time + "  " + modelData.title
                                     elide: Text.ElideRight; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                                 }
                                 Rectangle {
                                     id: editEvent
                                     anchors.right: removeEvent.left; anchors.rightMargin: 5; anchors.verticalCenter: parent.verticalCenter
                                     width: 54; height: 28; radius: 5
-                                    color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (editMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                    color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (root.controlButtonSurface)
                                     border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: root.cyan
                                     Text { anchors.centerIn: parent; text: "Editar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                     BounceMouseArea { id: editMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEditEvent(modelData) }
@@ -4941,7 +5264,7 @@ ShellRoot {
                                     id: removeEvent
                                     anchors.right: parent.right; anchors.rightMargin: 6; anchors.verticalCenter: parent.verticalCenter
                                     width: 28; height: 28; radius: 5
-                                    color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (removeMouse.containsMouse ? "#743541" : root.controlButtonSurface)
+                                    color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (root.controlButtonSurface)
                                     border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffd3da"
                                     Text { font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 16 }
                                     BounceMouseArea { id: removeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.deleteEvent(modelData.id) }
@@ -4955,19 +5278,8 @@ ShellRoot {
                         spacing: 6
                         visible: root.popupKind === "calendar" && root.calendarEditor
 
-                        Row {
-                            width: parent.width
-                            Text {
-                                width: parent.width - 42; height: 30; verticalAlignment: Text.AlignVCenter
-                                text: root.editingEventId ? "[ Editar evento ]" : "[ + ] Novo evento"
-                                color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuTitleSize; font.weight: Font.DemiBold
-                            }
-                            Rectangle {
-                                width: 34; height: 30; radius: 6; color: cancelTopMouse.containsMouse ? "#743541" : root.controlButtonSurface
-                                Text { font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 18 }
-                                BounceMouseArea { id: cancelTopMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.cancelCalendarEditor() }
-                            }
-                        }
+                        MenuButton { width: parent.width; outlined: true; iconName: "chevron-left"; label: "Voltar ao calendário"; onActivated: root.cancelCalendarEditor() }
+                        MenuHeader { title: root.editingEventId ? "Editar evento" : "Novo evento" }
                         Text { text: "Título"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         EventField { id: calendarTitleField; text: root.draftTitle; placeholder: "Nome do evento"; onTextChanged: root.draftTitle = text }
 
@@ -4988,9 +5300,9 @@ ShellRoot {
                         Text { text: "Categoria"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         Rectangle {
                             id: categoryButton
-                            width: parent.width; height: 34; radius: 6
+                            width: parent.width; height: 34; radius: 10
                             activeFocusOnTab: true
-                            color: activeFocus ? root.controlButtonActive : (categoryButtonMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                            color: activeFocus ? root.controlButtonActive : (root.controlButtonSurface)
                             border.width: root.categoryPickerOpen || activeFocus ? 1 : 0; border.color: activeFocus ? root.cyan : root.controlButtonOutline
                             Keys.onPressed: function(event) {
                                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
@@ -5010,7 +5322,7 @@ ShellRoot {
                             width: parent.width; spacing: 4; visible: root.categoryPickerOpen
                             Text {
                                 visible: root.calendarCategories.length === 0
-                                text: "-- ainda não existem categorias --"
+                                text: "Sem categorias"
                                 color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                             }
                             ListView {
@@ -5041,7 +5353,7 @@ ShellRoot {
                             }
                             Rectangle {
                                 width: parent.width; height: 30; radius: 5; activeFocusOnTab: true
-                                color: activeFocus ? root.controlButtonActive : (newCategoryMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                color: activeFocus ? root.controlButtonActive : (root.controlButtonSurface)
                                 border.width: activeFocus ? 1 : 0; border.color: root.cyan
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
@@ -5049,7 +5361,7 @@ ShellRoot {
                                         event.accepted = true
                                     }
                                 }
-                                Text { anchors.centerIn: parent; text: "[ + ] Criar nova categoria"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+                                Text { anchors.centerIn: parent; text: "Criar categoria"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                 BounceMouseArea { id: newCategoryMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.newCategoryOpen = true }
                             }
                         }
@@ -5057,8 +5369,8 @@ ShellRoot {
                             width: parent.width; spacing: 6; visible: root.newCategoryOpen
                             EventField { id: newCategoryField; width: parent.width - 86; text: root.newCategoryName; placeholder: "Nome da categoria"; onTextChanged: root.newCategoryName = text }
                             Rectangle {
-                                width: 80; height: 34; radius: 6; activeFocusOnTab: true
-                                color: activeFocus ? root.controlButtonHover : (createCategoryMouse.containsMouse ? root.controlButtonHover : root.controlButtonOutline)
+                                width: 80; height: 34; radius: 10; activeFocusOnTab: true
+                                color: activeFocus ? root.controlButtonHover : (root.controlButtonOutline)
                                 border.width: activeFocus ? 1 : 0; border.color: root.cyan
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
@@ -5071,17 +5383,31 @@ ShellRoot {
                             }
                         }
 
+                        MenuButton {
+                            width: parent.width; height: 38; iconName: "chevron-right"
+                            label: "Notas e partilha"; onActivated: root.calendarDetailsOpen = !root.calendarDetailsOpen
+                        }
+                        Column {
+                            width: parent.width; spacing: 6; visible: root.calendarDetailsOpen
                         Text { text: "Notas (opcional)"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         EventField { id: calendarNotesField; text: root.draftNotes; placeholder: "Local, descrição, ligação…"; onTextChanged: root.draftNotes = text }
 
                         Text { text: "Partilha"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         EventToggle {
                             width: parent.width
-                            label: root.draftShared ? "Partilhar entre Environments" : "Não Partilhar entre Environments"
+                            label: "Partilhar entre Environments"
                             checked: root.draftShared
                             onActivated: root.draftShared = !root.draftShared
                         }
 
+                        }
+                        MenuButton {
+                            width: parent.width; height: 38; iconName: "bell"
+                            label: root.draftReminders.length ? "Lembretes · " + root.draftReminders.length : "Adicionar lembrete"
+                            onActivated: root.calendarRemindersOpen = !root.calendarRemindersOpen
+                        }
+                        Column {
+                            width: parent.width; spacing: 6; visible: root.calendarRemindersOpen
                         Text { text: "Avisar antes"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         Row {
                             width: parent.width; spacing: 5
@@ -5116,8 +5442,8 @@ ShellRoot {
                             }
                         }
                         Rectangle {
-                            width: parent.width; height: 34; radius: 6; activeFocusOnTab: true
-                            color: activeFocus ? root.controlButtonHover : (addReminderMouse.containsMouse ? root.controlButtonHover : root.controlButtonOutline)
+                            width: parent.width; height: 34; radius: 10; activeFocusOnTab: true
+                            color: activeFocus ? root.controlButtonHover : (root.controlButtonOutline)
                             border.width: 1; border.color: activeFocus ? root.cyan : root.controlButtonOutline
                             Keys.onPressed: function(event) {
                                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
@@ -5127,7 +5453,7 @@ ShellRoot {
                             }
                             Text {
                                 anchors.centerIn: parent
-                                text: "[ + ] Adicionar lembrete"
+                                text: "Adicionar lembrete"
                                 color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal
                             }
                             BounceMouseArea {
@@ -5138,7 +5464,7 @@ ShellRoot {
                         }
                         Text {
                             visible: root.draftReminders.length === 0
-                            text: "-- sem lembretes adicionados --"
+                            text: "Sem lembretes"
                             color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                         }
                         Flow {
@@ -5150,7 +5476,7 @@ ShellRoot {
                                     required property int modelData
                                     height: 30
                                     width: reminderText.implicitWidth + 42
-                                    radius: 6; color: activeFocus ? "#49242c" : root.controlButtonSurface
+                                    radius: 10; color: activeFocus ? "#49242c" : root.controlButtonSurface
                                     activeFocusOnTab: true
                                     border.width: 1; border.color: activeFocus ? "#ffd3da" : root.controlButtonOutline
                                     Keys.onPressed: function(event) {
@@ -5177,6 +5503,8 @@ ShellRoot {
                             }
                         }
 
+                        }
+
                         Text {
                             visible: root.eventError.length > 0
                             text: root.eventError; color: "#ff91a4"; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal
@@ -5184,8 +5512,8 @@ ShellRoot {
                         Row {
                             width: parent.width; spacing: 6
                             Rectangle {
-                                width: (parent.width - 6) / 2; height: 36; radius: 6; activeFocusOnTab: true
-                                color: activeFocus ? root.controlButtonActive : (cancelMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                width: (parent.width - 6) / 2; height: 36; radius: 10; activeFocusOnTab: true
+                                color: activeFocus ? root.controlButtonActive : (root.controlButtonSurface)
                                 border.width: activeFocus ? 1 : 0; border.color: root.cyan
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
@@ -5197,8 +5525,8 @@ ShellRoot {
                                 BounceMouseArea { id: cancelMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.cancelCalendarEditor() }
                             }
                             Rectangle {
-                                width: (parent.width - 6) / 2; height: 36; radius: 6; activeFocusOnTab: true
-                                color: activeFocus ? root.controlButtonHover : (saveMouse.containsMouse ? root.controlButtonHover : root.controlButtonOutline)
+                                width: (parent.width - 6) / 2; height: 36; radius: 10; activeFocusOnTab: true
+                                color: activeFocus ? root.controlButtonHover : (root.controlButtonOutline)
                                 border.width: 1; border.color: activeFocus ? root.cyan : root.controlButtonOutline
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
@@ -5350,15 +5678,14 @@ ShellRoot {
                     Rectangle {
                         id: hubEnvironmentCard
                         property bool keyboardFocused: false
-                        width: parent.width; height: 62; radius: 9
+                        width: parent.width; height: 46; radius: 12
                         color: keyboardFocused ? root.controlButtonActive : root.controlButtonSurface
-                        border.width: 1
-                        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
-                        Rectangle { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 9; height: 9; radius: 5; color: root.textMain }
+                        border.width: keyboardFocused ? 1 : 0
+                        border.color: root.cyan
+                        LucideIcon { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 18; height: 18; name: root.isHub ? "layout-dashboard" : "box" }
                         Column {
-                            anchors.left: parent.left; anchors.leftMargin: 34; anchors.right: activeEnvironmentBadge.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
-                            Text { width: parent.width; text: root.environmentLabel; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuTitleSize; font.weight: Font.DemiBold; elide: Text.ElideRight }
-                            Text { visible: root.isHub; width: parent.width; text: "Centro de gestão e segurança"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; elide: Text.ElideRight }
+                            anchors.left: parent.left; anchors.leftMargin: 42; anchors.right: activeEnvironmentBadge.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                            Text { width: parent.width; text: root.environmentLabel; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal; elide: Text.ElideRight }
                         }
                         Rectangle {
                             id: activeEnvironmentBadge
@@ -5374,35 +5701,26 @@ ShellRoot {
                         Row {
                             width: parent.width; height: 24
                             Text { width: parent.width * 0.42; anchors.verticalCenter: parent.verticalCenter; text: "Os teus Environments"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
-                            Text { width: parent.width * 0.58; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight; text: root.environmentStorageSummary(); color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; elide: Text.ElideLeft }
+                            Text { width: parent.width * 0.58; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight; text: ""; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; elide: Text.ElideLeft }
                         }
                         Repeater {
                             model: root.environmentCatalog.length ? root.environmentCatalog : [{ name: "", display_name: "Ainda não tens Environments", state: "empty", generation: "", category: "general" }]
                             Rectangle {
                                 required property var modelData
                                 required property int index
-                                width: parent ? parent.width : 400; height: 59; radius: 9
+                                width: parent ? parent.width : 400; height: 44; radius: 12
                                 property bool selected: modelData.name.length > 0 && root.selectedEnvironmentName === modelData.name
                                 property bool keyboardFocused: root.environmentIsOpenable(modelData) && root.environmentKeyboardFocus && root.environmentFocusIndex === index
-                                color: keyboardFocused ? root.controlButtonActive : (selected ? root.controlButtonActive : (environmentChoiceMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface))
-                                SelectionIndicator { visible: parent.selected }
-                                border.width: 1; border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
-                                Rectangle { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 8; height: 8; radius: 4; color: root.environmentIsOpenable(modelData) ? (parent.selected ? root.textMain : "#5d7b82") : "#79505a" }
+                                color: keyboardFocused ? root.controlButtonActive : (selected ? root.controlButtonActive : (root.controlButtonSurface))
+                                SelectionIndicator { visible: parent.selected; color: "#ffffff" }
+                                border.width: keyboardFocused ? 1 : 0; border.color: root.cyan
+                                LucideIcon { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 18; height: 18; name: root.environmentIcon(modelData) }
                                 Column {
-                                    anchors.left: parent.left; anchors.leftMargin: 32; anchors.right: environmentRowStatus.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                    anchors.left: parent.left; anchors.leftMargin: 42; anchors.right: environmentRowStatus.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
                                     Text { width: parent.width; text: String(modelData.display_name || modelData.name); color: modelData.state === "empty" ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal; elide: Text.ElideRight }
-                                    Row {
-                                        width: parent.width; height: 16; spacing: 6
-                                        Rectangle {
-                                            visible: !!modelData.system_kind && modelData.system_kind !== "arch"
-                                            width: visible ? systemTagText.implicitWidth + 10 : 0; height: 16; radius: 5
-                                            color: root.controlButtonActive; border.width: 1; border.color: root.controlButtonOutline
-                                            Text { id: systemTagText; anchors.centerIn: parent; text: String(modelData.system_label || "Sistema"); color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
-                                        }
-                                        Text { width: parent.width - (modelData.system_kind && modelData.system_kind !== "arch" ? systemTagText.implicitWidth + 16 : 0); text: root.environmentMeta(modelData); color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; elide: Text.ElideRight }
-                                    }
+
                                 }
-                                Text { id: environmentRowStatus; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: root.environmentIsOpenable(modelData) ? root.environmentSizeLabel(modelData) : (modelData.state === "preparing" ? "A preparar" : (modelData.state === "empty" ? "" : "Indisponível")); color: parent.selected ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
+                                Text { id: environmentRowStatus; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: root.environmentIsOpenable(modelData) ? "" : (modelData.state === "preparing" ? "A preparar" : (modelData.state === "empty" ? "" : "Indisponível")); color: parent.selected ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
                                 BounceMouseArea {
                                     id: environmentChoiceMouse
                                     anchors.fill: parent
@@ -5454,7 +5772,7 @@ ShellRoot {
                             width: parent.width; height: 32; spacing: 8
                             Rectangle {
                                 width: 92; height: parent.height; radius: 6
-                                color: root.environmentEditFocusIndex === 0 ? root.controlButtonActive : (environmentEditBackMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                color: root.environmentEditFocusIndex === 0 ? root.controlButtonActive : (root.controlButtonSurface)
                                 border.width: root.environmentEditFocusIndex === 0 ? 1 : 0
                                 border.color: root.cyan
                                 Text { anchors.centerIn: parent; text: "‹  Voltar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
@@ -5462,7 +5780,6 @@ ShellRoot {
                             }
                             Text { width: parent.width - 100; anchors.verticalCenter: parent.verticalCenter; text: "Editar apresentação"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                         }
-                        Text { width: parent.width; text: "O identificador interno “" + root.selectedEnvironmentName + "” não muda."; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; elide: Text.ElideRight }
                         Rectangle {
                             width: parent.width; height: 42; radius: 7; color: root.controlButtonSurface; border.width: 1; border.color: environmentEditTitleInput.activeFocus || root.environmentEditFocusIndex === 1 ? root.cyan : root.controlButtonOutline
                             TextInput {
@@ -5497,11 +5814,33 @@ ShellRoot {
                             }
                             Text { anchors.left: parent.left; anchors.leftMargin: 11; anchors.verticalCenter: parent.verticalCenter; visible: !environmentEditDescriptionInput.text.length; text: "Legenda (opcional)"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         }
+                        Text { text: "Ícone"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                        Grid {
+                            width: parent.width; columns: 8; spacing: 5
+                            Repeater {
+                                model: root.environmentIconChoices
+                                delegate: MenuButton {
+                                    required property string modelData
+                                    width: (parent.width - 35) / 8; height: 36
+                                    iconName: modelData
+                                    label: ""
+                                    Accessible.name: "Ícone " + modelData
+                                    selected: root.environmentEditIcon === modelData
+                                    keyboardFocused: root.environmentEditFocusIndex === 3 && selected
+                                    enabled: !root.environmentMetadataBusy
+                                    onActivated: {
+                                        root.environmentEditIcon = modelData
+                                        root.environmentEditFocusIndex = 3
+                                        environmentMenu.forceActiveFocus()
+                                    }
+                                }
+                            }
+                        }
                         MenuButton {
                             width: parent.width; height: 42
                             label: root.environmentMetadataBusy ? "A guardar…" : "Guardar alterações"
                             accent: true
-                            keyboardFocused: root.environmentEditFocusIndex === 3
+                            keyboardFocused: root.environmentEditFocusIndex === 4
                             enabled: !root.environmentMetadataBusy && root.environmentEditTitle.trim().length > 0
                             onActivated: { root.environmentEditFocusIndex = 3; root.saveEnvironmentMetadata() }
                         }
@@ -5514,7 +5853,7 @@ ShellRoot {
                             width: parent.width; height: 32; spacing: 8
                             Rectangle {
                                 width: 92; height: parent.height; radius: 6
-                                color: root.environmentCreateFocusIndex === 0 ? root.controlButtonActive : (environmentBackMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                color: root.environmentCreateFocusIndex === 0 ? root.controlButtonActive : (root.controlButtonSurface)
                                 border.width: root.environmentCreateFocusIndex === 0 ? 1 : 0
                                 border.color: root.cyan
                                 Text { anchors.centerIn: parent; text: "‹  Voltar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
@@ -5609,7 +5948,7 @@ ShellRoot {
                                     Rectangle {
                                         width: parent.width; height: 34; radius: 7
                                         property bool keyboardFocused: root.environmentCreateFocusIndex === 9 + index
-                                        color: keyboardFocused ? root.controlButtonActive : (featureDrawerMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface)
+                                        color: keyboardFocused ? root.controlButtonActive : (root.controlButtonSurface)
                                         border.width: keyboardFocused || root.environmentFeatureDrawer === modelData.key ? 1 : 0
                                         border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
                                         Text { anchors.left: parent.left; anchors.leftMargin: 11; anchors.right: parent.right; anchors.rightMargin: 34; anchors.verticalCenter: parent.verticalCenter; text: modelData.label; color: root.environmentFeatureDrawer === modelData.key ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; elide: Text.ElideRight }
@@ -5720,9 +6059,9 @@ ShellRoot {
                         visible: root.renderedControls.controlsConnectivityOpen
                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("connectivity") }
                         Text { text: "Ligações"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
-                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: root.wifiDisplayActive() ? "wifi" : "wifi-off"; caption: "Wi-Fi  ·  " + (root.wifiDisplayActive() ? "Ligado" : "Desligado"); selected: root.wifiDisplayActive(); onActivated: root.openControlSection("wifi") }
-                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: root.bluetoothDisplayPowered() ? "bluetooth" : "bluetooth-off"; caption: "Bluetooth  ·  " + (root.bluetoothDisplayPowered() ? "Ligado" : "Desligado"); selected: root.bluetoothDisplayPowered(); onActivated: root.openControlSection("bluetooth") }
-                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: "plane"; caption: "Modo de avião  ·  " + (root.airplaneMode ? "Ligado" : "Desligado"); selected: root.airplaneMode; enabled: !DesktopActivity.busy; onActivated: DesktopActivity.action(["airplane", root.airplaneMode ? "off" : "on"]) }
+                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: root.wifiDisplayPowered() ? "wifi" : "wifi-off"; caption: "Wi-Fi"; quiet: true; selected: root.wifiDisplayPowered(); iconActionEnabled: true; iconActionAvailable: !wifiPowerProcess.running; iconActionLabel: root.wifiDisplayPowered() ? "Desativar Wi-Fi" : "Ativar Wi-Fi"; onIconActivated: root.toggleWifiPower(); onActivated: root.openControlSection("wifi") }
+                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: root.bluetoothDisplayPowered() ? "bluetooth" : "bluetooth-off"; caption: "Bluetooth"; quiet: true; selected: root.bluetoothDisplayPowered(); iconActionEnabled: true; iconActionAvailable: !bluetoothPowerProcess.running && !root.bluetoothPowerPhase.length; iconActionLabel: root.bluetoothDisplayPowered() ? "Desativar Bluetooth" : "Ativar Bluetooth"; onIconActivated: root.toggleBluetoothPower(); onActivated: root.openControlSection("bluetooth") }
+                        ControlTile { width: parent.width; height: 56; showCaption: true; iconName: "plane"; caption: "Modo de avião"; quiet: true; selected: root.airplaneMode; iconActionEnabled: true; iconActionAvailable: !DesktopActivity.busy; iconActionLabel: root.airplaneMode ? "Desativar modo de avião" : "Ativar modo de avião"; onIconActivated: DesktopActivity.action(["airplane", root.airplaneMode ? "off" : "on"]); onActivated: DesktopActivity.action(["airplane", root.airplaneMode ? "off" : "on"]) }
                     }
                     ActivityPanel {
                         width: parent.width
@@ -5731,104 +6070,124 @@ ShellRoot {
                         onBack: { root.controlsActivityKind = ""; menuFlick.contentY = 0 }
                     }
 
-                    Rectangle {
-                        visible: root.renderedControls.controlsWifiOpen
-                        width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: root.controlButtonSurface
-                        border.width: 1; border.color: root.controlButtonOutline
-                        Rectangle {
-                            anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                            width: 62; height: 28; radius: 8
-                            color: wifiHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: wifiHeaderMouse.containsMouse ? "#ffffff" : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
-                            BounceMouseArea { id: wifiHeaderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("wifi") }
-                        }
-                        IconLabel { iconName: root.wifiDisplayActive() ? "wifi" : "wifi-off";
-                            anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter
-                            text: "Wi-Fi"
-                            color: root.textMain; pixelSize: root.menuBodySize
-                        }
-                        Text {
-                            anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter
-                            text: root.wifiTogglePhase === "connecting" ? "A ligar…" : (root.wifiDisplayActive() ? "Ligado" : "Sem ligação")
-                            color: root.wifiDisplayActive() ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
-                        }
-                    }
                     Column {
-                        width: parent.width; spacing: 4; visible: root.renderedControls.controlsWifiOpen
+                        width: parent.width; spacing: 8
+                        visible: root.renderedControls.controlsWifiOpen
+                        MenuButton { outlined: true; iconName: "chevron-left"; label: root.wifiPasswordVisible ? "Escolher outra rede" : "Voltar às ligações"; enabled: !wifiCredentialProcess.running && !hostActionProcess.running; onActivated: { if (root.wifiPasswordVisible) root.cancelWifiPassword(); else root.openControlSection("wifi") } }
+                        Text { text: "Wi-Fi"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                         Rectangle {
-                            width: parent.width; height: 56; radius: 11
-                            color: root.wifiDisplayActive() ? root.controlButtonActive : root.controlButtonSurface
-                            border.width: 1; border.color: root.wifiDisplayActive() ? root.controlButtonOutline : root.controlButtonOutline
-                            Text {
-                                anchors.left: parent.left; anchors.leftMargin: 14; anchors.top: parent.top; anchors.topMargin: 8
-                                width: parent.width - 130; elide: Text.ElideRight
-                                text: root.wifiDisplayActive() ? root.hostState.network_name : (root.wifiTogglePhase === "connecting" ? "A ligar a " + root.wifiLastNetwork : "Sem ligação")
-                                color: root.wifiDisplayActive() ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuTitleSize; font.weight: Font.DemiBold
+                            visible: !root.wifiPasswordVisible
+                            width: parent.width; height: 56; radius: 14
+                            color: root.controlButtonSurface
+                            RadioIconButton {
+                                x: 8; anchors.verticalCenter: parent.verticalCenter
+                                iconName: root.wifiDisplayPowered() ? "wifi" : "wifi-off"
+                                powered: root.wifiDisplayPowered()
+                                busy: wifiPowerProcess.running
+                                actionLabel: root.wifiDisplayPowered() ? "Desativar Wi-Fi" : "Ativar Wi-Fi"
+                                onActivated: root.toggleWifiPower()
                             }
-                            Text {
-                                anchors.left: parent.left; anchors.leftMargin: 14; anchors.bottom: parent.bottom; anchors.bottomMargin: 8
-                                text: root.wifiDisplayActive()
-                                    ? "● Ligado · " + root.wifiDetails(root.hostState.network_name).signal + "%"
-                                    : (root.wifiTogglePhase === "connecting" ? "◌ A estabelecer ligação…" : "○ Sem ligação")
-                                color: root.wifiDisplayActive() ? "#55dfa1" : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                            Column {
+                                anchors.left: parent.left; anchors.leftMargin: 54; anchors.right: disconnectButton.left; anchors.rightMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                Item {
+                                    width: parent.width; height: currentWifiName.implicitHeight
+                                    property int signalStrength: root.wifiCurrentSignal()
+                                    Text {
+                                        id: currentWifiName
+                                        anchors.left: parent.left; anchors.right: currentWifiSignal.left
+                                        anchors.rightMargin: currentWifiSignal.visible ? 6 : 0
+                                        elide: Text.ElideRight
+                                        text: !root.wifiDisplayPowered() ? "Wi-Fi desativado" : (root.wifiDisplayActive() ? root.hostState.network_name : (root.wifiTogglePhase === "connecting" ? "A ligar…" : "Sem ligação"))
+                                        color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
+                                    }
+                                    Text {
+                                        id: currentWifiSignal
+                                        anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                                        visible: parent.signalStrength >= 0
+                                        width: visible ? implicitWidth : 0
+                                        text: parent.signalStrength + "%"
+                                        color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                                        Accessible.name: "Força do sinal: " + text
+                                    }
+                                }
+                                Text {
+                                    visible: root.wifiDisplayActive()
+                                    text: "Ligado"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
+                                }
                             }
-                            Rectangle {
+                            MenuButton {
+                                id: disconnectButton
                                 visible: root.wifiDisplayActive() && root.wifiTogglePhase !== "connecting"
                                 anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                width: 84; height: 28; radius: 8
-                                color: disconnectMouse.containsMouse ? "#743541" : root.controlButtonSurface
-                                Text { anchors.centerIn: parent; text: "Desligar"; color: "#ffb0bd"; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
-                                BounceMouseArea { id: disconnectMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.cancelWifiPassword(); root.toggleWifiConnection() } }
+                                width: visible ? 108 : 0; height: 32
+                                label: "Desconectar"
+                                brightActionHover: true
+                                actionSurface: parent.color
+                                onActivated: { root.cancelWifiPassword(); root.toggleWifiConnection() }
                             }
                         }
-
                         Row {
-                            visible: !!root.hostState.network_name
-                            width: parent.width; height: visible ? 28 : 0; spacing: 8
-                            Text { anchors.verticalCenter: parent.verticalCenter; text: root.wifiConnectivityLabel(); color: root.wifiConnectivityColor(); font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
-                            MenuButton { visible: root.hostState.network_connectivity === "portal"; height: 28; width: 112; label: "Abrir acesso"; onActivated: if (!wifiPortalProcess.running) wifiPortalProcess.running = true }
-                        }
-
-                        Item {
-                            visible: !!root.hostState.network_name
-                            width: parent.width
-                            height: visible ? 6 : 0
-                            BounceMouseArea { anchors.fill: parent; onClicked: root.cancelWifiPassword() }
-                        }
-                        Item {
-                            width: parent.width; height: 18
-                            BounceMouseArea { anchors.fill: parent; onClicked: root.cancelWifiPassword() }
+                            visible: !root.wifiPasswordVisible && root.wifiDisplayPowered() && !!root.hostState.network_name && ["portal", "limited", "none"].indexOf(root.hostState.network_connectivity) >= 0
+                            width: parent.width; height: visible ? 32 : 0; spacing: 8
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "Redes próximas  ·  " + (root.hostState.available_networks || []).length
-                                color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal
+                                text: root.hostState.network_connectivity === "portal" ? "Iniciar sessão na rede" : "Sem acesso à Internet"
+                                color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
                             }
+                            MenuButton { visible: root.hostState.network_connectivity === "portal"; height: 32; width: 112; label: "Abrir acesso"; onActivated: if (!wifiPortalProcess.running) wifiPortalProcess.running = true }
+                        }
+                        Text {
+                            visible: root.wifiDisplayPowered() && !root.wifiPasswordVisible
+                            text: "Outras redes"; color: root.textDim
+                            font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
                         }
                         Rectangle {
                             id: wifiPasswordCard
                             visible: root.wifiPasswordVisible
                             width: parent.width
-                            height: visible ? (root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid) ? 238
-                                             : ((!root.wifiIsKnown(root.wifiSelectedSsid) && !root.wifiIsOpen(root.wifiSelectedSsid)) ? 86 : 50)) : 0
-                            radius: 11
+                            height: visible ? wifiCredentialFields.implicitHeight + 24 : 0
+                            radius: 14
                             color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                             Column {
-                                anchors.fill: parent; anchors.margins: 8; spacing: 5
-                                Text { text: "Ligar a " + root.wifiSelectedSsid; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal; elide: Text.ElideRight; width: parent.width }
+                                id: wifiCredentialFields
+                                x: 12; y: 12; width: parent.width - 24; spacing: 10
+                                Row {
+                                    width: parent.width; spacing: 10; height: 40
+                                    Rectangle {
+                                        width: 36; height: 36; radius: 18; color: root.controlButtonActive
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        LucideIcon { anchors.centerIn: parent; name: "wifi"; width: 16; height: 16 }
+                                    }
+                                    Column {
+                                        width: parent.width - 46; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                        Text { text: root.wifiSelectedSsid; width: parent.width; elide: Text.ElideRight; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.DemiBold }
+                                        Text { text: root.wifiIsKnown(root.wifiSelectedSsid) ? "Rede guardada" : (root.wifiIsOpen(root.wifiSelectedSsid) ? "Rede aberta" : (root.wifiIsEnterprise(root.wifiSelectedSsid) ? "Rede da organização" : "Rede protegida")); color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                                    }
+                                }
+                                Text {
+                                    visible: root.wifiIsKnown(root.wifiSelectedSsid) || root.wifiIsOpen(root.wifiSelectedSsid)
+                                    width: parent.width; wrapMode: Text.Wrap
+                                    text: root.wifiIsKnown(root.wifiSelectedSsid) ? "As credenciais guardadas serão usadas para ligar." : "Esta rede não pede palavra-passe."
+                                    color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                                }
                                 Row {
                                     visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
-                                    spacing: 8
-                                    MenuButton { width: 86; height: 27; label: "PEAP"; accent: root.wifiEnterpriseMethod === "PEAP"; onActivated: root.wifiEnterpriseMethod = "PEAP" }
-                                    MenuButton { width: 100; height: 27; label: "TTLS/PAP"; accent: root.wifiEnterpriseMethod === "TTLS-PAP"; onActivated: root.wifiEnterpriseMethod = "TTLS-PAP" }
-                                    MenuButton { width: 98; height: 27; label: "TTLS/MS"; accent: root.wifiEnterpriseMethod === "TTLS-MSCHAPV2"; onActivated: root.wifiEnterpriseMethod = "TTLS-MSCHAPV2" }
+                                    width: parent.width; spacing: 6
+                                    MenuButton { width: (parent.width - 12) / 3; height: 32; label: "PEAP"; accent: root.wifiEnterpriseMethod === "PEAP"; onActivated: root.wifiEnterpriseMethod = "PEAP" }
+                                    MenuButton { width: (parent.width - 12) / 3; height: 32; label: "TTLS/PAP"; accent: root.wifiEnterpriseMethod === "TTLS-PAP"; onActivated: root.wifiEnterpriseMethod = "TTLS-PAP" }
+                                    MenuButton { width: (parent.width - 12) / 3; height: 32; label: "TTLS/MS"; accent: root.wifiEnterpriseMethod === "TTLS-MSCHAPV2"; onActivated: root.wifiEnterpriseMethod = "TTLS-MSCHAPV2" }
                                 }
+                                Text { visible: wifiUsernameField.visible; text: "Utilizador"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                 Rectangle {
+                                    id: wifiUsernameField
                                     visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
-                                    width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface
-                                    border.width: wifiUsernameInput.activeFocus ? 1 : 0; border.color: root.cyan
+                                    width: parent.width; height: visible ? 40 : 0; radius: 9; color: root.controlButtonActive
+                                    enabled: !wifiCredentialProcess.running && !hostActionProcess.running
+                                    border.width: wifiUsernameInput.activeFocus ? 1 : 0; border.color: root.textMain
                                     TextInput {
                                         id: wifiUsernameInput
+                                        Accessible.name: "Utilizador"
                                         activeFocusOnTab: true
                                         Keys.onPressed: function(event) {
                                             if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab)
@@ -5842,13 +6201,15 @@ ShellRoot {
                                         }
                                         anchors.fill: parent; anchors.leftMargin: 9; verticalAlignment: TextInput.AlignVCenter; text: root.wifiUsername; onTextChanged: root.wifiUsername = text; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                                     }
-                                    Text { visible: !wifiUsernameInput.text.length; anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; text: "Utilizador"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                                    Text { visible: !wifiUsernameInput.text.length; anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; text: "nome@instituição.pt"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                 }
+                                Text { visible: wifiPasswordField.visible; text: "Palavra-passe"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                 Rectangle {
+                                    id: wifiPasswordField
                                     visible: !root.wifiIsKnown(root.wifiSelectedSsid) && !root.wifiIsOpen(root.wifiSelectedSsid)
-                                    width: parent.width; height: visible ? 30 : 0; radius: 5; color: root.controlButtonSurface; border.width: wifiPasswordInput.activeFocus ? 1 : 0; border.color: root.cyan
+                                    width: parent.width; height: visible ? 40 : 0; radius: 9; color: root.controlButtonActive; enabled: !wifiCredentialProcess.running && !hostActionProcess.running; border.width: wifiPasswordInput.activeFocus ? 1 : 0; border.color: root.textMain
                                     TextInput {
-                                        id: wifiPasswordInput; anchors.fill: parent; anchors.leftMargin: 9; anchors.rightMargin: 9; verticalAlignment: TextInput.AlignVCenter
+                                        id: wifiPasswordInput; Accessible.name: "Palavra-passe"; anchors.fill: parent; anchors.leftMargin: 9; anchors.rightMargin: 94; verticalAlignment: TextInput.AlignVCenter
                                         activeFocusOnTab: true
                                         Keys.onPressed: function(event) {
                                             if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab)
@@ -5860,18 +6221,29 @@ ShellRoot {
                                                 root.focusedMenuItem = wifiPasswordInput
                                             }
                                         }
-                                        text: root.wifiPassword; onTextChanged: root.wifiPassword = text; echoMode: TextInput.Password; passwordCharacter: "•"
+                                        text: root.wifiPassword; onTextChanged: root.wifiPassword = text; echoMode: root.wifiShowPassword ? TextInput.Normal : TextInput.Password; passwordCharacter: "•"
                                         color: root.textMain; selectionColor: root.controlButtonOutline; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                                         onAccepted: root.submitWifiPassword()
                                     }
-                                    Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; visible: !wifiPasswordInput.text.length; text: "Palavra-passe"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                                    MenuButton {
+                                        anchors.right: parent.right; anchors.rightMargin: 5; anchors.verticalCenter: parent.verticalCenter
+                                        id: wifiPasswordToggle
+                                        lighterSurface: true
+                                        width: 84; height: 30; label: root.wifiShowPassword ? "Ocultar" : "Mostrar"
+                                        onActivated: { root.wifiShowPassword = !root.wifiShowPassword; if (!root.menuKeyboardNavigation) wifiPasswordInput.forceActiveFocus() }
+                                    }
+                                    Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; visible: !wifiPasswordInput.text.length; anchors.right: wifiPasswordToggle.left; anchors.rightMargin: 8; elide: Text.ElideRight; text: "Introduz a palavra-passe"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                 }
+                                Text { visible: wifiDomainField.visible; text: "Domínio do servidor"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                 Rectangle {
+                                    id: wifiDomainField
                                     visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
-                                    width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface
-                                    border.width: wifiDomainInput.activeFocus ? 1 : 0; border.color: root.cyan
+                                    width: parent.width; height: visible ? 40 : 0; radius: 9; color: root.controlButtonActive
+                                    enabled: !wifiCredentialProcess.running && !hostActionProcess.running
+                                    border.width: wifiDomainInput.activeFocus ? 1 : 0; border.color: root.textMain
                                     TextInput {
                                         id: wifiDomainInput
+                                        Accessible.name: "Domínio do servidor"
                                         activeFocusOnTab: true
                                         Keys.onPressed: function(event) {
                                             if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab)
@@ -5885,14 +6257,18 @@ ShellRoot {
                                         }
                                         anchors.fill: parent; anchors.leftMargin: 9; verticalAlignment: TextInput.AlignVCenter; text: root.wifiDomain; onTextChanged: root.wifiDomain = text; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                                     }
-                                    Text { visible: !wifiDomainInput.text.length; anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; text: "Domínio do servidor (ex.: wifi.escola.pt)"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                                    Text { visible: !wifiDomainInput.text.length; anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; text: "wifi.escola.pt"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                 }
+                                Text { visible: wifiCaField.visible; text: "Certificado CA"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                 Rectangle {
+                                    id: wifiCaField
                                     visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
-                                    width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface
-                                    border.width: wifiCaInput.activeFocus ? 1 : 0; border.color: root.cyan
+                                    width: parent.width; height: visible ? 40 : 0; radius: 9; color: root.controlButtonActive
+                                    enabled: !wifiCredentialProcess.running && !hostActionProcess.running
+                                    border.width: wifiCaInput.activeFocus ? 1 : 0; border.color: root.textMain
                                     TextInput {
                                         id: wifiCaInput
+                                        Accessible.name: "Certificado CA"
                                         activeFocusOnTab: true
                                         Keys.onPressed: function(event) {
                                             if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab)
@@ -5907,34 +6283,53 @@ ShellRoot {
                                         anchors.fill: parent; anchors.leftMargin: 9; verticalAlignment: TextInput.AlignVCenter; text: root.wifiCaCert; onTextChanged: root.wifiCaCert = text; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
                                     }
                                 }
-                                Text { visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid); text: "Certificado CA no Host · domínio obrigatório"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                                Text { visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid); width: parent.width; wrapMode: Text.Wrap; text: "Verifica o domínio e o certificado da organização."; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                                Text {
+                                    visible: root.wifiMessage.length > 0; width: parent.width; wrapMode: Text.Wrap
+                                    text: root.wifiMessage; color: root.wifiMessage.indexOf("A ligar") === 0 ? root.textDim : "#ffb0bd"
+                                    font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                                }
                                 Row {
-                                    spacing: 14
-                                    Text { text: wifiCredentialProcess.running ? "A ligar…" : (root.wifiSelectedSsid === root.hostState.network_name ? "Já ligada" : "Ligar"); color: connectWifiMouse.containsMouse ? "#ffffff" : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; BounceMouseArea { id: connectWifiMouse; anchors.fill: parent; enabled: root.wifiSelectedSsid !== root.hostState.network_name; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.submitWifiPassword() } }
-                                    Text { text: "Cancelar"; color: cancelWifiMouse.containsMouse ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; BounceMouseArea { id: cancelWifiMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.cancelWifiPassword() } }
+                                    width: parent.width; spacing: 8
+                                    MenuButton {
+                                        width: (parent.width - 8) / 2; height: 38; label: "Cancelar"
+                                        enabled: !wifiCredentialProcess.running && !hostActionProcess.running
+                                        onActivated: root.cancelWifiPassword()
+                                    }
+                                    MenuButton {
+                                        width: (parent.width - 8) / 2; height: 38; accent: true
+                                        label: (wifiCredentialProcess.running || hostActionProcess.running) ? "A ligar…" : "Ligar"
+                                        enabled: !wifiCredentialProcess.running && !hostActionProcess.running && root.wifiSelectedSsid !== root.hostState.network_name
+                                        onActivated: root.submitWifiPassword()
+                                    }
                                 }
                             }
                         }
-                        Text { visible: root.wifiMessage.length > 0; width: parent.width; wrapMode: Text.Wrap; text: root.wifiMessage; color: root.wifiMessage.indexOf("Não") === 0 ? "#ff91a4" : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                        Text { visible: !root.wifiPasswordVisible && root.wifiMessage.length > 0; width: parent.width; wrapMode: Text.Wrap; text: root.wifiMessage; color: root.wifiMessage.indexOf("Não") === 0 ? "#ff91a4" : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                         Repeater {
-                            model: root.hostState.available_networks || []
+                            model: root.wifiDisplayPowered() && !root.wifiPasswordVisible ? root.wifiAvailableNetworks() : []
                             Rectangle {
                                 required property string modelData
                                 visible: modelData !== root.hostState.network_name
                                       && (!root.wifiPasswordVisible || modelData !== root.wifiSelectedSsid)
                                 width: parent ? parent.width : 300; height: visible ? 40 : 0; radius: 10
-                                color: nearbyWifiMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                                border.width: nearbyWifiMouse.containsMouse ? 1 : 0; border.color: root.controlButtonOutline
-                                Text {
-                                    anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 6
-                                    width: parent.width - 145; elide: Text.ElideRight
-                                    text: modelData; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
+                                color: root.controlButtonSurface
+                                border.width: 0; border.color: root.controlButtonOutline
+                                LucideIcon {
+                                    name: root.wifiDetails(modelData).signal >= 50 ? "wifi" : (root.wifiDetails(modelData).signal >= 25 ? "wifi-high" : "wifi-low")
+                                    width: 16; height: 16
+                                    anchors.left: parent.left; anchors.leftMargin: 18; anchors.verticalCenter: parent.verticalCenter
+                                    opacity: .7
                                 }
                                 Text {
-                                    anchors.left: parent.left; anchors.leftMargin: 12; anchors.bottom: parent.bottom; anchors.bottomMargin: 5
-                                    text: root.wifiDetails(modelData).signal + "%  ·  " + root.wifiSecurityLabel(modelData)
-                                    color: root.textDim
-                                    font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal
+                                    anchors.left: parent.left; anchors.leftMargin: 54; anchors.verticalCenter: parent.verticalCenter
+                                    width: parent.width - 94; elide: Text.ElideRight
+                                    text: modelData; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
+                                }
+                                LucideIcon {
+                                    visible: !root.wifiIsOpen(modelData)
+                                    name: "lock-keyhole"; width: 14; height: 14; opacity: .4
+                                    anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
                                 }
                                 BounceMouseArea {
                                     id: nearbyWifiMouse
@@ -5951,197 +6346,170 @@ ShellRoot {
                             }
                         }
                         Text {
-                            visible: !(root.hostState.available_networks || []).length
-                            text: "-- nenhuma rede encontrada --"
+                            visible: root.wifiDisplayPowered() && !root.wifiPasswordVisible && !root.wifiAvailableNetworks().length
+                            text: root.wifiDisplayActive() ? "Não há outras redes disponíveis" : "Nenhuma rede encontrada"
                             color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
                         }
                     }
 
-                    Rectangle {
+                    Column {
                         visible: root.renderedControls.controlsBluetoothOpen
-                        width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: root.controlButtonSurface
-                        border.width: 1; border.color: root.controlButtonOutline
-                        Rectangle {
-                            anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                            width: 62; height: 28; radius: 8
-                            color: bluetoothHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                            Text { anchors.centerIn: parent; z: 2; text: "‹ Voltar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
-                            BounceMouseArea { id: bluetoothHeaderMouse; anchors.fill: parent; z: 1; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("bluetooth") }
-                        }
-                        IconLabel { iconName: root.bluetoothDisplayPowered() ? "bluetooth" : "bluetooth-off";
-                            anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter
-                            text: "Bluetooth"
-                            color: root.textMain; pixelSize: root.menuBodySize
-                        }
-                        Text {
-                            anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter
-                            text: root.bluetoothPowerPhase === "turning-on" ? "A ligar…" : (root.bluetoothDisplayPowered() ? "Ligado" : "Desligado")
-                            color: root.bluetoothDisplayPowered() ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
-                        }
-                    }
-                    Flickable {
-                        visible: root.renderedControls.controlsBluetoothOpen
-                        width: parent.width; height: visible ? 216 : 0
-                        contentWidth: width; contentHeight: bluetoothContent.implicitHeight
-                        clip: true; boundsBehavior: Flickable.StopAtBounds
-                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOff }
-
+                        width: parent.width; spacing: 8
+                        MenuButton { outlined: true; iconName: "chevron-left"; label: root.bluetoothRemoveAddress.length ? "Voltar aos dispositivos" : "Voltar às ligações"; enabled: !bluetoothRemoveProcess.running; onActivated: { if (root.bluetoothRemoveAddress.length) { root.bluetoothRemoveAddress = ""; root.bluetoothRemoveName = "" } else root.openControlSection("bluetooth") } }
+                        Text { text: "Bluetooth"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                         Column {
                             id: bluetoothContent
-                            width: parent.width - (implicitHeight > 216 ? 7 : 0); spacing: 5
-
+                            property bool formVisible: root.bluetoothPairPhase.length > 0 || root.bluetoothRemoveAddress.length > 0
+                            width: parent.width; spacing: 8
                             Rectangle {
-                                width: parent.width; height: 56; radius: 11
-                                color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
-                                Text {
-                                    anchors.left: parent.left; anchors.leftMargin: 14; anchors.top: parent.top; anchors.topMargin: 8
-                                    text: root.bluetoothPowerPhase === "turning-on" ? "A ligar Bluetooth…" : (root.bluetoothDisplayPowered() ? "Bluetooth ativo" : "Bluetooth desligado")
-                                    color: root.bluetoothDisplayPowered() ? root.textMain : root.textDim
-                                    font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal
+                                visible: !bluetoothContent.formVisible
+                                width: parent.width; height: 56; radius: 14; color: root.controlButtonSurface
+                                RadioIconButton {
+                                    x: 8; anchors.verticalCenter: parent.verticalCenter
+                                    iconName: root.bluetoothDisplayPowered() ? "bluetooth" : "bluetooth-off"
+                                    powered: root.bluetoothDisplayPowered()
+                                    busy: bluetoothPowerProcess.running || root.bluetoothPowerPhase.length > 0
+                                    actionLabel: root.bluetoothDisplayPowered() ? "Desativar Bluetooth" : "Ativar Bluetooth"
+                                    onActivated: root.toggleBluetoothPower()
                                 }
-                                Text {
-                                    anchors.left: parent.left; anchors.leftMargin: 14; anchors.bottom: parent.bottom; anchors.bottomMargin: 8
-                                    text: root.bluetoothConnectedDevices().length + " ligado" + (root.bluetoothConnectedDevices().length === 1 ? "" : "s")
-                                    color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal
-                                }
-                                Rectangle {
-                                    anchors.right: parent.right; anchors.rightMargin: 9; anchors.verticalCenter: parent.verticalCenter
-                                    width: 84; height: 28; radius: 8
-                                    color: bluetoothPowerMouse.containsMouse ? (root.bluetoothDisplayPowered() ? "#743541" : root.controlButtonHover) : root.controlButtonSurface
-                                    border.width: root.bluetoothDisplayPowered() ? 0 : 1; border.color: root.controlButtonOutline
-                                    Text { anchors.centerIn: parent; text: root.bluetoothPowerPhase === "turning-on" ? "A ligar…" : (root.bluetoothDisplayPowered() ? "Desligar" : "Ligar"); color: root.bluetoothDisplayPowered() ? "#ffb0bd" : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
-                                    BounceMouseArea { id: bluetoothPowerMouse; anchors.fill: parent; enabled: !root.bluetoothPowerPhase.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.toggleBluetoothPower() }
-                                }
-                            }
-
-                            Rectangle {
-                                visible: root.bluetoothDisplayPowered()
-                                width: parent.width; height: visible ? 30 : 0; radius: 8
-                                color: bluetoothScanMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                                border.width: 1; border.color: root.controlButtonOutline
-                                Text { anchors.centerIn: parent; text: bluetoothScanProcess.running ? "A procurar…" : "Procurar dispositivos"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
-                                BounceMouseArea { id: bluetoothScanMouse; anchors.fill: parent; enabled: !bluetoothScanProcess.running; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: bluetoothScanProcess.running = true }
-                            }
-
-                            Rectangle {
-                                visible: root.bluetoothPairSessionId.length > 0
-                                width: parent.width
-                                height: visible ? (root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin" ? 108 : 78) : 0
-                                radius: 10; color: root.controlButtonActive; border.width: 1; border.color: root.controlButtonOutline
                                 Column {
-                                    anchors.fill: parent; anchors.margins: 9; spacing: 5
-                                    Text { width: parent.width; elide: Text.ElideRight; text: "Emparelhar " + root.bluetoothPairName; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+                                    anchors.left: parent.left; anchors.leftMargin: 54
+                                    anchors.right: bluetoothSearchButton.left; anchors.rightMargin: 10
+                                    anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                    Text { width: parent.width; elide: Text.ElideRight; text: "Bluetooth"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                                    Text { text: root.bluetoothDisplayPowered() ? "Ativo" : "Desativado"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                                }
+                                MenuButton {
+                                    id: bluetoothSearchButton
+                                    visible: root.bluetoothDisplayPowered()
+                                    anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
+                                    width: visible ? 108 : 0; height: 32
+                                    label: bluetoothScanProcess.running ? "A procurar…" : "Procurar"
+                                    brightActionHover: true
+                                    actionSurface: parent.color
+                                    enabled: !bluetoothScanProcess.running && !root.bluetoothPowerPhase.length
+                                    onActivated: bluetoothScanProcess.running = true
+                                }
+                            }
+                            Rectangle {
+                                id: bluetoothPairCard
+                                visible: root.bluetoothPairPhase.length > 0
+                                width: parent.width; height: visible ? bluetoothPairFields.implicitHeight + 24 : 0
+                                radius: 14; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
+                                Column {
+                                    id: bluetoothPairFields
+                                    x: 12; y: 12; width: parent.width - 24; spacing: 10
+                                    Row {
+                                        width: parent.width; height: 40; spacing: 10
+                                        Rectangle { width: 36; height: 36; radius: 18; anchors.verticalCenter: parent.verticalCenter; color: Qt.lighter(root.controlButtonSurface, 1.6); LucideIcon { anchors.centerIn: parent; name: "bluetooth"; width: 16; height: 16 } }
+                                        Column {
+                                            width: parent.width - 46; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                            Text { width: parent.width; elide: Text.ElideRight; text: root.bluetoothPairName; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.DemiBold }
+                                            Text { text: "Emparelhar dispositivo"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                                        }
+                                    }
                                     Text {
                                         width: parent.width; wrapMode: Text.Wrap
-                                        text: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "confirm"
-                                              ? "Confirma que o código " + (root.bluetoothPairPasskey || "------") + " coincide."
-                                              : (root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin"
-                                                 ? "Introduz o PIN apresentado pelo dispositivo."
-                                                 : (root.bluetoothPairPhase === "waiting-device"
-                                                    ? "Escreve no dispositivo o código " + (root.bluetoothPairPasskey || "------") + "."
-                                                    : (root.bluetoothMessage || "A aguardar o dispositivo…")))
-                                        color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                                        text: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "confirm" ? "Confirma que este código coincide no dispositivo." : (root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin" ? "Introduz o PIN apresentado pelo dispositivo." : (root.bluetoothPairPhase === "waiting-device" ? "Escreve este código no dispositivo Bluetooth." : (root.bluetoothMessage || "A aguardar o dispositivo…")))
+                                        color: root.bluetoothPairPhase === "failed" ? "#ffb0bd" : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
                                     }
                                     Rectangle {
+                                        visible: root.bluetoothPairPasskey.length > 0
+                                        width: parent.width; height: visible ? 52 : 0; radius: 9; color: root.controlButtonActive
+                                        Text { anchors.centerIn: parent; text: root.bluetoothPairPasskey; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: 24; font.letterSpacing: 4 }
+                                    }
+                                    Text { visible: bluetoothPinField.visible; text: "PIN"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                                    Rectangle {
+                                        id: bluetoothPinField
                                         visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin"
-                                        width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface; border.width: bluetoothPinInput.activeFocus ? 1 : 0; border.color: root.cyan
+                                        width: parent.width; height: visible ? 40 : 0; radius: 9; color: root.controlButtonActive
+                                        border.width: bluetoothPinInput.activeFocus ? 1 : 0; border.color: root.textMain
+                                        enabled: !bluetoothPairRespondProcess.running
                                         TextInput {
-                                            id: bluetoothPinInput; anchors.fill: parent; anchors.leftMargin: 9; anchors.rightMargin: 9; verticalAlignment: TextInput.AlignVCenter
-                                            activeFocusOnTab: true
-                                            text: root.bluetoothPairPin; onTextChanged: root.bluetoothPairPin = text; echoMode: TextInput.Password; maximumLength: 16
+                                            id: bluetoothPinInput
+                                            anchors.fill: parent; anchors.leftMargin: 9; anchors.rightMargin: 94
+                                            verticalAlignment: TextInput.AlignVCenter; activeFocusOnTab: true
+                                            Accessible.name: "PIN do dispositivo Bluetooth"
+                                            text: root.bluetoothPairPin; onTextChanged: root.bluetoothPairPin = text
+                                            echoMode: root.bluetoothShowPin ? TextInput.Normal : TextInput.Password; maximumLength: 16
                                             color: root.textMain; selectionColor: root.controlButtonOutline; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
+                                            Keys.onPressed: event => { if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) root.navigateGenericMenu(event) }
+                                            onActiveFocusChanged: if (activeFocus) { root.clearPendingMenuFocus(); root.focusedMenuItem = bluetoothPinInput }
                                             onAccepted: if (text.length) root.respondBluetoothPair(true, text)
                                         }
-                                        Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; visible: !bluetoothPinInput.text.length; text: "Pin"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
-                                    }
-                                    Row {
-                                        spacing: 12
-                                        Text { text: root.bluetoothPairPhase === "completed" || root.bluetoothPairPhase === "failed" ? "Fechar" : "Cancelar"; color: pairCancelMouse.containsMouse ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; BounceMouseArea { id: pairCancelMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.bluetoothPairPhase === "completed" || root.bluetoothPairPhase === "failed" ? root.dismissBluetoothPairing() : root.cancelBluetoothPairing() } }
-                                        Text { visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "confirm"; text: "Confirmar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.respondBluetoothPair(true, "") } }
-                                        Text { visible: root.bluetoothPairPhase === "needs-response" && root.bluetoothPairChallenge === "pin"; text: "Emparelhar"; color: root.bluetoothPairPin.length ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; BounceMouseArea { anchors.fill: parent; enabled: root.bluetoothPairPin.length > 0; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.respondBluetoothPair(true, root.bluetoothPairPin) } }
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                visible: root.bluetoothRemoveAddress.length > 0
-                                width: parent.width; height: visible ? 58 : 0; radius: 10
-                                color: "#2b2026"; border.width: 1; border.color: "#743541"
-                                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.top: parent.top; anchors.topMargin: 8; width: parent.width - 20; elide: Text.ElideRight; text: "Esquecer " + root.bluetoothRemoveName + "?"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
-                                Row {
-                                    anchors.left: parent.left; anchors.leftMargin: 10; anchors.bottom: parent.bottom; anchors.bottomMargin: 8; spacing: 14
-                                    Text { text: "Cancelar"; color: removeCancelMouse.containsMouse ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; BounceMouseArea { id: removeCancelMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.bluetoothRemoveAddress = ""; root.bluetoothRemoveName = "" } } }
-                                    Text { text: bluetoothRemoveProcess.running ? "A esquecer…" : "Confirmar"; color: "#ffb0bd"; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal; BounceMouseArea { anchors.fill: parent; enabled: !bluetoothRemoveProcess.running; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.confirmBluetoothRemove() } }
-                                }
-                            }
-
-                            Text { visible: root.bluetoothMessage.length > 0 && root.bluetoothPairSessionId.length === 0; width: parent.width; wrapMode: Text.Wrap; text: root.bluetoothMessage; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
-
-                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "Dispositivos ligados  ·  " + root.bluetoothConnectedDevices().length; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal } }
-                            Repeater {
-                                model: root.bluetoothConnectedDevices()
-                                Rectangle {
-                                    required property var modelData
-                                    width: parent ? parent.width : 300; height: 36; radius: 10
-                                    color: connectedBtMouse.containsMouse ? root.controlButtonHover : root.controlButtonActive; border.width: 1; border.color: root.controlButtonOutline
-                                    Rectangle { width: 8; height: 8; radius: 4; color: root.textMain; anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { anchors.left: parent.left; anchors.leftMargin: 32; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 130; elide: Text.ElideRight; text: modelData.name || modelData.address; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
-                                    Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: "Desligar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
-                                    BounceMouseArea { id: connectedBtMouse; anchors.fill: parent; enabled: !root.bluetoothDevicePendingAddress.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.bluetoothDeviceAction("bluetooth-disconnect", modelData) }
-                                }
-                            }
-                            Text { visible: root.bluetoothConnectedDevices().length === 0; text: "-- nenhum dispositivo ligado --"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
-
-                            Item { width: parent.width; height: 4 }
-                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "Dispositivos anteriores  ·  " + root.bluetoothKnownDevices().length; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal } }
-                            Repeater {
-                                model: root.bluetoothKnownDevices()
-                                Rectangle {
-                                    required property var modelData
-                                    width: parent ? parent.width : 300; height: 36; radius: 10; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
-                                    Rectangle { width: 8; height: 8; radius: 4; color: "#405058"; anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { anchors.left: parent.left; anchors.leftMargin: 32; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 148; elide: Text.ElideRight; text: modelData.name || modelData.address; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
-                                    Row {
-                                        anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; spacing: 4
-                                        Rectangle {
-                                            width: root.bluetoothDevicePendingAction === "bluetooth-connect" && root.bluetoothDevicePendingAddress === modelData.address ? 58 : 38
-                                            height: 24; radius: 6; color: knownConnectMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                                            Text {
-                                                anchors.centerIn: parent
-                                                text: root.bluetoothDevicePendingAction === "bluetooth-connect" && root.bluetoothDevicePendingAddress === modelData.address ? "A ligar…" : "Ligar"
-                                                color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal
-                                                SequentialAnimation on opacity {
-                                                    running: root.bluetoothDevicePendingAction === "bluetooth-connect" && root.bluetoothDevicePendingAddress === modelData.address
-                                                    loops: Animation.Infinite
-                                                    NumberAnimation { to: 0.35; duration: 380 }
-                                                    NumberAnimation { to: 1; duration: 380 }
-                                                }
-                                            }
-                                            BounceMouseArea { id: knownConnectMouse; anchors.fill: parent; enabled: !root.bluetoothDevicePendingAddress.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.bluetoothDeviceAction("bluetooth-connect", modelData) }
+                                        MenuButton {
+                                            anchors.right: parent.right; anchors.rightMargin: 5; anchors.verticalCenter: parent.verticalCenter
+                                            width: 84; height: 30; lighterSurface: true; label: root.bluetoothShowPin ? "Ocultar" : "Mostrar"
+                                            onActivated: { root.bluetoothShowPin = !root.bluetoothShowPin; if (!root.menuKeyboardNavigation) bluetoothPinInput.forceActiveFocus() }
                                         }
-                                        Rectangle { width: 52; height: 24; radius: 6; color: knownRemoveMouse.containsMouse ? "#59303a" : root.controlButtonSurface; Text { anchors.centerIn: parent; text: "Esquecer"; color: "#ffb0bd"; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal } BounceMouseArea { id: knownRemoveMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginBluetoothRemove(modelData) } }
+                                    }
+                                    Row {
+                                        width: parent.width; spacing: 8
+                                        MenuButton {
+                                            width: root.bluetoothPairPhase === "needs-response" ? (parent.width - 8) / 2 : parent.width; height: 38
+                                            label: root.bluetoothPairPhase === "completed" || root.bluetoothPairPhase === "failed" ? "Fechar" : (root.bluetoothPairPhase === "needs-response" ? "Cancelar" : "A aguardar…")
+                                            enabled: !bluetoothPairBeginProcess.running && !bluetoothPairRespondProcess.running && ["needs-response", "completed", "failed"].indexOf(root.bluetoothPairPhase) >= 0
+                                            onActivated: root.bluetoothPairPhase === "needs-response" ? root.cancelBluetoothPairing() : root.dismissBluetoothPairing()
+                                        }
+                                        MenuButton {
+                                            visible: root.bluetoothPairPhase === "needs-response"
+                                            width: (parent.width - 8) / 2; height: 38; accent: true
+                                            label: root.bluetoothPairChallenge === "pin" ? "Emparelhar" : "Confirmar"
+                                            enabled: !bluetoothPairRespondProcess.running && (root.bluetoothPairChallenge !== "pin" || root.bluetoothPairPin.length > 0)
+                                            onActivated: root.respondBluetoothPair(true, root.bluetoothPairChallenge === "pin" ? root.bluetoothPairPin : "")
+                                        }
                                     }
                                 }
                             }
-                            Text { visible: root.bluetoothKnownDevices().length === 0; text: "-- nenhum dispositivo anterior --"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
-
-                            Item { width: parent.width; height: 4 }
-                            Item { width: parent.width; height: 18; Text { anchors.verticalCenter: parent.verticalCenter; text: "Dispositivos disponíveis  ·  " + root.bluetoothAvailableDevices().length; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal } }
-                            Repeater {
-                                model: root.bluetoothAvailableDevices()
-                                Rectangle {
-                                    required property var modelData
-                                    width: parent ? parent.width : 300; height: 36; radius: 10; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
-                                    Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 104; elide: Text.ElideRight; text: modelData.name || modelData.address; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
-                                    Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 78; height: 24; radius: 6; color: availablePairMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface; Text { anchors.centerIn: parent; text: "Emparelhar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal } BounceMouseArea { id: availablePairMouse; anchors.fill: parent; enabled: !root.bluetoothPairSessionId.length; hoverEnabled: true; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.beginBluetoothPair(modelData) } }
+                            Rectangle {
+                                id: bluetoothForgetCard
+                                visible: root.bluetoothRemoveAddress.length > 0
+                                width: parent.width; height: visible ? bluetoothForgetFields.implicitHeight + 24 : 0
+                                radius: 14; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
+                                Column {
+                                    id: bluetoothForgetFields
+                                    x: 12; y: 12; width: parent.width - 24; spacing: 10
+                                    Text { width: parent.width; elide: Text.ElideRight; text: root.bluetoothRemoveName; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.DemiBold }
+                                    Text { width: parent.width; wrapMode: Text.Wrap; text: "Esquecer este dispositivo? Para voltar a usá-lo, será necessário emparelhar novamente."; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                                    Row {
+                                        width: parent.width; spacing: 8
+                                        MenuButton { width: (parent.width - 8) / 2; height: 38; label: "Cancelar"; enabled: !bluetoothRemoveProcess.running; onActivated: { root.bluetoothRemoveAddress = ""; root.bluetoothRemoveName = "" } }
+                                        MenuButton { width: (parent.width - 8) / 2; height: 38; label: bluetoothRemoveProcess.running ? "A esquecer…" : "Esquecer"; enabled: !bluetoothRemoveProcess.running; onActivated: root.confirmBluetoothRemove() }
+                                    }
                                 }
                             }
-                            Text { visible: root.bluetoothAvailableDevices().length === 0; width: parent.width; wrapMode: Text.Wrap; text: root.hostState.bluetooth_powered ? (bluetoothScanProcess.running ? "-- a procurar dispositivos --" : "-- nenhum dispositivo disponível --") : "-- liga o Bluetooth para procurar dispositivos --"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Text { visible: !bluetoothContent.formVisible && root.bluetoothMessage.length > 0; width: parent.width; wrapMode: Text.Wrap; text: root.bluetoothMessage; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Text { visible: !bluetoothContent.formVisible && root.bluetoothConnectedDevices().length > 0; text: "Ligados"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Repeater {
+                                model: bluetoothContent.formVisible ? [] : root.bluetoothConnectedDevices()
+                                BluetoothDeviceRow {
+                                    required property var modelData
+                                    device: modelData; connected: true; paired: modelData.paired === true
+                                    onActivated: root.bluetoothDeviceAction("bluetooth-disconnect", modelData)
+                                }
+                            }
+                            Text { visible: !bluetoothContent.formVisible && root.bluetoothKnownDevices().length > 0; text: "Guardados"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Repeater {
+                                model: bluetoothContent.formVisible ? [] : root.bluetoothKnownDevices()
+                                BluetoothDeviceRow {
+                                    required property var modelData
+                                    device: modelData; paired: true
+                                    onActivated: root.bluetoothDeviceAction("bluetooth-connect", modelData)
+                                    onForgetRequested: root.beginBluetoothRemove(modelData)
+                                }
+                            }
+                            Text { visible: !bluetoothContent.formVisible && root.bluetoothAvailableDevices().length > 0; text: "Disponíveis"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Repeater {
+                                model: bluetoothContent.formVisible ? [] : root.bluetoothAvailableDevices()
+                                BluetoothDeviceRow {
+                                    required property var modelData
+                                    device: modelData
+                                    onActivated: root.beginBluetoothPair(modelData)
+                                }
+                            }
+                            Text { visible: !bluetoothContent.formVisible && root.bluetoothDisplayPowered() && !bluetoothScanProcess.running && !root.bluetoothKnownDevices().length && !root.bluetoothConnectedDevices().length && !root.bluetoothAvailableDevices().length && !root.bluetoothMessage.length; width: parent.width; wrapMode: Text.Wrap; text: "Nenhum dispositivo encontrado"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                         }
                     }
-
-
 
                     Text {
                         visible: root.renderedControlsAllClosed() && root.hardwareControlError.length > 0
@@ -6152,67 +6520,124 @@ ShellRoot {
                         width: parent.width; spacing: 10
                         visible: root.renderedControls.controlsBrightnessOpen
                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("brightness") }
-                        ControlTile { width: implicitWidth; height: 28; color: "transparent"; showCaption: true; iconName: root.volumeMuted ? "volume-x" : "volume-2"; caption: "Som"; onActivated: root.openControlSection("audio") }
-                        Text { text: root.volumeValue + "%"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
-                        ControlSlider {
-                            id: combinedVolumeSlider
-                            width: parent.width; height: 36; from: 0; to: 100; stepSize: 1; activeFocusOnTab: true
-                            Accessible.name: "Volume"
-                            onMoved: { root.previewVolume(value); if (!pressed) root.commitVolume(value) }
-                            onPressedChanged: if (!pressed) root.commitVolume(value)
-                            Binding { target: combinedVolumeSlider; property: "value"; value: root.volumeMuted ? 0 : root.volumeValue; when: !combinedVolumeSlider.pressed }
-                        }
-                        IconLabel { iconName: "sun"; text: "Brilho do ecrã"; color: root.textMain; pixelSize: root.menuBodySize }
-                        Text { text: root.displayBrightness + "%"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
-                        ControlSlider {
-                            id: displayBrightnessSlider
-                            width: parent.width; height: 36
-                            from: 5; to: 100; stepSize: 1; activeFocusOnTab: true
-                            Accessible.name: "Brilho do ecrã"
-                            onMoved: { root.previewDisplayBrightness(value); if (!pressed) root.commitDisplayBrightness(value) }
-                            onPressedChanged: if (!pressed) root.commitDisplayBrightness(value)
-                            Binding { target: displayBrightnessSlider; property: "value"; value: root.displayBrightness; when: !displayBrightnessSlider.pressed }
-                        }
-                        ControlTile { width: parent.width; height: 42; showCaption: true; iconName: root.microphoneMuted ? "mic-off" : "mic"; caption: "Microfone"; onActivated: root.openControlSection("microphone") }
-                        ControlTile { width: parent.width; height: 42; showCaption: true; iconName: "keyboard"; caption: "Iluminação do teclado"; selected: root.keyboardBrightness > 0; onActivated: root.cycleKeyboardBrightness() }
-                    }
-                    Rectangle {
-                        visible: root.renderedControls.controlsAudioOpen
-                        width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: root.controlButtonSurface
-                        border.width: 1; border.color: root.controlButtonOutline
                         Rectangle {
-                            anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                            width: 62; height: 28; radius: 8
-                            color: audioHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: audioHeaderMouse.containsMouse ? "#ffffff" : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
-                            BounceMouseArea { id: audioHeaderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("audio") }
+                            id: combinedVolumeCard
+                            width: parent.width; height: 56; radius: 14
+                            color: root.controlButtonSurface
+                            BounceMouseArea {
+                                id: combinedVolumeCardMouse
+                                anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                Accessible.name: "Som"
+                                onClicked: root.openControlSection("audio")
+                            }
+                                RadioIconButton {
+                                    x: 8; anchors.verticalCenter: parent.verticalCenter; iconName: root.volumeMuted ? "volume-x" : "volume-2"
+                                    powered: !root.volumeMuted; busy: localActionProcess.running
+                                    actionLabel: root.volumeMuted ? "Reativar som" : "Silenciar som"
+                                    onActivated: root.toggleVolumeMute()
+                                }
+
+                            Text {
+                                id: combinedVolumePercent
+                                anchors.right: parent.right; anchors.rightMargin: 14
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 40; horizontalAlignment: Text.AlignRight
+                                text: (root.volumeMuted ? 0 : root.volumeValue) + "%"; color: root.textDim
+                                font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
+                            }
+                            MenuSlider {
+                                id: combinedVolumeSlider
+                                anchors.left: parent.left; anchors.leftMargin: 54
+                                anchors.right: combinedVolumePercent.left; anchors.rightMargin: 8
+                                anchors.verticalCenter: parent.verticalCenter
+                                height: 16; topPadding: 0; bottomPadding: 0; from: 0; to: 100; stepSize: 1; activeFocusOnTab: true
+                                Accessible.name: "Som"
+                                onKeyboardValueChanged: nextValue => root.commitVolume(nextValue)
+                                onMoved: root.previewVolume(value)
+                                onPressedChanged: { if (pressed) forceActiveFocus(); else root.commitVolume(value) }
+                                Binding { target: combinedVolumeSlider; property: "value"; value: root.volumeMuted ? 0 : root.volumeValue; when: !combinedVolumeSlider.pressed }
+                                background: Rectangle {
+                                    x: combinedVolumeSlider.leftPadding; y: combinedVolumeSlider.topPadding + combinedVolumeSlider.availableHeight / 2 - height / 2
+                                    width: combinedVolumeSlider.availableWidth; height: 5; radius: 3; color: root.controlButtonOutline
+                                    Rectangle { width: combinedVolumeSlider.visualPosition * parent.width; height: parent.height; radius: 3; color: root.textMain }
+                                }
+                                handle: Item { width: 0; height: 0 }
+                            }
                         }
-                        IconLabel { iconName: root.volumeMuted ? "volume-x" : "volume-2";
-                            anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter
-                            text: "Volume"
-                            color: root.textMain; pixelSize: root.menuBodySize
+                        Rectangle {
+                            id: combinedBrightnessCard
+                            width: parent.width; height: 56; radius: 14
+                            color: root.controlButtonSurface
+                            BounceMouseArea {
+                                id: combinedBrightnessCardMouse
+                                anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                Accessible.name: "Brilho do ecrã"
+                                onClicked: root.toggleDisplayDim()
+                            }
+                                RadioIconButton {
+                                    x: 8; anchors.verticalCenter: parent.verticalCenter; iconName: "sun"
+                                    powered: root.displayBrightness > 5; busy: displayBrightnessProcess.running
+                                    actionLabel: root.displayBrightness > 5 ? "Reduzir brilho" : "Restaurar brilho"
+                                    onActivated: root.toggleDisplayDim()
+                                }
+
+                            Text {
+                                id: combinedBrightnessPercent
+                                anchors.right: parent.right; anchors.rightMargin: 14
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 40; horizontalAlignment: Text.AlignRight
+                                text: root.displayBrightness + "%"; color: root.textDim
+                                font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize
+                            }
+                            MenuSlider {
+                                id: displayBrightnessSlider
+                                anchors.left: parent.left; anchors.leftMargin: 54
+                                anchors.right: combinedBrightnessPercent.left; anchors.rightMargin: 8
+                                anchors.verticalCenter: parent.verticalCenter
+                                height: 16; topPadding: 0; bottomPadding: 0; from: 5; to: 100; stepSize: 1; activeFocusOnTab: true
+                                Accessible.name: "Brilho do ecrã"
+                                onKeyboardValueChanged: nextValue => root.commitDisplayBrightness(nextValue)
+                                onMoved: root.previewDisplayBrightness(value)
+                                onPressedChanged: { if (pressed) forceActiveFocus(); else root.commitDisplayBrightness(value) }
+                                Binding { target: displayBrightnessSlider; property: "value"; value: root.displayBrightness; when: !displayBrightnessSlider.pressed }
+                                background: Rectangle {
+                                    x: displayBrightnessSlider.leftPadding; y: displayBrightnessSlider.topPadding + displayBrightnessSlider.availableHeight / 2 - height / 2
+                                    width: displayBrightnessSlider.availableWidth; height: 5; radius: 3; color: root.controlButtonOutline
+                                    Rectangle { width: displayBrightnessSlider.visualPosition * parent.width; height: parent.height; radius: 3; color: root.textMain }
+                                }
+                                handle: Item { width: 0; height: 0 }
+                            }
                         }
-                        Text {
-                            anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter
-                            text: root.volumeText
-                            color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
-                        }
+                        ControlTile { width: parent.width; height: 48; quiet: true; showCaption: true; iconName: root.microphoneMuted ? "mic-off" : "mic"; caption: "Microfone"; selected: !root.microphoneMuted; iconActionEnabled: true; iconActionAvailable: !localActionProcess.running; iconActionLabel: root.microphoneMuted ? "Reativar microfone" : "Silenciar microfone"; onIconActivated: root.toggleMicrophoneMute(); onActivated: root.openControlSection("microphone") }
+                        ControlTile { width: parent.width; height: 48; quiet: true; showCaption: true; iconName: "keyboard"; caption: "Iluminação do teclado"; selected: root.keyboardBrightness > 0; iconActionEnabled: true; iconActionAvailable: !keyboardBrightnessProcess.running; iconActionLabel: "Alterar iluminação do teclado"; onIconActivated: root.cycleKeyboardBrightness(); onActivated: root.cycleKeyboardBrightness() }
+                    }
+                    Column {
+                        visible: root.renderedControls.controlsAudioOpen
+                        width: parent.width; spacing: 8
+                        MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("audio") }
+                        Text { text: "Som"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                     }
                     Column {
                         width: parent.width; spacing: 5; visible: root.renderedControls.controlsAudioOpen
 
                         Rectangle {
-                            width: parent.width; height: 68; radius: 11
-                            color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
+                            width: parent.width; height: 80; radius: 14
+                            color: root.controlButtonSurface; border.width: 0; border.color: root.controlButtonOutline
+                            RadioIconButton {
+                                x: 6; y: 3
+                                iconName: root.volumeMuted ? "volume-x" : "volume-2"
+                                powered: !root.volumeMuted; busy: localActionProcess.running
+                                actionLabel: root.volumeMuted ? "Reativar som" : "Silenciar som"
+                                onActivated: root.toggleVolumeMute()
+                            }
                             Text {
-                                anchors.left: parent.left; anchors.leftMargin: 16; anchors.top: parent.top; anchors.topMargin: 8
+                                anchors.left: parent.left; anchors.leftMargin: 50; anchors.top: parent.top; anchors.topMargin: 12
                                 text: root.volumeMuted ? "Volume silenciado" : "Volume de saída"
                                 color: root.volumeMuted ? root.textDim : root.textMain
                                 font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal
                             }
                             Text {
-                                anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 8
+                                anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 12
                                 text: Math.round(volumeSlider.value) + "%"
                                 color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal
                             }
@@ -6246,48 +6671,29 @@ ShellRoot {
                             }
                         }
 
-                        Row {
-                            width: parent.width; height: 30; spacing: 4
-                            MenuButton {
-                                width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste −5%"
-                                onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
-                            }
-                            MenuButton {
-                                width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste +5%"
-                                onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "-l", "1", "@DEFAULT_AUDIO_SINK@", "5%+"])
-                            }
-                        }
-                        Rectangle {
-                            width: parent.width; height: 30; radius: 7
-                            color: volumeMuteMouse.containsMouse ? root.controlButtonHover : (root.volumeMuted ? root.controlButtonActive : root.controlButtonSurface)
-                            SelectionIndicator { visible: root.volumeMuted }
-                            border.width: root.volumeMuted ? 1 : 0; border.color: root.controlButtonOutline
-                            Text { anchors.centerIn: parent; text: root.volumeMuted ? "Reativar som" : "Silenciar"; color: root.volumeMuted ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
-                            BounceMouseArea { id: volumeMuteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.toggleVolumeMute() }
-                        }
+
                     }
 
-                    Rectangle {
+                    Column {
                         visible: root.renderedControls.controlsMicrophoneOpen
-                        width: parent.width; height: visible ? 44 : 0; radius: 11
-                        color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
-                        Rectangle {
-                            anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                            width: 62; height: 28; radius: 8
-                            color: microphoneHeaderMouse.containsMouse ? root.controlButtonHover : root.controlButtonSurface
-                            Text { anchors.centerIn: parent; text: "‹ Voltar"; color: microphoneHeaderMouse.containsMouse ? "#ffffff" : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
-                            BounceMouseArea { id: microphoneHeaderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openControlSection("microphone") }
-                        }
-                        IconLabel { iconName: root.microphoneMuted ? "mic-off" : "mic"; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter; text: "Microfone"; color: root.textMain; pixelSize: root.menuBodySize }
-                        Text { anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter; text: root.microphoneText; color: root.microphoneMuted ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                        width: parent.width; spacing: 8
+                        MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("microphone") }
+                        Text { text: "Microfone"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                     }
                     Column {
                         width: parent.width; spacing: 5; visible: root.renderedControls.controlsMicrophoneOpen
                         Rectangle {
-                            width: parent.width; height: 68; radius: 11
-                            color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
-                            Text { anchors.left: parent.left; anchors.leftMargin: 16; anchors.top: parent.top; anchors.topMargin: 8; text: root.microphoneMuted ? "Microfone silenciado" : "Volume de entrada"; color: root.microphoneMuted ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
-                            Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: Math.round(microphoneSlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+                            width: parent.width; height: 80; radius: 14
+                            color: root.controlButtonSurface; border.width: 0; border.color: root.controlButtonOutline
+                            RadioIconButton {
+                                x: 6; y: 3
+                                iconName: root.microphoneMuted ? "mic-off" : "mic"
+                                powered: !root.microphoneMuted; busy: localActionProcess.running
+                                actionLabel: root.microphoneMuted ? "Reativar microfone" : "Silenciar microfone"
+                                onActivated: root.toggleMicrophoneMute()
+                            }
+                            Text { anchors.left: parent.left; anchors.leftMargin: 50; anchors.top: parent.top; anchors.topMargin: 12; text: root.microphoneMuted ? "Microfone silenciado" : "Volume de entrada"; color: root.microphoneMuted ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+                            Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 12; text: Math.round(microphoneSlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                             MenuSlider {
                                 id: microphoneSlider
                                 onKeyboardValueChanged: (nextValue) => root.commitMicrophoneVolume(nextValue)
@@ -6305,19 +6711,7 @@ ShellRoot {
                                 handle: Item { width: 0; height: 0 }
                             }
                         }
-                        Row {
-                            width: parent.width; height: 30; spacing: 4
-                            MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste −5%"; onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", "5%-"]) }
-                            MenuButton { width: (parent.width - 6) / 2; height: parent.height; label: "Ajuste +5%"; onActivated: root.localAction(["/usr/bin/wpctl", "set-volume", "-l", "1", "@DEFAULT_AUDIO_SOURCE@", "5%+"]) }
-                        }
-                        Rectangle {
-                            width: parent.width; height: 30; radius: 7
-                            color: microphoneMuteMouse.containsMouse ? root.controlButtonHover : (root.microphoneMuted ? root.controlButtonActive : root.controlButtonSurface)
-                            SelectionIndicator { visible: root.microphoneMuted }
-                            border.width: root.microphoneMuted ? 1 : 0; border.color: root.controlButtonOutline
-                            Text { anchors.centerIn: parent; text: root.microphoneMuted ? "Reativar microfone" : "Silenciar microfone"; color: root.microphoneMuted ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
-                            BounceMouseArea { id: microphoneMuteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.toggleMicrophoneMute() }
-                        }
+
                     }
 
 
@@ -6370,8 +6764,8 @@ ShellRoot {
                 Column {
                     width: parent.width; spacing: 10
                     visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsAppearanceOpen
-                    MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: { root.controlsMoreOpen = false; menuFlick.contentY = 0 } }
-                    MenuButton { outlined: true; iconName: "paintbrush"; label: "Personalização"; onActivated: { Appearance.refresh(); root.controlsAppearanceOpen = true; menuFlick.contentY = 0 } }
+                    MenuButton { height: 44; radius: 14; alignedIcon: true; outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: { root.controlsMoreOpen = false; menuFlick.contentY = 0 } }
+                    MenuButton { height: 56; radius: 14; alignedIcon: true; iconName: "paintbrush"; label: "Personalização"; onActivated: { Appearance.refresh(); personalizationPanel.section = ""; root.controlsAppearanceOpen = true; menuFlick.contentY = 0 } }
                     Column {
                         visible: root.hasExternalDisplay; width: parent.width; spacing: 6
                         Text { text: "Posição do monitor externo"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
@@ -6384,30 +6778,95 @@ ShellRoot {
                         Text { visible: root.displayLayoutError.length > 0; width: parent.width; text: root.displayLayoutError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
                     }
                     Rectangle {
-                        width: parent.width; height: 72; radius: 11; color: root.controlButtonSurface
-                        border.width: 1; border.color: root.controlButtonOutline
-                        IconLabel { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: "Sensibilidade do rato"; iconName: "mouse"; color: root.textMain; pixelSize: root.menuBodySize }
-                        Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: (mouseSensitivitySlider.value > 0 ? "+" : "") + Math.round(mouseSensitivitySlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
-                        ControlSlider {
+                        id: mouseSensitivityCard
+                        width: parent.width; height: 56; radius: 14; color: root.controlButtonSurface
+                        border.width: 0; border.color: root.controlButtonOutline
+                        BounceMouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            enabled: !mouseSensitivityProcess.running
+                            Accessible.name: "Ajustar sensibilidade do rato"
+                            onClicked: mouseSensitivitySlider.forceActiveFocus(Qt.TabFocusReason)
+                        }
+                        RadioIconButton {
+                            x: 8; anchors.verticalCenter: parent.verticalCenter
+                            iconName: "mouse"; powered: root.pointerDevices.mouse.enabled
+                            actionLabel: (root.pointerDevices.mouse.enabled ? "Desativar" : "Ativar") + " rato"
+                            busy: pointerPowerProcess.running || !root.pointerDevices.mouse.available
+                            onActivated: root.togglePointer("mouse")
+                        }
+                        Text { id: mouseSensitivityPercent; width: 46; horizontalAlignment: Text.AlignRight; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: (mouseSensitivitySlider.value > 0 ? "+" : "") + Math.round(mouseSensitivitySlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                        MenuSlider {
                             id: mouseSensitivitySlider
-                            anchors.left: parent.left; anchors.leftMargin: 12; anchors.right: parent.right; anchors.rightMargin: 12
-                            anchors.bottom: parent.bottom; anchors.bottomMargin: 3
-                            height: 36; from: -100; to: 100; stepSize: 1
+                            anchors.left: parent.left; anchors.leftMargin: 54; anchors.right: mouseSensitivityPercent.left; anchors.rightMargin: 8
+                            anchors.verticalCenter: parent.verticalCenter
+                            height: 16; topPadding: 0; bottomPadding: 0; from: -100; to: 100; stepSize: 1
                             activeFocusOnTab: true
                             Accessible.name: "Sensibilidade do rato"
-                            enabled: !mouseSensitivityProcess.running
-                            onMoved: if (!pressed) root.setMouseSensitivity(value)
+                            enabled: !mouseSensitivityProcess.running && root.pointerDevices.mouse.available && root.pointerDevices.mouse.enabled
+                            wheelEnabled: false
+                            onKeyboardValueChanged: nextValue => root.setMouseSensitivity(nextValue)
                             onPressedChanged: if (!pressed) root.setMouseSensitivity(value)
                             Binding { target: mouseSensitivitySlider; property: "value"; value: root.mouseSensitivity; when: !mouseSensitivitySlider.pressed }
                             background: Rectangle {
-                                x: mouseSensitivitySlider.leftPadding; y: (mouseSensitivitySlider.height - height) / 2
-                                width: mouseSensitivitySlider.availableWidth; height: 6; radius: 3; color: "#303644"
-                                Rectangle { width: Math.max(6, parent.width * mouseSensitivitySlider.visualPosition); height: parent.height; radius: 3; color: "#c9d2e5" }
+                                x: mouseSensitivitySlider.leftPadding
+                                y: mouseSensitivitySlider.topPadding + mouseSensitivitySlider.availableHeight / 2 - height / 2
+                                width: mouseSensitivitySlider.availableWidth; height: 5; radius: 3
+                                color: root.controlButtonOutline
+                                Rectangle {
+                                    width: mouseSensitivitySlider.visualPosition * parent.width; height: parent.height; radius: 3
+                                    color: root.textMain
+                                }
                             }
+                            handle: Item { width: 0; height: 0 }
                         }
                     }
                     Text { visible: root.mouseSensitivityError.length > 0; width: parent.width; text: root.mouseSensitivityError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
-                    MenuButton { outlined: true; iconName: "keyboard"; label: "Lista de atalhos"; onActivated: { root.shortcutsOpen = true; menuFlick.contentY = 0 } }
+                    Rectangle {
+                        id: trackpadSensitivityCard
+                        width: parent.width; height: 56; radius: 14; color: root.controlButtonSurface
+                        border.width: 0; border.color: root.controlButtonOutline
+                        BounceMouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            enabled: !trackpadSensitivityProcess.running
+                            Accessible.name: "Ajustar sensibilidade do trackpad"
+                            onClicked: trackpadSensitivitySlider.forceActiveFocus(Qt.TabFocusReason)
+                        }
+                        RadioIconButton {
+                            x: 8; anchors.verticalCenter: parent.verticalCenter
+                            iconName: "touchpad"; powered: root.pointerDevices.trackpad.enabled
+                            actionLabel: (root.pointerDevices.trackpad.enabled ? "Desativar" : "Ativar") + " trackpad"
+                            busy: pointerPowerProcess.running || !root.pointerDevices.trackpad.available
+                            onActivated: root.togglePointer("trackpad")
+                        }
+                        Text { id: trackpadSensitivityPercent; width: 46; horizontalAlignment: Text.AlignRight; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: (trackpadSensitivitySlider.value > 0 ? "+" : "") + Math.round(trackpadSensitivitySlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                        MenuSlider {
+                            id: trackpadSensitivitySlider
+                            anchors.left: parent.left; anchors.leftMargin: 54; anchors.right: trackpadSensitivityPercent.left; anchors.rightMargin: 8
+                            anchors.verticalCenter: parent.verticalCenter
+                            height: 16; topPadding: 0; bottomPadding: 0; from: -100; to: 100; stepSize: 1
+                            activeFocusOnTab: true
+                            Accessible.name: "Sensibilidade do trackpad"
+                            enabled: !trackpadSensitivityProcess.running && root.pointerDevices.trackpad.available && root.pointerDevices.trackpad.enabled
+                            wheelEnabled: false
+                            onKeyboardValueChanged: nextValue => root.setTrackpadSensitivity(nextValue)
+                            onPressedChanged: if (!pressed) root.setTrackpadSensitivity(value)
+                            Binding { target: trackpadSensitivitySlider; property: "value"; value: root.trackpadSensitivity; when: !trackpadSensitivitySlider.pressed }
+                            background: Rectangle {
+                                x: trackpadSensitivitySlider.leftPadding
+                                y: trackpadSensitivitySlider.topPadding + trackpadSensitivitySlider.availableHeight / 2 - height / 2
+                                width: trackpadSensitivitySlider.availableWidth; height: 5; radius: 3
+                                color: root.controlButtonOutline
+                                Rectangle {
+                                    width: trackpadSensitivitySlider.visualPosition * parent.width; height: parent.height; radius: 3
+                                    color: root.textMain
+                                }
+                            }
+                            handle: Item { width: 0; height: 0 }
+                        }
+                    }
+                    Text { visible: root.trackpadSensitivityError.length > 0; width: parent.width; text: root.trackpadSensitivityError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                    Text { visible: root.pointerPowerError.length > 0; width: parent.width; text: root.pointerPowerError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                    MenuButton { height: 56; radius: 14; alignedIcon: true; iconName: "list"; label: "Lista de atalhos"; onActivated: { root.shortcutsOpen = true; menuFlick.contentY = 0 } }
                 }
 
                 PersonalizationPanel {
@@ -6416,6 +6875,7 @@ ShellRoot {
                     visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && root.renderedControls.controlsAppearanceOpen && !root.renderedControls.shortcutsOpen
                     wallpapers: root.wallpaperSources
                     onBack: { root.controlsAppearanceOpen = false; menuFlick.contentY = 0 }
+                    onNavigation: menuFlick.contentY = 0
                     onChooseImage: { root.closePopup(); Appearance.chooseWallpaper() }
                 }
 

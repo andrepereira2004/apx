@@ -3,6 +3,8 @@ import QtQuick
 MouseArea {
     id: bounceMouse
     property bool keyboardActivationPending: false
+    // Shared pointer feedback for every menu action; keyboard focus stays cyan.
+    hoverEnabled: true
     onVisibleChanged: if (!visible) keyboardActivationPending = false
     // The same action is shared by pointer and keyboard activation.
     activeFocusOnTab: activeFocus || cursorShape === Qt.PointingHandCursor
@@ -27,14 +29,11 @@ MouseArea {
             }
         }
     }
-    Rectangle {
-        anchors.fill: parent
-        radius: bounceMouse.parent.radius === undefined ? 0 : bounceMouse.parent.radius
-        color: "transparent"
-        border.width: 1
-        border.color: "#55e6ff"
-        visible: bounceMouse.activeFocus || bounceMouse.keyboardActivationPending
+    MenuHover {
+        parent: bounceMouse.parent
         z: 100
+        enabled: bounceMouse.enabled
+        keyboardFocused: bounceMouse.activeFocus || bounceMouse.keyboardActivationPending
     }
 
     NumberAnimation {

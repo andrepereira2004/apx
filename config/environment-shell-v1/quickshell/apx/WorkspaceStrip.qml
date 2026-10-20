@@ -72,6 +72,7 @@ Item {
 
     BarButton {
         id: workspaceSymbol
+        border.width: 0
         grouped: strip.grouped
         height: 32
         iconName: "square-stack"

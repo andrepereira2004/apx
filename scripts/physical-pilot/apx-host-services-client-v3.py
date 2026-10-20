@@ -43,7 +43,7 @@ def main() -> int:
                                                "bluetooth-remove", "bluetooth-scan", "bluetooth-status",
                                                "capabilities", "events", "snapshot", "wifi-connect",
                                                "wifi-connectivity-check", "wifi-disconnect", "wifi-forget",
-                                               "wifi-portal-open", "wifi-scan", "wifi-status", "radio-status", "radio-airplane",
+                                               "wifi-portal-open", "wifi-scan", "wifi-status", "wifi-power", "radio-status", "radio-airplane",
                                                "calendar-load", "calendar-save", "appearance-load", "appearance-save"))
     parser.add_argument("target", nargs="?")
     parser.add_argument("--credential-stdin", action="store_true",
@@ -61,14 +61,14 @@ def main() -> int:
                "wifi-connect": "network.connect", "wifi-disconnect": "network.disconnect",
                "wifi-connectivity-check": "network.connectivity-check", "wifi-forget": "network.forget",
                "wifi-portal-open": "network.portal.open", "wifi-scan": "network.scan",
-               "wifi-status": "network.status", "radio-status": "radio.status", "radio-airplane": "radio.airplane",
+               "wifi-status": "network.status", "wifi-power": "network.power", "radio-status": "radio.status", "radio-airplane": "radio.airplane",
                "calendar-load": "calendar.load", "calendar-save": "calendar.save",
                "appearance-load": "appearance.load", "appearance-save": "appearance.save"}
     payload: dict[str, object] = {}
     if arguments.operation in {"bluetooth-connect", "bluetooth-disconnect", "bluetooth-pair", "bluetooth-remove"}:
         if arguments.target is None: parser.error("this operation requires a Bluetooth address")
         payload["address"] = arguments.target
-    if arguments.operation == "bluetooth-power":
+    if arguments.operation in {"bluetooth-power", "wifi-power"}:
         if arguments.target not in {"on", "off"}: parser.error("Bluetooth power requires on or off")
         payload["powered"] = arguments.target == "on"
     if arguments.operation == "bluetooth-pair-status":

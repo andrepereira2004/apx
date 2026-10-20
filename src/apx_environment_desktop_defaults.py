@@ -56,3 +56,91 @@ def install_flatpak_defaults(root: Path, seed: Path = SEED) -> None:
         os.chmod(p,0o644 if name.endswith(('.service', '.rules', '.conf')) else 0o755)
     if not link.is_symlink():
         link.symlink_to('../apx-flatpak-nesting-v1.service');os.lchown(link,uid,gid)
+    install_browser_passkey_defaults(root)
+
+
+PASSKEY_LAUNCHER_HELPER = r'''#!/usr/bin/python
+"""Keep APX passkey support after Environment-local Brave installations/upgrades."""
+from pathlib import Path
+import sys
+
+
+def preserve(root=Path('/')):
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError('unsafe Environment root')
+    current = root
+    for part in ('usr', 'bin', 'brave'):
+        current /= part
+        if current.is_symlink():
+            raise ValueError('linked Brave launcher path')
+    if not current.exists():
+        return
+    if not current.is_file() or current.stat().st_size > 65536:
+        raise ValueError('unsafe Brave launcher')
+    source = current.read_text()
+    marker = '# APX passkeys: filtered host Bluetooth for the active desktop.'
+    if marker in source:
+        return
+    target = 'exec /opt/brave-bin/brave '
+    if target not in source:
+        raise ValueError('Brave launcher format changed; APX passkeys requires review')
+    block = marker + '\nif [[ -S /run/apx/passkeys-browser-bus ]]; then\n    export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/apx/passkeys-browser-bus\nfi\n\n'
+    current.write_text(source.replace(target, block + target, 1))
+
+
+if __name__ == '__main__':
+    preserve(Path(sys.argv[1]) if len(sys.argv) == 2 else Path('/'))
+'''
+
+PASSKEY_PACKAGE_HOOK = '''[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = brave-bin
+
+[Action]
+Description = Preserve APX Bluetooth support for browser passkeys
+When = PostTransaction
+Exec = /usr/bin/python /usr/local/lib/apx-passkeys/preserve-launcher.py
+'''
+
+
+def install_browser_passkey_defaults(root: Path) -> None:
+    """Independent defaults, including when Brave is installed after creation.
+
+    The Host bridge authorizes only the active Environment's user. This installs
+    no Host socket, package manager access, credentials, or shared browser data.
+    """
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError('passkey defaults root is unsafe')
+    uid, gid = root.stat().st_uid, root.stat().st_gid
+    assets = {
+        'usr/local/lib/apx-passkeys/preserve-launcher.py': (PASSKEY_LAUNCHER_HELPER, 0o755),
+        'etc/pacman.d/hooks/95-apx-passkeys-bluetooth.hook': (PASSKEY_PACKAGE_HOOK, 0o644),
+    }
+    for relative in assets:
+        current = root
+        for part in Path(relative).parent.parts:
+            current /= part
+            if current.is_symlink() or (current.exists() and not current.is_dir()):
+                raise ValueError('passkey defaults parent is unsafe')
+        target = root / relative
+        if target.is_symlink() or (target.exists() and not target.is_file()):
+            raise ValueError('passkey defaults destination is unsafe')
+    # Validate the launcher before writing hooks; skip absent Brave, which its
+    # future package-install hook will configure after pacman installs it.
+    namespace = {'__name__': 'apx_passkey_launcher'}
+    exec(compile(PASSKEY_LAUNCHER_HELPER, '<apx-passkey-launcher>', 'exec'), namespace)
+    namespace['preserve'](root)
+    for relative, (content, mode) in assets.items():
+        current = root
+        for part in Path(relative).parent.parts:
+            current /= part
+            if not current.exists():
+                current.mkdir(mode=0o755)
+                current.chmod(0o755)
+                os.chown(current, uid, gid)
+        target = root / relative
+        target.write_text(content)
+        os.chown(target, uid, gid)
+        target.chmod(mode)

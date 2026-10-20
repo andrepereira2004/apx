@@ -1,0 +1,121 @@
+{
+  "bluetooth": {
+    "visible": true,
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": true,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "keyboard_items": 3
+  },
+  "sound": {
+    "visible": true,
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": true,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "keyboard_items": 3
+  },
+  "microphone": {
+    "visible": true,
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": true,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "keyboard_items": 3
+  },
+  "brightness": {
+    "visible": true,
+    "displayed_controls": {
+      "controlsBrightnessOpen": true,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "keyboard_items": 6
+  },
+  "more": {
+    "visible": true,
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": true,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "keyboard_items": 4
+  },
+  "personalization": {
+    "visible": true,
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": true,
+      "controlsAppearanceOpen": true,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "keyboard_items": 4
+  },
+  "personalization-section": {
+    "visible": true,
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": true,
+      "controlsAppearanceOpen": true,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "keyboard_items": 13
+  }
+}

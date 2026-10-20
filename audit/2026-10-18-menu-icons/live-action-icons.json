@@ -1,0 +1,26 @@
+{
+  "open": {
+    "icon": "copy-plus.svg",
+    "stroke": "#77c99a"
+  },
+  "terminate": {
+    "icon": "x.svg",
+    "stroke": "#e4b75c"
+  },
+  "nvidia": {
+    "icon": "cpu.svg",
+    "stroke": "#77c99a"
+  },
+  "uninstall": {
+    "icon": "trash-2.svg",
+    "stroke": "#d98989"
+  },
+  "confirm": {
+    "icon": "check.svg",
+    "stroke": "#e4b75c"
+  },
+  "cancel": {
+    "icon": "undo-2.svg",
+    "stroke": "#9ba3ac"
+  }
+}

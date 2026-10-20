@@ -33,6 +33,8 @@ def status() -> dict:
         "available_networks": [item["ssid"] for item in details],
         "known_networks": [item["ssid"] for item in details if item.get("known")],
         "network_details": details,
+        "wifi_powered": network.get("powered", True),
+        "wifi_hardware_blocked": network.get("hardware_blocked", False),
         "network_connectivity": network.get("connectivity", "unknown"),
         "network_connectivity_checked_at": network.get("connectivity_checked_at"),
         "network_name": network.get("network"),
@@ -84,8 +86,8 @@ def main() -> int:
     elif operation == "wifi-portal-open" and target is None: result = portal_open()
     elif operation in {"wifi-scan", "wifi-disconnect", "wifi-connectivity-check"} and target is None:
         result = data((V3, operation))
-    elif operation in {"bluetooth-power", "bluetooth-connect", "bluetooth-disconnect"} and target is not None:
-        mapped = {"bluetooth-power": "bluetooth-power", "bluetooth-connect": "bluetooth-connect",
+    elif operation in {"wifi-power", "bluetooth-power", "bluetooth-connect", "bluetooth-disconnect"} and target is not None:
+        mapped = {"wifi-power": "wifi-power", "bluetooth-power": "bluetooth-power", "bluetooth-connect": "bluetooth-connect",
                   "bluetooth-disconnect": "bluetooth-disconnect"}[operation]
         result = data((V3, mapped, target))
     else: raise RuntimeError("Operação da interface não suportada")

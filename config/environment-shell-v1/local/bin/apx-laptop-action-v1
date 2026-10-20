@@ -45,11 +45,8 @@ def files() -> int:
     if updater:
         subprocess.run([updater], check=False, timeout=5)
     subprocess.run(["/home/apx/.local/bin/apx-application-catalog-v1"], check=False, timeout=10)
-    # Runs as the Environment's desktop user. Repeated shortcuts focus the
-    # existing file window instead of depending on a long-lived Thunar process.
-    code = ('local w = hl.get_window("class:^(thunar|Thunar|org.xfce.Thunar)$"); '
-            'if w then hl.dispatch(hl.dsp.focus({window=w})) '
-            'else hl.exec_cmd("env -u GIO_USE_VFS USER=apx LOGNAME=apx HOME=/home/apx /usr/bin/thunar /home/apx") end')
+    # Ask Thunar for a fresh window on every shortcut invocation.
+    code = 'hl.exec_cmd("env -u GIO_USE_VFS USER=apx LOGNAME=apx HOME=/home/apx /usr/bin/thunar --window /home/apx")'
     try:
         result = subprocess.run((HYPRCTL, "eval", code), capture_output=True,
                                 text=True, timeout=3, check=False)
@@ -279,7 +276,7 @@ def main() -> int:
     actions = {
         "files": files,
         "airplane-status": airplane_status,
-        "apps": lambda: (feedback("hotkeyApps") if rofi else feedback("hotkeyFailed"), detached([rofi, "-show", "drun"]) if rofi else 0)[1],
+        "apps": lambda: (feedback("hotkeyApps") if rofi else feedback("hotkeyFailed"), detached(["/usr/bin/env", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", rofi, "-modi", "apps,files", "-show", "apps", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary"]) if rofi else 0)[1],
         "calculator": calculator,
         "display-cycle": display_cycle,
         "display-left": lambda: display_layout("left"),

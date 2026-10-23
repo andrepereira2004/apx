@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "allocated_bytes": 32943968256,
+      "committed_to_git": false,
+      "kind": "generated-binary",
+      "logical_bytes": 512110190592,
+      "path": "audit/2026-09-21-input-monitors/windows-lab/disk.raw",
+      "retained_on_host": true
+    },
+    {
+      "committed_to_git": false,
+      "file_count": 1841,
+      "kind": "third-party-tool-cache",
+      "path": "audit/2026-09-21-input-monitors/windows-lab-tools",
+      "retained_on_host": true
+    },
+    {
+      "allocated_bytes": 198238208,
+      "committed_to_git": false,
+      "kind": "generated-binary",
+      "logical_bytes": 198238128,
+      "path": "audit/2026-09-21-input-monitors/migration-lab/uki-build/maintenance-relocate/maintenance.efi",
+      "retained_on_host": true
+    }
+  ],
+  "profile": "apx-git-excluded-disposable-lab-artifacts-v1"
+}

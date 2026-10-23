@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "stdout": "{\n  \"state\": \"ready\",\n  \"shell_assets_verified\": 185,\n  \"package_cache_bytes_removed\": 685185411,\n  \"retention\": \"Keep for owner hands-on test\",\n  \"human_password\": \"Owner chooses locally on first SDL launch; never recorded here\"\n}\n",
+  "stderr": "",
+  "request_id": "0671f6c52d815c2c"
+}

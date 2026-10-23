@@ -1,0 +1,12 @@
+{
+  "artifacts_removed": true,
+  "contract_generation_matches": true,
+  "display_driver_directories": 2,
+  "efi_published": false,
+  "embedded_files_extracted_and_hash_matched": true,
+  "original_setup_media_unchanged": true,
+  "profile": "apx-native-v3-disposable-winpe-build",
+  "source_media_mounted_read_only": true,
+  "tested_at_utc": "2026-09-23T18:17:49Z",
+  "wim_bytes": 625564900
+}

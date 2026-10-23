@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Path
+Target = usr/share/applications/*.desktop
+
+[Action]
+Description = Atualizar o menu de aplicações deste Environment
+When = PostTransaction
+Exec = /usr/bin/runuser -u apx -- /usr/bin/env HOME=/home/apx /home/apx/.local/bin/apx-application-catalog-v1

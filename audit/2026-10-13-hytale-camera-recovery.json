@@ -1,0 +1,35 @@
+{
+  "active": {
+    "generation": "97014bb7-aa82-41fd-aaff-2833e2e41033",
+    "name": "hytale",
+    "pid": 640690,
+    "profile": "apx-active-graphical-environment-v1",
+    "role": "graphical-base",
+    "schema": 1,
+    "unit": "apx-graphical-hytale-97014bb7.service"
+  },
+  "tests": {
+    "common_engine": 29,
+    "workload": 5,
+    "face_auth": 9
+  },
+  "live_sha256": {
+    "/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py": "c78966929d91c7ca7a8d05fb6151c5754a79a09774a1499b30e6bb8825142b40",
+    "/usr/lib/apx/apx-graphical-environment-v1.py": "b390d2f7679b7320c29b5ce7fb54ece4f950b3767bb3e182dbaf2ec325ea5ca4"
+  },
+  "recovery_journal": "Oct 13 11:21:53 apx-host systemd[1]: Started [systemd-run] /usr/lib/apx/apx-graphical-environment-v1.py --environment hytale --interactive.\nOct 13 11:21:53 apx-host apx-graphical-environment-v1.py[640418]: APX: GPU request nvidia differs from internal-panel routing; using hybrid\nOct 13 11:21:53 apx-host apx-graphical-environment-v1.py[640418]: APX: internal camera unavailable; facial authentication unavailable, use password.\nOct 13 11:21:55 apx-host apx-graphical-environment-v1.py[640418]: APX: a mudar para tty2. Super+Q abre Kitty; Super+M volta \u00e0 recupera\u00e7\u00e3o Host.\nOct 13 11:21:55 apx-host apx-graphical-environment-v1.py[640418]: APX: Ctrl+Alt+F1 volta visualmente ao Host; o watchdog apenas monitoriza.\n",
+  "owner_unlock_observed": false,
+  "followup": {
+    "return_rejection": "n\u00e3o existe uma troca supervisionada para concluir",
+    "cause": "Agent launched recovery workload directly without switch supervisor",
+    "recovery": "Canonical switch runner --relaunch-hub",
+    "hub_active": {
+      "generation": "6f63f9a9-daea-40d1-969f-e25ff0752f4d",
+      "pid": 645993,
+      "profile": "apx-official-hub-graphical-v1",
+      "unit": "apx-official-hub-graphical-6f63f9a9.service"
+    },
+    "shell": "quickshell",
+    "configerrors": []
+  }
+}

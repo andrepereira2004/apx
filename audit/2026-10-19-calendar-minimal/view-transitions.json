@@ -1,0 +1,20 @@
+[
+  {
+    "view": "year",
+    "animated": true,
+    "during_opacity": 0.1516183703703704,
+    "during_offset": 8.483816296296297
+  },
+  {
+    "view": "day",
+    "animated": true,
+    "during_opacity": 0.2870802962962963,
+    "during_offset": -7.129197037037037
+  },
+  {
+    "view": "month",
+    "animated": true,
+    "during_opacity": 0.1516183703703704,
+    "during_offset": 8.483816296296297
+  }
+]

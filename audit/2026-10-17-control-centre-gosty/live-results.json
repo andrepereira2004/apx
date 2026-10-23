@@ -1,0 +1,260 @@
+{
+  "greeting": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 546,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 340,
+    "visual_height": 546,
+    "visual_x": 932,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 0,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:12",
+      "JetBrains Mono:14"
+    ],
+    "displayed_controls": {
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 0,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "ghost_visible": true,
+    "ghost_message": "Ol\u00e1, Andr\u00e9. O calend\u00e1rio entrou num ritmo diferente; o menu acompanha.",
+    "ghost_width": 332,
+    "media_summary_width": 17,
+    "media_summary_x": -9,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "media": {
+        "x": 719,
+        "y": 7,
+        "width": 0,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 11,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "connectivity": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 480,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 340,
+    "visual_height": 308,
+    "visual_x": 932,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 10,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:12",
+      "JetBrains Mono:14"
+    ],
+    "displayed_controls": {
+      "controlsConnectivityOpen": true,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 0,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "ghost_visible": true,
+    "ghost_message": "Ol\u00e1, Andr\u00e9. O calend\u00e1rio entrou num ritmo diferente; o menu acompanha.",
+    "ghost_width": 332,
+    "media_summary_width": 17,
+    "media_summary_x": -9,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "media": {
+        "x": 719,
+        "y": 7,
+        "width": 0,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 4,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "wifi_navigation": true,
+  "bluetooth_navigation": true,
+  "expired": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 546,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 340,
+    "visual_height": 546,
+    "visual_x": 932,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 0,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:12",
+      "JetBrains Mono:14"
+    ],
+    "displayed_controls": {
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 0,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "ghost_visible": false,
+    "ghost_message": "Ol\u00e1, Andr\u00e9. O calend\u00e1rio entrou num ritmo diferente; o menu acompanha.",
+    "ghost_width": 0,
+    "media_summary_width": 17,
+    "media_summary_x": -9,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "media": {
+        "x": 1057,
+        "y": 7,
+        "width": 0,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 11,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "configerrors": ""
+}

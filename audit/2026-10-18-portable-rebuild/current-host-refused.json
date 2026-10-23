@@ -1,0 +1,5 @@
+{
+  "exit_code": 2,
+  "stdout": "",
+  "stderr": "APX full installation refused/failed: existing APX state or destination: /var/lib/apx; installation refused\n"
+}

@@ -1,0 +1,5 @@
+[Default Applications]
+inode/directory=thunar.desktop
+
+[Added Associations]
+inode/directory=thunar.desktop;

@@ -1,0 +1,41 @@
+{
+  "active_animation_configuration": {
+    "layersIn": {
+      "name": "layersIn",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 1.6,
+      "style": "fade"
+    },
+    "layersOut": {
+      "name": "layersOut",
+      "overridden": true,
+      "bezier": "linear",
+      "enabled": true,
+      "speed": 1.2,
+      "style": "fade"
+    },
+    "fadeLayersIn": {
+      "name": "fadeLayersIn",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 1.6,
+      "style": ""
+    },
+    "fadeLayersOut": {
+      "name": "fadeLayersOut",
+      "overridden": true,
+      "bezier": "linear",
+      "enabled": true,
+      "speed": 1.2,
+      "style": ""
+    }
+  },
+  "config_errors": [],
+  "backup": "/var/lib/apx/backups/20261008T223549Z-rofi-menu-animation",
+  "scope": "overlay layer enter/exit in four workloads and independent seed; windows/workspaces/Hub not modified",
+  "reference_menu_duration_ms": 160,
+  "physical_owner_animation_acceptance": "pending"
+}

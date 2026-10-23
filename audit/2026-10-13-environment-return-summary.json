@@ -1,0 +1,85 @@
+{
+  "physical_runs": [
+    {
+      "environment": "hytale",
+      "mode": "missing",
+      "return_reply": "{\"accepted\": true, \"direction\": \"workload-to-hub\", \"source\": \"hytale\", \"unit\": \"apx-environment-return-705ff1c1d0.service\"}",
+      "hub": {
+        "generation": "6f63f9a9-daea-40d1-969f-e25ff0752f4d",
+        "pid": 687348,
+        "profile": "apx-official-hub-graphical-v1",
+        "unit": "apx-official-hub-graphical-6f63f9a9.service"
+      },
+      "passed": true
+    },
+    {
+      "environment": "minecraft",
+      "mode": "stale",
+      "return_reply": "{\"accepted\": true, \"direction\": \"workload-to-hub\", \"source\": \"minecraft\", \"unit\": \"apx-environment-return-ecc1620ae9.service\"}",
+      "hub": {
+        "generation": "6f63f9a9-daea-40d1-969f-e25ff0752f4d",
+        "pid": 689213,
+        "profile": "apx-official-hub-graphical-v1",
+        "unit": "apx-official-hub-graphical-6f63f9a9.service"
+      },
+      "passed": true
+    },
+    {
+      "environment": "steam",
+      "mode": "missing",
+      "return_reply": "{\"accepted\": true, \"direction\": \"workload-to-hub\", \"source\": \"steam\", \"unit\": \"apx-environment-return-f1d87c8a94.service\"}",
+      "hub": {
+        "generation": "6f63f9a9-daea-40d1-969f-e25ff0752f4d",
+        "pid": 691107,
+        "profile": "apx-official-hub-graphical-v1",
+        "unit": "apx-official-hub-graphical-6f63f9a9.service"
+      },
+      "passed": true
+    },
+    {
+      "environment": "faculdade",
+      "mode": "missing",
+      "return_reply": "{\"accepted\": true, \"direction\": \"workload-to-hub\", \"source\": \"faculdade\", \"unit\": \"apx-environment-return-62014e4ced.service\"}",
+      "hub": {
+        "generation": "6f63f9a9-daea-40d1-969f-e25ff0752f4d",
+        "pid": 693084,
+        "profile": "apx-official-hub-graphical-v1",
+        "unit": "apx-official-hub-graphical-6f63f9a9.service"
+      },
+      "passed": true
+    },
+    {
+      "environment": "hytale",
+      "mode": "supervised",
+      "return_reply": "{\"accepted\": true, \"direction\": \"workload-to-hub\", \"source\": \"hytale\", \"unit\": \"apx-graphical-hytale-97014bb7.service\"}",
+      "hub": {
+        "generation": "6f63f9a9-daea-40d1-969f-e25ff0752f4d",
+        "pid": 695018,
+        "profile": "apx-official-hub-graphical-v1",
+        "unit": "apx-official-hub-graphical-6f63f9a9.service"
+      },
+      "passed": true
+    }
+  ],
+  "subsequent_owner_session": {
+    "monitor": "eDP-1",
+    "shell": "quickshell",
+    "keyboards": 3,
+    "configerrors": "",
+    "active": {
+      "generation": "97014bb7-aa82-41fd-aaff-2833e2e41033",
+      "name": "hytale",
+      "pid": 697036,
+      "profile": "apx-active-graphical-environment-v1",
+      "role": "graphical-base",
+      "schema": 1,
+      "unit": "apx-graphical-hytale-97014bb7.service"
+    }
+  },
+  "unit_tests_passed": 80,
+  "known_unrelated_test": "Windows hook assertion expects SetWindowsHookEx despite owner disabling hook on 2026-10-05; excluded from focused run",
+  "installed_sha256": {
+    "/usr/lib/apx/apx-environment-switch-v1.py": "4990efb765bb991cb7fa871fecbf2c9574c9bcf1f05be24ae2e02dcaa12afe34",
+    "/usr/lib/apx/apx-environment-switch-runner-v1.py": "579010c75cdfaa0b654c0ddd1237aeaf223f498c8a6bda5f381c67189939e5fe"
+  }
+}

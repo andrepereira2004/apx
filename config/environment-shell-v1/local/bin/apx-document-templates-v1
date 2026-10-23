@@ -1,0 +1,31 @@
+#!/usr/bin/python
+"""Initialize small document templates without replacing personal templates."""
+from pathlib import Path
+from gi.repository import GLib
+
+TEMPLATES = {
+    'Documento de texto.txt': '',
+    'Nota.md': '# Título\n\n',
+    'Tabela.csv': 'Nome,Descrição,Valor\n',
+    'Página HTML.html': '<!doctype html>\n<html lang="pt">\n<head>\n  <meta charset="utf-8">\n  <title>Título</title>\n</head>\n<body>\n  <h1>Título</h1>\n</body>\n</html>\n',
+}
+
+def main():
+    home = Path.home().resolve()
+    configured = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_TEMPLATES)
+    target = Path(configured) if configured else home / 'Templates'
+    # XDG pointing at Home means templates are disabled. Honor that choice.
+    if target == home or not target.resolve().is_relative_to(home):
+        return
+    if any(p.is_symlink() for p in (target, *target.parents) if p != home and p.is_relative_to(home)):
+        return
+    target.mkdir(parents=True, exist_ok=True)
+    for name, content in TEMPLATES.items():
+        try:
+            with (target / name).open('x', encoding='utf-8') as stream:
+                stream.write(content)
+        except FileExistsError:
+            pass
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,24 @@
+{
+  "authorization": "Owner explicitly approved quota rescan, necessary cleanup and general system diagnosis on 2026-10-13",
+  "quota_consistent": true,
+  "scrub_finished_no_errors": true,
+  "host_and_five_environment_package_db_checks_passed": true,
+  "host_and_five_environment_missing_file_checks_passed": true,
+  "failed_units_at_final_check": 0,
+  "cleanup_live_bytes_removed": 9485164544,
+  "physical_free_space_increase_not_claimed": "Retained Btrfs snapshots still reference removed distributions. df remains around 30 GiB free.",
+  "phone_ip_pending": true,
+  "network_exception_applied": false,
+  "recovery_paths": [
+    "/var/lib/apx/backups/20261013-system-health",
+    "/var/lib/apx/backups/20261013-localsend"
+  ],
+  "remaining": [
+    "USB camera intermittent protocol error -71",
+    "autovt@tty1 alias error while APX masks getty; boot recovery integration needs review",
+    "full-qgroup lifecycle performance/inconsistency recurrence",
+    "large retained native Windows migration images pending validation of their rollback role",
+    "weekly snapshot reserve currently below 30 GiB",
+    "LocalSend connectivity plugin assumes NetworkManager; phone transfer and lifecycle not validated"
+  ]
+}

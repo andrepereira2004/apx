@@ -1,0 +1,30 @@
+{
+  "repository": "https://github.com/lucide-icons/lucide",
+  "commit": "fa238cf2787d64393b74121631b518cee0c909c2",
+  "icons": [
+    "clock",
+    "computer",
+    "disc",
+    "eject",
+    "folder",
+    "folder-down",
+    "folder-open",
+    "folder-search",
+    "folder-symlink",
+    "hard-drive",
+    "house",
+    "image",
+    "monitor",
+    "music",
+    "network",
+    "printer",
+    "smartphone",
+    "trash-2",
+    "usb",
+    "video"
+  ],
+  "overrides": {
+    "music": "0.468.0",
+    "trash-2": "0.468.0"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "action": "create",
+  "description": "Teste manual do APX numa VM Arch; manter ate o utilizador terminar",
+  "desktop_modules": [
+    "system",
+    "cli-aur",
+    "graphical",
+    "desktop-integration",
+    "locale-input",
+    "network",
+    "bluetooth",
+    "audio",
+    "graphics",
+    "power",
+    "devices-storage",
+    "files",
+    "web-documents",
+    "multimedia",
+    "communication",
+    "printing-scanning",
+    "shortcuts"
+  ],
+  "desktop_preset": "intermediate",
+  "digest": "956c9c7ee0808e56c08be29407e74fc448be4f2fc00ea2f6b2fa075354dd4de5",
+  "effects": [
+    "root",
+    "home",
+    "configure",
+    "publish"
+  ],
+  "generation": "0de1256b-dc39-4b67-82cc-30363819c36a",
+  "name": "teste",
+  "role": "graphical-base",
+  "schema": 1,
+  "update_policy": "follow-host"
+}

@@ -1,0 +1,11 @@
+{
+  "tests": 8,
+  "failures": [
+    "test_apx_control_center_scale.ControlCenterScaleTests.test_audio_slider_updates_volume_while_dragging",
+    "test_apx_control_center_scale.ControlCenterScaleTests.test_control_center_matches_desktop_scale_without_fractional_resampling",
+    "test_apx_control_center_scale.ControlCenterScaleTests.test_every_keyboard_popup_animates_its_bar_button",
+    "test_apx_control_center_scale.ControlCenterScaleTests.test_popup_opening_uses_one_explicit_forward_animation",
+    "test_apx_control_center_scale.ControlCenterScaleTests.test_workload_overview_has_room_for_all_actions"
+  ],
+  "errors": []
+}

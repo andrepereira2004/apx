@@ -1,0 +1,151 @@
+{
+  "wifi": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 480,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 9,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "bluetooth": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 320,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 3,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "volume": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 340,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 7,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "calendar": {
+    "kind": "calendar",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 500,
+    "height": 410,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 38,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "date",
+    "calendar_focus_key": "2026-10-16",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "environments": {
+    "kind": "environments",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 460,
+    "height": 214,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 1,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "date",
+    "calendar_focus_key": "2026-10-16",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "battery": {
+    "kind": "battery",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 650,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "keyboard_items": 4,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "date",
+    "calendar_focus_key": "2026-10-16",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "/root/apx-host-development-mode-v1/apx/config/environment-shell-v1": {
+    "pinned_assets_verified": 64
+  },
+  "/usr/share/apx/config-seeds/environment-shell-v1": {
+    "pinned_assets_verified": 64
+  },
+  "hub": "installed bar and components verified",
+  "faculdade": "installed bar and components verified",
+  "hytale": "installed bar and components verified",
+  "minecraft": "installed bar and components verified",
+  "steam": "installed bar and components verified"
+}

@@ -1,0 +1,9 @@
+{
+  "primary_activation_creates_brave_window": true,
+  "new_windows": [
+    "0x5590e2069860"
+  ],
+  "existing_windows_preserved": true,
+  "launcher_closes_after_launch": true,
+  "test_window_closed": true
+}

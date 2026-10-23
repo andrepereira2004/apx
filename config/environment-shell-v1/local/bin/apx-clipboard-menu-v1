@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+import subprocess
+rows = subprocess.run(['/usr/bin/cliphist','list'], capture_output=True, check=True).stdout
+choice = subprocess.run(['/usr/bin/rofi','-dmenu','-p','Histórico de copiar'], input=rows, capture_output=True)
+if choice.returncode == 0 and choice.stdout.strip():
+    decoded = subprocess.run(['/usr/bin/cliphist','decode'], input=choice.stdout, capture_output=True, check=True).stdout
+    subprocess.run(['/usr/bin/wl-copy'], input=decoded, check=True)

@@ -1,0 +1,65 @@
+{
+  "environment": "faculdade",
+  "libreoffice_removed": true,
+  "creation_office_option_removed": true,
+  "manager_version": "0.1.11-rc.2",
+  "runner_version": "0.1.11-rc.2",
+  "office_installation": "Microsoft Office installed; local configure exited 0 after native MSXML6 repair",
+  "initial_manager_sha256": "bc44466397d8d40e3889d39945c96906bf1cc42917444addcc9cdee29f0ae123",
+  "initial_runner_archive_sha256": "402b8fb947825f1cde2b10d1d846ae10458ea077089e4773143a73f6baae8fcb",
+  "menu_backup": "/var/lib/apx/backups/20261012T111043Z-remove-libreoffice-menu",
+  "removal_backup": "/var/lib/apx/backups/20261012T111058Z-faculdade-before-libreoffice-removal",
+  "tests_passed": 62,
+  "preexisting_test_failure": "owner-disabled Windows keyboard hook assertion",
+  "graphics_selection": "Explicit NVIDIA GLX/EGL for installer",
+  "local_prefix": "/home/apx/.wine4office-offline",
+  "office_version": "16.0.20326.20144",
+  "office_languages": [
+    "pt-pt",
+    "en-us"
+  ],
+  "actual_runner": "Bottles Soda 11.0-29-experimental",
+  "runner_archive_sha256": "e8fc11761604a6f6832fdae84b56841656921e9f234475035035e616d942d76d",
+  "installed_apps": [
+    "word",
+    "excel",
+    "powerpoint",
+    "onenote"
+  ],
+  "validated_launches": [
+    "Microsoft Word",
+    "Microsoft Excel",
+    "Microsoft PowerPoint"
+  ],
+  "validation_boundary": "Processes and compositor windows reached Office setup/sign-in; session locked, no editing or activation validation",
+  "account_login_performed": false,
+  "office_prefix": "/home/apx/.wine4office-offline",
+  "added_arch_packages": [
+    "lib32-glibc",
+    "lib32-gcc-libs",
+    "lib32-fontconfig",
+    "lib32-freetype2",
+    "lib32-zlib",
+    "lib32-libpng",
+    "lib32-bzip2",
+    "lib32-brotli",
+    "lib32-expat"
+  ],
+  "native_msxml6": "Microsoft KB2957482; upstream Bottles recipe; md5 7efa46a2a22a00b2df30c84d269caef3",
+  "pefile": "2024.8.26; environment-local temporary helper dependency",
+  "future_update_note": "APX-owned desktop entries protect the launcher from automatic Wine4Office refresh; runner/build changes still require revalidation",
+  "desktop_sha256": {
+    "word": "56a2fb6fd460ed9656e0a39cc0b92221472106ba4196374db4c479e7ad85612e",
+    "excel": "1b4783a86db3e8e067a74e3c9124e7aed767a737dda5b98bf7d7d9e3371a04a2",
+    "powerpoint": "dd50eab803ab239712eec0d114bd87ee0ad38d4d19ce0033ab7a8b54ee7428af",
+    "onenote": "d3c278a6b95361d02eef0d5cee2af5921a85d2f4eece688aaac22e15f121165e"
+  },
+  "launcher": "~/.local/bin/apx-microsoft-office-v1",
+  "launcher_source": "config/environment-office-v1/local/bin/apx-microsoft-office-v1",
+  "desktop_ownership": "X-APX-Office-Managed=true; X-Wine4Office-Managed=false",
+  "windows_executable_identity_required": true,
+  "click_to_run_startup": "60-second Wine-server grace plus service readiness check",
+  "cold_launch_boundary": "Word reached Unlicensed Product/sign-in through direct Windows-path launch; later windows disappeared, owner close versus startup failure awaits clarification",
+  "agent_entered_microsoft_credentials": false,
+  "launcher_sha256": "ae08a86908f2c05835636767d9ef53fdeaa3c93c306d313460b606df4902a09b"
+}

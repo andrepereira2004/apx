@@ -1,0 +1,11 @@
+[Unit]
+Description=Check APX virtual network failure state
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=30s
+AccuracySec=2s
+Unit=apx-network-recovery-v1.service
+
+[Install]
+WantedBy=timers.target

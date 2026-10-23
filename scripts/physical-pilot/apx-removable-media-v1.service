@@ -1,0 +1,13 @@
+[Unit]
+Description=APX owner-approved removable PEN bridge
+After=systemd-udevd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/apx/apx-removable-media-v1.py watch
+Restart=always
+RestartSec=2s
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

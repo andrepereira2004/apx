@@ -1,0 +1,534 @@
+--- a/shell.qml
++++ b/shell.qml
+@@ -57,6 +57,24 @@
+             }
+         }
+         onExited: (code, status) => { root.displayLayoutError = code === 0 ? "" : "Não foi possível alterar os ecrãs." }
++    }
++    function setMouseSensitivity(value) {
++        if (mouseSensitivityProcess.running) return
++        mouseSensitivityError = ""
++        mouseSensitivityProcess.command = ["/home/apx/.local/bin/apx-mouse-sensitivity-v1", "set", String(Math.round(value))]
++        mouseSensitivityProcess.running = true
++    }
++    Process {
++        id: mouseSensitivityStatusProcess
++        command: ["/home/apx/.local/bin/apx-mouse-sensitivity-v1", "get"]
++        running: true
++        stdout: StdioCollector { onStreamFinished: root.mouseSensitivity = Number(text.trim()) || 0 }
++    }
++    Process {
++        id: mouseSensitivityProcess
++        stdout: StdioCollector { onStreamFinished: root.mouseSensitivity = Number(text.trim()) || 0 }
++        stderr: StdioCollector { onStreamFinished: if (text.trim().length) root.mouseSensitivityError = text.trim() }
++        onExited: (code, status) => { if (code !== 0 && !root.mouseSensitivityError.length) root.mouseSensitivityError = "Não foi possível alterar a sensibilidade." }
+     }
+ 
+     property color cyan: "#55e6ff"
+@@ -417,6 +435,7 @@
+     property bool airplaneMode: false
+     property bool powerConfirmOpen: false
+     property bool powerBusy: false
++    property bool powerTransitionActive: false
+     property string powerAction: ""
+     property string powerToken: ""
+     property string powerMessage: ""
+@@ -451,6 +470,9 @@
+     property string eventError: ""
+     property bool controlsWifiOpen: false
+     property bool shortcutsOpen: false
++    property bool controlsMoreOpen: false
++    property int mouseSensitivity: 0
++    property string mouseSensitivityError: ""
+     readonly property var shortcutList: [
+         { keys: "Super + R", action: "Abrir aplicações" },
+         { keys: "Super + E", action: "Environments" },
+@@ -483,6 +505,10 @@
+     property bool controlsMicrophoneOpen: false
+     property var audioDevices: ({ sinks: [], sources: [] })
+     property string audioDevicesError: ""
++    property string wifiUsername: ""
++    property string wifiDomain: ""
++    property string wifiCaCert: "/etc/ssl/certs/ca-certificates.crt"
++    property string wifiEnterpriseMethod: "PEAP"
+     property string wifiSelectedSsid: ""
+     property string wifiPassword: ""
+     property string wifiMessage: ""
+@@ -557,7 +583,12 @@
+         return (hostState.open_networks || []).indexOf(name) >= 0
+     }
+ 
++    function wifiIsEnterprise(name) {
++        return wifiDetails(name).security === "enterprise"
++    }
++
+     function wifiSecurityLabel(name) {
++        if (wifiIsEnterprise(name)) return "EMPRESARIAL"
+         if (wifiIsOpen(name)) return "ABERTA"
+         if (wifiIsKnown(name)) return "GUARDADA"
+         return "PALAVRA-PASSE"
+@@ -598,6 +629,8 @@
+         wifiMessage = ""
+         wifiSelectedSsid = name
+         wifiPassword = ""
++        wifiUsername = ""
++        wifiDomain = ""
+         wifiPasswordVisible = true
+         if (!wifiIsKnown(name) && !wifiIsOpen(name))
+             wifiPasswordInput.forceActiveFocus()
+@@ -605,6 +638,8 @@
+ 
+     function cancelWifiPassword() {
+         wifiPassword = ""
++        wifiUsername = ""
++        wifiDomain = ""
+         wifiSelectedSsid = ""
+         wifiPasswordVisible = false
+     }
+@@ -615,12 +650,19 @@
+             hostAction("wifi-connect", wifiSelectedSsid)
+             return
+         }
+-        if (wifiCredentialProcess.running || wifiPassword.length < 8) {
+-            wifiMessage = wifiPassword.length < 8 ? "A palavra-passe deve ter pelo menos 8 caracteres." : "Ligação em curso…"
++        var enterprise = wifiIsEnterprise(wifiSelectedSsid)
++        if (wifiCredentialProcess.running) return
++        if (enterprise && (!wifiUsername.length || !wifiPassword.length || !wifiDomain.length)) {
++            wifiMessage = "Introduz utilizador, palavra-passe e domínio do servidor."
+             return
+         }
++        if (!enterprise && wifiPassword.length < 8) {
++            wifiMessage = "A palavra-passe deve ter pelo menos 8 caracteres."
++            return
++        }
+         wifiMessage = "A ligar a " + wifiSelectedSsid + "…"
+-        wifiCredentialProcess.command = ["/run/apx/host-services-client-v3.py", "wifi-connect", wifiSelectedSsid, "--credential-stdin"]
++        wifiCredentialProcess.command = ["/run/apx/host-services-client-v3.py", "wifi-connect", wifiSelectedSsid,
++                                         enterprise ? "--enterprise-stdin" : "--credential-stdin"]
+         wifiCredentialProcess.running = true
+     }
+ 
+@@ -696,6 +738,7 @@
+         controlsBluetoothOpen = section === "bluetooth" && !wasOpen
+         controlsAudioOpen = section === "audio" && !wasOpen
+         controlsMicrophoneOpen = section === "microphone" && !wasOpen
++        if (controlsWifiOpen && !wifiConnectivityProcess.running) wifiConnectivityProcess.running = true
+         if (controlsAudioOpen)
+             Qt.callLater(function() { if (root.menuKeyboardNavigation) volumeSlider.forceActiveFocus(); else popupBackground.forceActiveFocus() })
+         else if (controlsMicrophoneOpen)
+@@ -735,7 +778,7 @@
+         bluetoothPairPasskey = payload.passkey === undefined || payload.passkey === null ? "" : String(payload.passkey)
+         bluetoothMessage = payload.message || ""
+         if (bluetoothPairPhase === "completed") {
+-            bluetoothMessage = bluetoothPairName + " emparelhado com sucesso."
++            bluetoothMessage = payload.message || bluetoothPairName + " emparelhado com sucesso."
+             bluetoothPairPin = ""
+             hostStatusProcess.running = true
+         } else if (bluetoothPairPhase === "failed") {
+@@ -1256,6 +1299,7 @@
+ 
+     function closePopup() {
+         shortcutsOpen = false
++        controlsMoreOpen = false
+         clearPendingMenuFocus()
+         editingMenuSlider = null
+         popupKeyboardRequested = false
+@@ -1360,6 +1404,7 @@
+         }
+         clearPendingMenuFocus()
+         editingMenuSlider = null
++            controlsMoreOpen = false
+         menuFlick.contentY = 0
+         popupKind = kind
+         popupTarget = target
+@@ -2216,6 +2261,7 @@
+         powerToken = ""
+         powerMessage = "A verificar o Host..."
+         powerConfirmOpen = true
++        powerTransitionActive = action === "reboot" || action === "poweroff"
+         powerPrepareProcess.command = ["/home/apx/.local/libexec/apx-system-power-client-v1.py", "prepare", action]
+         powerPrepareProcess.running = true
+     }
+@@ -2495,7 +2541,11 @@
+             onStreamFinished: if (text.trim().length) root.wifiMessage = text.trim()
+         }
+         onStarted: {
+-            write(root.wifiPassword + "\n")
++            write(root.wifiIsEnterprise(root.wifiSelectedSsid)
++                  ? JSON.stringify({kind: "enterprise", method: root.wifiEnterpriseMethod,
++                                    identity: root.wifiUsername, password: root.wifiPassword,
++                                    domain: root.wifiDomain, ca_cert: root.wifiCaCert}) + "\n"
++                  : root.wifiPassword + "\n")
+             root.wifiPassword = ""
+         }
+         onExited: (exitCode, exitStatus) => {
+@@ -2506,6 +2556,22 @@
+             } else if (!root.wifiMessage.length) {
+                 root.wifiMessage = "Não foi possível estabelecer a ligação."
+             }
++            hostStatusProcess.running = true
++        }
++    }
++
++    Process {
++        id: wifiConnectivityProcess
++        command: ["/run/apx/host-services-ui-v3.py", "wifi-connectivity-check"]
++        onExited: hostStatusProcess.running = true
++    }
++    Process {
++        id: wifiPortalProcess
++        command: ["/run/apx/host-services-ui-v3.py", "wifi-portal-open"]
++        stderr: StdioCollector { onStreamFinished: if (text.trim().length) root.wifiMessage = text.trim() }
++        onExited: (exitCode, exitStatus) => {
++            if (exitCode === 0) root.wifiMessage = "Página de autenticação aberta."
++            else if (!root.wifiMessage.length) root.wifiMessage = "Não foi possível abrir a página de autenticação."
+             hostStatusProcess.running = true
+         }
+     }
+@@ -2952,7 +3018,7 @@
+     Process { id: environmentAppsProcess; command: ["/usr/bin/rofi", "-modi", "apps:/home/apx/.local/bin/apx-window-apps-v1", "-show", "apps", "-me-select-entry", "", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary"] }
+     Process { id: updateUiProcess; command: root.isHub
+         ? ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/run/apx/coordinated-update-client-v1.py", "environments-ui"]
+-        : ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/home/apx/.local/bin/apx-environment-update-v1"] }
++        : ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/home/apx/.local/bin/apx-environment-update-v1", "--unattended"] }
+     Process {
+         id: hostConsoleProcess
+         command: ["/home/apx/.local/bin/apx-host-console-open"]
+@@ -3083,10 +3149,18 @@
+ 
+         function openWifiControls(): void {
+             openControls()
++            if (!wifiConnectivityProcess.running) wifiConnectivityProcess.running = true
+             root.controlsWifiOpen = true
+             root.controlsBluetoothOpen = false
+             root.controlsAudioOpen = false
+             root.controlsMicrophoneOpen = false
++        }
++
++        function openMoreControls(): void {
++            openControls()
++            root.controlsMoreOpen = true
++            root.shortcutsOpen = false
++            menuFlick.contentY = 0
+         }
+ 
+         function openBluetoothControls(): void {
+@@ -3169,6 +3243,7 @@
+     }
+     Process {
+         id: powerPrepareProcess
++        stderr: StdioCollector { onStreamFinished: if (text.trim().length) root.powerMessage = text.trim() }
+         stdout: StdioCollector {
+             onStreamFinished: {
+                 try {
+@@ -3182,15 +3257,25 @@
+                                                ? " a máquina física? O Environment continuará aberto."
+                                                : " a máquina física? O Environment atual será fechado.")
+                         if (result.reboot_required) root.powerMessage += " A atualização pede reinício."
++                        if (root.powerAction !== "suspend") root.confirmPower()
+                     } else {
++                        root.powerTransitionActive = false
+                         root.powerToken = ""
+                         root.powerMessage = "AÇÃO BLOQUEADA :: " + (result.blockers || []).join(" | ")
+                     }
+                 } catch (error) {
+                     root.powerBusy = false
++                    root.powerTransitionActive = false
+                     root.powerToken = ""
+                     root.powerMessage = "Não foi possível consultar o Host."
+                 }
++            }
++        }
++        onExited: (code, status) => {
++            if (code !== 0) {
++                root.powerBusy = false
++                root.powerTransitionActive = false
++                if (root.powerMessage === "A verificar o Host...") root.powerMessage = "O Host recusou a ação."
+             }
+         }
+     }
+@@ -3204,10 +3289,27 @@
+                 try {
+                     var result = JSON.parse(text)
+                     root.powerMessage = result.accepted ? "PEDIDO ACEITE PELO HOST" : "PEDIDO RECUSADO"
+-                } catch (error) { root.powerMessage = "O Host recusou a ação." }
+-            }
+-        }
+-        onExited: root.powerBusy = false
++                    if (result.accepted) root.powerToken = ""
++                    if (!result.accepted) root.powerTransitionActive = false
++                } catch (error) { root.powerTransitionActive = false; root.powerMessage = "O Host recusou a ação." }
++            }
++        }
++        onExited: (code, status) => {
++            root.powerBusy = false
++            if (code !== 0) {
++                root.powerTransitionActive = false
++                root.powerMessage = "O Host recusou a ação."
++            }
++        }
++    }
++    Timer {
++        interval: 95000
++        running: root.powerTransitionActive
++        repeat: false
++        onTriggered: {
++            root.powerTransitionActive = false
++            root.powerMessage = "O Host não concluiu a ação. Verifica o estado antes de tentar novamente."
++        }
+     }
+     Process {
+         id: powerCancelProcess
+@@ -3219,6 +3321,7 @@
+             root.powerToken = ""
+             root.powerMessage = ""
+             root.powerConfirmOpen = false
++            root.powerTransitionActive = false
+         }
+     }
+ 
+@@ -3410,6 +3513,7 @@
+         property string label: ""
+         property bool accent: false
+         property bool selected: false
++        property bool outlined: false
+         property bool keyboardFocused: false
+         signal activated()
+         width: parent ? parent.width : 250
+@@ -3417,8 +3521,8 @@
+         opacity: enabled ? 1 : 0.42
+         radius: 6
+         color: keyboardFocused ? root.controlButtonActive : (menuMouse.containsMouse ? root.controlButtonHover : (accent ? root.controlButtonActive : root.controlButtonSurface))
+-        border.width: keyboardFocused ? 1 : 0
+-        border.color: keyboardFocused ? root.cyan : root.cyan
++        border.width: keyboardFocused || outlined ? 1 : 0
++        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
+         Text {
+             anchors.left: parent.left
+             anchors.leftMargin: 11
+@@ -3846,7 +3950,7 @@
+                 }
+             }
+         }
+-        visible: root.environmentSwitchPending || root.startupCover
++        visible: root.environmentSwitchPending || root.startupCover || root.powerTransitionActive
+         exclusionMode: ExclusionMode.Ignore
+         WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+         anchors { top: true; bottom: true; left: true; right: true }
+@@ -3855,7 +3959,12 @@
+         color: "#000000"
+ 
+         MouseArea { anchors.fill: parent; cursorShape: Qt.BlankCursor; acceptedButtons: Qt.AllButtons }
+-        // Loading belongs to the Host; keep only a black readiness cover here.
++        Text {
++            visible: root.powerTransitionActive
++            anchors.centerIn: parent
++            text: root.powerAction === "reboot" ? "A reiniciar…" : "A encerrar…"
++            color: "#ffffff"; font.family: "Selawik"; font.pixelSize: 24
++        }
+     }
+     }
+ 
+@@ -3989,7 +4098,8 @@
+                               : 410 + Math.min(4, root.eventsForDate(root.calendarDate).length) * 44))
+                                                        : (root.popupKind === "controls"
+                                                           ? (root.shortcutsOpen ? Math.min(620, popup.height - 74) * root.controlCenterScale
+-                                                             : root.controlsAllClosed() ? (root.isHub ? Math.min(popup.height - 74, menuContent.implicitHeight + 20) : 394 + (root.hasExternalDisplay ? 100 : 0)) * root.controlCenterScale
++                                                             : root.controlsMoreOpen ? 340 * root.controlCenterScale
++                                                             : root.controlsAllClosed() ? (root.isHub ? Math.min(popup.height - 74, menuContent.implicitHeight + 20) : 394) * root.controlCenterScale
+                                                              : ((root.controlsAudioOpen || root.controlsMicrophoneOpen) ? Math.max(232, menuContent.implicitHeight + 20)
+                                                                 : (root.controlsBluetoothOpen ? 320 : 480)) * root.controlCenterScale)
+                                                           : (root.popupKind === "model" ? 370 : (root.popupKind === "environments" ? root.environmentPopupHeight : (root.popupKind === "battery" ? 650 : 440))))
+@@ -4681,7 +4791,7 @@
+ 
+                 MenuHeader {
+                     visible: root.popupKind !== "calendar"
+-                    title: root.popupKind === "battery" ? "Bateria e Energia" : (root.popupKind === "controls" ? (root.shortcutsOpen ? "Lista de Atalhos" : "Central de Controlo") : (root.popupKind === "model" ? "Modelo Local" : (root.popupKind === "environments" ? "Environments" : "[ " + root.popupKind.toUpperCase() + " Control ]")))
++                    title: root.popupKind === "battery" ? "Bateria e Energia" : (root.popupKind === "controls" ? (root.shortcutsOpen ? "Lista de Atalhos" : (root.controlsMoreOpen ? "Mais opções" : "Central de Controlo")) : (root.popupKind === "model" ? "Modelo Local" : (root.popupKind === "environments" ? "Environments" : "[ " + root.popupKind.toUpperCase() + " Control ]")))
+                 }
+ 
+                 Column {
+@@ -5151,7 +5261,7 @@
+                     Column {
+                     width: parent.width
+                     spacing: 5
+-                    visible: root.popupKind === "controls" && !root.shortcutsOpen
++                    visible: root.popupKind === "controls" && !root.shortcutsOpen && !root.controlsMoreOpen
+ 
+                     Row {
+                         visible: root.controlsAllClosed() && !root.powerConfirmOpen
+@@ -5236,6 +5346,14 @@
+                             }
+                         }
+ 
++                        Row {
++                            visible: !!root.hostState.network_name
++                            width: parent.width; height: visible ? 28 : 0; spacing: 8
++                            Text { anchors.verticalCenter: parent.verticalCenter; text: root.wifiConnectivityLabel(); color: root.wifiConnectivityColor(); font.family: "Selawik"; font.pixelSize: root.menuMetaSize }
++                            MenuButton { visible: root.hostState.network_connectivity === "portal"; height: 28; width: 112; label: "Abrir acesso"; onActivated: if (!wifiPortalProcess.running) wifiPortalProcess.running = true }
++                            MenuButton { height: 28; width: 75; label: "Verificar"; onActivated: if (!wifiConnectivityProcess.running) wifiConnectivityProcess.running = true }
++                        }
++
+                         Item {
+                             visible: !!root.hostState.network_name
+                             width: parent.width
+@@ -5255,12 +5373,27 @@
+                             id: wifiPasswordCard
+                             visible: root.wifiPasswordVisible
+                             width: parent.width
+-                            height: visible ? ((!root.wifiIsKnown(root.wifiSelectedSsid) && !root.wifiIsOpen(root.wifiSelectedSsid)) ? 86 : 50) : 0
++                            height: visible ? (root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid) ? 238
++                                             : ((!root.wifiIsKnown(root.wifiSelectedSsid) && !root.wifiIsOpen(root.wifiSelectedSsid)) ? 86 : 50)) : 0
+                             radius: 11
+                             color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
+                             Column {
+                                 anchors.fill: parent; anchors.margins: 8; spacing: 5
+                                 Text { text: "Ligar a " + root.wifiSelectedSsid; color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuBodySize; font.weight: Font.Normal; elide: Text.ElideRight; width: parent.width }
++                                Row {
++                                    visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
++                                    spacing: 8
++                                    MenuButton { width: 86; height: 27; label: "PEAP"; accent: root.wifiEnterpriseMethod === "PEAP"; onActivated: root.wifiEnterpriseMethod = "PEAP" }
++                                    MenuButton { width: 100; height: 27; label: "TTLS/PAP"; accent: root.wifiEnterpriseMethod === "TTLS-PAP"; onActivated: root.wifiEnterpriseMethod = "TTLS-PAP" }
++                                    MenuButton { width: 98; height: 27; label: "TTLS/MS"; accent: root.wifiEnterpriseMethod === "TTLS-MSCHAPV2"; onActivated: root.wifiEnterpriseMethod = "TTLS-MSCHAPV2" }
++                                }
++                                Rectangle {
++                                    visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
++                                    width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface
++                                    border.width: wifiUsernameInput.activeFocus ? 1 : 0; border.color: root.cyan
++                                    TextInput { id: wifiUsernameInput; anchors.fill: parent; anchors.leftMargin: 9; verticalAlignment: TextInput.AlignVCenter; text: root.wifiUsername; onTextChanged: root.wifiUsername = text; color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuBodySize }
++                                    Text { visible: !wifiUsernameInput.text.length; anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; text: "Utilizador"; color: root.textDim; font.family: "Selawik"; font.pixelSize: root.menuSmallSize }
++                                }
+                                 Rectangle {
+                                     visible: !root.wifiIsKnown(root.wifiSelectedSsid) && !root.wifiIsOpen(root.wifiSelectedSsid)
+                                     width: parent.width; height: visible ? 30 : 0; radius: 5; color: root.controlButtonSurface; border.width: wifiPasswordInput.activeFocus ? 1 : 0; border.color: root.cyan
+@@ -5273,6 +5406,20 @@
+                                     }
+                                     Text { anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; visible: !wifiPasswordInput.text.length; text: "Palavra-passe"; color: root.textDim; font.family: "Selawik"; font.pixelSize: root.menuSmallSize }
+                                 }
++                                Rectangle {
++                                    visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
++                                    width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface
++                                    border.width: wifiDomainInput.activeFocus ? 1 : 0; border.color: root.cyan
++                                    TextInput { id: wifiDomainInput; anchors.fill: parent; anchors.leftMargin: 9; verticalAlignment: TextInput.AlignVCenter; text: root.wifiDomain; onTextChanged: root.wifiDomain = text; color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuBodySize }
++                                    Text { visible: !wifiDomainInput.text.length; anchors.left: parent.left; anchors.leftMargin: 9; anchors.verticalCenter: parent.verticalCenter; text: "Domínio do servidor (ex.: wifi.escola.pt)"; color: root.textDim; font.family: "Selawik"; font.pixelSize: root.menuSmallSize }
++                                }
++                                Rectangle {
++                                    visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid)
++                                    width: parent.width; height: visible ? 28 : 0; radius: 5; color: root.controlButtonSurface
++                                    border.width: wifiCaInput.activeFocus ? 1 : 0; border.color: root.cyan
++                                    TextInput { id: wifiCaInput; anchors.fill: parent; anchors.leftMargin: 9; verticalAlignment: TextInput.AlignVCenter; text: root.wifiCaCert; onTextChanged: root.wifiCaCert = text; color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuSmallSize }
++                                }
++                                Text { visible: root.wifiIsEnterprise(root.wifiSelectedSsid) && !root.wifiIsKnown(root.wifiSelectedSsid); text: "Certificado CA no Host · domínio obrigatório"; color: root.textDim; font.family: "Selawik"; font.pixelSize: root.menuMetaSize }
+                                 Row {
+                                     spacing: 14
+                                     Text { text: "Cancelar"; color: cancelWifiMouse.containsMouse ? root.textMain : root.textDim; font.family: "Selawik"; font.pixelSize: root.menuSmallSize; BounceMouseArea { id: cancelWifiMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.cancelWifiPassword() } }
+@@ -5624,40 +5771,6 @@
+                             }
+                         }
+                     }
+-                    Column {
+-                        visible: root.controlsAllClosed() && root.hasExternalDisplay
+-                        width: parent.width
+-                        spacing: 6
+-                        Text {
+-                            text: "Posição do monitor externo"
+-                            color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuBodySize
+-                        }
+-                        Row {
+-                            width: parent.width; spacing: 6
+-                            MenuButton {
+-                                width: (parent.width - 6) / 2; label: "À esquerda"
+-                                enabled: !displayLayoutProcess.running
+-                                onActivated: root.setDisplayLayout("left")
+-                                SelectionIndicator { visible: root.displayLayoutSide === "left" }
+-                            }
+-                            MenuButton {
+-                                width: (parent.width - 6) / 2; label: "À direita"
+-                                enabled: !displayLayoutProcess.running
+-                                onActivated: root.setDisplayLayout("right")
+-                                SelectionIndicator { visible: root.displayLayoutSide === "right" }
+-                            }
+-                        }
+-                        Text {
+-                            width: parent.width; wrapMode: Text.WordWrap
+-                            text: "Super+Ctrl+Home traz o ponteiro para o portátil."
+-                            color: root.textDim; font.family: "Selawik"; font.pixelSize: root.menuMetaSize
+-                        }
+-                    }
+-                    Text {
+-                        visible: root.controlsAllClosed() && root.hasExternalDisplay && root.displayLayoutError.length > 0
+-                        width: parent.width; text: root.displayLayoutError; color: "#ff91a4"
+-                        wrapMode: Text.WordWrap; font.family: "Selawik"; font.pixelSize: root.menuMetaSize
+-                    }
+                     Text {
+                         visible: root.controlsAllClosed() && root.hardwareControlError.length > 0
+                         width: parent.width; text: root.hardwareControlError; color: "#ff91a4"
+@@ -6018,16 +6131,65 @@
+                     }
+                     MenuButton {
+                         visible: root.controlsAllClosed() && !root.powerConfirmOpen
+-                        label: "Lista de Atalhos  ›"
+-                        onActivated: { root.shortcutsOpen = true; menuFlick.contentY = 0 }
++                        outlined: true; label: "Mais opções  ›"
++                        onActivated: { root.controlsMoreOpen = true; menuFlick.contentY = 0 }
+                     }
++                }
++
++                Column {
++                    width: parent.width; spacing: 10
++                    visible: root.popupKind === "controls" && root.controlsMoreOpen && !root.shortcutsOpen
++                    MenuButton { outlined: true; label: "‹ Voltar aos controlos"; onActivated: { root.controlsMoreOpen = false; menuFlick.contentY = 0 } }
++                    Column {
++                        visible: root.hasExternalDisplay; width: parent.width; spacing: 6
++                        Text { text: "Posição do monitor externo"; color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuBodySize }
++                        Row {
++                            width: parent.width; spacing: 6
++                            MenuButton { width: (parent.width - 6) / 2; outlined: true; label: "À esquerda"; enabled: !displayLayoutProcess.running; onActivated: root.setDisplayLayout("left"); SelectionIndicator { visible: root.displayLayoutSide === "left" } }
++                            MenuButton { width: (parent.width - 6) / 2; outlined: true; label: "À direita"; enabled: !displayLayoutProcess.running; onActivated: root.setDisplayLayout("right"); SelectionIndicator { visible: root.displayLayoutSide === "right" } }
++                        }
++                        Text { text: "Super+Ctrl+Home traz o ponteiro para o portátil."; color: root.textDim; font.family: "Selawik"; font.pixelSize: root.menuMetaSize }
++                        Text { visible: root.displayLayoutError.length > 0; width: parent.width; text: root.displayLayoutError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: "Selawik"; font.pixelSize: root.menuMetaSize }
++                    }
++                    Rectangle {
++                        width: parent.width; height: 72; radius: 11; color: root.controlButtonSurface
++                        border.width: 1; border.color: root.controlButtonOutline
++                        Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: "Sensibilidade do rato"; color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuBodySize }
++                        Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 8; text: (mouseSensitivitySlider.value > 0 ? "+" : "") + Math.round(mouseSensitivitySlider.value) + "%"; color: root.textMain; font.family: "Selawik"; font.pixelSize: root.menuBodySize }
++                        MenuSlider {
++                            id: mouseSensitivitySlider
++                            anchors.left: parent.left; anchors.leftMargin: 12; anchors.right: parent.right; anchors.rightMargin: 12
++                            anchors.bottom: parent.bottom; anchors.bottomMargin: 7
++                            height: 28; from: -100; to: 100; stepSize: 1
++                            enabled: !mouseSensitivityProcess.running
++                            onKeyboardValueChanged: (nextValue) => root.setMouseSensitivity(nextValue)
++                            onPressedChanged: { if (pressed) forceActiveFocus(); else root.setMouseSensitivity(value) }
++                            Binding { target: mouseSensitivitySlider; property: "value"; value: root.mouseSensitivity; when: !mouseSensitivitySlider.pressed }
++                            background: Rectangle {
++                                x: mouseSensitivitySlider.leftPadding
++                                y: mouseSensitivitySlider.topPadding + mouseSensitivitySlider.availableHeight / 2 - height / 2
++                                width: mouseSensitivitySlider.availableWidth; height: 3; radius: 2
++                                color: mouseSensitivitySlider.keyboardEditing ? Qt.darker(root.cyan, 2.5) : "#34454e"
++                                Rectangle { width: mouseSensitivitySlider.visualPosition * parent.width; height: parent.height; radius: 2; color: mouseSensitivitySlider.keyboardEditing ? root.cyan : root.textMain }
++                            }
++                            handle: Rectangle {
++                                x: mouseSensitivitySlider.leftPadding + mouseSensitivitySlider.visualPosition * (mouseSensitivitySlider.availableWidth - width)
++                                y: mouseSensitivitySlider.topPadding + mouseSensitivitySlider.availableHeight / 2 - height / 2
++                                width: mouseSensitivitySlider.pressed ? 12 : 10; height: width; radius: width / 2
++                                color: mouseSensitivitySlider.keyboardEditing ? root.cyan : (mouseSensitivitySlider.pressed ? "#ffffff" : root.textMain)
++                                border.width: 2; border.color: root.controlButtonSurface
++                            }
++                        }
++                    }
++                    Text { visible: root.mouseSensitivityError.length > 0; width: parent.width; text: root.mouseSensitivityError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: "Selawik"; font.pixelSize: root.menuMetaSize }
++                    MenuButton { outlined: true; label: "Lista de atalhos  ›"; onActivated: { root.shortcutsOpen = true; menuFlick.contentY = 0 } }
+                 }
+ 
+                 Column {
+                     width: parent.width; spacing: 7
+                     visible: root.popupKind === "controls" && root.shortcutsOpen
+                     MenuButton {
+-                        label: "‹ Voltar aos controlos"
++                        outlined: true; label: "‹ Voltar às opções"
+                         onActivated: { root.shortcutsOpen = false; menuFlick.contentY = 0 }
+                     }
+                     Repeater {

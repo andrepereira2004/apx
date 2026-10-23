@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""Environment-local menu scroll preference, expressed as a percentage."""
+import os
+from pathlib import Path
+import sys
+CONFIG = Path.home() / ".config/apx-menu-scroll-v1"
+try:
+    if sys.argv[1:] == ["get"]:
+        try:
+            value = int(CONFIG.read_text())
+        except (OSError, ValueError):
+            value = 100
+        print(max(25, min(300, value)))
+    elif len(sys.argv) == 3 and sys.argv[1] == "set":
+        value = int(sys.argv[2])
+        if not 25 <= value <= 300:
+            raise ValueError("O scroll deve estar entre 25% e 300%")
+        CONFIG.parent.mkdir(parents=True, exist_ok=True)
+        temporary = CONFIG.with_name(CONFIG.name + f".{os.getpid()}.tmp")
+        try:
+            with temporary.open("x") as stream:
+                os.chmod(temporary, 0o600)
+                stream.write(str(value) + "\n")
+            os.replace(temporary, CONFIG)
+        finally:
+            temporary.unlink(missing_ok=True)
+        print(value)
+    else:
+        raise ValueError("Argumentos inválidos")
+except (OSError, ValueError) as error:
+    print(str(error), file=sys.stderr)
+    raise SystemExit(2)

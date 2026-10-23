@@ -1,0 +1,39 @@
+{
+  "existing_environments": [
+    {
+      "name": "hub",
+      "launcher": true,
+      "install_and_upgrade_hook": true,
+      "independent_helper": true
+    },
+    {
+      "name": "hytale",
+      "launcher": true,
+      "install_and_upgrade_hook": true,
+      "independent_helper": true
+    },
+    {
+      "name": "steam",
+      "launcher": true,
+      "install_and_upgrade_hook": true,
+      "independent_helper": true
+    },
+    {
+      "name": "minecraft",
+      "launcher": true,
+      "install_and_upgrade_hook": true,
+      "independent_helper": true
+    },
+    {
+      "name": "faculdade",
+      "launcher": true,
+      "install_and_upgrade_hook": true,
+      "independent_helper": true
+    }
+  ],
+  "installed_creation_defaults_without_brave": "passed",
+  "focused_tests": 37,
+  "preexisting_broader_suite_issue": "quickshell/apx/shell.qml digest mismatch, reproduced unchanged with pre-change runtime",
+  "full_iphone_authentication": "requires owner interaction",
+  "graphical_environment_switch": "not performed"
+}

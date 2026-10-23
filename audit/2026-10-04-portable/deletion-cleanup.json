@@ -1,0 +1,32 @@
+{
+  "profile": "audited-deleted-copies-20261004",
+  "applied": true,
+  "home_snapshots": [
+    "/.snapshots/local-recovery/environment-developer-home/20260927T161241Z",
+    "/.snapshots/local-recovery/environment-developer-home/20260929T142237Z",
+    "/.snapshots/local-recovery/environment-trabalharei-home/20260927T161241Z",
+    "/.snapshots/local-recovery/environment-trabalharei-home/20260929T142237Z",
+    "/.snapshots/local-recovery/environment-workkk-from-jome-home/20260927T161241Z",
+    "/.snapshots/local-recovery/environment-workkk-from-jome-home/20260929T142237Z"
+  ],
+  "lab_disks": [
+    {
+      "path": "/root/apx-host-development-mode-v1/apx/audit/2026-09-21-input-monitors/windows-lab/disk.raw",
+      "logical_bytes": 512110190592,
+      "allocated_bytes": 32943968256
+    },
+    {
+      "path": "/.snapshots/local-recovery/system/20260927T161241Z/root/apx-host-development-mode-v1/apx/audit/2026-09-21-input-monitors/windows-lab/disk.raw",
+      "logical_bytes": 512110190592,
+      "allocated_bytes": 32943968256
+    },
+    {
+      "path": "/.snapshots/local-recovery/system/20260929T142237Z/root/apx-host-development-mode-v1/apx/audit/2026-09-21-input-monitors/windows-lab/disk.raw",
+      "logical_bytes": 512110190592,
+      "allocated_bytes": 32943968256
+    }
+  ],
+  "verified_absent": true,
+  "system_snapshots_readonly": true,
+  "at": "2026-10-04T14:46:17+00:00"
+}

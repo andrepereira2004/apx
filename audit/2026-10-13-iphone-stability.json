@@ -1,0 +1,37 @@
+{
+  "observed_at": "2026-10-13T12:41:49.433258+00:00",
+  "scope": "read-only stability diagnosis and repository-only LocalSend preparation",
+  "physical_changes": false,
+  "localsend_installed": false,
+  "network_exception_applied": false,
+  "pending": [
+    "quota-rescan authorization",
+    "iPhone IPv4 address"
+  ],
+  "localsend_archive_sha256": "287690a9a8eb6da9c83cc97b3e3030ac67daf32a7331fcf307d0939300658d16",
+  "quota": {
+    "returncode": 0,
+    "stdout": "Quotas on /:\n  Enabled:                 yes\n  Mode:                    qgroup (full accounting)\n  Inconsistent:            yes (rescan needed)\n  Override limits:         no\n  Drop subtree threshold:  3\n  Total count:             102\n  Level 0:                 84\n",
+    "stderr": ""
+  },
+  "rescan": {
+    "returncode": 0,
+    "stdout": "no rescan operation in progress\n",
+    "stderr": ""
+  },
+  "device_stats": {
+    "returncode": 0,
+    "stdout": "[/dev/mapper/cryptroot].write_io_errs    0\n[/dev/mapper/cryptroot].read_io_errs     0\n[/dev/mapper/cryptroot].flush_io_errs    0\n[/dev/mapper/cryptroot].corruption_errs  79\n[/dev/mapper/cryptroot].generation_errs  0\n",
+    "stderr": ""
+  },
+  "last_scrub": {
+    "returncode": 0,
+    "stdout": "UUID:             0ab135e1-1d10-4580-8fca-f4c6ac25ad1c\nScrub started:    Wed Oct  7 19:20:27 2026\nStatus:           finished\nDuration:         0:02:06\nTotal to scrub:   185.32GiB\nRate:             1.39GiB/s\nError summary:    no errors found\n",
+    "stderr": ""
+  },
+  "network": {
+    "returncode": 0,
+    "stdout": "IDX LINK            TYPE     OPERATIONAL SETUP\n  1 lo              loopback carrier     unmanaged\n  2 eno1            ether    no-carrier  configuring\n  4 wlan0           wlan     routable    configured\n 25 ve-apx-ge9b0898 ether    routable    configured\n\n4 links listed.\n",
+    "stderr": ""
+  }
+}

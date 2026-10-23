@@ -1,0 +1,7 @@
+{
+  "unit": "apx-empty-disk-lab.service",
+  "machine": "apx-empty-disk-lab",
+  "ram_files": "/tmp/apx-empty-disk-lab-20261018",
+  "builder_root": "/var/lib/apx/test-labs/empty-disk-20261018/root",
+  "retained_manual_vm_untouched": true
+}

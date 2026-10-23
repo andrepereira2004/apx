@@ -1,0 +1,8 @@
+{
+  "toggleCalendar": true,
+  "toggleControls": true,
+  "toggleBattery": true,
+  "openMedia": true,
+  "rofi_toggle": true,
+  "rofi_escape": true
+}

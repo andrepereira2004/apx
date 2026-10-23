@@ -1,0 +1,1 @@
+{"state": "passed", "interactive_prompts": ["confirmation", "password", "repeat"], "disk": "/dev/vda", "scope": "disposable QEMU virtual disk only", "fixture_excluded_from_product": true}

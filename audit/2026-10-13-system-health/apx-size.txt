@@ -1,0 +1,32 @@
+0	/var/lib/apx/catalogue
+28672	/var/lib/apx/environments
+282624	/var/lib/apx/journal
+32768	/var/lib/apx/releases
+253952	/var/lib/apx/plans
+0	/var/lib/apx/snapshots
+0	/var/lib/apx/archives
+65536	/var/lib/apx/updates
+86016	/var/lib/apx/executor-v1
+442368	/var/lib/apx/official-hub-v1
+0	/var/lib/apx/host-services-v1
+159744	/var/lib/apx/host-services-v3
+8192	/var/lib/apx/audio-state-v1
+2046189568	/var/lib/apx/coordinated-updates-v1
+172032	/var/lib/apx/system-power-v1
+155648	/var/lib/apx/host-console-v1
+1794048	/var/lib/apx/environment-switch-v1
+7105130496	/var/lib/apx/backups
+372232192	/var/lib/apx/secure-boot-v1
+0	/var/lib/apx/model-store
+4096	/var/lib/apx/model-selection-v1
+0	/var/lib/apx/certification
+15926681600	/var/lib/apx/package-artifacts
+4096	/var/lib/apx/timezone-v1
+146434244608	/var/lib/apx/native-environments
+30330880	/var/lib/apx/tmp
+151552	/var/lib/apx/environment-updates-v1
+8192	/var/lib/apx/environment-storage-v1
+28672	/var/lib/apx/face-auth-v1
+171918508032	/var/lib/apx
+
+STDERR:

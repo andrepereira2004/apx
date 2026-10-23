@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=APX Terminal
+Comment=Terminal do Host APX
+Exec=/home/apx/.local/bin/apx-host-console-open
+Icon=/usr/share/icons/Papirus/48x48/apps/utilities-terminal.svg
+Terminal=false
+Categories=System;TerminalEmulator;
+StartupWMClass=apx-host-console-v1

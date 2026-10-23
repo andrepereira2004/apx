@@ -1,0 +1,19 @@
+{
+  "windows": [
+    {
+      "class": "org.localsend.localsend_app",
+      "xwayland": false,
+      "mapped": true
+    }
+  ],
+  "compositor_errors": "",
+  "local_https_info_status": 56,
+  "local_https_valid_json": false,
+  "package_file_check_exit": 0,
+  "package_file_check": "localsend-bin: 82 total files, 0 missing files\nlibayatana-appindicator: 42 total files, 0 missing files\nlibayatana-indicator: 22 total files, 0 missing files\nayatana-ido: 26 total files, 0 missing files\n",
+  "phone_transfer_tested": false,
+  "network_exception_applied": false,
+  "network_manager_dependency_warning": true,
+  "app_not_running_at_final_check": true,
+  "exit_reason": "not established; no transfer acceptance claim"
+}

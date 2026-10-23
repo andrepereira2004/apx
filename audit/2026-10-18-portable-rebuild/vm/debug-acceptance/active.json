@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "stdout": "{\"generation\": \"6dfb28bf-7717-4e8a-9032-b59de8425a91\", \"name\": \"hub\", \"pid\": 4042, \"profile\": \"apx-active-graphical-environment-v1\", \"role\": \"hub\", \"schema\": 1, \"unit\": \"apx-portable-hub-6dfb28bf.service\"}\n",
+  "stderr": "",
+  "request_id": "58cdb022b97a9eaf"
+}

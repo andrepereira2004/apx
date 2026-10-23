@@ -1,0 +1,40 @@
+{
+  "monitors": [
+    {
+      "name": "eDP-1",
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "scale": 1.5,
+      "colorManagementPreset": "srgb",
+      "sdrBrightness": 1,
+      "sdrSaturation": 1
+    },
+    {
+      "name": "HDMI-A-1",
+      "x": -1536,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "scale": 1.25,
+      "colorManagementPreset": "srgb",
+      "sdrBrightness": 1,
+      "sdrSaturation": 1
+    }
+  ],
+  "mice": [
+    "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+    "elan06fa:00-04f3:31dd-mouse",
+    "elan06fa:00-04f3:31dd-touchpad",
+    "razer-razer-blackwidow-v3-tenkeyless",
+    "razer-razer-blackwidow-v3-tenkeyless-keyboard-1",
+    "logitech-g305-1"
+  ],
+  "compositor_open_mouse_nodes": [
+    {
+      "node": "/dev/input/event22",
+      "name": "Logitech G305"
+    }
+  ]
+}

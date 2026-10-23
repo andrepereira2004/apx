@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=APX Browser
+Exec=/home/apx/.local/bin/apx-browser-redirect-v1 %U
+Icon=web-browser
+NoDisplay=true
+Terminal=false
+MimeType=x-scheme-handler/http;x-scheme-handler/https;

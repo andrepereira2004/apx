@@ -1,0 +1,55 @@
+{
+  "qml_pagination_passed": true,
+  "reports": [
+    {
+      "page": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "offset": 0,
+      "arrow": true,
+      "choice": 0
+    },
+    {
+      "page": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "offset": 1,
+      "arrow": true,
+      "choice": 0
+    },
+    {
+      "page": [
+        3,
+        4,
+        5,
+        6,
+        1
+      ],
+      "offset": 2,
+      "arrow": true,
+      "choice": 0
+    },
+    {
+      "page": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "offset": 0,
+      "arrow": false,
+      "choice": 6
+    }
+  ],
+  "inactive_hover_current_workspace": 1,
+  "inactive_preview_workspace": 3,
+  "seed_tests": 7
+}

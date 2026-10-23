@@ -1,0 +1,19 @@
+{
+  "state": "failed",
+  "checks": [
+    "fresh-generic-graphical-install",
+    "current-quickshell-and-hyprland-ready",
+    "authenticated-hub-service-identity",
+    "all-current-shell-source-digests-match",
+    "hub-creates-independent-intermediate-workload",
+    "graphical-workload-switch",
+    "workload-management-is-refused",
+    "real-package-and-file-isolation",
+    "authenticated-return-to-hub",
+    "stopped-graphical-workload-snapshot",
+    "normal-environment-archive-and-restore",
+    "test-workloads-and-their-copies-destroyed",
+    "existing-installation-overwrite-refused"
+  ],
+  "error": "systemd-run: No running instances for \"/home/apx/.config/quickshell/apx/shell.qml\"  present on the current display \"unk\"\nSome instances on other displays match:\n - f8yw34nt (wayland/wayland-1)\n"
+}

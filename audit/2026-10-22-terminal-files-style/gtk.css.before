@@ -1,0 +1,226 @@
+/* APX Files: a single translucent surface, opaque text and icons. */
+.thunar.background { background-color: rgba(48, 52, 69, 0.85); color: #eef3f6; }
+.thunar .standard-view, .thunar .standard-view .view,
+.thunar .sidebar, .thunar .sidebar .view,
+.thunar scrolledwindow, .thunar notebook, .thunar stack,
+.thunar toolbar, .thunar menubar, .thunar statusbar {
+    background-color: transparent;
+    background-image: none;
+    color: #eef3f6;
+}
+.thunar .sidebar { border-right: 1px solid rgba(120, 145, 160, 0.16); }
+.thunar .sidebar .view { padding: 5px; }
+.thunar toolbar { padding: 4px; border-bottom: 1px solid rgba(120, 145, 160, 0.16); }
+.thunar button { border-radius: 8px; }
+.thunar entry { background: #17232c; border: 1px solid #26343a; border-radius: 8px; color: #eef3f6; padding: 6px; }
+.thunar .view:selected, .thunar .view:selected:focus { background-color: #284e67; color: #ffffff; border-radius: 6px; }
+.thunar .view:hover { background-color: rgba(100, 160, 200, 0.16); }
+.thunar entry:focus { border-color: #79baff; }
+.thunar menu, .thunar popover { background-color: #101920; color: #eef3f6; }
+.thunar notebook header { background: rgba(23, 35, 44, 0.6); }
+.thunar notebook tab:checked { box-shadow: inset 0 -2px #79baff; }
+/* Symbolic toolbar icons inherit the button foreground, not the window's. */
+.thunar button, .thunar button image, .thunar menubar > menuitem {
+    color: #eef3f6;
+    -gtk-icon-shadow: none;
+    text-shadow: none;
+}
+.thunar button { background-image: none; background-color: transparent; }
+.thunar button:hover, .thunar button:checked { background-color: #284e67; color: #ffffff; }
+.thunar button:disabled, .thunar button:disabled image { color: #8799a5; }
+
+/* Compact navigation; bright symbolic sidebar icons follow foreground. */
+.thunar .sidebar .view, .thunar .sidebar image { color: #ffffff; -gtk-icon-shadow: none; }
+.thunar toolbar button { padding: 4px; min-width: 16px; min-height: 16px; }
+.thunar toolbar image { -gtk-icon-transform: scale(0.8); }
+
+/* Selected sidebar folders keep the same surface; only the foreground changes. */
+.thunar .sidebar .view:selected,
+.thunar .sidebar .view:selected:focus,
+.thunar .sidebar .view:selected:backdrop,
+.thunar .sidebar .view:selected:hover,
+.thunar .shortcuts-pane treeview:selected,
+.thunar .shortcuts-pane treeview:selected:focus,
+.thunar .shortcuts-pane treeview:selected:backdrop,
+.thunar .sidebar row:selected,
+.thunar .sidebar row:selected:backdrop,
+.thunar .sidebar *:selected {
+    background-color: transparent;
+    background-image: none;
+    color: #79baff;
+    box-shadow: none;
+    text-shadow: none;
+    outline-style: none;
+}
+.thunar .sidebar .view:hover {
+    background-color: transparent;
+    background-image: none;
+}
+/* The current folder in the breadcrumb bar also has no filled rectangle. */
+.thunar .path-bar button:checked,
+.thunar .path-bar button:checked:backdrop,
+.thunar .path-bar button:checked:hover {
+    background-color: transparent;
+    background-image: none;
+    color: #79baff;
+    border-color: transparent;
+    box-shadow: none;
+    text-shadow: none;
+    outline-style: none;
+}
+
+/* Trash/restore notices use the same dark controls instead of GTK's light banner. */
+.thunar infobar.info, .thunar infobar.question, .thunar infobar.warning,
+.thunar infobar.error, .thunar infobar {
+    background-color: rgba(10, 16, 20, 0.85);
+    background-image: none;
+    color: #eceef0;
+    border-top: 1px solid #343a41;
+    box-shadow: none;
+}
+.thunar infobar .message-area, .thunar infobar .action-area,
+.thunar infobar revealer, .thunar infobar revealer > box {
+    background-color: transparent;
+    background-image: none;
+    color: #eceef0;
+}
+.thunar infobar button {
+    background-color: rgba(25, 29, 34, 0.8);
+    background-image: none;
+    color: #eceef0;
+    border: 1px solid #343a41;
+    border-radius: 8px;
+    padding: 7px 12px;
+    box-shadow: none;
+    text-shadow: none;
+}
+.thunar infobar button:hover { background-color: #272c33; }
+.thunar infobar button:disabled, .thunar infobar button:disabled label { color: #8799a5; }
+.thunar infobar label { color: #eceef0; }
+
+/* APX GTK dialogs and menus, including file-operation confirmations. */
+.background {
+    background-color: rgba(10, 16, 20, 0.85);
+    background-image: none;
+    color: #eef3f6;
+}
+.background decoration {
+    border: 1px solid rgba(120, 145, 160, 0.28);
+    border-radius: 12px;
+    box-shadow: none;
+}
+.background .dialog-vbox, .background .dialog-action-area,
+.background .message-area, .background .titlebar { background: transparent; color: #eef3f6; }
+.background entry { background: rgba(23, 35, 44, 0.8); color: #eef3f6; border: 1px solid #343a41; border-radius: 8px; }
+.background button {
+    background-image: none;
+    background-color: rgba(25, 35, 44, 0.8);
+    color: #eef3f6;
+    border: 1px solid rgba(120, 145, 160, 0.28);
+    border-radius: 8px;
+    box-shadow: none;
+    text-shadow: none;
+}
+.background button:hover { background-color: rgba(40, 78, 103, 0.85); }
+.background button:focus { border-color: #79baff; }
+.background button:disabled { color: #8799a5; }
+.background button.suggested-action { border-color: #79baff; }
+.background button.destructive-action { color: #ffb4b4; border-color: #99565d; }
+menu, .thunar menu, popover, .thunar popover {
+    background-image: none;
+    background-color: rgba(10, 16, 20, 0.85);
+    color: #eef3f6;
+    border: 1px solid rgba(120, 145, 160, 0.28);
+    border-radius: 10px;
+    box-shadow: none;
+}
+menu menuitem { padding: 6px 10px; color: #eef3f6; }
+menu menuitem:hover { background-color: rgba(40, 78, 103, 0.8); }
+menu menuitem:disabled { color: #8799a5; }
+menu separator { background-color: rgba(120, 145, 160, 0.22); margin: 4px 8px; }
+/* Keep compact toolbar buttons on the shared file-manager surface. */
+.thunar toolbar button { background-color: transparent; border-color: transparent; }
+
+/* APX native upload/save chooser: GTK child surfaces can retain light defaults. */
+filechooser, filechooser .view, filechooser treeview,
+filechooser .sidebar, filechooser .sidebar .view,
+filechooser placessidebar, filechooser placessidebar list,
+filechooser placessidebar row, filechooser scrolledwindow,
+filechooser viewport, filechooser stack, filechooser paned,
+filechooser box, filechooser actionbar, filechooser headerbar {
+    background-color: transparent;
+    background-image: none;
+    color: #eef3f6;
+}
+filechooser .sidebar { border-right: 1px solid rgba(120, 145, 160, 0.16); }
+filechooser .view:selected, filechooser .view:selected:focus,
+filechooser row:selected, filechooser row:selected:backdrop {
+    background-color: #284e67;
+    color: #ffffff;
+}
+filechooser row:hover { background-color: rgba(100, 160, 200, 0.16); }
+filechooser treeview header button {
+    background-color: #17232c;
+    background-image: none;
+    color: #eef3f6;
+    border-color: rgba(120, 145, 160, 0.16);
+}
+filechooser label, filechooser image { color: inherit; }
+filechooser entry, filechooser searchentry {
+    background-color: #17232c;
+    color: #eef3f6;
+    caret-color: #eef3f6;
+    border: 1px solid #343a41;
+    border-radius: 8px;
+}
+filechooser separator { background-color: rgba(120, 145, 160, 0.16); }
+
+/* APX chooser icons use white symbolic shapes, including Places and toolbar. */
+filechooser image {
+    -gtk-icon-style: symbolic;
+    color: #ffffff;
+    -gtk-icon-shadow: none;
+}
+filechooser button:disabled image { color: #8799a5; }
+
+/* GTK dims sidebar symbols independently of their foreground color. */
+filechooser .sidebar-icon { opacity: 1; }
+
+/* File-list cell icons follow the same white symbolic treatment. */
+filechooser treeview.view { -gtk-icon-style: symbolic; color: #ffffff; }
+
+/* Give native dialog headers the same surface as the dialog body. */
+dialog.background headerbar.titlebar,
+dialog.background headerbar.titlebar:backdrop {
+    background-color: rgba(10, 16, 20, 0.85);
+    background-image: none;
+    box-shadow: none;
+}
+
+/* APX application chooser: one translucent surface, including the empty state. */
+appchooser, appchooser overlay, appchooser scrolledwindow,
+appchooser treeview.view, appchooser viewport, appchooser box {
+    background-color: transparent;
+    background-image: none;
+    color: #eef3f6;
+}
+appchooser scrolledwindow.frame { border-color: rgba(120, 145, 160, 0.16); }
+appchooser label, appchooser image { color: #eef3f6; }
+appchooser .dim-label { color: #b8c6d0; opacity: 1; }
+appchooser treeview.view:selected, appchooser treeview.view:selected:focus {
+    background-color: #284e67;
+    color: #ffffff;
+}
+appchooser treeview.view:hover { background-color: rgba(100, 160, 200, 0.16); }
+dialog.background decoration { border-color: rgba(120, 145, 160, 0.28); }
+
+/* The GTK portal uses a custom GtkWindow, with .view on its empty-state box. */
+window.background > box > stack > box.view,
+window.background > box > stack > scrolledwindow list.view {
+    background-color: transparent;
+    background-image: none;
+    color: #eef3f6;
+}
+window.background > box > stack > box.view label,
+window.background > box > stack > box.view image { color: #eef3f6; }
+window.background > box > stack > box.view .dim-label { color: #b8c6d0; }

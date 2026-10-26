@@ -5,6 +5,8 @@ set -u
 # Human-facing labels belong in the UI, never in the login identity.
 export USER=apx
 export LOGNAME=apx
+export QT_QPA_PLATFORMTHEME=xdgdesktopportal
+export GTK_USE_PORTAL=1
 
 # Locale choices apply only to this Environment and its session children.
 if [[ -r /home/apx/.config/apx/locale.env ]]; then
@@ -115,6 +117,13 @@ start_desktop_service '^/usr/lib/hyprpolkitagent/hyprpolkitagent' \
 start_desktop_service '^/usr/bin/udiskie([[:space:]]|$)' /usr/bin/udiskie --automount --no-tray
 start_desktop_service '[/]apx-removable-bookmark-v1([[:space:]]|$)' \
     /home/apx/.local/bin/apx-removable-bookmark-v1 --watch
+
+# Keep the Environment-local file manager ready without blocking shell startup.
+# The existing Thunar daemon exits with this Environment session.
+if [[ -x /usr/bin/thunar ]]; then
+    start_desktop_service '^/usr/bin/[Tt]hunar([[:space:]]|$)' \
+        /home/apx/.local/bin/thunar --daemon
+fi
 
 # User-selected startup applications and optional clipboard history.
 if [[ -x /home/apx/.local/bin/apx-desktop-preferences-v1 ]]; then

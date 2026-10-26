@@ -1,11 +1,1 @@
-[
-  "/usr/share/apx/config-seeds/environment-shell-v1/quickshell/apx/shell.qml",
-  "/var/lib/apx/environments/faculdade/home/apx/.config/quickshell/apx/shell.qml",
-  "/var/lib/apx/environments/hub/home/apx/.config/quickshell/apx/shell.qml",
-  "/var/lib/apx/environments/hytale/home/apx/.config/quickshell/apx/shell.qml",
-  "/var/lib/apx/environments/minecraft/home/apx/.config/quickshell/apx/shell.qml",
-  "/var/lib/apx/environments/steam/home/apx/.config/quickshell/apx/shell.qml",
-  "/root/apx-host-development-mode-v1/apx/scripts/virtual-lab/apx-lab-runtime.py",
-  "/usr/lib/apx/apx-lab-runtime.py",
-  "/root/apx-host-development-mode-v1/apx/scripts/physical-pilot/recover-development-quota-v1.sh"
-]
+[]

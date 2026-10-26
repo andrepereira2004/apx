@@ -1,3 +1,6 @@
+> Retired on 2026-10-22: owner removed facial authentication and Howdy.
+> Current authentication is password-only, including sudo. Content below is history.
+
 # Ecrã de autenticação e mensagens faciais — 2026-09-13
 
 O utilizador pediu uma apresentação atual e mensagens coerentes com a atividade

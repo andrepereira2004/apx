@@ -1,0 +1,14 @@
+{
+  "htmlUnchanged": true,
+  "subjectBg": "rgb(21, 23, 32)",
+  "recipientBg": "rgb(21, 23, 32)",
+  "editorBg": "rgb(16, 17, 23)",
+  "editorUri": "about:blank?compose",
+  "small": {
+    "width": 1536,
+    "height": 864,
+    "body": 533,
+    "ccButtonVisible": false
+  },
+  "ccFieldAvailable": true
+}

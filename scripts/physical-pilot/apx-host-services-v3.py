@@ -46,12 +46,14 @@ CAPABILITIES = {
                    "bluetooth.power", "bluetooth.scan", "bluetooth.status",
                    "capabilities.get", "events.subscribe", "network.connect", "network.disconnect",
                    "network.connectivity-check", "network.forget", "network.portal.open",
-                   "network.scan", "network.status", "network.power", "radio.status", "radio.airplane", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save"],
+                   "network.scan", "network.status", "network.power", "radio.status", "radio.airplane", "keyboard.load", "keyboard.save", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save"],
     "security": {"bluetooth_pairing_agent": "KeyboardDisplay", "enterprise_wifi": True,
                  "secret_transport": "unix-socket-body", "shell": False},
 }
 APPEARANCE_PATH = Path("/var/lib/apx/appearance-v1/global.json")
 _APPEARANCE_LOCK = threading.Lock()
+KEYBOARD_PATH = APPEARANCE_PATH.parent / "keyboard.json"
+_KEYBOARD_LOCK = threading.Lock()
 CALENDAR_PATH = Path("/var/lib/apx/calendar-v1/events.json")
 _LOCK = threading.Lock()
 _MUTATION_LOCK = threading.Lock()
@@ -479,6 +481,38 @@ def snapshot() -> dict[str, object]:
              "timezone": values.get("Timezone", "Etc/UTC")}, "version": 3}
 
 
+def keyboard_load() -> dict[str, object]:
+    try:
+        value = json.loads(KEYBOARD_PATH.read_text(encoding="utf-8"))
+        from apx_host_services_v3_contract import validate_payload
+        return validate_payload("keyboard.save", value)
+    except FileNotFoundError:
+        return {"numlock": None}
+
+
+def keyboard_save(payload: dict[str, object]) -> dict[str, object]:
+    from apx_host_services_v3_contract import validate_payload
+    value = validate_payload("keyboard.save", payload)
+    with _KEYBOARD_LOCK:
+        KEYBOARD_PATH.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        temporary = KEYBOARD_PATH.with_name(".keyboard-" + uuid.uuid4().hex + ".tmp")
+        try:
+            with temporary.open("x", encoding="utf-8") as stream:
+                os.chmod(temporary, 0o600)
+                stream.write(json.dumps(value) + "\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, KEYBOARD_PATH)
+            fd = os.open(KEYBOARD_PATH.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+        finally:
+            temporary.unlink(missing_ok=True)
+    return value
+
+
 def appearance_load() -> dict[str, object]:
     try:
         value = json.loads(APPEARANCE_PATH.read_text(encoding="utf-8"))
@@ -626,6 +660,8 @@ def wait_for_network(ssid: str, timeout: float = 10) -> dict[str, object]:
 def apply(operation: str, payload: dict[str, object]) -> object:
     if operation == "capabilities.get": return CAPABILITIES
     if operation == "snapshot.get": return snapshot()
+    if operation == "keyboard.load": return keyboard_load()
+    if operation == "keyboard.save": return keyboard_save(payload)
     if operation == "appearance.load": return appearance_load()
     if operation == "appearance.save": return appearance_save(payload)
     if operation == "calendar.load": return calendar_load()

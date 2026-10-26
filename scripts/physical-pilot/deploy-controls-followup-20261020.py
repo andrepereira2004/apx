@@ -7,7 +7,11 @@ AUDIT=REPO/'audit/2026-10-20-controls-followup'
 SOURCE=REPO/'config/environment-shell-v1'
 SEED=Path('/usr/share/apx/config-seeds/environment-shell-v1')
 class transform:
- RELATIVES = ['quickshell/apx/shell.qml', 'quickshell/apx/ControlTile.qml', 'quickshell/apx/MenuHover.qml', 'quickshell/apx/BarButton.qml', 'quickshell/apx/BounceMouseArea.qml', 'quickshell/apx/PersonalizationPanel.qml', 'quickshell/apx/RadioIconButton.qml', 'quickshell/apx/qmldir', 'local/bin/apx-install-v1', 'local/bin/apx-pointer-power-v1', 'quickshell/apx/icons/lucide/list.svg']
+ RELATIVES = ['local/bin/apx-microphone-activity-v1', 'quickshell/apx/DesktopActivity.qml', 'quickshell/apx/Appearance.qml', 'local/bin/apx-desktop-activity-v1', 'quickshell/apx/icons/lucide/leaf.svg', 'quickshell/apx/icons/lucide/scale.svg', 'quickshell/apx/icons/lucide/cross.svg', 'quickshell/apx/icons/lucide/gpu.svg', 'quickshell/apx/MediaIsland.qml', 'quickshell/apx/shell.qml', 'quickshell/apx/ControlTile.qml', 'quickshell/apx/MenuHover.qml', 'quickshell/apx/BarButton.qml', 'quickshell/apx/BounceMouseArea.qml', 'quickshell/apx/PersonalizationPanel.qml', 'quickshell/apx/RadioIconButton.qml', 'quickshell/apx/qmldir', 'local/bin/apx-install-v1', 'local/bin/apx-pointer-power-v1', 'quickshell/apx/icons/lucide/list.svg', 'quickshell/apx/icons/lucide/mouse-off.svg']
+ RELATIVES += ['quickshell/apx/icons/lucide/camera-off.svg', 'quickshell/apx/icons/lucide/plane-off.svg']
+ RELATIVES += ['hypr/hyprland.lua', 'hyprland/hyprland.conf']
+ RELATIVES += ['quickshell/apx/'+name for name in ['ActivityPanel.qml', 'ControlDashboard.qml', 'IconLabel.qml', 'MediaTimeline.qml', 'WorkspacePreview.qml']]
+ RELATIVES += ['quickshell/apx/ControlIcon.qml', 'quickshell/apx/ButtonOutline.qml', 'local/libexec/apx-rofi-secondary-v1.so']
  @staticmethod
  def transform(rel, text): return (SOURCE/rel).read_text()
 def atomic(path,data,mode,uid,gid):
@@ -32,8 +36,8 @@ def main():
   for rel in transform.RELATIVES:
    path=base/rel if base in [SOURCE,SEED] else (base/'.local'/rel.removeprefix('local/') if rel.startswith('local/') else base/'.config'/rel)
    assert not path.is_symlink(),path
-   assert path.is_file() or rel.endswith(('RadioIconButton.qml', 'MenuHover.qml')) or rel.startswith('local/bin/') or rel.endswith('list.svg'),path
-   planned[path]=transform.transform(rel,path.read_text() if path.exists() else '').encode()
+   assert path.is_file() or rel in ('local/share/apx/graphite-apps.css', 'local/share/themes/APX-Graphite/gtk-3.0/gtk.css', 'local/share/applications/xfce4-taskmanager.desktop') or rel == 'local/share/icons/APX-Graphite/scalable/devices/apx-host-terminal.svg' or rel == 'local/lib/rofi/apx-rofi-system-v1.so' or rel in ('local/libexec/apx-thunar-chrome-v1.so', 'local/libexec/apx-rofi-secondary-v1.so') or rel in ('local/share/dbus-1/services/org.xfce.Thunar.service', 'local/share/dbus-1/services/org.xfce.FileManager.service', 'local/share/dbus-1/services/org.xfce.Thunar.FileManager1.service') or rel.startswith('local/share/icons/APX-Graphite/scalable/actions/') or rel == 'hypr/apx-trackpad-sensitivity.lua' or rel in ('quickshell/apx/ButtonOutline.qml', 'quickshell/apx/GhostLines.js') or rel.endswith(('RadioIconButton.qml', 'MenuHover.qml', 'CameraIndicator.qml', 'NotificationInbox.qml', 'NotificationGroups.js')) or rel.startswith('local/bin/') or rel.endswith(('mouse-pointer-2.svg', 'arrow-up-down.svg', 'list.svg', 'mouse-off.svg', 'leaf.svg', 'scale.svg', 'cross.svg', 'gpu.svg', 'camera-off.svg', 'plane-off.svg')),path
+   planned[path]=(SOURCE/rel).read_bytes() if rel.endswith('.so') else (transform.transform_path(rel,path.read_text() if path.exists() else '',path) if hasattr(transform,'transform_path') else transform.transform(rel,path.read_text() if path.exists() else '')).encode()
  for runtime,base in [(REPO/'scripts/virtual-lab/apx-lab-runtime.py',SOURCE),(Path('/usr/lib/apx/apx-lab-runtime.py'),SEED)]:
   text=runtime.read_text()
   if base == SEED:
@@ -60,7 +64,7 @@ def main():
  if sys.argv[1:]==['--check']:
   (AUDIT/'planned-paths.json').write_text(json.dumps([str(p) for p in planned],indent=2)+'\n')
   for rel in transform.RELATIVES:
-   dest=AUDIT/'candidate'/rel;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(transform.transform(rel,(SOURCE/rel).read_text() if (SOURCE/rel).exists() else ''))
+   dest=AUDIT/'candidate'/rel;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes((SOURCE/rel).read_bytes() if rel.endswith('.so') else transform.transform(rel,(SOURCE/rel).read_text() if (SOURCE/rel).exists() else '').encode())
   print('Planned',len(planned),'files');return
  if not planned:print('OSD geometry already updated.');return
  backup=Path('/var/lib/apx/backups')/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-controls-followup');backup.mkdir(parents=True)

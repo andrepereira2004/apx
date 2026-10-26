@@ -16,3 +16,6 @@ MediaTimeline 1.0 MediaTimeline.qml
 ControlSlider 1.0 ControlSlider.qml
 RadioIconButton 1.0 RadioIconButton.qml
 MenuHover 1.0 MenuHover.qml
+CameraIndicator 1.0 CameraIndicator.qml
+NotificationInbox 1.0 NotificationInbox.qml
+ButtonOutline 1.0 ButtonOutline.qml

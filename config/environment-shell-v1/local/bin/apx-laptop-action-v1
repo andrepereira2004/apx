@@ -154,7 +154,7 @@ def display_cycle() -> int:
     # Reapplying it repairs a previous mirror/disabled rule, without cycling
     # into mirroring or turning off an output that may contain open windows.
     commands = ["hl.monitor({output=" + json.dumps(str(item["name"]))
-                + ', mode="preferred", position="auto", scale="auto"})'
+                + ', mode="highres", position="auto", scale=1.25})'
                 for item in connected]
     feedback_method = "hotkeyDisplayExtended"
 
@@ -247,14 +247,14 @@ def display_layout(side: str) -> int:
         else:
             # hyprctl parses arguments beginning with '--' as CLI flags.
             code = ''
-            code += 'hl.monitor({output="",mode="preferred",position="auto-' + side + '",scale="auto"})\n'
-            code += 'hl.monitor({output=' + json.dumps(internal["name"]) + ',mode="preferred",position="0x0",scale="auto"})\n'
+            code += 'hl.monitor({output="",mode="highres",position="auto-' + side + '",scale=1.25})\n'
+            code += 'hl.monitor({output=' + json.dumps(internal["name"]) + ',mode="highres",position="0x0",scale=' + str(float(internal.get("scale", 1.25))) + '})\n'
             # Preserve each connected external display's scale across placement changes.
             for monitor in monitors:
                 if monitor is internal:
                     continue
                 scale = 1.25 if enlarge else float(monitor.get("scale", 1))
-                code += 'hl.monitor({output=' + json.dumps(monitor["name"]) + ',mode="preferred",position="auto-' + side + '",scale=' + str(scale) + '})\n'
+                code += 'hl.monitor({output=' + json.dumps(monitor["name"]) + ',mode="highres",position="auto-' + side + '",scale=' + str(scale) + '})\n'
         applied = subprocess.run((HYPRCTL, "eval", code), check=True,
                                  capture_output=True, text=True, timeout=3)
         if applied.stdout.strip() != "ok":
@@ -276,7 +276,7 @@ def main() -> int:
     actions = {
         "files": files,
         "airplane-status": airplane_status,
-        "apps": lambda: (feedback("hotkeyApps") if rofi else feedback("hotkeyFailed"), detached(["/usr/bin/env", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", rofi, "-modi", "apps,files", "-show", "apps", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary"]) if rofi else 0)[1],
+        "apps": lambda: (feedback("hotkeyApps") if rofi else feedback("hotkeyFailed"), detached(["/usr/bin/env", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", rofi, "-modi", "apps,files,system", "-show", "apps", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary"]) if rofi else 0)[1],
         "calculator": calculator,
         "display-cycle": display_cycle,
         "display-left": lambda: display_layout("left"),

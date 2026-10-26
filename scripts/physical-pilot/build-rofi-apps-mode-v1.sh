@@ -8,3 +8,7 @@ cc -shared -fPIC -Wall -Wextra -Werror -O2 \
   "$script_dir/apx-rofi-apps-mode-v1.c" \
   -o "${1:-$repo/config/environment-shell-v1/local/lib/rofi/apx-rofi-apps-v1.so}" \
   "${native_flags[@]}"
+cc -shared -fPIC -Wall -Wextra -Werror -O2 -DAPX_MODE_NAME='"system"' \
+  "$script_dir/apx-rofi-apps-mode-v1.c" \
+  -o "${2:-$repo/config/environment-shell-v1/local/lib/rofi/apx-rofi-system-v1.so}" \
+  "${native_flags[@]}"

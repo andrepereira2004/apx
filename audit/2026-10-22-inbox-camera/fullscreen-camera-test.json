@@ -1,0 +1,30 @@
+[
+  {
+    "camera_active": false,
+    "fullscreen": false,
+    "osd_fallback": false,
+    "osd_visible": false,
+    "island_transient": false
+  },
+  {
+    "camera_active": true,
+    "fullscreen": false,
+    "osd_fallback": false,
+    "osd_visible": false,
+    "island_transient": true
+  },
+  {
+    "camera_active": true,
+    "fullscreen": true,
+    "osd_fallback": true,
+    "osd_visible": true,
+    "island_transient": false
+  },
+  {
+    "camera_active": true,
+    "fullscreen": true,
+    "osd_fallback": false,
+    "osd_visible": false,
+    "island_transient": false
+  }
+]

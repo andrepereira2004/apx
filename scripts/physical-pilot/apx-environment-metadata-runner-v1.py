@@ -12,6 +12,9 @@ import stat
 import sys
 
 
+sys.path.insert(0, "/usr/lib/apx")
+from apx_environment_switch_contract import ENVIRONMENT_ICONS
+
 ENVIRONMENTS = Path("/var/lib/apx/environments")
 NATIVE_ENVIRONMENTS = Path("/var/lib/apx/native-environments")
 NAME = re.compile(r"[a-z](?:[a-z0-9]|-(?=[a-z0-9])){0,26}")
@@ -111,7 +114,9 @@ def atomic_write(path: Path, value: dict[str, object], mode: int) -> None:
         raise
 
 
-def update_metadata(target: str, generation: str, display_name: str, description: str) -> None:
+def update_metadata(target: str, generation: str, display_name: str, description: str, icon: str | None = None) -> None:
+    if icon is not None and (not isinstance(icon, str) or icon not in ENVIRONMENT_ICONS):
+        raise RuntimeError("o ícone pedido não é válido")
     if os.geteuid() != 0 or NAME.fullmatch(target) is None or target == "hub" \
             or GENERATION.fullmatch(generation) is None \
             or not valid_text(display_name, 1, 64) or not valid_text(description, 0, 120):
@@ -124,18 +129,23 @@ def update_metadata(target: str, generation: str, display_name: str, description
         path, value, mode = ordinary_record(target, generation)
     value["display_name"] = display_name
     value["description"] = description
+    if icon is not None:
+        trusted_parent(ENVIRONMENTS)
+        atomic_write(ENVIRONMENTS / f".icon-{target}-{generation}.json",
+                     {"name": target, "generation": generation, "icon": icon}, 0o600)
     atomic_write(path, value, mode)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--icon")
     parser.add_argument("--target", required=True)
     parser.add_argument("--generation", required=True)
     parser.add_argument("--display-name", required=True)
     parser.add_argument("--description", required=True)
     arguments = parser.parse_args()
     update_metadata(arguments.target, arguments.generation,
-                    arguments.display_name, arguments.description)
+                    arguments.display_name, arguments.description, arguments.icon)
     return 0
 
 

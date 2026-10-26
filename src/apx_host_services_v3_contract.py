@@ -21,7 +21,7 @@ OPERATIONS = (
     "capabilities.get", "events.subscribe", "network.connect",
     "network.connectivity-check", "network.disconnect", "network.forget",
     "network.portal.open", "network.scan", "network.status", "network.power", "radio.status", "radio.airplane",
-    "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save",
+    "keyboard.load", "keyboard.save", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save",
 )
 SECRET_FIELDS = frozenset({"credential", "passphrase", "password", "pin", "secret"})
 _REQUEST_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}")
@@ -79,13 +79,17 @@ def validate_payload(operation: str, payload: object) -> dict[str, object]:
     if operation in {"bluetooth.scan", "bluetooth.status", "capabilities.get",
                      "network.connectivity-check", "network.disconnect",
                      "network.portal.open", "network.scan", "network.status", "radio.status", "snapshot.get",
-                     "calendar.load", "appearance.load"}:
+                     "calendar.load", "appearance.load", "keyboard.load"}:
         if payload:
             raise HostServicesV3ContractError("operation takes no payload")
         return {}
     if operation == "radio.airplane":
         if set(payload) != {"enabled"} or type(payload["enabled"]) is not bool:
             raise HostServicesV3ContractError("airplane mode requires a boolean")
+        return dict(payload)
+    if operation == "keyboard.save":
+        if set(payload) != {"numlock"} or type(payload["numlock"]) is not bool:
+            raise HostServicesV3ContractError("keyboard state requires one boolean")
         return dict(payload)
     if operation == "appearance.save":
         if set(payload) != {"color", "icons", "buttons", "windows"} or type(payload["color"]) is not str \

@@ -67,7 +67,7 @@ class BatteryActionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which('node'), 'Node required for QML JavaScript behavior checks')
     def test_popup_click_switches_menu_and_same_button_closes(self):
         source = SHELL.read_text()
-        hit_test = source.split('    function popupBarTargetAt', 1)[1].split('    function togglePopup', 1)[0]
+        hit_test = source.split('    function popupBarTargetAt', 1)[1].split('\n    }', 1)[0] + '\n    }\n'
         handler = source.split('property var pressedBarTarget: null', 1)[1].split('onClicked: (mouse) => {', 1)[1].split('\n            }', 1)[0]
         js = '''const assert = require('node:assert/strict');
 const bar = {screen: 1, implicitHeight: 46, contentItem: {}, margins: {left: 5}};
@@ -76,7 +76,7 @@ let current = 'calendar';
 function button(kind, x) {return {visible: true, enabled: true, width: 80, height: 32,
 mapToItem: () => ({x, y: 7}), activated: () => {current = current === kind ? '' : kind;}};}
 const calendarButton = button('calendar', 0), environmentButton = button('environments', 100),
-modelStoreButton = button('model', 200), appsButton = button('apps', 500), batteryButton = button('battery', 300), controlCenterButton = button('controls', 400);
+appsButton = button('apps', 500), batteryButton = button('battery', 300), controlCenterButton = button('controls', 400), mediaButton = button('media', 600), filesButton = button('files', 700);
 ''' + 'function popupBarTargetAt' + hit_test + '''
 const root = {popupBarTargetAt, closePopup: () => {current = '';}};
 const Qt = {LeftButton: 1};
@@ -87,7 +87,7 @@ click(320, 20); assert.equal(current, 'battery');
 click(420, 20); assert.equal(current, 'controls');
 click(420, 20); assert.equal(current, '');
 current = 'calendar'; click(320, 60); assert.equal(current, '');
-current = 'calendar'; modelStoreButton.visible = false; click(220, 20); assert.equal(current, '');
+current = 'calendar'; click(220, 20); assert.equal(current, '');
 current = 'calendar'; click(320, 20, 2); assert.equal(current, '');
 current = 'calendar'; pressedBarTarget = calendarButton; dispatch({x:320,y:20,button:1}); assert.equal(current, '');
 assert.equal(popupBarTargetAt(304,20), null);
@@ -96,22 +96,27 @@ popup.screen = 2; assert.equal(popupBarTargetAt(320,20), null);
         subprocess.run(['node', '-e', js], check=True, capture_output=True, text=True)
 
     @unittest.skipUnless(shutil.which('node'), 'Node required for QML JavaScript behavior checks')
-    def test_first_navigation_key_starts_at_first_control(self):
+    def test_first_navigation_key_starts_at_directional_edge(self):
         source = SHELL.read_text()
         body = source.split('    function navigateGenericMenu(event) {', 1)[1].split('\n    }', 1)[0]
         js = """
 const assert = require('node:assert/strict');
 const Qt = {Key_Backtab:1, Key_Up:2, Key_Left:3, Key_Tab:4, Key_Down:5, Key_Right:6};
-let popupKind = 'battery', menuKeyboardNavigation = false, chosen = -1;
+let popupKind = 'battery', menuKeyboardNavigation = false, chosen = -1, menuNavigationColumn = NaN;
+const controlPageAnimation = {running:false}, controlPageCapturing = false;
+const root = {controlsAppearanceOpen:false, wifiPasswordVisible:false};
 const items = [{activeFocus:false},{activeFocus:false},{activeFocus:false}];
 function genericMenuItems() {return items;}
 function focusMenuItem(item) {chosen=items.indexOf(item);}
-function menuNavigationRect(item) {return {x:0,y:items.indexOf(item)*30,w:100,h:20};}
+function menuNavigationRect(item) {return {x:0,y:items.indexOf(item)*30,width:100,height:20};}
+function menuEntryIndex(items,backwards) {return backwards ? items.length-1 : 0;}
+function menuItemIntersectsViewport(item) {return true;}
 function spatialMenuIndex(rects,current,key) {return current+1;}
 function navigateGenericMenu(event) {""" + body + """}
 navigateGenericMenu({key:99}); assert.equal(chosen,-1); assert.equal(menuKeyboardNavigation,false);
 navigateGenericMenu({key:Qt.Key_Down}); assert.equal(chosen,0); assert.equal(menuKeyboardNavigation,true);
-navigateGenericMenu({key:Qt.Key_Backtab}); assert.equal(chosen,0);
+navigateGenericMenu({key:Qt.Key_Backtab}); assert.equal(chosen,2);
+navigateGenericMenu({key:Qt.Key_Up}); assert.equal(chosen,2);
 items[0].activeFocus=true; navigateGenericMenu({key:Qt.Key_Down}); assert.equal(chosen,1);
 """
         subprocess.run(['node', '-e', js], check=True, capture_output=True, text=True)

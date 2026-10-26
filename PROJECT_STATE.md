@@ -1,3 +1,910 @@
+# Close-first live-only experiment active — 2026-10-26
+
+Owner observes remaining expansion under the outgoing window and explicitly selects testing close-before-expand. Installed audit/2026-10-26-window-only-defaults/close-first-test.lua through live eval only; no source/seed/home/pin changes or config reload. Normal tiled close (excluding floating, fullscreen, grouped and last-tile cases) selects a high-mass hold spring for windowsMove. Next event-loop turn starts a 170ms oneshot, exceeding existing 149ms geometry/146ms fade close. Then switches to a critical settle spring (mass1 stiffness1600 damping80), preserving animated spring state; after400ms restores accepted180ms easeOutQuint movement. Normal window.open_early cancels pending close sequence and immediately restores accepted opening reflow; overlapping open/close therefore prioritizes new opening. No polling/daemon/plugins, QuickShell or workspace changes. Timer callbacks self-expire via native Lua timer lifecycle. Hold is visual/subpixel, not a layout-engine removal delay.
+
+Isolated nested/headless test using same compositor, official entrance/exit defaults and two self-closing terminals verifies surviving coloured boundary remains unchanged while outgoing colour is detected. Last detected outgoing colour at 2230ms; first survivor expansion at 2379ms. Threshold/sampling limit: this verifies visible bounds, not compositor internals. Isolated callback returns idle:1, no parsing error; no nested process remains. Live test returns idle:29; user is also actively opening/closing windows, so live full-frame recording is not a controlled comparison. New review saved in Faculdade /home/apx/Videos/APX-fechar-primeiro-camara-lenta.mp4 and audit normal-recording-close-first/. Not opened automatically to avoid introducing more layout changes during owner's normal-app testing.
+
+Current live test disappears on config reload/session restart; saved historical spring config remains unchanged. User visual acceptance and persistence pending. Revert specifically by removing apxCloseFirstTest subscriptions, invalidating serial and applying windowsMove180ms/easeOutQuint; a full config reload also reverts prior accepted fast-move setting, so reapply if used.
+
+# Owner reports improved reflow; slower review opened — 2026-10-26
+
+Owner feedback on live-only windowsMove 1.8/easeOutQuint: "ok agora parece bem melhor!". Requests another slow-motion review to assess refinement. Opened the fast-move recording at approximately 4x slower than real screen time in Faculdade, looping mpv title Janelas-ajustadas-camara-lenta. Source normal-recording-fast-move/normal-windows-review-4x.mp4; deployed review file /home/apx/Videos/APX-janelas-ajuste-camara-lenta.mp4. No new animation adjustment or persistence in this step; active reflow override confirmed before playback. Review/persistence still pending; saved historical config still reverts this override on reload.
+
+# Temporary reflow-only diagnostic active; awaiting owner feedback — 2026-10-26
+
+Owner confirmed normal-windows-review.mp4 shows the exact unwanted existing-window delay. Applied one live-only Lua animation override: windowsMove enabled=true speed=1.8 bezier=easeOutQuint. This is a custom 180ms reflow diagnostic, NOT a claimed original Hyprland default. No source/seed/home animation config changed in this step. windowsIn remains spring:easy, close/fades/layers/workspaces untouched. New normal-recording-fast-move/ shows the existing Brave window opening space before the incoming terminal occupies its half, but existing app differs from baseline console and ~140ms capture intervals limit onset conclusions. User has been asked to test normal apps while the override is active. Visual acceptance and persistence decision remain pending.
+
+Current live override is intentionally different from saved configuration. A config-only reload restores the historical saved spring/inherited movement. Do not run deployment/reload during pending owner test. If rejected, restore via reload config-only; if accepted, explain the custom timing tradeoff before treating as chosen policy. No further fake-default claims. Main session running; temporary apps self-closed. Closed only the specifically launched review player before recording; no user application closed. Evidence temporary-fast-move-animations.json and normal-recording-fast-move/.
+
+# Historical restoration rejected; normal-window recording available — 2026-10-26
+
+Owner still sees existing window stuck while its neighbour opens after the recovered 08:39 candidate. Do not describe historical recovery as a fix or confirmed good reference. Recorded one regular Kitty opening beside the existing Host console and self-closing after two seconds; no special animation/window rules and no desktop config changes. Capture at ~130ms intervals limits onset precision; review clip is ~2x slower than actual elapsed screen time. Video normal-recording/normal-windows-review.mp4 and original frame timing normal-recording/timing.json. This recording is intended to align the user's exact visual symptom before more configuration changes. Quickshell and workspace animation remain untouched; no new packages, compositor restart or plugins. Cause remains unconfirmed.
+
+# Historical window candidate recovered from prior conversation — 2026-10-26
+
+Owner recalls a good test preceding a request to go back. Located exact prior-session message "volta para a anterior!" at 08:45:01 UTC. The corresponding rollback inventory 20261026T084045Z-controls-followup preserves the 08:39 factory-window state before entrance damping and Quickshell changes. Recovered only its six window/fade leaves, original easy spring, unoverridden windowsMove and main Thunar animation override popin97%. Other window-rule fields and all non-window animation leaves/curves retained. This follows the newly identified historical reference, superseding earlier classical/non-spring interpretation. Owner has not yet confirmed this is the good test or accepted the restored result.
+
+Source, independent seed, five homes and required integrity pins synchronized; each window leaf byte-equal historical reference. Only two animation lines changed, explicit windowsMove removed and main Thunar animation field restored relative to previous config. Config-only reload ok, configerrors empty; live windows/windowsIn use spring:easy and windowsMove is unoverridden. Quickshell bytes remain identical to pre-conversation inventory. New backup: /var/lib/apx/backups/20261026T094508Z-controls-followup. No whole-backup rollback, Quickshell reload or workspace change. Await owner normal-application feedback; no claim of visual correction.
+
+# Explicit window movement applied for owner testing — 2026-10-26
+
+Owner did not observe temporary coloured probes and requests tested motion applied to normal applications for direct feedback. Persisted explicit windowsMove enabled=true speed=4.79 bezier=easeOutQuint, equivalent to the intended classic inheritance, without claiming measured improvement. Only this one Hyprland line added to source, independent seed and five homes; all other configuration bytes preserved. Required integrity pins updated. Config-only reload accepted, configerrors empty; live windowsMove override confirmed. Quickshell bytes match pre-conversation inventory. Deployment helper is idempotent and preserves this explicit setting. Backup: /var/lib/apx/backups/20261026T093556Z-controls-followup. Actual symptom remains unresolved pending owner feedback on normal applications. No further temporary window tests requested or launched.
+
+# Window motion remains unresolved after owner testing — 2026-10-26
+
+Owner rejects the classic-curve result: existing window appears to wait/drag while a neighbour opens; reports all applications affected. Previous config-value checks did not establish visual correctness. No further persistent desktop configuration changes applied during diagnosis.
+
+Transient explicit windowsMove=4.79/easeOutQuint A/B gave similar rendered colour-bound progression to inherited windowsMove; restored with config-only reload. Disposable blue/red Kitty probes self-close. Narrow screencopy colour bounds show uneven resizing; captures can include occlusion and buffer-content effects, and are not direct animation-variable measurements. Initial IPC timing records expose goal geometry only and cannot establish visual onset.
+
+A separate time-limited compositor using the installed official example with only the classical easeOutQuint substitutions also shows uneven colour-bound progression on a 1280x720 headless output, without APX rules or QuickShell. This weakens a custom-curve-only explanation but does not prove a compositor regression or reproduce the owner's exact physical symptom. Independent compositor stopped; temporary config removed. Initial headless-only backend start failed; successful retry used Wayland backend plus a headless test output. Main compositor/session preserved.
+
+Evidence: colored-inherited.json, colored-explicit.json, clean-colored.json, clean-animations.json, clean-monitors.json and clean-session.log in this directory. New reproducible capture scripts are audit tools only. Quickshell bytes verified equal pre-conversation inventory; all deployed Hyprland files remain synchronized. Cause and correction remain open; awaiting whether owner observed the same symptom in the coloured probes. Do not claim resolved or replace more animation families.
+
+# Classic window motion selected — 2026-10-26
+
+Owner confirms classical non-spring Hyprland motion. Changed only windows/windowsIn to official v0.54.3 easeOutQuint defaults, speeds 4.79/4.1 and popin 87% entrance. windowsMove remains unoverridden and inherits windows. Verified every deployed Hyprland file differs by those two lines only; QuickShell matches pre-conversation inventory. Workspace/layer animation and all window rules preserved. Source, independent seed, five homes and required integrity pins synchronized. Live reload ok, configerrors empty, live animations confirm easeOutQuint and unoverridden windowsMove. Visual side-by-side opening/closing acceptance remains pending; no visual smoothness claim. Backup: /var/lib/apx/backups/20261026T090840Z-controls-followup. Updated bounded deployment helper to preserve classical defaults.
+
+# Window-only original motion — 2026-10-26
+
+Owner clarifies scope: only opening/closing and tiled neighbour reflow. Applied installed original windows/windowsIn/windowsOut/fadeIn/fadeOut values; removed custom windowsMove so it inherits original windows motion. Removed only main Thunar entrance override; floating dialog and layer rules retained. All other animation leaves and all curves verified unchanged per deployed file. QuickShell files unchanged against pre-conversation inventory; no shell touch/restart. Source, independent seed, five homes and required digest pins synchronized. Hyprland reload returns ok; configerrors empty; deployment recheck zero pending. Visual acceptance remains pending. Backup: /var/lib/apx/backups/20261026T085807Z-controls-followup. The old deploy-window-reflow helper remains rejected; use deploy-window-only-defaults-20261026.py for this scoped change.
+
+# Full pre-conversation configuration restored — 2026-10-26
+
+Owner reports configuration no longer matches previous behavior and requests
+restoration. Restored entire first backup inventory from
+/var/lib/apx/backups/20261026T083521Z-controls-followup. Verified every file hash
+equals inventory.before, including all five homes, source/seed, runtime/recovery
+pins. QuickShell ControlTile.qml/shell.qml hashes also equal pre-change backups
+across their deployed copies. Live Hyprland reload accepted, configerrors empty.
+This restores pre-conversation custom animations, superseding all factory/default
+and reflow candidates recorded below. Owner visual acceptance pending.
+Do not reapply deploy-window-reflow-20261026.py; it is a rejected candidate.
+
+# Scope correction: restore shell animation behavior — 2026-10-26
+
+Owner objects that windows remain incorrect and QuickShell was changed. Restored
+all non-window animation leaves and their curves from pre-conversation backup,
+including layers and workspaces. Verified live values match that backup; source
+ControlTile.qml/shell.qml equal pre-change backup. Six window/fade leaves retain
+factory v0.56.2 defaults; verified upstream example uses springs (not classic
+Bezier). Asked owner to distinguish installed spring defaults from classic
+non-bouncing defaults before further window changes. Configerrors empty.
+Backup:/var/lib/apx/backups/20261026T084845Z-controls-followup.
+
+# Original Hyprland animation block restored — 2026-10-26
+
+Owner still reports incorrect appearance. Follow-up inspection found window-rule
+animation overrides for Thunar and file pickers. Removed animation/no_anim fields
+from window rules, preserving geometry/matching/borders. Factory animation block
+retained. Source, seed, five homes and digest pins updated; reload accepted,
+configerrors empty. Backup:/var/lib/apx/backups/20261026T084743Z-controls-followup.
+Owner clarification requested on remaining symptom; visual acceptance pending.
+
+Owner explicitly insists on original Hyprland animations. Entire curves/animation
+block now byte-identical to installed /usr/share/hypr/hyprland.lua, including
+windows, workspace and layer animation leaves. No custom spring damping or
+windowsMove override. Source, seed, five homes and runtime/recovery pins updated.
+Live reload accepted, configerrors empty, deploy recheck0pending.
+Backup:/var/lib/apx/backups/20261026T084639Z-controls-followup.
+Deployment helper now restores this factory block, not rejected earlier candidates.
+Ligações unchanged from prior rollback. Owner visual acceptance pending.
+
+# Remember Num Lock and final lock greeting position — 2026-10-25
+
+Owner clarifies: remember the chosen Num Lock state, not always enabled. Replaced
+today's fixed true with shared authenticated keyboard.load/save boolean preference
+and independent local caches. Non-consuming Num Lock release binding saves actual
+main-keyboard state (including while locked); startup/config reload restores it.
+No polling/new daemon/device access. Broker private state keyboard.json uses atomic
+replacement and fsync, within existing service sandbox. Seed has no personal state.
+Source/seed/five homes/runtime/recovery pins synchronized; check0pending. Broker
+updated with existing bounded restart/socket refresh adapter and inode-preserving
+client updates. Initial observed main-keyboard state was false and retained.
+Live compositor-launched helper save/restore both exit0, authenticated operations
+accepted, configerrors empty. Direct namespace-entered test correctly rejected by
+process-lineage authorization; no weakening applied. Four new persistence/validation
+unit tests,8contract,9physical broker,7seed tests pass; peer tests recorded separately.
+Actual key release, Environment switch and full power cycle not exercised; owner
+physical acceptance remains pending. Details:docs/numlock-state-2026-10-25.md and
+audit/2026-10-25-numlock/. Backups:20261025T171746Z-radio-power and
+20261025T171800Z-controls-followup under /var/lib/apx/backups; initialization
+inventory in audit initialized-state.json. Supersedes always-on policy below.
+
+Owner final greeting placement: BELOW the always-visible password field, y=-72;
+time/date retained, no APX/layout/instructions. Applied source/seed/five homes;
+backup20261025T171600Z-controls-followup. Actual lock visual check pending.
+No firmware/boot/auth changes, reboot, commit or push.
+
+# Desktop responsiveness and visual consistency — 2026-10-25
+
+Owner prioritizes low launch delay while retaining smooth animation, using
+QuickShell Environment/Control Centre motion as reference. Accepted direction:
+common20px outer alignment and10px circular corners, Thunar retained as default,
+no internal Rofi transitions or folder prefetch. Experimental pilot now starts
+existing Environment-local Thunar daemon asynchronously where installed; repeat
+open improvement measured, first-window latency still open. Final motion candidate
+320ms entry/240ms exit; owner visual acceptance pending. No boot architecture or
+TPM/encryption/bootloader change. Details: audit/2026-10-25-desktop-alignment/.
+
+# Default file manager decision — 2026-10-25
+
+Owner explicitly confirms Thunar is and must remain the APX default file manager.
+Reasserting the directory association at session activation is intentional, not
+a defect. The repository-only alternative-preservation candidate was withdrawn;
+no live deployment occurred. Desktop integration planning must retain Thunar.
+
+# General APX reply routing correction — 2026-10-24
+
+Owner requests all apps and networks covered. Replaced wlan0-only workaround
+with uplink-independent IPv4 NAT reply handling: after reverse NAT, match the
+actual destination route ve-apx-* and raise only TTL1 to2. Covers current/future
+APX routed interfaces and all protocols/apps using this NAT path. No interface,
+SSID, destination website, app or Environment address is pinned. No firewall
+accept verdict added; per-Environment host/private/sibling restrictions retained.
+Experimental physical-pilot compatibility exception, not production approval.
+Native IPv6 is outside this IPv4 NAT correction; no IPv6 topology enabled.
+
+Existing enabled nftables startup config persists the fragment. Full config
+syntax passes; dedicated table applied without restarting services. Isolated
+network test reproduces TTL1 failure, verifies arbitrary-uplink recovery, normal
+TTL64 unchanged and non-APX routes excluded. Four existing network policy tests
+pass. Live Faculdade WhatsApp/Google/example.com all HTTPS200. Physical switching
+to another Wi-Fi/Ethernet remains untested. No account/session changes or reboot.
+Source config/environment-network-recovery-v1/reply-hop-pilot.nft; evidence and
+rollback audit/2026-10-24-zapzap-network/generalized/. No commit/push.
+
+# Shared button contours and Logitech stability work — 2026-10-24
+
+Owner asks for workspace-style outlines on all QuickShell buttons while continuing
+Logitech diagnosis. Added shared ButtonOutline:1px inset contour, selected/focused
+#d9dcea and hover#69728a. Bar/media/menu/radio button families use it; suppress old
+outer borders during shared feedback. Source, seed, five homes and pins synchronized;
+7seed and8notification tests pass, deployment0pending. Controls visually checked;
+owner visual acceptance pending. Backups074004/074234/074430-controls-followup.
+
+Logitech: persistent narrowly matched receiver/Genesys hub power policy applied.
+Existing recovery now logs state changes only and tolerates unplug during scans;
+4regression tests pass. User confirms manual removal followed loss of response.
+New hub-path descriptor errors occurred despite hub power on; no cure claimed.
+Last scan receiver absent, stability test awaits reconnection. No whole-controller
+reset, arbitrary kernel quirk, firmware update or new daemon. Evidence:
+audit/2026-10-24-button-outlines/ and audit/2026-10-24-logitech-stability/.
+No commit/push or reboot.
+
+# Maintenance service isolation and media reconciliation — 2026-10-24
+
+Owner requests continued efficient and secure system review with minimal complexity.
+Hardened existing network-recovery and environment-storage oneshot units in source
+and Host: read-only system/home protections, namespace restrictions and appropriate
+capability boundaries. Both verified and executed successfully. No network fault
+injected; recovery branch that restarts network remains unexercised.
+
+Media watcher now reconciles every 5 s instead of 500 ms, retaining MPRIS events.
+Live 7 s output count fell from 14 to 2; isolated fake-player PropertiesChanged
+reached watcher in 27.71 ms. Restarted only the existing watcher; no new daemon.
+Source/seed/five homes and pins synchronized; deployment reports zero pending.
+24 existing regression tests pass. No additional deletion justified this round.
+USB 1-2.3 enumeration errors and absent Logitech receiver recorded, no controller reset.
+Evidence and rollback: /root/apx-maintenance-review-20261024/README.md.
+No reboot, package installation, commit or push.
+
+# Vulkan functional check, obsolete package cache and hardening — 2026-10-24
+
+Owner authorizes graphics testing and continued system space/security review.
+Three600-frame vkcube Wayland1280x720 mailbox executions succeed on explicit
+NVIDIA driver. This is a functional rendering/submission check, NOT game FPS or
+Windows comparison.30s observation found no game process; old Hytale log confirms
+NVIDIA renderer. Temporary test binaries removed; no package installation.
+
+Removed92downloaded package archives from failed17/08 coordinated operation,
+retaining all plan/state/log/database/rollback metadata.2015779816bytes of archive
+payload; settled observed physical free delta2015825920bytes (~1.88GiB), final
+free near97.66GiB. No snapshots or personal Backup.tar/Backup directory removed.
+
+Applied kernel.kptr_restrict=1 in new/etc/sysctl.d/60-apx-kernel-pointers.conf,
+previous value0saved. Firewall rules present; no failed Host units; OpenSSL package
+files verify unchanged. SecureBoot/AppArmor remain inactive pending boot/isolation
+validation. No comprehensive source/CVE scan claimed. No commit/push or reboot.
+Evidence/reversal: /root/apx-system-review-20261024/README.md.
+
+# Performance profile and additional cache cleanup — 2026-10-24
+
+Owner asks to continue optimization. On AC, changed native platform profile from
+low-power to performance; no forced CPU clocks, voltage, boot options or battery
+automation. Tested nvidia-powerd: AC ceiling reported130W, unsupported DC table
+warnings; daemon used13.86% of one thread in15s. No measured gaming benefit, so
+stopped it and retained disabled state; reported ceiling returned80W. QuickShell
+remains2.80% of one thread in that sample. No FPS comparison performed.
+Removed only stopped Hub/Minecraft Brave disk/code caches (~1.96GiB allocated
+entries), physical free delta68345856bytes (~65MiB); snapshots retained. TSC
+rejection confirmed across three recent boots; HPET remains, no override applied.
+Evidence and prior hardware state: /root/apx-performance-followup-20261024/.
+No reboot, commit or push. Game GPU/frametime comparison remains unmeasured.
+
+# QuickShell background performance and selective cleanup — 2026-10-24
+
+Owner authorizes QuickShell optimization and disposable-cache cleanup. Network,
+radio and audio status polling now uses3s with menus closed and500ms while open;
+opening a menu still requests immediate fresh status. Appearance uses5s in the
+background and500ms while its settings are visible, preserving immediate reads
+after writes. Media position uses250ms for the bar, retaining16ms in the detailed
+media menu. Notifications and explicit action paths retained.
+
+Source, independent seed, five homes and runtime/recovery digest pins synchronized;
+deployment recheck0pending. Live reload succeeded;7seed tests pass. Two15s CPU
+samples: QuickShell19.23% to2.93% of one thread; Hyprland20.10% to11.32%.
+Samples are session observations, not a controlled gaming benchmark. Live controls
+open/update/settle/close validation covers network, audio, volume and microphone.
+User visual acceptance remains pending. Backup20261024T071123Z-controls-followup.
+
+Pruned103 old package-cache archives, retaining2versions per package; removed
+Faculdade Gridcraft target build products (installed binary is independent) and
+stopped Faculdade Brave disk/code caches. About4.40GiB of allocated cache entries
+removed; physical free-space increase549195776bytes (~524MiB), limited by retained
+Btrfs snapshots/shared extents and concurrent filesystem activity. Profiles,
+credentials, shader caches, system ISOs, installed packages and snapshots retained.
+Evidence: audit/2026-10-24-quickshell-performance/ and
+/root/apx-quickshell-optimization-20261024/. No commit/push.
+
+# Automatic maximum monitor modes — 2026-10-23
+
+Owner requests automatic external monitor detection with maximum resolution and
+refresh. Common Hyprland defaults, per-Environment monitor rules, and laptop
+layout/display controls now use `highres`: prioritize supported resolution, then
+refresh at that resolution. This uses compositor-native connection handling;
+no polling service or fixed connector resolution. Placement and scale retained.
+Repository source, independent seed, five registered homes and digest pins
+updated with a bounded deployment; recheck reports zero pending changes.
+Live compositor confirms OMEN 27 G2 HDMI at1920x1080/165.003Hz and internal
+panel at1920x1080/120.213Hz, unchanged positions/scales and no config errors.
+180Hz is absent from currently advertised HDMI modes. Physical unplug/replug
+and other monitor models have not been tested. Hz selection does not guarantee
+application/game FPS. Recovery backup20261023T225810Z-controls-followup.
+Evidence: audit/2026-10-23-auto-monitor-modes/live-validation.json.
+Validation:10 laptop-action and7 seed tests pass. Additional UI scale suite
+has7 failures in unchanged QuickShell assertions; not repaired in this change.
+No commit/push.
+
+# Remove complete title-bar sections — 2026-10-23
+
+Owner clarifies removal means the entire top section, not just title text.
+Settings/Task Manager now have no titlebar widget and are undecorated. Files
+module no longer injects its header and disables decorations. Task Manager
+Advanced action moved to the search/services row, preserving its behavior.
+Settings status/error handling retained; app identity/window metadata unchanged.
+Existing windows reopened in original workspaces; Files Recent location retained.
+Live GTK confirms no Settings/Task Manager titlebar and retained Task Manager
+Advanced/services controls. Responsive navigation regression passes; seed7pass.
+Source/seed/five homes and pins synchronized. Backups:
+20261023T150801Z-controls-followup and20261023T150803Z-controls-followup.
+Evidence: audit/2026-10-23-header-alignment/no-title-bars.png. No commit/push.
+Supersedes preceding title/header designs. Owner visual acceptance pending.
+
+# Responsive Settings navigation and no visible application titles — 2026-10-23
+
+Owner reports slow Settings navigation, then asks to remove visible titles in
+Files/Settings/Task Manager. All three header custom-title slots are empty;
+window metadata and existing controls remain. Settings page reads now suspend
+rendering and run subprocess queries in a bounded2-worker executor; GTK widget
+work stays on the main thread, with a loading indication and disabled partial
+form. Generation checks discard stale results on navigation/search/close; queued
+requests cancelled and executor shut down on close. No transition delay.
+Destroyed replaced widgets now clean up their timers/form tracking. Explicit
+user write actions retain their existing paths; navigation performs reads only.
+
+Live test:300ms simulated query returns navigation in2.5ms, GTK heartbeat runs,
+stale completion ignored, fresh revisit completes. All other14 real read-only
+pages finish; measured navigation calls1–10ms. This is navigation latency, not
+system-data availability latency. Nine focused tests pass. Source/seed/five homes
+and digest pins synced; both deploy checks0pending. Existing app windows reopened
+on their original workspaces. Visual acceptance pending. No commit/push.
+Backups20261023T150607Z-controls-followup and20261023T150609Z-controls-followup.
+Evidence audit/2026-10-23-header-alignment/navigation-results.json and
+check-navigation.py. Files deploy no longer writes unrelated Thunar preferences.
+
+# Aligned application headers and Settings navigation inset — 2026-10-23
+
+Owner requests aligned title dividers across Files/Settings/Task Manager and
+Settings sidebar icons further right like Files. Removed theme text-button
+vertical margins that made Task Manager header59px; computed header heights now
+47px in all three. Files header measured through matching standalone GTK widget;
+Settings/Task Manager via actual application classes. Settings category content
+inset40px (previous14px), preserving219px sidebar and16px icons. Source/seed/five
+homes and digest pins synchronized; deployment0pending. Existing Settings/Task
+Manager windows reopened on their original workspaces. Evidence:
+audit/2026-10-23-header-alignment/measurements.json. Owner acceptance pending.
+No commit/push.
+
+# Files title and left-aligned arrows — 2026-10-23
+
+Owner refines Files: only back/forward arrows in toolbar, aligned left, and
+Gestor de Ficheiros title above. Presentation module now also hides menu/search
+toolbar items, removes navigation centering, and adds a native header with fixed
+custom title (native window title still identifies the folder). Header styling
+matches APX Settings. Folder/path/sidebar/grid remain native.24px toolbar request
+retained. Source/seed/five homes and pins synchronized;7seed tests pass, final
+recheck0pending. Reopened home-folder window on workspace4 and restored user's
+focused workspace after screenshot verification. No commit/push. Backups:
+20261023T145909Z-controls-followup and20261023T145958Z-controls-followup.
+Owner visual acceptance pending; evidence audit/2026-10-23-files-arrows/after.png.
+
+# Files toolbar: remove Home/Parent and enlarge navigation — 2026-10-23
+
+Owner requests toolbar Home removal,24px remaining navigation, then also removes
+Parent/up. Thunar-local presentation module hides only toolbar items with ids
+open-home/open-parent and registers a native24px toolbar icon size, leaving
+sidebar Home and native folder operations intact. Shared GTK sizes unchanged.
+Recompiled module with installed GTK3 headers and strict compiler warnings;
+source, independent seed, five homes and digest pins synchronized. Native
+preference experiments were ineffective and their task-created keys removed.
+Existing one-window /home/apx Files session was not busy; reopened on workspace4.
+Full-resolution screenshot confirms Home/Parent absent and navigation retained.
+Seven seed tests pass; final deployment check0 pending. Owner acceptance pending.
+Evidence: audit/2026-10-23-files-arrows/. No commit/push.
+
+# Task Manager transparency matches Settings — 2026-10-23
+
+Owner requests only transparency changes. Task Manager now uses Settings'80%
+body and95% header opacity; cards82% and list80% replace the earlier45% cards
+and completely transparent list. No layout/font/control changes. Computed GTK
+alphas verified; source/seed/five homes and digest pins synchronized, recheck0
+pending. Task Manager opened/reopened in the existing workspace context.
+Backup20261023T145212Z-controls-followup; evidence:
+audit/2026-10-23-task-transparency/computed-alpha.json. Visual acceptance pending.
+No commit/push.
+
+# Settings navigation arrows — 2026-10-23
+
+Owner requests larger arrows at the left. Back/forward icons now24px instead of
+16px; navigation group left-aligned within its existing toolbar area. Search
+alignment preserved. Live GTK verifies icon size, left alignment and functioning
+back/forward history. Source/seed/five homes and digest pins synchronized;
+deploy recheck0 pending. Settings reopened on previous workspace. No commit/push.
+
+# Settings selected row white outline — 2026-10-23
+
+Owner replaces the lateral selection marker with a white border around the
+selected category. Changed inset styling to a1px white outline on all sides,
+preserving dimensions, background and hover states. Source/seed/five homes and
+pins synchronized; deployment recheck0 pending. Settings reopened on its previous
+workspace. No commit/push. Supersedes the lateral marker below.
+
+# Settings sidebar selection and hover — 2026-10-23
+
+Owner accepts sidebar proportions and requests clearer active/hover states.
+Category-only rows now have graphite hover, a stronger selected background and
+3px pale inset marker; selected+hover is distinct. Headings remain neutral and
+row metrics unchanged. Four GTK computed background states verified distinct;
+seed7pass, deployment recheck0 pending, source/seed/five homes and pins synced.
+Reopened Settings on its previous workspace. Owner visual acceptance pending.
+Backup20261023T144721Z-controls-followup; evidence under
+ audit/2026-10-23-settings-sidebar/selection-colors.json. No commit/push.
+
+# Settings sidebar aligned with Files — 2026-10-23
+
+Owner rejected remaining Settings sidebar typography/icon sizing. Explicit label
+font JetBrains Mono10pt now avoids inheritance of the12px page font; all15 rows
+compute32px height,16px scalable Gio SVG icons using bundled Lucide geometry
+(the printer uses Files' existing Lucide SVG),8px icon/text gap and14px inset.
+Sidebar remains219px. Source, independent seed and five homes synchronized;
+runtime/recovery pins updated. Live Hytale Settings reopened on original workspace2,
+xwayland=false; full-resolution screenshot inspected. Two Lucide and seven seed
+tests pass; deployment recheck0 pending. Owner visual acceptance pending.
+Evidence and exact backup: audit/2026-10-23-settings-sidebar/. No commit/push.
+
+# Thunderbird close-current-message button — 2026-10-23
+
+Owner requested a button to close the current message. Added local APX MailExtension
+apx-close-message@apx.local1.0.0 using native messageDisplayAction. Header X clears
+selection and collapses the reading pane; selecting the same or another message
+reopens it. On message-only tabs, X closes that tab. No sending/deleting functions.
+Permissions accountsRead/messagesRead are required for selection APIs; no host
+origins, experiments, network code or retained message data. Source:
+config/thunderbird-close-message-v1/. Profile-only styling in existing graphite.
+
+Offline real-button tests verified close, same-message reopen, tab-close with
+main tab retained, unchanged local message count. Installed permanently through
+AddonManager on faculdade existing profile; active and button presence verified.
+Temporary control listeners closed and test profile/cache removed; app left open.
+Evidence/rollback: audit/2026-10-23-thunderbird-close/. No commit/push.
+
+# Thunderbird sidebar retained in tiled windows — 2026-10-23
+
+Owner clarifies Send was already good; reverted the immediately preceding
+Send-only refinement to its accepted pale styling. Actual issue was folder-pane
+compression in half-screen tiling. Sidebar now keeps219px minimum. At1100px or
+less, native vertical layout places message reading below the message list,
+preserving folders; wider windows retain native three-column layout. Narrow
+vertical layout uses40/60 height proportions and hides the native horizontal-drag
+message splitter there; wide splitter and sidebar resizing remain native.
+Collapsed message pane expands the list; collapsed sidebar does not leave a gap.
+Offline test verified758px stacked/234px sidebar and1536px three-column layouts,
+no horizontal content overflow, collapsed-message expansion. Test profile closed
+and removed. Source/profile CSS synchronized with backup. Existing live windows/
+drafts preserved; complete app restart needed to load new CSS. Owner acceptance
+pending. Evidence: audit/2026-10-23-thunderbird-responsive/. No commit/push.
+
+# Thunderbird Send button refinement — 2026-10-23
+
+Owner accepts the compose layout except Send. Replaced the large pale emphasis
+with a graphite button, subtle border, lighter label weight and16px icon.
+Applied source/profile CSS with appearance backup; no window/draft closed.
+Already-open Thunderbird process needs a complete restart to reload user CSS.
+No other layout/preference change; owner visual acceptance pending.
+
+# Thunderbird startup restoration and compose polish — 2026-10-23
+
+Owner requested no welcome/donation startup pages, restoration of the last email,
+and a cleaner compose window. Disabled start_page, donation-category in-app notices
+and scroll-to-new auto-selection through a marked user.js block. Installed official
+Last selected message2.1 (ATN988576, minimumTB148) via AddonManager; active on155,
+existing selection recorded. Complete source inspected; permissions storage,
+messagesRead/accountsRead, no network origins or send capability. Verified exact
+selected message index1 survives a full offline test-profile quit/reopen.
+
+Compose now has aligned dark recipient/subject fields, simpler primary toolbar,
+clear Send button and consistent editor surface. Content stylesheet is scoped to
+about:blank?compose; applying it left message HTML unchanged. Cc visibility and
+native controls checked; small compose verified at748px. Files/profile backups
+and evidence: audit/2026-10-23-thunderbird-startup/ and
+ audit/2026-10-23-thunderbird-compose/. Temporary control listener not retained;
+owner visual acceptance pending. No shell seed/account/transport changes or
+commit/push. Startup restoration requires a previously selected existing message.
+
+# Cleaner native Thunderbird workspace — 2026-10-23
+
+Owner found the first theme too close to stock dark Thunderbird and requested
+Outlook-inspired structure. Second version uses sans-serif UI, conditional
+single-tab-strip removal, flat message rows/separators, quieter secondary row
+actions with persistent flagged/spam states, a clearer compose button and flatter
+reply controls/reading-panel framing. Multiple tabs restore the native strip.
+Applied only to faculdade's existing profile with appearance-file backups.
+Native pane layouts and all account/mail settings retained. Offline disposable
+preview checked at739px/classic and1536px/vertical, including two-tab behavior;
+preview closed/removed. Real main window reopened in native Wayland. Owner visual
+acceptance pending. Evidence/rollback: audit/2026-10-23-thunderbird-clean/README.md.
+No package/seed changes, commit or push.
+
+# Native Thunderbird Graphite — 2026-10-23
+
+Owner requested styling consistent with APX File Manager and Control Centre.
+Applied UI-only CSS to faculdade's Thunderbird155.0.1 default-release profile,
+preserving prior appearance files. No account, mail or credential changes.
+Offline disposable preview verified colors/font and screenshots at1496/739px;
+preview closed and removed. Main native Wayland window reopened on workspace6
+at739x774; stylesheet digest/enabled preference verified. No shell seed changes.
+Owner visual acceptance pending; CSS may need maintenance after app updates.
+Backup/rollback/evidence: audit/2026-10-23-thunderbird-graphite/README.md.
+No commit/push.
+
+# Signed-in ChatGPT restart verified — 2026-10-23
+
+Owner reopened ChatGPT but still saw low resolution. Confirmed original host
+PID342310/container194304 from11:28 remained alive and X11; reopening only
+reused that process. Gracefully terminated it and launched the existing signed-in
+profile via gtk-launch and the managed desktop override. New main window verified
+xwayland=false with1920x1080/1.25 monitor; restored workspace2. No profile reset,
+monitor/browser scale changes, commit or push. Evidence:
+audit/2026-10-23-native-scale/restarted-main-profile.json.
+Owner visual acceptance remains pending.
+
+# Native application scaling with monitor size preserved — 2026-10-23
+
+Owner rejected the blanket100% monitor change. Restored faculdade's original
+monitor files from the pre-change copies; live output confirmed1920x1080/1.25.
+Brave remains native Wayland with its existing app-specific scale untouched.
+Added apx-native-scale-v1: local catalogue refresh detects vendor Electron
+bundles by sibling resources/app.asar/default_app.asar and generates owned user
+desktop overrides. Wrapper requests Wayland only when its session socket is
+reachable, retaining arguments and explicit backend choices; custom user entries
+are preserved. Vendor updates/removals refresh/remove only managed overrides.
+Catalogue now respects user-entry precedence. Existing package hook and session
+startup run synchronization, covering future matching native package installs.
+No blanket X11 unscaling; Minecraft's accepted native-X11/DPI setup preserved.
+Flatpak/AppImage and undetected/legacy X11 applications are not universally fixed.
+
+Source, independent seed and five homes synchronized with runtime/recovery pins;
+four behavior tests plus seven seed tests pass, deploy recheck zero pending.
+Separate-profile ChatGPT through the installed wrapper verified xwayland=false;
+monitor1.25 and Brave native verified simultaneously. Current signed-in ChatGPT
+process still needs a complete exit/reopen for backend change; visual acceptance
+is pending. No commit/push. Backup20261023T103849Z-controls-followup.
+Evidence: audit/2026-10-23-native-scale/verified-live.json.
+
+# Stable parent border with file dialogs — 2026-10-23
+
+Owner reports background movement persists after spring removal. Found the
+single-window border rule counted floating dialogs: opening a chooser switches
+the tiled parent from0px to2px border and can resize its content. Changed rule
+to count visible tiled windows only and apply only to tiled clients (w[tv1]).
+Floating file chooser retains its2px border. This addresses a separate geometry
+trigger; actual symptom resolution is not yet owner-confirmed. Source, seed and
+five homes synchronized; seven seed tests pass, recheck zero pending, live reload
+accepted/configerrors empty. Backup20261023T081224Z-controls-followup.
+No commit/push.
+
+# Window bounce removed — 2026-10-23
+
+Owner accepted the smoother chooser entrance but rejected bounce in the background
+application. Replaced general window and entrance springs with the existing
+monotonic OutCubic curve; retained chooser94% popin and280ms fade/entrance.
+This also removes bounce from other ordinary window entrances. Source, independent
+seed and five homes synchronized with runtime/recovery pins. Seven seed tests pass,
+zero pending deployment files; live reload accepted and configerrors empty.
+Perceptual background behavior awaits owner confirmation. No commit/push.
+
+# Softer file-dialog opening — 2026-10-23
+
+Owner requested smoother file-manager opening from applications such as Gridcraft.
+Enabled compositor animation for GTK portal file pickers and Thunar modal dialogs,
+using popin94% with the existing280ms window/fade entrance. Progress dialogs remain
+immediate. Applied independent seed and five homes, preserving unrelated local
+compositor settings; runtime/recovery pins synchronized. Active faculdade reload
+accepted, configerrors empty, seven desktop-seed tests pass; recheck zero pending.
+Owner perceptual confirmation and a real Gridcraft invocation remain pending.
+Backup: /var/lib/apx/backups/20261023T073759Z-controls-followup.
+Evidence/deploy: audit/2026-10-23-file-dialog-motion/ and
+scripts/physical-pilot/deploy-file-dialog-motion-20261023.py. No commit/push.
+
+# Settings opacity clarification — 2026-10-22
+
+Owner clarified that only the upper region was too transparent. Restored Settings
+body/sidebar80%; header and search toolbar now95%. Task Manager remains88%, with
+its existing translucent cards. Computed GTK body/header alpha checked80%/95%.
+Source/seed/five homes and digest pins synchronized; no commit/push.
+
+# Calmer Settings surface and subtle Task Manager glass — 2026-10-22
+
+Owner supersedes the earlier80% Settings surface: Settings now95%, Task Manager
+88% with translucent cards/list. Removed Settings Reload button. Shared window
+controls are compact/native-style, with no empty subtitle space; title font is
+unchanged. GTK computed alpha/header checks and seed7pass; digests synchronized,
+zero pending deploy files. Previously open apps restored to their workspaces.
+Evidence: audit/2026-10-22-thunar-settings/. No commit/push.
+
+# Thunar consistency, normalized mouse and sharp Minecraft — 2026-10-22
+
+Owner's final requested terminal icon is Lucide Croissant (supersedes ASCII).
+Settings now use the current219px Thunar sidebar, aligned search/back/forward
+navigation, native-like surface and simpler sliders/switches; raw device IDs and
+display coordinates are tucked into expanders. Thunar219 persisted as seed and
+five-home default while retaining other preferences. Control Centre/Settings
+mouse UI0–100% maps to existing raw-100…100 without resetting speed.
+
+Active Minecraft: redundant Minecraft Java shortcut removed after identical Exec
+confirmation; Launcher reuses its PNG icon. Already-installed Ristretto now owns
+image MIME defaults and actually opens PNG. Launcher uses opt-in native X11
+buffers plus matching Xft DPI120 at the selected1.25 output, preserving size and
+fixing low-resolution enlargement; real1870x973 XComposite capture verified.
+Only Minecraft opts in; monitor scale unchanged. Other X11 apps in that Environment
+share the Xwayland setting. Common seed includes an optional helper, no games.
+
+Source/seed/five-home pins synchronized, focused tests and live read-only checks
+pass; no package installation/removal, reboot or commit/push. Implementation,
+limits, exact backups and reversal: audit/2026-10-22-thunar-settings/README.md.
+
+# Shared APX application headers — 2026-10-22
+
+Owner requests consistent window titles/chrome. Shared CSS now makes Settings
+and Task Manager titles14px JetBrains Mono/600 with matching header and button
+spacing, overriding Settings-only page-heading leakage. Computed GTK fonts match
+in both live apps. Reopened in prior workspaces; source/seed/five-home digests
+synchronized. Details: audit/2026-10-22-settings-fixed-sidebar/. No commit/push.
+
+# Settings sidebar fixed to File Manager proportions — 2026-10-22
+
+Owner supersedes the earlier sidebar-collapse choice: Settings navigation now
+stays visible at all widths.140px fixed width,16px icons and10pt JetBrains Mono
+match the current Thunar reference. Long labels retain full tooltips; form rows
+adapt to remaining width. Removed the compact category selector. Welcome and
+all pages retained, Task Manager unchanged. All16 pages fit600/740/980px; live
+half-screen rendering checked. Source/seed/five homes and digests synchronized.
+Evidence: audit/2026-10-22-settings-fixed-sidebar/. No commit/push.
+
+# Settings half-window layout and welcome — 2026-10-22
+
+Owner clarified Task Manager already fits tiling; it remains unchanged. Settings
+now use an adaptive search/category toolbar, collapse navigation below900px and
+stack fields below700px. Removed fixed page-width requests that prevented proper
+client resizing. Opening cards were replaced with the requested welcome message.
+All15 pages plus welcome pass minimum-width checks at600/740/980px; actual739px
+Hyprland tiling visually verified. Source/seed/five homes and digest pins match.
+Evidence: audit/2026-10-22-settings-half-window/. No commit/push.
+
+# Graphite applications and APX scale standard — 2026-10-22
+
+Owner requested and iterated Settings/Task Manager to match Rofi/Control Centre.
+Task Manager now has a simple application-family view, real GPU readings,
+application/service icons, dynamic Include/Exclude services toggle, confirmed
+identity-pinned close and native Advanced view. Settings retain15 pages with
+icon navigation, grouped opening cards, Network before Sound, no Início item,
+compact inner pages and direct sound controls. Owner chose monitor factor1.25
+as APX100%; defaults and scale labels reflect that standard. Unsupported scale
+choices are filtered per selected resolution. Xwayland nearest-neighbor scaling
+is disabled to smooth Launcher text without extra zoom.
+
+Owner also authorized interface optimization while preserving its appearance.
+Input-settings polling now runs only while Controls is open; slow sensor polling
+falls to5s while menus are closed. No visual layout/animation change. Short CPU
+samples improved but are not a controlled system-wide benchmark. A read-only
+process audit found no clearly unnecessary service for removal; nothing disabled
+or uninstalled. All future permanent removal remains for owner review.
+
+Source/seed/five homes/runtime/recovery digests synchronized; live GTK/IPC checks
+and focused tests pass, with existing battery/navigation and Control Centre scale
+fixture failures reproduced on the pre-change shell. No commit/push. Details,
+validation limits, screenshots and rollback inventory pointer:
+audit/2026-10-22-app-polish/README.md. Final Settings visual acceptance is pending.
+
+# Rofi supporting-software tab — 2026-10-22
+
+Owner-requested launcher organization is now Apps / Ficheiros / Sistema.
+Known configuration, diagnostics and supporting launchers belong to Sistema;
+ordinary and newly installed/unclassified applications belong to Apps. All
+previously exposed installed entries remain available across the two application
+tabs; this is organization, not hiding or uninstalling software. Implemented in
+the independent shell seed and all five current homes with shared native-mode
+code. Hub retains script Files; other current Environments retain native Files.
+Automated partition/action/seed checks and actual Minecraft GUI rendering pass;
+owner interaction confirmation remains pending. Details: CURRENT_HANDOFF.md and
+audit/2026-10-22-rofi-system/.
+
+# Inbox and application-integration update — 2026-10-22
+
+Accepted pilot UI now retains up to200 local notification records per Environment,
+groups unread messages into expandable app/thread stacks, stabilizes notification
+scrolling, insets menu titles and shows an animated camera-use indicator outside
+fullscreen. Common native file selection is the default for compatible apps;
+Thunar remains the folder manager. Custom app dialogs cannot be universally
+replaced. Environment package transactions now refuse incomplete repository
+upgrade plans, preserving existing Host-coupled GPU holds. This is pilot behavior,
+not a new production mechanism. Real camera capture and activity transitions are verified, and the owner
+confirmed the preview. Hotplug after the privacy switch is supported by the
+identity-pinned pilot bridge; ongoing usage now occupies the status island.
+Implementation, tests, package repair and reversal details: CURRENT_HANDOFF.md
+and audit/2026-10-22-inbox-camera/README.md. No commit/push.
+
+# Password-only authentication; startup cursor investigation — 2026-10-22
+
+Owner explicitly revoked all facial unlock/authentication, including sudo,
+and requested uninstalling the detection program. Replaced lock PAM in Hub,
+faculdade, hytale, minecraft and steam with password-only pam_unix/faillock
+and retained account/session/login paths. Hub sudo now uses its normal
+system-auth password stack; no live PAM stack anywhere contains pam_howdy.
+Uninstalled howdy-apx and python-dlib in all five Environments through their
+own package contexts; Host packages untouched. Removed active models/config,
+Howdy residual directories, installed UI helper/module, private enrollment,
+and ordinary cached installers. Historical read-only snapshots were preserved;
+they may contain old program/model copies and are not active authentication.
+No new biometric backups were made. Existing stale, zero-length Oct18 pacman
+locks were removed after verifying no package manager was running.
+
+Removed future-creation enrollment/imports/face packages from source and installed
+runtime; public seed no longer includes the face status helper. Lock text is
+static password instructions, empty Enter ignored. Removed retired source support
+module and its obsolete tests; updated creation/default-lock tests and durable
+AGENTS guidance. Historical build/deployment documents are not active product
+and must not be used to reinstall the retired feature.
+
+Authentication validation: actual PAM loader in a private mount namespace with
+synthetic password modules accepted a valid token/rejected an invalid token for
+hyprlock and sudo (four cases, repeated after package removal), without reading
+real credentials or camera. Nine creation-feature tests, seven seed tests and
+focused lock-default test pass. Full work-default suite has 13 passes and the
+known unrelated pre-existing bar-layout assertion failure. Live reload clean;
+all five package/model/PAM states verified; deployment recheck zero pending.
+Backups without biometric data: 20261022T084829Z-password-only,
+20261022T085331Z-controls-followup. No real lock/reboot or password change.
+
+For the cursor, no delayed acceleration program was found. Added a short,
+read-only 8-second startup sampler, once per session, from the compositor start
+callback before the shell launch. Collects seven IPC timings, output refresh,
+device names and CPU pressure; no input events, cursor positions or camera.
+Overwrites only each Environment's private latest report. User entered faculdade
+during this task: first monitor query took156ms, later queries6–8ms. This is
+startup process/IPC responsiveness evidence, not cursor FPS or proof that the
+acceleration profile was late. Actual cold-boot Hub measurement is pending the
+next ordinary boot/entry; do not claim the startup symptom is fixed.35/100 and
+adaptive remain configured. Evidence audit/2026-10-22-password-only/.
+No commit or push.
+
+# Uniform 35/100 trackpad cursor — 2026-10-22
+
+Owner requested 35/100 in every Environment persistently and clarified the
+perceived smoothness delay happens during the first seconds entering Hub.
+Persisted raw sensitivity -0.30 (UI35) and explicit adaptive profile in Hub,
+faculdade, hytale, minecraft and steam independent preference files. Added that
+preference to the independent seed/pinned inventory so new Environments start
+at35 too. Settings helper now preserves explicit adaptive profile when saving
+cursor sensitivity. Existing UI remains adjustable; this is an owner-requested
+uniform current/default choice, not a lock or a cross-Environment settings sync.
+Scroll/workspace preferences and pointer power are unchanged.
+
+Source/live paths show no delayed acceleration activation service: these values
+load directly in compositor Lua configuration independently of shell polling.
+Boot/re-entry perceived delay is not reproduced or explained yet. Do not claim
+this change proves a startup-delay fix. No reboot/session restart performed.
+
+Seven pointer/gesture tests and seven seed tests pass. Live Hub apply succeeds,
+configerrors empty, five saved profiles verified and recheck zero pending.
+Backup /var/lib/apx/backups/20261022T084259Z-controls-followup. Evidence:
+audit/2026-10-22-trackpad-uniform/. No package/lifecycle change, commit or push.
+
+# Concurrent unlock input — 2026-10-22
+
+Owner requested typing the unlock code while face capture runs. Applied Howdy
+native concurrent password conversation and face-first lock PAM ordering in Hub
+and four graphical workloads, retaining password fallback/faillock paths. Updated
+private opt-in config/PAM/digests for future workloads, lock instructions in source,
+seed/five homes and runtime/recovery pins. Rechecks: zero pending files.
+
+Native mode cancels the prompt thread (upstream stability caveat); six private
+namespace fixture cases pass against the installed native Howdy module. Tests use
+synthetic face/password/faillock, not live credentials or camera. 21 face tests
+and seven seed tests pass; work-default lock regression passes, with an unrelated
+existing bar-layout assertion still failing. Physical owner unlock is pending.
+Howdy config is Environment-wide: existing other Howdy consumers also receive the
+concurrent prompt; their PAM rules were not changed. No packages, face models,
+passwords or session restart. Backups 20261022T072852Z-parallel-unlock and
+20261022T072907Z-controls-followup. Evidence/reversal:
+audit/2026-10-22-parallel-unlock/README.md. No commit/push.
+
+# Semantic Trackpad icons — 2026-10-22
+
+Owner requested the three Trackpad items better represent each section. Asked
+icons vs labels; after an optional response window proceeded with icons only,
+preserving the previously explicitly requested Cursor/Scroll/Workspaces labels.
+Cursor uses Lucide mouse-pointer-2, Scroll uses arrow-up-down, Workspaces uses
+the existing square-stack. The cursor circle retains its existing trackpad power
+action and off indicator. Other two are passive illustrations, without fake
+button behavior. Existing style, sliders, values and keyboard behavior unchanged.
+
+New icons are official Lucide SVG assets under the existing Lucide license.
+Applied source, independent seed and five graphical homes with digest pins.
+Live screenshot inspected: all three icons render and cards fit. Seven seed
+tests pass; deployment recheck zero pending. Backup:
+/var/lib/apx/backups/20261021T230422Z-controls-followup.
+Evidence audit/2026-10-22-trackpad-icons/. No settings, package, lifecycle action,
+commit or push.
+
+# Short trackpad labels and workspace glide — 2026-10-21
+
+Owner requested labels exactly Scroll and Workspaces and another refinement of
+workspace animation. Visible/accessibility labels shortened. Workspace/In/Out
+use a dedicated apxWorkspaceGlide cubic curve (0.22,1;0.36,1), 4.2 animation
+units (nominal 420ms), full horizontal slide. Terminal slope is zero, no overshoot;
+this lengthens and softens the settle after release. Physical finger tracking,
+three-finger gesture, stored sensitivity and other animation curves unchanged.
+Physical feel awaits owner feedback; compositor acceptance is not perceptual proof.
+
+Live eval and reload accepted, configerrors empty; animations JSON confirms new
+curve. Full native shell parse and existing 15-frame smooth fixture pass; seven
+seed tests pass. Source, seed/five homes and pins applied, recheck zero pending.
+Backup /var/lib/apx/backups/20261021T225942Z-controls-followup. Original source
+copies and animations evidence: audit/2026-10-21-workspace-glide/.
+No packages, lifecycle action, commit or push.
+
+# Arrow keys across settings sliders — 2026-10-21
+
+Owner accepted Trackpad keyboard adjustment and requested the same for the other
+sliders, including sound, brightness and mouse. MenuSlider now defaults to direct
+Left/Right by one and Shift+Left/Right by five; Up/Down and Tab retain navigation.
+This includes combined/separate volume, screen brightness, microphone and mouse.
+Standalone ControlSlider (personalization opacity) uses the same convention and
+emits moved on keyboard updates. No value/range or hardware settings were changed
+by deployment. Media timeline seeking retains its native player-specific keys.
+
+Mouse writes now preserve focus and queue the newest held-arrow value, protecting
+optimistic state from stale status replies. Mouse drag captures released value
+before model rebinding. Microphone volume has its own latest-value write queue;
+status polling cannot overwrite pending/in-flight changes. Existing volume and
+screen-brightness write queues remain in use.
+
+Validation: 11 native Qt results pass against actual shared MenuSlider, settings
+cards, mouse/gesture/microphone queue functions and standalone ControlSlider.
+Includes one/five-point steps, bounds, held-key final value, microphone busy
+writes, opacity updates and retained gesture drag/keyboard behavior. Full native
+shell parse and 15-frame smooth fixture pass; seven seed tests pass. Applied
+source/independent seed/five graphical homes with runtime/recovery pins; recheck
+zero pending files. Backup /var/lib/apx/backups/20261021T225817Z-controls-followup.
+Evidence: audit/2026-10-21-all-slider-arrows/.
+No package install, hardware adjustment, lifecycle action, commit or push.
+
+# Trackpad submenu and normalized keyboard controls — 2026-10-21
+
+Owner requested all three controls inside one Trackpad menu, scales 0–100,
+and arrow-key adjustment. More options now has one Trackpad entry; its page
+contains Cursor, Scroll · 2 dedos, Workspaces · 3 dedos plus back navigation.
+The existing named control-page state/transition handles this nested route;
+generic ActivityPanel excludes it, main header names it, depth is two.
+
+UI normalization preserves saved physical settings: cursor maps 0–100 to
+-100–100, gestures map 0–100 to existing 25–200. Zero is the minimum speed,
+not device disable. Stored file formats and actual current settings are unchanged.
+Only trackpad sliders enable immediate Left/Right adjustment by one, Shift by
+five; Up/Down and Tab retain menu navigation. Cursor drag now captures released
+value before model rebinding too. Focus is retained during writes. Queued latest
+updates preserve held-arrow input and independent pending gesture choices;
+readback does not overwrite pending choices. Failed writes refresh saved state.
+
+Seven native Qt results pass using actual MenuSlider, gesture cards and queue
+functions: direct arrows, Shift, queued rapid keys/readback, normalized endpoints,
+mouse drag/release and independence. Seven backend/trackpad tests and seven seed
+tests pass. Full shell PARSE_PASS and existing 15-frame smooth fixture pass.
+Live submenu screenshot inspected; all three cards fit and display 0–100 values.
+Source, independent seed, five homes and digest pins applied. Recheck zero
+pending files. Backup /var/lib/apx/backups/20261021T225520Z-controls-followup;
+pre-edit source in audit/2026-10-21-trackpad-submenu/shell.before.qml.
+No browser flags, packages, lifecycle action, commit or push.
+
+# Independent trackpad settings — 2026-10-21
+
+Owner requested independent cursor and gesture sensitivity, then clarified all
+scroll/workspace gestures and corrected workspace switching to three fingers.
+More options now has separate Cursor, Scroll · 2 dedos and Workspaces · 3 dedos
+sliders. Cursor uses the existing helper and range. New Environment-local helper
+stores scroll factor (25–200%) and inverse workspace swipe distance (25–200%,
+100%=300px) in an independently sourced preference file, without touching cursor
+sensitivity, adaptive acceleration or disable-while-typing. Saves are serialized,
+validated, atomic, with prior live state restored on persistence failure.
+
+Live test initially used scroll80; owner subsequently interacted with the live
+controls (screenshot shows their cursor/scroll choices). Do not overwrite those.
+Gesture remains three-finger horizontal. No browser restart or flags/extensions.
+Scroll amount is adjustable; browser-managed inertia/friction was not changed
+and must not be described as macOS-equivalent or system-wide kinetic scrolling.
+
+Validation: seven trackpad/helper tests (including existing pointer setting),
+seven desktop seed tests, five native Qt slider results (real drag/release
+and keyboard independence), native full-shell PARSE_PASS and 15-frame smooth
+fixture pass. Slider commits retain the dragged value across binding restoration. Live helper writes and compositor reload succeed with no config errors.
+Live More options screenshot inspected; additional workspace slider is below
+scroll in the existing scrollable menu. Source, seed and five graphical homes
+applied; deployment recheck zero pending files. Backups:
+/var/lib/apx/backups/20261021T224519Z-controls-followup
+/var/lib/apx/backups/20261021T224531Z-controls-followup
+/var/lib/apx/backups/20261021T224636Z-controls-followup
+Original source copies in audit/2026-10-21-trackpad-gestures/.
+No package install, lifecycle operation, commit or push.
+
+# Accepted trackpad motion and workspace swipe — 2026-10-21
+
+Owner accepted and requested persistence of adaptive acceleration for the ELAN
+trackpad and disable_while_typing=false after reporting reduced initial delay.
+This is owner-observed improvement, not a proven hardware diagnosis. Existing
+per-Environment sensitivity overrides and scroll settings remain. Dynamic-cursors
+was unloaded and its temporary source/build deleted; no cursor effect remains.
+Owner also requested smoother three-finger workspace transitions: replaced
+slidefade 12% with full horizontal slide, speed 3.5 and apxMenuOutCubic easing
+on workspaces/In/Out. Live config reload has no errors; physical gesture feel
+awaits owner evaluation. Source, installed seed, five graphical homes and digest
+pins updated. Backup: /var/lib/apx/backups/20261021T223509Z-controls-followup;
+pre-edit source: /var/lib/apx/backups/20261021T223503Z-trackpad-workspaces.
+No packages, lifecycle action, commit or push.
+
+# Per-display UI scaling requirement — 2026-10-21
+
+Owner requires the bar and menus to remain usable and sharp when using another
+monitor or scale. Dimensions/fonts stay logical; no fixed assumption of 150%
+is allowed. Quickshell already creates per-output bars and routes shared menus
+to their triggering output. The popup now reads the effective QWindow DPR
+rather than the potentially rounded QScreen DPR. Geometry uses that live DPR;
+render buffers round it upward for fractional scales to preserve current text
+quality. Existing accepted icon rendering is retained. GPU fixtures cover 100%,
+125%, 150%, 200% via process-local Qt scale factors. Simultaneous mixed-DPI
+monitors and physical hotplug remain unverified on the single-output pilot.
+
+# Local AI concept retired — 2026-10-21
+
+Owner removed local AI from the APX product concept and requested deletion of
+its entire interface. The current shell no longer includes an AI widget, model
+selector, storage controls, Super+I binding, model IPC methods or model polling.
+Local AI is no longer a product objective or built-in shell capability. Earlier
+model/SSD experiments and their recovery tooling remain historical resources;
+existing model files and encrypted storage were not deleted by this UI removal.
+The temporary rainbow pointer effect and all its source/cache files were also
+removed at owner request; it has no autostart or seed integration.
+
 # Owner-requested accumulated commit and push — 2026-10-20
 
 Owner explicitly requested committing all changes since the previous commit and
@@ -5043,3 +5950,30 @@ Evidence/source: feedback-harness.qml and feedback-validation.log under
 audit/2026-10-16-control-layout. Updated signal integration fixture supports
 Play/Pause and passed (add/change 0.143–0.144s, remove 0.030s). All test processes
 and temporary Environment files removed. Owner media was not controlled.
+
+
+## 2026-10-24 Windows Pessoal entry restored
+
+Owner reports Hub refusing Windows Pessoal. Live journal rejected native.boot-v3
+with the generic creation-validation message. Native release integrity manifest
+still pinned three pre-update switch client/daemon/contract digests. Reviewed
+deltas against pinned bytes (daemon baseline recovered from
+/var/lib/apx/backups/20261013-environment-return): icon metadata, socket fallback
+and supervised return recovery; live files equal repository sources. Refreshed
+only those three manifest digests, preserving all critical paths and checks.
+Backup: /var/lib/apx/backups/20261023T232552Z-windows-integrity.
+Live enabled() and Windows Pessoal validate-only boot preflight pass; no reboot
+or actual boot requested. Owner menu/boot confirmation pending. Native Hub4 and
+icon4 tests pass. Switch suite27/30 pass; three existing source-string assertions
+fail (socket fallback and changed UI expectations); no runtime failure inferred.
+Evidence: audit/2026-10-24-windows-integrity/result.json. No commit/push.
+
+
+## 2026-10-24 Calendar bar button contraction removed
+
+Owner requests no contraction when pressing calendar. Calendar BarButton now
+overrides scale to1, retaining hover/active colours, icon and popup actions.
+Source, independent seed and five homes synchronized; runtime/recovery pins
+updated. Existing live Hyprland files preserved. Seven desktop-seed tests pass.
+Backup: /var/lib/apx/backups/20261023T232703Z-controls-followup.
+Live pointer/visual acceptance pending. No commit/push.

@@ -1,0 +1,32 @@
+{
+  "scope": "direct thunar --window empty directory; first sample not guaranteed cold; mapped != interactive or animation-complete; polling includes subprocess overhead",
+  "samples": [
+    {
+      "iteration": 1,
+      "mapped_ms": 475.1,
+      "removed_from_client_list_ms": 41.6
+    },
+    {
+      "iteration": 2,
+      "mapped_ms": 452.6,
+      "removed_from_client_list_ms": 42.2
+    },
+    {
+      "iteration": 3,
+      "mapped_ms": 455.8,
+      "removed_from_client_list_ms": 42.2
+    },
+    {
+      "iteration": 4,
+      "mapped_ms": 455.3,
+      "removed_from_client_list_ms": 41.8
+    },
+    {
+      "iteration": 5,
+      "mapped_ms": 456.1,
+      "removed_from_client_list_ms": 43.0
+    }
+  ],
+  "median_mapped_ms": 455.8,
+  "temporary_windows_remaining": 0
+}

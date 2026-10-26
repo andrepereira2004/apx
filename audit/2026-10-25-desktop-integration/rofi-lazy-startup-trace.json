@@ -1,0 +1,32 @@
+{
+  "traces": [
+    {
+      "mode": "apps",
+      "trace": [
+        "APX_ROFI_TIMING apps init 37475299650",
+        "APX_ROFI_TIMING system init 37475343184",
+        "APX_ROFI_TIMING apps load_begin 37475343231",
+        "APX_ROFI_TIMING apps load_end 37475419973",
+        "APX_ROFI_TIMING apps icon_zero 37475431923",
+        "APX_ROFI_TIMING apps icon_zero 37475442451",
+        "APX_ROFI_TIMING apps icon_zero 37475473466",
+        "APX_ROFI_TIMING apps icon_zero 37475545269",
+        "APX_ROFI_TIMING apps icon_zero 37475571197"
+      ]
+    },
+    {
+      "mode": "system",
+      "trace": [
+        "APX_ROFI_TIMING apps init 37476367735",
+        "APX_ROFI_TIMING system init 37476410910",
+        "APX_ROFI_TIMING system load_begin 37476410951",
+        "APX_ROFI_TIMING system load_end 37476485306",
+        "APX_ROFI_TIMING system icon_zero 37476497288",
+        "APX_ROFI_TIMING system icon_zero 37476507303",
+        "APX_ROFI_TIMING system icon_zero 37476538701",
+        "APX_ROFI_TIMING system icon_zero 37476608564",
+        "APX_ROFI_TIMING system icon_zero 37476633858"
+      ]
+    }
+  ]
+}

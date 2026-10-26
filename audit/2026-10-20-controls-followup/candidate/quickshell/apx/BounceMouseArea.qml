@@ -2,7 +2,10 @@ import QtQuick
 
 MouseArea {
     id: bounceMouse
+    property var menuViewportGuard: null
     property bool keyboardActivationPending: false
+    property bool menuFeedbackEnabled: true
+    property bool pressAnimationEnabled: true
     // Shared pointer feedback for every menu action; keyboard focus stays cyan.
     hoverEnabled: true
     onVisibleChanged: if (!visible) keyboardActivationPending = false
@@ -32,7 +35,7 @@ MouseArea {
     MenuHover {
         parent: bounceMouse.parent
         z: 100
-        enabled: bounceMouse.enabled
+        enabled: bounceMouse.enabled && bounceMouse.menuFeedbackEnabled
         keyboardFocused: bounceMouse.activeFocus || bounceMouse.keyboardActivationPending
     }
 
@@ -54,7 +57,7 @@ MouseArea {
         easing.type: Easing.OutCubic
     }
 
-    onPressed: bounceDown.restart()
-    onReleased: bounceUp.restart()
-    onCanceled: bounceUp.restart()
+    onPressed: if (pressAnimationEnabled) bounceDown.restart()
+    onReleased: if (pressAnimationEnabled) bounceUp.restart()
+    onCanceled: if (pressAnimationEnabled) bounceUp.restart()
 }

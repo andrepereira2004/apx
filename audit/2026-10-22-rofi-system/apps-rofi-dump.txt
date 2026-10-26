@@ -1,0 +1,5 @@
+
+
+(process:412283): Wayland-WARNING **: 20:46:08.417: Could not connect to the Wayland compositor
+
+(process:412283): Rofi-WARNING **: 20:46:08.417: No valid backend was found. Make sure to launch /usr/bin/rofi from a valid X11 or Wayland session.

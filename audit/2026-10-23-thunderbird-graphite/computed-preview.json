@@ -1,0 +1,22 @@
+{
+  "outer": 739,
+  "threePane": "about:3pane",
+  "rootColor": "#101117",
+  "folderFont": "\"JetBrains Mono\", monospace",
+  "folderBg": "rgb(21, 23, 32)",
+  "styleSheets": [
+    "chrome://messenger/skin/messenger.css",
+    "chrome://messenger/skin/contextMenu.css",
+    "chrome://messenger/skin/icons.css",
+    "chrome://messenger/skin/containers.css",
+    "chrome://messenger/skin/colors.css",
+    "chrome://messenger/skin/folderColors.css",
+    "chrome://messenger/skin/folderMenus.css",
+    "chrome://messenger/skin/shared/quickFilterBar.css",
+    "chrome://messenger/skin/shared/tree-listbox.css",
+    "chrome://messenger/skin/searchBox.css",
+    "chrome://messenger/skin/about3Pane.css",
+    null
+  ],
+  "folderWidth": 100
+}

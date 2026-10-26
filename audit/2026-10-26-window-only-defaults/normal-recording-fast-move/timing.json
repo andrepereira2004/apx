@@ -1,0 +1,4073 @@
+{
+  "initial": {
+    "address": "0x55dc03182d80",
+    "mapped": true,
+    "hidden": false,
+    "visible": true,
+    "acceptsInput": true,
+    "at": [
+      20,
+      66
+    ],
+    "size": [
+      1496,
+      778
+    ],
+    "workspace": {
+      "id": 3,
+      "name": "3"
+    },
+    "floating": false,
+    "monitor": 0,
+    "class": "brave-browser",
+    "title": "hyprland window opening - Pesquisa Google - Brave",
+    "initialClass": "brave-browser",
+    "initialTitle": "Reddit - The heart of the internet - Brave",
+    "pid": 518648,
+    "xwayland": false,
+    "pinned": false,
+    "pinFullscreened": false,
+    "fullscreen": 0,
+    "fullscreenClient": 0,
+    "fullscreenHandler": "default",
+    "allowedOverFullscreen": true,
+    "grouped": [],
+    "tags": [],
+    "swallowing": "0x0",
+    "focusHistoryID": 0,
+    "inhibitingIdle": false,
+    "xdgTag": "",
+    "xdgDescription": "",
+    "contentType": "none",
+    "tearingHint": false,
+    "stableId": "18000095"
+  },
+  "workspace": {
+    "id": 3,
+    "name": "3",
+    "monitor": "eDP-1",
+    "monitorID": 0,
+    "windows": 1,
+    "hasfullscreen": false,
+    "lastwindow": "0x55dc03182d80",
+    "lastwindowtitle": "hyprland window opening - Pesquisa Google - Brave",
+    "ispersistent": false,
+    "tiledLayout": "dwindle"
+  },
+  "samples": [
+    {
+      "frame": 1,
+      "ms": 143,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 2,
+      "ms": 281,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 3,
+      "ms": 424,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 4,
+      "ms": 560,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 5,
+      "ms": 698,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 6,
+      "ms": 828,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 7,
+      "ms": 965,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 8,
+      "ms": 1097,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 9,
+      "ms": 1229,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 10,
+      "ms": 1416,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 11,
+      "ms": 1544,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 12,
+      "ms": 1670,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 13,
+      "ms": 1800,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 14,
+      "ms": 1929,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 15,
+      "ms": 2057,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 16,
+      "ms": 2186,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc03b7cbb0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "Terminal",
+          "initialClass": "kitty",
+          "initialTitle": "Terminal",
+          "pid": 519731,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000096"
+        }
+      ]
+    },
+    {
+      "frame": 17,
+      "ms": 2318,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        }
+      ]
+    },
+    {
+      "frame": 18,
+      "ms": 2452,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        }
+      ]
+    },
+    {
+      "frame": 19,
+      "ms": 2585,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        }
+      ]
+    },
+    {
+      "frame": 20,
+      "ms": 2718,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        }
+      ]
+    },
+    {
+      "frame": 21,
+      "ms": 2852,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        }
+      ]
+    },
+    {
+      "frame": 22,
+      "ms": 2981,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        }
+      ]
+    },
+    {
+      "frame": 23,
+      "ms": 3115,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc033d6140",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "kitty",
+          "initialClass": "kitty",
+          "initialTitle": "kitty",
+          "pid": 519856,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000097"
+        }
+      ]
+    },
+    {
+      "frame": 24,
+      "ms": 3251,
+      "clients": [
+        {
+          "address": "0x55dc0368d460",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 1,
+            "name": "1"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "chatgpt",
+          "title": "ChatGPT",
+          "initialClass": "chatgpt",
+          "initialTitle": "ChatGPT",
+          "pid": 5916,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 3,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000005"
+        },
+        {
+          "address": "0x55dc03ba53f0",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            20,
+            66
+          ],
+          "size": [
+            1496,
+            778
+          ],
+          "workspace": {
+            "id": 2,
+            "name": "2"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "apx-host-console-v1",
+          "title": "APX HOST ROOT",
+          "initialClass": "apx-host-console-v1",
+          "initialTitle": "APX HOST ROOT",
+          "pid": 49611,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 2,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "1800003f"
+        },
+        {
+          "address": "0x55dc03182d80",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            775,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "brave-browser",
+          "title": "hyprland window opening - Pesquisa Google - Brave",
+          "initialClass": "brave-browser",
+          "initialTitle": "Reddit - The heart of the internet - Brave",
+          "pid": 518648,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 1,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000095"
+        },
+        {
+          "address": "0x55dc033d6140",
+          "mapped": true,
+          "hidden": false,
+          "visible": true,
+          "acceptsInput": true,
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "workspace": {
+            "id": 3,
+            "name": "3"
+          },
+          "floating": false,
+          "monitor": 0,
+          "class": "kitty",
+          "title": "bash",
+          "initialClass": "kitty",
+          "initialTitle": "kitty",
+          "pid": 519856,
+          "xwayland": false,
+          "pinned": false,
+          "pinFullscreened": false,
+          "fullscreen": 0,
+          "fullscreenClient": 0,
+          "fullscreenHandler": "default",
+          "allowedOverFullscreen": true,
+          "grouped": [],
+          "tags": [],
+          "swallowing": "0x0",
+          "focusHistoryID": 0,
+          "inhibitingIdle": false,
+          "xdgTag": "",
+          "xdgDescription": "",
+          "contentType": "none",
+          "tearingHint": false,
+          "stableId": "18000097"
+        }
+      ]
+    }
+  ]
+}

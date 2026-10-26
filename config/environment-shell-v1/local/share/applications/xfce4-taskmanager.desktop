@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Task Manager
+Name[pt]=Gestor de Tarefas
+Comment=Processos e utilização de recursos deste Environment
+Exec=/home/apx/.local/bin/apx-task-manager
+Icon=org.xfce.taskmanager
+Terminal=false
+StartupNotify=true
+Categories=System;Utility;
+Keywords=monitor;resources;system;task;performance;
+StartupWMClass=apx-task-manager

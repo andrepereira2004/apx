@@ -21,6 +21,16 @@ OPERATIONS = {
 }
 NAME = re.compile(r"[a-z](?:[a-z0-9]|-(?=[a-z0-9])){0,26}")
 GENERATION = re.compile(r"[0-9a-f]{8}-[0-9a-f-]{27}")
+ENVIRONMENT_ICONS = frozenset((
+    "box", "monitor", "terminal", "book-open", "swords", "shield-check",
+    "globe", "folder", "cpu", "music", "camera", "paintbrush",
+    "pickaxe", "hexagon", "zap", "satellite-dish", "calculator", "calendar-days",
+    "book-a", "keyboard", "mouse", "touchpad", "gpu", "hard-drive",
+    "usb", "video", "audio-lines", "mic", "leaf", "scale",
+    "ghost", "package", "package-open", "folder-open", "square-stack", "layout-dashboard",
+    "layout-grid", "settings", "lock-keyhole", "plane", "gamepad-2", "joystick",
+    "trophy", "dice-5", "target", "rocket", "puzzle", "medal",
+))
 SYSTEM_KINDS = ("arch", "windows-native")
 NATIVE_WINDOWS_SIZES_GIB = (120, 180, 250)
 
@@ -42,7 +52,11 @@ def request_bytes(
     system_kind: str | None = None,
     size_gib: int | None = None,
     display_name: str | None = None,
+    icon: str | None = None,
 ) -> bytes:
+    if icon is not None and (operation != "environment.update-metadata"
+            or not isinstance(icon, str) or icon not in ENVIRONMENT_ICONS):
+        raise ValueError("invalid Environment icon")
     if operation not in OPERATIONS:
         raise ValueError("unsupported Environment-switch operation")
     if operation in {"native.prepare-v3", "native.activate-v3", "native.rollback-v3", "native.retry-v3", "native.delete-v3", "native.boot-v3"}:
@@ -124,6 +138,8 @@ def request_bytes(
                 or display_name is not None:
             raise ValueError("Environment-switch operation takes no target")
         payload = {}
+    if icon is not None:
+        payload["icon"] = icon
     return (json.dumps({
         "schema": SCHEMA, "profile": PROFILE, "operation": operation, "payload": payload,
     }, sort_keys=True, separators=(",", ":")) + "\n").encode()
@@ -175,14 +191,17 @@ def parse_message(data: bytes) -> dict[str, object]:
                 or GENERATION.fullmatch(payload["generation"]) is None:
             raise ValueError("invalid native Windows recovery identity")
     elif operation == "environment.update-metadata":
-        if type(payload) is not dict or set(payload) != {
-            "description", "display_name", "generation", "target",
-        } or type(payload.get("target")) is not str or NAME.fullmatch(payload["target"]) is None \
+        if type(payload) is not dict or set(payload) not in (
+            {"description", "display_name", "generation", "target"},
+            {"description", "display_name", "generation", "target", "icon"},
+        ) or type(payload.get("target")) is not str or NAME.fullmatch(payload["target"]) is None \
                 or payload["target"] == "hub" or type(payload.get("generation")) is not str \
                 or GENERATION.fullmatch(payload["generation"]) is None \
                 or not valid_display_name(payload.get("display_name")) \
                 or not valid_description(payload.get("description")):
             raise ValueError("invalid Environment metadata update")
+        if "icon" in payload and (not isinstance(payload["icon"], str) or payload["icon"] not in ENVIRONMENT_ICONS):
+            raise ValueError("invalid Environment icon")
     elif operation == "environment.destroy":
         target = payload.get("target") if type(payload) is dict else None
         generation = payload.get("generation") if type(payload) is dict else None

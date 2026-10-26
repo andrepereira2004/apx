@@ -74,7 +74,7 @@ class EnvironmentFeaturesTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 subject.normalize_modules(values)
 
-    def test_enrolled_graphical_creation_installs_dependencies_before_face_policy(self):
+    def test_graphical_creation_never_restores_retired_face_auth(self):
         runtime = self.runtime()
         with tempfile.TemporaryDirectory() as temporary:
             state = Path(temporary)
@@ -84,7 +84,8 @@ class EnvironmentFeaturesTests(unittest.TestCase):
             (target / "etc/shadow").write_text("apx:!:8:9:10:11:12:13:14\n")
             for path in (hub / "shadow", target / "etc/shadow"):
                 path.chmod(0o600)
-            identity = {"apx.dat": b"synthetic fixture"}
+            (state / "face-auth-v1").mkdir()
+            (state / "face-auth-v1/manifest.json").write_text('{"enabled":true}')
             calls = []
             with mock.patch.object(runtime, "ENVIRONMENTS", state / "environments"), \
                     mock.patch.object(runtime, "packages_for", return_value=()), \
@@ -92,20 +93,17 @@ class EnvironmentFeaturesTests(unittest.TestCase):
                     mock.patch.object(runtime, "host_nvidia_version", return_value="610.43.03"), \
                     mock.patch.object(runtime, "validated_local_package_artifact",
                                       side_effect=lambda package: state / (package + "-610.43.03-3-x86_64.pkg.tar.zst")), \
-                    mock.patch("apx_face_auth.load_identity", return_value=identity) as load, \
-                    mock.patch("apx_face_auth.install_identity", side_effect=lambda *args: calls.append("policy")) as install, \
                     mock.patch.object(runtime, "run", side_effect=lambda command: calls.append(command)):
                 runtime.configure_environment_features(target, {
                     "desktop_preset": "intermediate", "desktop_modules": list(subject.PRESETS["intermediate"]),
                 })
-            load.assert_called_once_with(state / "face-auth-v1")
-            install.assert_called_once_with(target, identity)
-            self.assertIn("python-opencv", calls[0])
-            self.assertIn("cblas", calls[0])
-            self.assertIn("lapack", calls[0])
-            self.assertTrue(calls[-3][-1].startswith(str(state / "python-dlib-")))
-            self.assertTrue(calls[-2][-1].startswith(str(state / "howdy-apx-")))
-            self.assertEqual(calls[-1], "policy")
+            serialized = json.dumps(calls)
+            for removed in ("howdy", "python-dlib", "python-opencv", "cblas", "lapack"):
+                self.assertNotIn(removed, serialized)
+            self.assertNotIn("howdy-apx", runtime.LOCAL_PACKAGE_MANIFESTS)
+            self.assertNotIn("python-dlib", runtime.LOCAL_PACKAGE_MANIFESTS)
+            self.assertFalse((target / "etc/howdy").exists())
+            self.assertIn("$6$hub-hash", (target / "etc/shadow").read_text())
 
     def test_alternate_private_root_uses_a_complete_arch_upgrade(self):
         source = (Path(__file__).resolve().parents[1]

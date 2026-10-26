@@ -1,0 +1,98 @@
+[
+  {
+    "action": "openConnectivityControls",
+    "settled_ms": 455,
+    "samples": [
+      {
+        "ms": 305,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 383,
+        "transition": true,
+        "progress": 0.9726434350141016,
+        "blocked": true
+      },
+      {
+        "ms": 455,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openControls",
+    "settled_ms": 277,
+    "samples": [
+      {
+        "ms": 132,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 205,
+        "transition": true,
+        "progress": 0.9603089617543104,
+        "blocked": true
+      },
+      {
+        "ms": 277,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openBrightnessControls",
+    "settled_ms": 458,
+    "samples": [
+      {
+        "ms": 313,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 386,
+        "transition": true,
+        "progress": 0.9603089617543104,
+        "blocked": true
+      },
+      {
+        "ms": 458,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openControls",
+    "settled_ms": 309,
+    "samples": [
+      {
+        "ms": 160,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 237,
+        "transition": true,
+        "progress": 0.9603089617543104,
+        "blocked": true
+      },
+      {
+        "ms": 309,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  }
+]

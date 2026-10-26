@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "APX — Fechar mensagem",
+  "version": "1.0.0",
+  "description": "Fecha a mensagem atual e volta à lista; selecionar outra mensagem reabre a leitura.",
+  "browser_specific_settings": {
+    "gecko": { "id": "apx-close-message@apx.local", "strict_min_version": "148.0" }
+  },
+  "permissions": ["accountsRead", "messagesRead"],
+  "background": { "scripts": ["background.js"] },
+  "message_display_action": {
+    "default_title": "Fechar mensagem",
+    "default_label": "",
+    "default_icon": "close.svg"
+  }
+}

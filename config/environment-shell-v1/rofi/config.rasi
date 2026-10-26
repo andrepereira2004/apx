@@ -1,5 +1,5 @@
 configuration {
-    modi: "drun,files:/home/apx/.local/bin/apx-rofi-files-v1";
+    modi: "apps,files:/home/apx/.local/bin/apx-rofi-files-v1,system";
     kb-mode-next: "Tab,Control+Tab";
     kb-mode-previous: "ISO_Left_Tab,Control+ISO_Left_Tab";
     kb-row-tab: "";
@@ -19,6 +19,7 @@ configuration {
     font: "JetBrains Mono 11";
     display-drun: "Apps";
     display-apps: "Apps";
+    display-system: "Sistema";
     sidebar-mode: true;
     display-run: "Executar";
     display-window: "Pesquisar workspaces";
@@ -29,8 +30,8 @@ configuration {
 }
 * {
     background-color: transparent;
-    text-color: #eceef0;
-    border-color: #343a41;
+    text-color: #d9dcea;
+    border-color: #414654;
 }
 window { fullscreen: false; location: south; anchor: south; width: 100%; height: 100%; background-color: transparent; border: 0px; padding: 0px; }
 mainbox { children: [button-dismiss-top, centerbox, button-dismiss-bottom]; spacing: 0px; }
@@ -38,8 +39,8 @@ centerbox { orientation: horizontal; children: [button-dismiss-left, launcherbox
 launcherbox {
     children: [headerbox, apx-separator, inputbar, listview];
     width: 580px; expand: false;
-    background-color: #0a1014d9;
-    border: 1px; border-color: #343a41; border-radius: 12px;
+    background-color: #101117d9;
+    border: 1px; border-color: #343947; border-radius: 10px;
     padding: 18px; spacing: 12px;
 }
 headerbox {
@@ -50,7 +51,7 @@ headerbox {
 }
 header-spacer { expand: true; }
 mode-switcher {
-    width: 248px;
+    width: 376px;
     height: 36px;
     orientation: horizontal;
     spacing: 8px;
@@ -65,17 +66,17 @@ button {
     font: "JetBrains Mono 10";
     padding: 5px 8px;
     border: 1px;
-    border-color: #343a41;
-    border-radius: 7px;
-    background-color: #0a1014d9;
-    text-color: #9ba3ac;
+    border-color: #414654;
+    border-radius: 14px;
+    background-color: #1b1d26;
+    text-color: #a4abc0;
 }
 button selected.normal {
-    background-color: #30353b;
-    border-color: #6d7883;
+    background-color: #353a4a;
+    border-color: #69728a;
     text-color: #ffffff;
 }
-apx-separator { width: 542px; height: 1px; expand: false; background-color: #343a41; }
+apx-separator { width: 542px; height: 1px; expand: false; background-color: #414654; }
 button-dismiss-top, button-dismiss-bottom, button-dismiss-left, button-dismiss-right {
     content: " ";
     width: 100%;
@@ -87,23 +88,23 @@ inputbar {
     children: [entry];
     spacing: 12px;
     padding: 14px;
-    background-color: #0a1014d9;
+    background-color: #1b1d26;
     border: 1px;
-    border-color: #343a41;
-    border-radius: 8px;
+    border-color: #414654;
+    border-radius: 14px;
 }
-prompt { text-color: #eceef0; vertical-align: 0.5; }
-entry { text-color: #ffffff; placeholder: "Pesquisar…"; placeholder-color: #9ba3ac; }
-listview { border: 0px; lines: 7; fixed-height: true; spacing: 4px; scrollbar: false; }
-element { height: 44px; padding: 10px 12px; spacing: 12px; border: 1px; border-color: transparent; border-radius: 7px; }
-element normal.normal { background-color: transparent; text-color: #eceef0; }
-element alternate.normal { background-color: transparent; text-color: #eceef0; }
+prompt { text-color: #d9dcea; vertical-align: 0.5; }
+entry { text-color: #ffffff; placeholder: "Pesquisar…"; placeholder-color: #a4abc0; }
+listview { border: 0px; lines: 7; fixed-height: true; spacing: 6px; scrollbar: false; }
+element { height: 50px; padding: 12px 14px; spacing: 12px; border: 1px; border-color: transparent; border-radius: 14px; }
+element normal.normal { background-color: #1b1d26; text-color: #d9dcea; }
+element alternate.normal { background-color: #1b1d26; text-color: #d9dcea; }
 element normal.urgent, element alternate.urgent, element selected.urgent,
 element normal.active, element alternate.active, element selected.active {
     background-color: transparent;
-    text-color: #eceef0;
+    text-color: #d9dcea;
 }
-element selected.normal, element normal.active, element alternate.active, element selected.active { background-color: #30353b; border-color: #6d7883; text-color: #ffffff; }
+element selected.normal, element normal.active, element alternate.active, element selected.active { background-color: #353a4a; border-color: #69728a; text-color: #ffffff; }
 element-icon { size: 22px; }
 element-text { vertical-align: 0.5; text-color: inherit; }
 

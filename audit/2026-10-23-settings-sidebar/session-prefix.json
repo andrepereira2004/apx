@@ -1,0 +1,1 @@
+["nsenter", "-t", "1233391", "-m", "-U", "-p", "-n", "--", "setpriv", "--reuid=1000", "--regid=1000", "--init-groups", "env", "HOME=/home/apx", "XDG_RUNTIME_DIR=/run/apx/session-1000", "WAYLAND_DISPLAY=wayland-1", "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/apx/session-1000/bus", "HYPRLAND_INSTANCE_SIGNATURE=efb50993780079460b0cbed1363e2166a2de1d9f_1792766458_948455127"]

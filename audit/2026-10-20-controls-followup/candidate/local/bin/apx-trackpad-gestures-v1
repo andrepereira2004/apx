@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+"""Independent Environment-local touchpad scroll and workspace sensitivity."""
+import fcntl
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+CONFIG = Path.home() / '.config/hypr/apx-trackpad-gestures.lua'
+MARKER = re.compile(r'^-- APX trackpad gestures: (.+)$', re.MULTILINE)
+DEFAULTS = {'scroll': 55, 'workspaces': 100}
+
+
+def current():
+    if not CONFIG.exists():
+        return dict(DEFAULTS)
+    match = MARKER.search(CONFIG.read_text())
+    if not match:
+        raise ValueError('A configuração existente não pertence à APX')
+    state = json.loads(match[1])
+    if type(state) is not dict or set(state) != set(DEFAULTS):
+        raise ValueError('Configuração de gestos inválida')
+    for value in state.values():
+        if type(value) is not int or not 25 <= value <= 200:
+            raise ValueError('Sensibilidade fora do intervalo')
+    return state
+
+
+def devices():
+    r = subprocess.run(['/usr/bin/hyprctl', '-j', 'devices'], capture_output=True, text=True, check=True, timeout=3)
+    return sorted({d['name'] for d in json.loads(r.stdout)['mice']
+                   if type(d) is dict and type(d.get('name')) is str
+                   and 'touchpad' in d['name'].lower()
+                   and re.fullmatch(r'[A-Za-z0-9 _.,:-]{1,128}', d['name'])})
+
+
+def render(state, names):
+    lines = ['-- APX trackpad gestures: ' + json.dumps(state, sort_keys=True)]
+    for name in names:
+        lines.append('hl.device({name=' + json.dumps(name) + ',scroll_factor=%.2f})' % (state['scroll'] / 100))
+    # Higher sensitivity means a shorter travel to complete the same swipe.
+    lines.append('hl.config({gestures={workspace_swipe_distance=%d}})' % round(30000 / state['workspaces']))
+    return '\n'.join(lines) + '\n'
+
+
+def apply(code):
+    code = ';'.join(line for line in code.splitlines() if line and not line.startswith('--'))
+    r = subprocess.run(['/usr/bin/hyprctl', 'eval', code], capture_output=True, text=True, timeout=3)
+    if r.returncode or r.stdout.strip() != 'ok':
+        raise RuntimeError('O compositor recusou os gestos')
+
+
+def set_value(kind, value):
+    if kind not in DEFAULTS or type(value) is not int or not 25 <= value <= 200:
+        raise ValueError('Escolhe um valor entre 25 e 200')
+    CONFIG.parent.mkdir(parents=True, exist_ok=True)
+    if CONFIG.is_symlink():
+        raise ValueError('Configuração de gestos inválida')
+    with CONFIG.with_suffix('.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        previous = current()
+        state = dict(previous)
+        state[kind] = value
+        names = devices()
+        if not names:
+            raise RuntimeError('Nenhum trackpad está ligado')
+        before = render(previous, names)
+        rendered = render(state, names)
+        temp = CONFIG.with_name(CONFIG.name + '.%d.tmp' % os.getpid())
+        try:
+            with temp.open('x') as stream:
+                os.chmod(temp, 0o600)
+                stream.write(rendered)
+                stream.flush()
+                os.fsync(stream.fileno())
+            apply(rendered)
+            try:
+                os.replace(temp, CONFIG)
+            except OSError:
+                apply(before)
+                raise
+        finally:
+            temp.unlink(missing_ok=True)
+        return state
+
+
+if __name__ == '__main__':
+    try:
+        if sys.argv[1:] == ['get']:
+            result = current()
+        elif len(sys.argv) == 4 and sys.argv[1] == 'set':
+            result = set_value(sys.argv[2], int(sys.argv[3]))
+        else:
+            raise ValueError('Uso: get | set scroll|workspaces VALOR')
+        print(json.dumps(result, sort_keys=True))
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.SubprocessError) as error:
+        print(str(error), file=sys.stderr)
+        raise SystemExit(2)

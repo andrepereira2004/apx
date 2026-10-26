@@ -86,11 +86,11 @@ live Hub as the filesystem parent or template for other Environments. Hub-only
 management software, permissions, credentials, metadata, widgets, and mutable
 state must not propagate to workload Environments.
 
-The owner explicitly authorized workload lock-screen reuse of the enrolled APX
-face identity on 2026-10-05. This narrow exception uses a private Host-owned
-opt-in artifact and independent copies in graphical workloads; it does not
-permit copying other Hub credentials or management state. See
-`docs/face-auth-workloads-2026-10-05.md`.
+On 2026-10-22 the owner revoked facial authentication entirely, including
+lock screens, sudo and future Environments. Authentication is password-only.
+Do not reinstall Howdy, enroll/copy facial models, or restore facial PAM rules
+from historical deployment scripts or snapshots without a new explicit owner
+request. The earlier 2026-10-05 facial opt-in is retired; its documents are history.
 
 Package managers and installers executed inside an Environment must affect only
 that Environment. This includes `pacman`, `yay`, `apt`, Flatpak, language

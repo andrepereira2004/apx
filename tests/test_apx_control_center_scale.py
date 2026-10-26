@@ -86,7 +86,6 @@ class ControlCenterScaleTests(unittest.TestCase):
         for button_id, kind in (
             ("calendarButton", "calendar"),
             ("environmentButton", "environments"),
-            ("modelStoreButton", "model"),
             ("batteryButton", "battery"),
         ):
             block = source.split(f"id: {button_id}", 1)[1].split("onActivated:", 1)[0]
@@ -198,13 +197,12 @@ class ControlCenterScaleTests(unittest.TestCase):
         # lets a user click a bar button and immediately continue with arrows,
         # Tab and Enter without first moving the pointer into the popup.
         bar = source.split("id: bar", 1)[1].split("id: hotkeyOsdWindow", 1)[0]
-        for kind in ("calendar", "environments", "model", "battery", "controls"):
+        for kind in ("calendar", "environments", "battery", "controls"):
             self.assertIn(f'root.togglePopup("{kind}", this, true)', bar)
         ipc = source.split('target: "host"', 1)[1]
         for kind, button in (
             ("calendar", "calendarButton"),
             ("environments", "environmentButton"),
-            ("model", "modelStoreButton"),
             ("battery", "batteryButton"),
             ("controls", "controlCenterButton"),
         ):

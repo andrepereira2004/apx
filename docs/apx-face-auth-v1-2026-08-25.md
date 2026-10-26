@@ -1,3 +1,6 @@
+> Retired on 2026-10-22: owner removed facial authentication and Howdy.
+> Current authentication is password-only, including sudo. Content below is history.
+
 # APX face authentication v1
 
 ## Result

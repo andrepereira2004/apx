@@ -33,10 +33,47 @@ class WindowApplicationsTests(unittest.TestCase):
                 m.native_page()
             page = json.loads(output.getvalue())
             self.assertEqual({r['info'] for r in page['rows'] if not r['info'].startswith('action:')},
-                             {a['id'] for a in apps})
+                             {a['id'] for a in apps if a['id'] != 'xgps'})
             self.assertTrue(all(r['browse'] and r['search'] for r in page['rows']))
             self.assertFalse(any(r['info'].startswith(('folder:', 'action:folder:')) for r in page['rows']))
             self.assertEqual(page['headers']['prompt'], 'Apps')
+
+    def test_system_and_apps_partition_complete_catalogue_in_browse_and_search(self):
+        m = load_module()
+        apps = [dict(id=k, name=k, windows=[], iconPath='/icon') for k in
+                ('new.app', 'kitty', 'mpv', 'org.xfce.mousepad', 'thunar',
+                 'thunar-settings', 'thunar-bulk-rename', 'xgps', 'cups',
+                 'com.rtosta.zapzap', 'com.rtosta.zapzap.nogpu')]
+        groups = {}
+        for section, prompt in [('apps', 'Apps'), ('system', 'Sistema')]:
+            output = io.StringIO()
+            with patch.dict(m.os.environ, {'APX_ROFI_SECTION': section}, clear=True), \
+                    patch.object(m, 'catalog', return_value=apps), redirect_stdout(output):
+                m.native_page()
+            page = json.loads(output.getvalue())
+            groups[section] = {r['info'] for r in page['rows']}
+            self.assertEqual(page['headers']['prompt'], prompt)
+            self.assertTrue(all(r['browse'] and r['search'] for r in page['rows']))
+        self.assertFalse(groups['apps'] & groups['system'])
+        self.assertEqual(groups['apps'] | groups['system'], {a['id'] for a in apps})
+        self.assertIn('new.app', groups['apps'])
+        self.assertIn('kitty', groups['apps'])
+        self.assertIn('com.rtosta.zapzap.nogpu', groups['system'])
+
+    def test_system_secondary_actions_keep_support_app_selected(self):
+        m = load_module()
+        apps = [dict(id=k, name=k, windows=[], iconPath='/icon')
+                for k in ('xgps', 'thunar')]
+        output = io.StringIO()
+        with patch.dict(m.os.environ, {'APX_ROFI_SECTION': 'system',
+                'ROFI_RETV': '10', 'ROFI_INFO': 'xgps'}, clear=True), \
+                patch.object(m, 'catalog', return_value=apps), \
+                patch.object(m, 'nvidia_on_demand', return_value=False), redirect_stdout(output):
+            m.native_page()
+        page = json.loads(output.getvalue())
+        self.assertEqual(page['headers']['prompt'], 'Sistema')
+        self.assertTrue(any(r['info'] == 'action:uninstall:xgps' for r in page['rows']))
+        self.assertFalse(any(r['info'] == 'thunar' for r in page['rows']))
 
     def test_thunar_helpers_do_not_steal_main_window(self):
         m = load_module()

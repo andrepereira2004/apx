@@ -44,7 +44,7 @@ def main() -> int:
                                                "capabilities", "events", "snapshot", "wifi-connect",
                                                "wifi-connectivity-check", "wifi-disconnect", "wifi-forget",
                                                "wifi-portal-open", "wifi-scan", "wifi-status", "wifi-power", "radio-status", "radio-airplane",
-                                               "calendar-load", "calendar-save", "appearance-load", "appearance-save"))
+                                               "calendar-load", "calendar-save", "appearance-load", "appearance-save", "keyboard-load", "keyboard-save"))
     parser.add_argument("target", nargs="?")
     parser.add_argument("--credential-stdin", action="store_true",
                         help="read one passphrase from stdin; never pass it as an argument")
@@ -62,6 +62,7 @@ def main() -> int:
                "wifi-connectivity-check": "network.connectivity-check", "wifi-forget": "network.forget",
                "wifi-portal-open": "network.portal.open", "wifi-scan": "network.scan",
                "wifi-status": "network.status", "wifi-power": "network.power", "radio-status": "radio.status", "radio-airplane": "radio.airplane",
+               "keyboard-load": "keyboard.load", "keyboard-save": "keyboard.save",
                "calendar-load": "calendar.load", "calendar-save": "calendar.save",
                "appearance-load": "appearance.load", "appearance-save": "appearance.save"}
     payload: dict[str, object] = {}
@@ -98,6 +99,9 @@ def main() -> int:
     if arguments.operation == "radio-airplane":
         if arguments.target not in {"on", "off"}: parser.error("airplane mode requires on or off")
         payload = {"enabled": arguments.target == "on"}
+    if arguments.operation == "keyboard-save":
+        if arguments.target not in {"on", "off"}: parser.error("keyboard-save requires on or off")
+        payload = {"numlock": arguments.target == "on"}
     if arguments.operation == "appearance-save":
         if arguments.target is None: parser.error("appearance-save requires a JSON style")
         payload = json.loads(arguments.target)

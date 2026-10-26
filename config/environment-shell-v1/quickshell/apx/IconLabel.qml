@@ -20,7 +20,7 @@ Item {
         x: label.stacked ? (label.width - width) / 2 : 0
         y: label.stacked ? 0 : (label.height - height) / 2
     }
-    Text {
+    Text { renderType: Text.QtRendering;
         id: caption
         text: label.text
         color: label.color

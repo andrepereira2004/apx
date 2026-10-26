@@ -1,0 +1,14 @@
+# file: /var/lib/apx/environments/hub/home/apx
+# owner: 1000
+# group: 1000
+user::rwx
+group::---
+other::---
+
+# file: /var/lib/apx/environments/hub/home/apx/.config
+# owner: 1000
+# group: 1000
+user::rwx
+group::---
+other::---
+

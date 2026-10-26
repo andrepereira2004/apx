@@ -16,14 +16,20 @@ Item {
         when: feedback.hovered && feedback.hasSurface
         restoreMode: Binding.RestoreBindingOrValue
     }
-    Rectangle {
-        anchors.fill: parent
-        anchors.margins: 1
-        radius: Math.max(0, (feedback.parent.radius || 0) - 1)
-        color: "transparent"
-        border.width: 1
-        border.color: feedback.keyboardFocused ? "#55e6ff" : "#69728a"
-        visible: (feedback.hovered || feedback.keyboardFocused) && feedback.parent.brightActionHover !== true
-        antialiasing: true
+    readonly property bool selected: keyboardFocused || parent.keyboardFocused === true || (parent.selected === true && parent.iconActionEnabled !== true) || parent.checked === true
+    readonly property bool outlineVisible: enabled && (selected || hovered) && parent.outlineManaged !== true
+    // Avoid drawing the old outer border underneath the common inset contour.
+    Binding {
+        target: feedback.parent
+        property: "border.width"
+        value: 0
+        when: feedback.hasSurface && feedback.outlineVisible
+        restoreMode: Binding.RestoreBindingOrValue
+    }
+    ButtonOutline {
+        outlineRadius: Math.max(0, (feedback.parent.radius || 0))
+        selected: feedback.selected
+        hovered: feedback.hovered
+        visible: feedback.outlineVisible
     }
 }

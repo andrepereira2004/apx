@@ -1,0 +1,280 @@
+{
+  "scope": "local canvas-stream video in isolated native HTML fullscreen; not YouTube/network/codec reproduction",
+  "video_source": "decoded",
+  "xwayland": false,
+  "results": [
+    {
+      "viewports": [
+        {
+          "time": 1072.2,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 1080.4,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 1097.1,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 1092.3000000044703,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 104,
+      "dropped": 4,
+      "cycle": 1,
+      "enter": true,
+      "promise_ms": 22.0,
+      "max_raf_gap_ms": 8.5,
+      "raf_gaps_over_25ms": 0,
+      "samples": 93
+    },
+    {
+      "viewports": [
+        {
+          "time": 1847.8,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 1856.1,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 1864.5,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 1856.8000000044703,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 150,
+      "dropped": 4,
+      "cycle": 1,
+      "enter": false,
+      "promise_ms": 18.1,
+      "max_raf_gap_ms": 8.7,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    },
+    {
+      "viewports": [
+        {
+          "time": 2615.1,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 2623.4,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 2631.8,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 2623.89999999851,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 196,
+      "dropped": 5,
+      "cycle": 2,
+      "enter": true,
+      "promise_ms": 7.9,
+      "max_raf_gap_ms": 16.6,
+      "raf_gaps_over_25ms": 0,
+      "samples": 90
+    },
+    {
+      "viewports": [
+        {
+          "time": 3382.4,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 3390.8,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 3383,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 240,
+      "dropped": 5,
+      "cycle": 2,
+      "enter": false,
+      "promise_ms": 15.8,
+      "max_raf_gap_ms": 8.7,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    },
+    {
+      "viewports": [
+        {
+          "time": 4149.7,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 4158,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 4151.10000000149,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 287,
+      "dropped": 5,
+      "cycle": 3,
+      "enter": true,
+      "promise_ms": 8.6,
+      "max_raf_gap_ms": 8.5,
+      "raf_gaps_over_25ms": 0,
+      "samples": 91
+    },
+    {
+      "viewports": [
+        {
+          "time": 4908.7,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 4917,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 4925.4,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 4917.80000000447,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 333,
+      "dropped": 5,
+      "cycle": 3,
+      "enter": false,
+      "promise_ms": 18.0,
+      "max_raf_gap_ms": 8.8,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    },
+    {
+      "viewports": [
+        {
+          "time": 5676.1,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 5684.4,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 5692.7,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 5685,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 379,
+      "dropped": 5,
+      "cycle": 4,
+      "enter": true,
+      "promise_ms": 8.4,
+      "max_raf_gap_ms": 8.5,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    },
+    {
+      "viewports": [
+        {
+          "time": 6443.4,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 6451.6,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 6444.70000000298,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 420,
+      "dropped": 5,
+      "cycle": 4,
+      "enter": false,
+      "promise_ms": 15.8,
+      "max_raf_gap_ms": 16.7,
+      "raf_gaps_over_25ms": 0,
+      "samples": 75
+    }
+  ]
+}

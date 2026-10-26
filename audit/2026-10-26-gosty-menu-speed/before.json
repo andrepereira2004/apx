@@ -1,0 +1,146 @@
+[
+  {
+    "action": "openConnectivityControls",
+    "settled_ms": 614,
+    "samples": [
+      {
+        "ms": 317,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 394,
+        "transition": true,
+        "progress": 0.8794773657634758,
+        "blocked": true
+      },
+      {
+        "ms": 467,
+        "transition": true,
+        "progress": 0.9797577149539356,
+        "blocked": true
+      },
+      {
+        "ms": 542,
+        "transition": true,
+        "progress": 0.9995767647171904,
+        "blocked": true
+      },
+      {
+        "ms": 614,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openControls",
+    "settled_ms": 438,
+    "samples": [
+      {
+        "ms": 135,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 217,
+        "transition": true,
+        "progress": 0.8527760566333936,
+        "blocked": true
+      },
+      {
+        "ms": 293,
+        "transition": true,
+        "progress": 0.9791830504185028,
+        "blocked": true
+      },
+      {
+        "ms": 366,
+        "transition": true,
+        "progress": 0.9995200561511429,
+        "blocked": true
+      },
+      {
+        "ms": 438,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openBrightnessControls",
+    "settled_ms": 606,
+    "samples": [
+      {
+        "ms": 313,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 387,
+        "transition": true,
+        "progress": 0.8821144844894938,
+        "blocked": true
+      },
+      {
+        "ms": 460,
+        "transition": true,
+        "progress": 0.9803206679248786,
+        "blocked": true
+      },
+      {
+        "ms": 535,
+        "transition": true,
+        "progress": 0.9996296764324238,
+        "blocked": true
+      },
+      {
+        "ms": 606,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openControls",
+    "settled_ms": 450,
+    "samples": [
+      {
+        "ms": 158,
+        "transition": true,
+        "progress": 0,
+        "blocked": true
+      },
+      {
+        "ms": 233,
+        "transition": true,
+        "progress": 0.8794773657634758,
+        "blocked": true
+      },
+      {
+        "ms": 306,
+        "transition": true,
+        "progress": 0.9797577149539356,
+        "blocked": true
+      },
+      {
+        "ms": 380,
+        "transition": true,
+        "progress": 0.9995767647171904,
+        "blocked": true
+      },
+      {
+        "ms": 450,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  }
+]

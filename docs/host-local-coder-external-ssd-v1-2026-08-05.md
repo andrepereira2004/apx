@@ -1,3 +1,8 @@
+> Retired product concept — 2026-10-21. The owner removed local AI from APX.
+> This document records an earlier experiment, not current product requirements.
+> The shell widget, management menu, shortcut and background polling have been removed.
+> Existing model data and storage recovery tooling are retained as historical resources.
+
 # Host-local coder and external SSD v1 — 2026-08-05
 
 Status: owner-authorized physical implementation completed and locally proved,

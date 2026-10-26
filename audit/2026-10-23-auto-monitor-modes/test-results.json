@@ -1,0 +1,14 @@
+{
+  "tests": 8,
+  "failures": [
+    "test_bounce_mouse_area_is_a_stateless_reusable_primitive (test_apx_control_center_scale.ControlCenterScaleTests.test_bounce_mouse_area_is_a_stateless_reusable_primitive)",
+    "test_calendar_is_fully_reachable_from_the_keyboard (test_apx_control_center_scale.ControlCenterScaleTests.test_calendar_is_fully_reachable_from_the_keyboard)",
+    "test_control_center_matches_desktop_scale_without_fractional_resampling (test_apx_control_center_scale.ControlCenterScaleTests.test_control_center_matches_desktop_scale_without_fractional_resampling)",
+    "test_control_icons_use_qt_icon_rendering_without_post_effect (test_apx_control_center_scale.ControlCenterScaleTests.test_control_icons_use_qt_icon_rendering_without_post_effect)",
+    "test_every_keyboard_popup_animates_its_bar_button (test_apx_control_center_scale.ControlCenterScaleTests.test_every_keyboard_popup_animates_its_bar_button)",
+    "test_popup_opening_uses_one_explicit_forward_animation (test_apx_control_center_scale.ControlCenterScaleTests.test_popup_opening_uses_one_explicit_forward_animation)",
+    "test_workload_overview_has_room_for_all_actions (test_apx_control_center_scale.ControlCenterScaleTests.test_workload_overview_has_room_for_all_actions)"
+  ],
+  "errors": [],
+  "scope": "Existing UI assertions in untouched QuickShell files; monitor/laptop and desktop seed tests pass (10 + 7)."
+}

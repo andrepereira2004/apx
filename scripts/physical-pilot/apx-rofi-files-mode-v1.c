@@ -1,5 +1,6 @@
 /* Environment-local Rofi ABI 7 mode. Only the selected directory is requested.
- * Enumeration and JSON parsing run outside the UI thread. Theme icons are fetched
+ * Normal navigation runs outside the UI thread; initial metadata has a bounded
+ * 50ms preparation budget before first paint. Theme icons are fetched
  * for visible rows only; file content, archives and thumbnails are never read.
  */
 #include <gio/gio.h>
@@ -18,6 +19,8 @@ typedef struct RofiViewState RofiViewState;
 extern RofiViewState *rofi_view_get_active(void);
 extern Mode *rofi_view_get_mode(RofiViewState *view);
 extern void rofi_view_reload(void);
+extern void rofi_view_clear_input(RofiViewState *view);
+extern void rofi_view_set_selected_line(RofiViewState *view, unsigned int index);
 
 typedef struct {
     gchar *path, *label, *icon, *search, *kind;
@@ -26,7 +29,7 @@ typedef struct {
 typedef struct {
     gint refs;
     Mode *mode;
-    gchar *home, *directory, *error;
+    gchar *home, *directory, *loaded_directory, *error;
     GPtrArray *entries;
     GRWLock rows_lock;
     GSubprocess *process;
@@ -40,7 +43,7 @@ typedef struct {
     guint generation;
     GSubprocess *process;
     GCancellable *cancel;
-    gchar *output;
+    gchar *output, *prefix;
 } Request;
 typedef struct { gchar *directory; GPtrArray *entries; } Page;
 
@@ -55,11 +58,11 @@ static void state_unref(gpointer value) {
     if (!g_atomic_int_dec_and_test(&s->refs)) return;
     g_ptr_array_unref(s->entries); g_rw_lock_clear(&s->rows_lock);
     g_clear_object(&s->process); g_clear_object(&s->cancel);
-    g_free(s->home); g_free(s->directory); g_free(s->error); g_free(s);
+    g_free(s->loaded_directory); g_free(s->home); g_free(s->directory); g_free(s->error); g_free(s);
 }
 static void request_free(Request *r) {
     g_object_unref(r->process); g_object_unref(r->cancel);
-    g_free(r->output); state_unref(r->state); g_free(r);
+    g_free(r->prefix); g_free(r->output); state_unref(r->state); g_free(r);
 }
 static void page_free(gpointer value) {
     Page *p = value;
@@ -151,13 +154,21 @@ static void parsed(GObject *source, GAsyncResult *result, gpointer data) {
     if (current(r)) {
         if (!p) failed(r);
         else {
+            gboolean changed_directory = g_strcmp0(s->loaded_directory, p->directory) != 0;
             g_rw_lock_writer_lock(&s->rows_lock);
             GPtrArray *old = s->entries;
             s->entries = p->entries; p->entries = old;
             g_rw_lock_writer_unlock(&s->rows_lock);
             g_free(s->directory); s->directory = g_strdup(p->directory);
             s->loading = FALSE;
+            g_free(s->loaded_directory); s->loaded_directory = g_strdup(p->directory);
             g_clear_object(&s->process); g_clear_object(&s->cancel);
+            /* Commit navigation only when its complete page is available. */
+            if (changed_directory && active(s)) {
+                RofiViewState *view = rofi_view_get_active();
+                rofi_view_clear_input(view);
+                rofi_view_set_selected_line(view, 0);
+            }
             refresh(s);
         }
     }
@@ -165,14 +176,26 @@ static void parsed(GObject *source, GAsyncResult *result, gpointer data) {
 }
 static void enumerated(GObject *source, GAsyncResult *result, gpointer data) {
     Request *r = data;
-    GError *error = NULL; gchar *errors = NULL;
-    gboolean ok = g_subprocess_communicate_utf8_finish(G_SUBPROCESS(source), result,
-                                                        &r->output, &errors, &error);
+    GError *error = NULL;
+    GBytes *output = NULL, *errors = NULL;
+    gboolean ok = g_subprocess_communicate_finish(G_SUBPROCESS(source), result,
+                                                  &output, &errors, &error);
+    if (output) {
+        gsize size = 0;
+        const gchar *bytes = g_bytes_get_data(output, &size);
+        r->output = g_strndup(bytes ? bytes : "", size);
+        g_bytes_unref(output);
+    }
     if (!ok || !g_subprocess_get_successful(r->process) || !current(r)) {
         if (current(r)) failed(r);
-        g_clear_error(&error); g_free(errors); request_free(r); return;
+        g_clear_error(&error); g_clear_pointer(&errors, g_bytes_unref); request_free(r); return;
     }
-    g_free(errors);
+    g_clear_pointer(&errors, g_bytes_unref);
+    if (r->prefix) {
+        gchar *tail = r->output;
+        r->output = g_strconcat(r->prefix, tail ? tail : "", NULL);
+        g_free(tail);
+    }
     GTask *task = g_task_new(NULL, r->cancel, parsed, r);
     g_task_set_task_data(task, r, NULL);
     g_task_run_in_thread(task, parse_page);
@@ -184,13 +207,48 @@ static GSubprocessLauncher *launcher(GSubprocessFlags flags) {
     for (guint i = 0; vars[i]; i++) g_subprocess_launcher_unsetenv(l, vars[i]);
     return l;
 }
-static void load(State *s) {
+/* Only during mode initialization, before the view exists: give the shallow
+ * home listing a bounded head start. Never pump the UI loop or wait indefinitely.
+ * A slow/large response continues through the ordinary asynchronous path, with
+ * any already-read bytes retained. */
+static gboolean prime_initial_page(Request *r) {
+    GInputStream *stream = g_subprocess_get_stdout_pipe(r->process);
+    if (!G_IS_POLLABLE_INPUT_STREAM(stream) ||
+        !g_pollable_input_stream_can_poll(G_POLLABLE_INPUT_STREAM(stream))) return FALSE;
+    gint64 deadline = g_get_monotonic_time() + 50000;
+    GString *buffer = g_string_new(NULL);
+    gboolean complete = FALSE;
+    while (g_get_monotonic_time() < deadline && buffer->len < 131072) {
+        gchar chunk[4096];
+        GError *error = NULL;
+        gssize n = g_pollable_input_stream_read_nonblocking(
+            G_POLLABLE_INPUT_STREAM(stream), chunk, sizeof(chunk), r->cancel, &error);
+        if (n > 0) g_string_append_len(buffer, chunk, n);
+        else if (n == 0) complete = TRUE;
+        else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK)) {
+            g_clear_error(&error); break;
+        }
+        g_clear_error(&error);
+        if (complete) break;
+        if (n < 0) g_usleep(500);
+    }
+    if (!complete) {
+        r->prefix = g_string_free(buffer, FALSE);
+        return FALSE;
+    }
+    r->output = g_string_free(buffer, FALSE);
+    GTask *task = g_task_new(NULL, r->cancel, NULL, NULL);
+    parse_page(task, NULL, r, r->cancel);
+    parsed(NULL, G_ASYNC_RESULT(task), r);
+    g_object_unref(task);
+    return TRUE;
+}
+static void load_page(State *s, gboolean initial) {
     cancel_request(s);
     g_clear_pointer(&s->error, g_free);
     s->loading = TRUE; s->phase = 0; s->started = g_get_monotonic_time();
-    g_rw_lock_writer_lock(&s->rows_lock);
-    g_ptr_array_set_size(s->entries, 0);
-    g_rw_lock_writer_unlock(&s->rows_lock);
+    /* Keep the current page until the requested directory is ready. This is
+     * one retained visible page, never a cache or prefetch of child folders. */
     GSubprocessLauncher *l = launcher(G_SUBPROCESS_FLAGS_STDOUT_PIPE | G_SUBPROCESS_FLAGS_STDERR_PIPE);
     GError *error = NULL;
     s->process = g_subprocess_launcher_spawn(l, &error, APX_FILES_HELPER,
@@ -205,17 +263,26 @@ static void load(State *s) {
     Request *r = g_new0(Request, 1);
     r->state = state_ref(s); r->generation = s->generation;
     r->process = g_object_ref(s->process); r->cancel = g_object_ref(s->cancel);
-    g_subprocess_communicate_utf8_async(s->process, NULL, s->cancel, enumerated, r);
+    if (initial && prime_initial_page(r)) return;
+    g_subprocess_communicate_async(s->process, NULL, s->cancel, enumerated, r);
     refresh(s);
 }
+static void load(State *s) { load_page(s, FALSE); }
 static gboolean tick(gpointer data) {
     State *s = data;
     if (s->destroyed) return G_SOURCE_REMOVE;
     gboolean shown = active(s);
-    if (shown && !s->visible) { s->visible = TRUE; load(s); }
+    if (shown && !s->visible) {
+        s->visible = TRUE;
+        if (!s->loading) load(s);
+    }
     else if (!shown && s->visible) { s->visible = FALSE; cancel_request(s); }
-    if (shown && s->loading && g_get_monotonic_time() - s->started >= 150000) {
-        s->phase++; refresh(s);
+    g_rw_lock_reader_lock(&s->rows_lock);
+    gboolean has_rows = s->entries->len > 0;
+    g_rw_lock_reader_unlock(&s->rows_lock);
+    if (shown && s->loading && !has_rows && g_get_monotonic_time() - s->started >= 150000) {
+        guint phase = (guint)((g_get_monotonic_time() - s->started) / 80000);
+        if (phase != s->phase) { s->phase = phase; refresh(s); }
     }
     return G_SOURCE_CONTINUE;
 }
@@ -230,7 +297,9 @@ static int init(Mode *sw) {
     g_rw_lock_init(&s->rows_lock);
     if (sw->module) g_module_make_resident(sw->module); /* pending callbacks survive mode teardown */
     mode_set_private_data(sw, s);
-    s->timer = g_timeout_add_full(G_PRIORITY_DEFAULT, 80, tick, state_ref(s), state_unref);
+    /* Prepare the initial page before first paint, with a strict 50ms budget. */
+    load_page(s, TRUE);
+    s->timer = g_timeout_add_full(G_PRIORITY_DEFAULT, 16, tick, state_ref(s), state_unref);
     return TRUE;
 }
 static void destroy(Mode *sw) {
@@ -244,7 +313,7 @@ static unsigned int count(const Mode *sw) {
     State *s = mode_get_private_data(sw);
     if (!s) return 0;
     g_rw_lock_reader_lock(&s->rows_lock);
-    guint n = MAX(1u, s->entries->len);
+    guint n = s->error ? 1u : MAX(1u, s->entries->len);
     g_rw_lock_reader_unlock(&s->rows_lock); return n;
 }
 static char *display(const Mode *sw, unsigned int index, int *state,
@@ -253,8 +322,10 @@ static char *display(const Mode *sw, unsigned int index, int *state,
     if (!get_entry) return NULL;
     State *s = mode_get_private_data(sw);
     if (!s) return g_strdup("");
-    if (!s->visible) return g_strdup(" ");
-    if (s->loading) {
+    g_rw_lock_reader_lock(&s->rows_lock);
+    gboolean has_rows = s->entries->len > 0;
+    g_rw_lock_reader_unlock(&s->rows_lock);
+    if (s->loading && !has_rows) {
         const gchar *frames[] = {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
         return g_get_monotonic_time() - s->started < 150000 ? g_strdup(" ") :
                g_strdup_printf("%s  A carregar…", frames[s->phase % G_N_ELEMENTS(frames)]);
@@ -311,7 +382,7 @@ static ModeMode result(Mode *sw, int event, char **input, unsigned int index) {
     g_rw_lock_reader_unlock(&s->rows_lock);
     if (!path) return RELOAD_DIALOG;
     if (directory) {
-        g_free(s->directory); s->directory = path; load(s); return RESET_DIALOG;
+        g_free(s->directory); s->directory = path; load(s); return RELOAD_DIALOG;
     }
     GSubprocessLauncher *l = launcher(G_SUBPROCESS_FLAGS_NONE);
     GSubprocess *p = g_subprocess_launcher_spawn(l, NULL, APX_FILES_HELPER, "--open-entry", path, NULL);

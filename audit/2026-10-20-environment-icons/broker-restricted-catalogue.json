@@ -1,0 +1,32 @@
+[
+  {
+    "name": "faculdade",
+    "generation": "e9b08983-4740-4b85-8580-862c4a1d4c54",
+    "icon": "book-open"
+  },
+  {
+    "name": "hytale",
+    "generation": "97014bb7-aa82-41fd-aaff-2833e2e41033",
+    "icon": "swords"
+  },
+  {
+    "name": "minecraft",
+    "generation": "a79db3e2-4870-4b5f-9367-822adbc18c8b",
+    "icon": "pickaxe"
+  },
+  {
+    "name": "steam",
+    "generation": "72f90ce8-3119-4bdd-8368-7ee431b9f13c",
+    "icon": "box"
+  },
+  {
+    "name": "windows-testes",
+    "generation": "2770478b-480f-4aea-8910-e3201d5334c5",
+    "icon": "monitor"
+  },
+  {
+    "name": "windows",
+    "generation": "1c5b5631-fb0e-4384-bf6f-b23eb1798f70",
+    "icon": "monitor"
+  }
+]

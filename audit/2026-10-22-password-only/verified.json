@@ -1,0 +1,42 @@
+[
+  {
+    "environment": "faculdade",
+    "face_pam": false,
+    "howdy_installed": false,
+    "dlib_installed": false,
+    "face_models": false,
+    "lock_password_only": true
+  },
+  {
+    "environment": "hub",
+    "face_pam": false,
+    "howdy_installed": false,
+    "dlib_installed": false,
+    "face_models": false,
+    "lock_password_only": true
+  },
+  {
+    "environment": "hytale",
+    "face_pam": false,
+    "howdy_installed": false,
+    "dlib_installed": false,
+    "face_models": false,
+    "lock_password_only": true
+  },
+  {
+    "environment": "minecraft",
+    "face_pam": false,
+    "howdy_installed": false,
+    "dlib_installed": false,
+    "face_models": false,
+    "lock_password_only": true
+  },
+  {
+    "environment": "steam",
+    "face_pam": false,
+    "howdy_installed": false,
+    "dlib_installed": false,
+    "face_models": false,
+    "lock_password_only": true
+  }
+]

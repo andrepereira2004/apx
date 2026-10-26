@@ -1,0 +1,6 @@
+#!/bin/sh
+# Always use APX native file selection, including launches from older sessions.
+export QT_QPA_PLATFORMTHEME=xdgdesktopportal
+export GTK_USE_PORTAL=1
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then export XDG_SESSION_TYPE=wayland; fi
+exec /usr/bin/zapzap "$@"

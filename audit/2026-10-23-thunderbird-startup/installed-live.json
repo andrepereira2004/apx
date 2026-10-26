@@ -1,0 +1,12 @@
+{
+  "addon": {
+    "id": "{ECFD45DC-CEE2-4784-BEEC-A33713B2288D}",
+    "version": "2.1",
+    "active": true
+  },
+  "startPage": false,
+  "donations": false,
+  "scrollToNew": false,
+  "closedPromotionalTabs": 0,
+  "existingSelectionRecorded": true
+}

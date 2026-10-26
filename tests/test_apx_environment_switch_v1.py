@@ -36,6 +36,7 @@ def load_contract():
 
 
 def load_switch_service():
+    sys.modules["apx_environment_switch_contract"] = load_contract()
     original_path = list(sys.path)
     sys.path.insert(0, str(ROOT / "src"))
     try:
@@ -53,6 +54,7 @@ def load_runner():
 
 
 def load_metadata_runner():
+    sys.modules["apx_environment_switch_contract"] = load_contract()
     spec = importlib.util.spec_from_file_location("metadata_runner", METADATA_RUNNER)
     module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
     return module
@@ -764,7 +766,8 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn('root.toggleFocusedPopup("environments")', source)
         self.assertIn("function toggleControls(): void", source)
         self.assertIn("function toggleCalendar(): void", source)
-        self.assertIn("function toggleModel(): void", source)
+        self.assertNotIn("toggleModel", source)
+        self.assertNotIn("modelStore", source)
         self.assertIn("function toggleBattery(): void", source)
         self.assertIn("id: batteryButton", source)
         self.assertNotIn('text: "SUPER+M"', source)
@@ -981,7 +984,7 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
         self.assertIn("hyprctl keyword unbind 'SUPER, E'", shortcut_helper)
         self.assertIn("hyprctl keyword bind \"SUPER, E, exec", shortcut_helper)
         for key, method in (("A", "toggleControls"), ("D", "toggleCalendar"),
-                            ("I", "toggleModel"), ("B", "toggleBattery")):
+                            ("B", "toggleBattery")):
             self.assertIn(f'mainMod .. " + {key}"', lua)
             self.assertIn(method, lua)
             self.assertIn(f"bind = SUPER, {key}, exec, quickshell -c apx ipc call host {method}", legacy)

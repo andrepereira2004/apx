@@ -1,0 +1,1 @@
+{"apps": 4, "with_services": 33, "gpu": {"name": "NVIDIA GeForce RTX 3060 Laptop GPU", "use": 0.0, "memory": 13.0, "capacity": 6144.0}, "icons": true, "toggle_labels": true, "dummy_termination": true}

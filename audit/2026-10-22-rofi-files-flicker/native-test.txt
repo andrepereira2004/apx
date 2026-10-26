@@ -1,0 +1,1 @@
+PASS: bounded first paint, partial UTF-8 fallback, immediate initial labels, prefetched home, cached rows on return, async spinner, shallow rows, navigation, switching, stale requests, visible-only icons, failure/retry, cancel and pending teardown

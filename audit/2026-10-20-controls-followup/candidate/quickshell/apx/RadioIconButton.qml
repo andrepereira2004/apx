@@ -7,18 +7,23 @@ Rectangle {
     property string actionLabel: ""
     property bool powered: false
     property bool busy: false
+    property bool cardHoverEnabled: true
     signal activated()
-    width: 36; height: 36; radius: width / 2
+    width: Appearance.menuIconCircleSize; height: width; radius: width / 2
     antialiasing: true
+    readonly property Item navigationTarget: parent
     activeFocusOnTab: true
     enabled: !busy
     readonly property color surroundingColor: parent && parent.color !== undefined ? parent.color : (parent && parent.parent && parent.parent.color !== undefined ? parent.parent.color : Appearance.surface)
-    color: Qt.lighter(surroundingColor, iconHover.hovered && enabled ? 1.95 : 1.6)
-    border.width: activeFocus || (iconHover.hovered && enabled) ? 2 : 0
-    border.color: activeFocus ? Appearance.iconColor : "#69728a"
+    color: activeFocus ? "#454d64" : Qt.lighter(surroundingColor, iconHover.hovered && enabled ? 1.95 : 1.6)
+    border.width: 0
+    ButtonOutline {
+        selected: button.activeFocus || button.powered
+        hovered: iconHover.hovered && button.enabled
+    }
     MenuHover {
         parent: button.parent; z: 100
-        enabled: button.enabled && !button.parent.children.some(child => child.keyboardActivationPending !== undefined)
+        enabled: button.cardHoverEnabled && button.enabled && !button.parent.children.some(child => child.keyboardActivationPending !== undefined)
     }
     HoverHandler { id: iconHover; blocking: false }
     scale: mouse.pressed ? .94 : 1
@@ -29,7 +34,7 @@ Rectangle {
     Accessible.checkable: true
     Accessible.checked: powered
     LucideIcon {
-        anchors.centerIn: parent; width: 16; height: 16
+        anchors.centerIn: parent; width: Appearance.menuGlyphSize; height: width
         name: button.iconName
         opacity: button.powered ? 1 : .55
         Behavior on opacity { NumberAnimation { duration: 90 } }

@@ -1,3 +1,8 @@
+> Retired product concept — 2026-10-21. The owner removed local AI from APX.
+> This document records an earlier experiment, not current product requirements.
+> The shell widget, management menu, shortcut and background polling have been removed.
+> Existing model data and storage recovery tooling are retained as historical resources.
+
 # NVIDIA CUDA local-model path v1 — 2026-08-11
 
 The Host RTX 3060 was previously driven by Nouveau/NVK and Ollama Vulkan.

@@ -1,0 +1,9 @@
+{
+  "path": "/var/lib/apx/environments/faculdade/root/usr/share/applications/org.localsend.localsend_app.desktop",
+  "before_mode": "0600",
+  "after_mode": "0644",
+  "uid": 98107392,
+  "gid": 98107392,
+  "sha256": "9920649f303bbc3b860653daec8a9792c1741dff29ed7c2e8b68a54c866ca71f",
+  "rollback": "Restore mode 0600 on this exact file; content and ownership unchanged."
+}

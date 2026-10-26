@@ -1,0 +1,16 @@
+{
+  "before": {
+    "openings": 6,
+    "intervals": 198,
+    "median_ms": 8.0,
+    "max_ms": 32,
+    "over17ms": 6
+  },
+  "after": {
+    "openings": 6,
+    "intervals": 206,
+    "median_ms": 8.0,
+    "max_ms": 32,
+    "over17ms": 6
+  }
+}

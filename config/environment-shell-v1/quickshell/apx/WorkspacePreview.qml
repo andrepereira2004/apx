@@ -43,7 +43,7 @@ Rectangle {
         x: 12; y: 12
         width: parent.width - 24
         spacing: 10
-        Text {
+        Text { renderType: Text.CurveRendering;
             width: parent.width
             text: "Workspace " + (preview.workspace ? preview.workspace.name : "")
             color: preview.mainColor
@@ -87,7 +87,7 @@ Rectangle {
                         captureSource: thumbnail.modelData.wayland
                         live: false
                     }
-                    Text {
+                    Text { renderType: Text.CurveRendering;
                         anchors.centerIn: parent
                         width: parent.width - 8
                         visible: !capture.hasContent
@@ -101,7 +101,7 @@ Rectangle {
                 }
             }
         }
-        Text {
+        Text { renderType: Text.CurveRendering;
             visible: preview.windows.length === 0
             text: "Sem aplicações abertas"
             color: preview.dimColor
@@ -125,7 +125,7 @@ Rectangle {
                         required property var modelData
                         width: appList.width
                         spacing: 2
-                        Text {
+                        Text { renderType: Text.CurveRendering;
                             width: parent.width
                             text: preview.appName(parent.modelData)
                             elide: Text.ElideRight
@@ -133,7 +133,7 @@ Rectangle {
                             font.family: Appearance.fontFamily
                             font.pixelSize: Appearance.bodySize
                         }
-                        Text {
+                        Text { renderType: Text.CurveRendering;
                             width: parent.width
                             text: parent.modelData.title
                             elide: Text.ElideRight

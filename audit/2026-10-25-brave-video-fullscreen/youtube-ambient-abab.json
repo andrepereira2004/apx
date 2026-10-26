@@ -1,0 +1,695 @@
+{
+  "scope": "isolated browser: anonymous YouTube when selected, otherwise local video; RAF timing is not GPU presentation timing",
+  "video_source": "YouTube anonymous public Big Buck Bunny",
+  "xwayland": false,
+  "results": [
+    {
+      "viewports": [
+        {
+          "time": 5184.5,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 5192.9,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 5376.1,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 5330.20000000298,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 272.9,
+        "LayoutDuration": 28.4,
+        "RecalcStyleDuration": 96.6,
+        "TaskDuration": 515.4
+      },
+      "candidate": false,
+      "cycle": 1,
+      "enter": true,
+      "promise_ms": 146.2,
+      "max_raf_gap_ms": 208.6,
+      "raf_gaps_over_25ms": 2,
+      "samples": 61
+    },
+    {
+      "viewports": [
+        {
+          "time": 6085.4,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 6093.7,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 6310.7,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 6245.5,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 343.7,
+        "LayoutDuration": 39.4,
+        "RecalcStyleDuration": 150.6,
+        "TaskDuration": 680.7
+      },
+      "candidate": false,
+      "cycle": 1,
+      "enter": false,
+      "promise_ms": 40.3,
+      "max_raf_gap_ms": 333.7,
+      "raf_gaps_over_25ms": 3,
+      "samples": 22
+    },
+    {
+      "viewports": [
+        {
+          "time": 7086.3,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 7094.7,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 7244.4,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 7202.80000000447,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 243.9,
+        "LayoutDuration": 12.8,
+        "RecalcStyleDuration": 88.4,
+        "TaskDuration": 460.7
+      },
+      "candidate": false,
+      "cycle": 2,
+      "enter": true,
+      "promise_ms": 121.1,
+      "max_raf_gap_ms": 200.1,
+      "raf_gaps_over_25ms": 2,
+      "samples": 64
+    },
+    {
+      "viewports": [
+        {
+          "time": 7961.8,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 7970.1,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 8161.9,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 8103.30000000447,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 258.1,
+        "LayoutDuration": 35.9,
+        "RecalcStyleDuration": 137.9,
+        "TaskDuration": 572.8
+      },
+      "candidate": false,
+      "cycle": 2,
+      "enter": false,
+      "promise_ms": 41.2,
+      "max_raf_gap_ms": 266.6,
+      "raf_gaps_over_25ms": 3,
+      "samples": 35
+    },
+    {
+      "viewports": [
+        {
+          "time": 8962.4,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 8970.8,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 9112.1,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 9072.40000000596,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 239.3,
+        "LayoutDuration": 12.6,
+        "RecalcStyleDuration": 86.7,
+        "TaskDuration": 437.3
+      },
+      "candidate": true,
+      "cycle": 3,
+      "enter": true,
+      "promise_ms": 115.5,
+      "max_raf_gap_ms": 200.7,
+      "raf_gaps_over_25ms": 2,
+      "samples": 64
+    },
+    {
+      "viewports": [
+        {
+          "time": 9829,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 9837.4,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 10038.4,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 9977,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 280.3,
+        "LayoutDuration": 36.3,
+        "RecalcStyleDuration": 141.6,
+        "TaskDuration": 594.7
+      },
+      "candidate": true,
+      "cycle": 3,
+      "enter": false,
+      "promise_ms": 46.5,
+      "max_raf_gap_ms": 283.3,
+      "raf_gaps_over_25ms": 3,
+      "samples": 34
+    },
+    {
+      "viewports": [
+        {
+          "time": 10830.1,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 10838.3,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 11004.7,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 10966.30000000447,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 227.3,
+        "LayoutDuration": 14.7,
+        "RecalcStyleDuration": 105.4,
+        "TaskDuration": 447.8
+      },
+      "candidate": true,
+      "cycle": 4,
+      "enter": true,
+      "promise_ms": 134.4,
+      "max_raf_gap_ms": 193,
+      "raf_gaps_over_25ms": 2,
+      "samples": 65
+    },
+    {
+      "viewports": [
+        {
+          "time": 11722.3,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 11730.6,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 11921.9,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 11864.80000000447,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 249.3,
+        "LayoutDuration": 35.9,
+        "RecalcStyleDuration": 143.2,
+        "TaskDuration": 573.8
+      },
+      "candidate": true,
+      "cycle": 4,
+      "enter": false,
+      "promise_ms": 42.0,
+      "max_raf_gap_ms": 268.1,
+      "raf_gaps_over_25ms": 3,
+      "samples": 36
+    },
+    {
+      "viewports": [
+        {
+          "time": 12724,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 12732.3,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 12890.3,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 12851.60000000149,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 222.4,
+        "LayoutDuration": 13.7,
+        "RecalcStyleDuration": 105.3,
+        "TaskDuration": 438.6
+      },
+      "candidate": false,
+      "cycle": 5,
+      "enter": true,
+      "promise_ms": 130.9,
+      "max_raf_gap_ms": 192.4,
+      "raf_gaps_over_25ms": 2,
+      "samples": 66
+    },
+    {
+      "viewports": [
+        {
+          "time": 13607.2,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 13615.6,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 13798.5,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 13750.20000000298,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 251.9,
+        "LayoutDuration": 36.8,
+        "RecalcStyleDuration": 141.3,
+        "TaskDuration": 571.1
+      },
+      "candidate": false,
+      "cycle": 5,
+      "enter": false,
+      "promise_ms": 40.3,
+      "max_raf_gap_ms": 268.1,
+      "raf_gaps_over_25ms": 3,
+      "samples": 37
+    },
+    {
+      "viewports": [
+        {
+          "time": 14608.1,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 14616.5,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 14825.7,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 14762.80000000447,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 257.4,
+        "LayoutDuration": 15.6,
+        "RecalcStyleDuration": 113.7,
+        "TaskDuration": 612.9
+      },
+      "candidate": false,
+      "cycle": 6,
+      "enter": true,
+      "promise_ms": 159.7,
+      "max_raf_gap_ms": 208.5,
+      "raf_gaps_over_25ms": 3,
+      "samples": 60
+    },
+    {
+      "viewports": [
+        {
+          "time": 15517.3,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 15533.8,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 15809.7,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 15729,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 288.8,
+        "LayoutDuration": 39.8,
+        "RecalcStyleDuration": 165.0,
+        "TaskDuration": 647.3
+      },
+      "candidate": false,
+      "cycle": 6,
+      "enter": false,
+      "promise_ms": 53.1,
+      "max_raf_gap_ms": 325.3,
+      "raf_gaps_over_25ms": 2,
+      "samples": 27
+    },
+    {
+      "viewports": [
+        {
+          "time": 16527.2,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 16535.5,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 16744,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 16694.40000000596,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 252.0,
+        "LayoutDuration": 13.9,
+        "RecalcStyleDuration": 114.1,
+        "TaskDuration": 486.9
+      },
+      "candidate": true,
+      "cycle": 7,
+      "enter": true,
+      "promise_ms": 165.6,
+      "max_raf_gap_ms": 200.2,
+      "raf_gaps_over_25ms": 2,
+      "samples": 65
+    },
+    {
+      "viewports": [
+        {
+          "time": 17452.1,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 17460.4,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 17694.8,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 17618.60000000149,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 262.9,
+        "LayoutDuration": 36.4,
+        "RecalcStyleDuration": 150.2,
+        "TaskDuration": 614.0
+      },
+      "candidate": true,
+      "cycle": 7,
+      "enter": false,
+      "promise_ms": 48.9,
+      "max_raf_gap_ms": 300,
+      "raf_gaps_over_25ms": 3,
+      "samples": 31
+    },
+    {
+      "viewports": [
+        {
+          "time": 18461.5,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 18469.9,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 18662.3,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 18605.30000000447,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 250.5,
+        "LayoutDuration": 13.4,
+        "RecalcStyleDuration": 107.0,
+        "TaskDuration": 469.3
+      },
+      "candidate": true,
+      "cycle": 8,
+      "enter": true,
+      "promise_ms": 148.6,
+      "max_raf_gap_ms": 191.9,
+      "raf_gaps_over_25ms": 2,
+      "samples": 64
+    },
+    {
+      "viewports": [
+        {
+          "time": 19362.1,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 19370.4,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 19545,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 19494.70000000298,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 45,
+      "dropped": 3,
+      "work_ms": {
+        "ScriptDuration": 242.1,
+        "LayoutDuration": 32.1,
+        "RecalcStyleDuration": 127.7,
+        "TaskDuration": 534.9
+      },
+      "candidate": true,
+      "cycle": 8,
+      "enter": false,
+      "promise_ms": 39.4,
+      "max_raf_gap_ms": 243.1,
+      "raf_gaps_over_25ms": 4,
+      "samples": 40
+    }
+  ]
+}

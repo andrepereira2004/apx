@@ -4,6 +4,7 @@ import Quickshell.Io
 
 QtObject {
     id: activity
+    property var notificationEntries: []
     property var state: ({ players: [], notifications: [], active_notifications: 0 })
     readonly property bool busy: actionProcess.running
     property double clock: Date.now()
@@ -106,7 +107,7 @@ QtObject {
         sendSeek()
     }
     property Timer progressClock: Timer {
-        interval: 16; repeat: true
+        interval: activity.detailsVisible ? 16 : 250; repeat: true
         running: activity.state.players.some(function(p) { return p.status === "Playing" })
         onTriggered: activity.clock = Date.now()
     }
@@ -132,7 +133,14 @@ QtObject {
                     return player
                 })
             }
-            state = Object.assign({}, state, report)
+            if (report.notifications) {
+                if (JSON.stringify(report.notifications) !== JSON.stringify(notificationEntries))
+                    notificationEntries = report.notifications
+                report.notifications = notificationEntries
+            }
+            // Notification polling must not rebuild unchanged media/menu models.
+            var next = Object.assign({}, state, report)
+            if (JSON.stringify(next) !== JSON.stringify(state)) state = next
             settlePlaybackFeedback()
             settleSeekFeedback()
         } catch (e) {}
@@ -159,7 +167,7 @@ QtObject {
         stdout: StdioCollector { onStreamFinished: activity.accept(text) }
     }
     property Timer notificationsTimer: Timer {
-        interval: 10000; running: true; repeat: true; triggeredOnStart: true
+        interval: 500; running: true; repeat: true; triggeredOnStart: true
         onTriggered: if (!activity.busy && !activity.notificationsProcess.running) activity.notificationsProcess.running = true
     }
     property Process actionProcess: Process {
@@ -194,5 +202,5 @@ QtObject {
         interval: 1000; repeat: true; running: !activity.watchProcess.running
         onTriggered: activity.watchProcess.running = true
     }
-    property Timer timer: Timer { interval: 2000; running: !activity.watchProcess.running; repeat: true; triggeredOnStart: true; onTriggered: activity.refresh() }
+    property Timer timer: Timer { interval: 500; running: !activity.watchProcess.running; repeat: true; triggeredOnStart: true; onTriggered: activity.refresh() }
 }

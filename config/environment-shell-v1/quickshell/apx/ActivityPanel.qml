@@ -6,8 +6,9 @@ Item {
     id: panel
     property string kind: "media"
     property bool embedded: false
+    readonly property bool continuousScrollContent: kind !== "media"
     property bool showBack: !embedded
-    readonly property var entries: kind === "media" ? DesktopActivity.state.players.filter(function(p) { return DesktopActivity.hasMedia(p) }) : DesktopActivity.state.notifications.filter(function(n) { return !embedded || n.active })
+    readonly property var entries: kind === "media" ? DesktopActivity.state.players.filter(function(p) { return DesktopActivity.hasMedia(p) }) : []
     // Retain the last visual snapshot until the exit transition finishes.
     property var renderedEntries: []
     property var entryKeys: []
@@ -16,7 +17,7 @@ Item {
     readonly property bool hasContent: kind !== "media" || entries.length > 0
     property real reveal: 0
     property real contentOpacity: 0
-    implicitHeight: body.implicitHeight * reveal
+    implicitHeight: kind === "media" ? body.implicitHeight * reveal : (notificationInbox.item ? notificationInbox.item.implicitHeight : 0)
     height: implicitHeight
     visible: kind !== "media" || reveal > 0
     clip: kind === "media"
@@ -46,8 +47,22 @@ Item {
     onEntriesChanged: syncEntries()
     Component.onCompleted: { syncEntries(); ready = true; syncPresence() }
     signal back()
+    Loader {
+        id: notificationInbox
+        width: panel.width; active: panel.kind !== "media"
+        sourceComponent: Column {
+            width: panel.width; spacing: 8
+            ControlTile {
+                visible: panel.showBack; width: parent.width
+                iconName: "chevron-left"; caption: "Voltar"; showCaption: true
+                onActivated: panel.back()
+            }
+            NotificationInbox { width: parent.width }
+        }
+    }
     Column {
         id: body
+        visible: panel.kind === "media"
         width: panel.width
         y: panel.kind === "media" ? 6 * (1 - panel.reveal) : 0
         opacity: panel.contentOpacity
@@ -59,15 +74,15 @@ Item {
         width: parent.width
         ControlTile { width: parent.width; showCaption: true; iconName: "check"; caption: "Marcar todas como lidas"; enabled: !DesktopActivity.busy; onActivated: DesktopActivity.action(["notification", "read-all"]) }
     }
-    Text {
+    Text { renderType: Text.CurveRendering;
         visible: panel.kind !== "media" && DesktopActivity.error.length > 0
         width: parent.width; wrapMode: Text.WordWrap; text: DesktopActivity.error; textFormat: Text.PlainText
         color: "#f0b7b7"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
     }
-    Text {
+    Text { renderType: Text.CurveRendering;
         width: parent.width; wrapMode: Text.WordWrap
         visible: panel.kind !== "media"
-        text: panel.entries.length ? "Notificações por ler" : "Sem notificações por ler"
+        text: (DesktopActivity.notificationEntries.length === 1 ? "1 mensagem por ler" : DesktopActivity.notificationEntries.length + " mensagens por ler")
         color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize
     }
     Repeater {
@@ -83,10 +98,10 @@ Item {
                 anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
                 anchors.margins: 10; spacing: 6
                 IconLabel { iconName: panel.kind === "media" ? (card.entry.kind || "music") : "bell"; text: panel.kind === "media" ? (card.entry.status === "Playing" ? "A reproduzir" : card.entry.status === "Paused" ? "Em pausa" : "Parado") : (card.entry.app || ""); pixelSize: Appearance.bodySize; iconSize: 16 }
-                Text { width: parent.width; wrapMode: Text.WordWrap; text: card.entry.title || ""; textFormat: Text.PlainText; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
-                Text { width: parent.width; visible: text.length > 0; wrapMode: Text.WordWrap; text: panel.kind === "media" ? (card.entry.artist || "") : (card.entry.body || ""); textFormat: Text.PlainText; color: "#b5bdd0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
+                Text { renderType: Text.CurveRendering; width: parent.width; wrapMode: Text.WordWrap; text: card.entry.title || ""; textFormat: Text.PlainText; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
+                Text { renderType: Text.CurveRendering; width: parent.width; visible: text.length > 0; wrapMode: Text.WordWrap; text: panel.kind === "media" ? (card.entry.artist || "") : (card.entry.body || ""); textFormat: Text.PlainText; color: "#b5bdd0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
                 Row {
-                    visible: panel.kind !== "media" && !!card.entry.active
+                    visible: panel.kind !== "media"
                     width: parent.width; spacing: 6
                     ControlTile {
                         visible: !!card.entry.can_open; showCaption: true

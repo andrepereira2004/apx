@@ -1,0 +1,17 @@
+import QtQuick
+
+// The workspace contour, shared by every button family.
+Rectangle {
+    property bool selected: false
+    property bool hovered: false
+    property int idleWidth: 0
+    property real outlineRadius: Math.max(0, (parent.radius || 0) - 1)
+    anchors.fill: parent
+    anchors.margins: 1
+    radius: outlineRadius
+    color: "transparent"
+    antialiasing: true
+    border.width: selected || hovered ? 1 : idleWidth
+    border.color: selected ? Appearance.buttonSelectedBorder : hovered ? Appearance.buttonHoverBorder : Appearance.buttonIdleBorder
+    visible: border.width > 0
+}

@@ -1,0 +1,20 @@
+singleton Appearance 1.0 Appearance.qml
+singleton DesktopActivity 1.0 DesktopActivity.qml
+ActivityPanel 1.0 ActivityPanel.qml
+BarButton 1.0 BarButton.qml
+BounceMouseArea 1.0 BounceMouseArea.qml
+ControlDashboard 1.0 ControlDashboard.qml
+ControlIcon 1.0 ControlIcon.qml
+ControlTile 1.0 ControlTile.qml
+IconLabel 1.0 IconLabel.qml
+LucideIcon 1.0 LucideIcon.qml
+PersonalizationPanel 1.0 PersonalizationPanel.qml
+WorkspacePreview 1.0 WorkspacePreview.qml
+WorkspaceStrip 1.0 WorkspaceStrip.qml
+MediaIsland 1.0 MediaIsland.qml
+MediaTimeline 1.0 MediaTimeline.qml
+ControlSlider 1.0 ControlSlider.qml
+RadioIconButton 1.0 RadioIconButton.qml
+MenuHover 1.0 MenuHover.qml
+CameraIndicator 1.0 CameraIndicator.qml
+NotificationInbox 1.0 NotificationInbox.qml

@@ -44,8 +44,21 @@ UTILITY_NAMES = {
     'org.xfce.mousepad-settings': 'Preferências do editor de texto',
     'xfce4-about': 'Sobre os componentes Xfce',
     'org.gnome.Evince-previewer': 'Pré-visualização de impressão',
-    'gcr-viewer': 'Ver certificados', 'uuctl': 'Gestão de atualizações (uuctl)',
+    'gcr-viewer': 'Ver certificados', 'uuctl': 'Serviços da sessão (uuctl)',
 }
+
+# Explicit support-tool IDs keep newly installed applications in Apps by default.
+# This partitions only the launcher; the full catalogue still owns window actions.
+SYSTEM_APP_IDS = set(UTILITY_NAMES) - {'Alacritty', 'foot', 'foot-server', 'footclient'} | {
+    'apx-settings', 'xfce4-taskmanager', 'org.pulseaudio.pavucontrol',
+    'org.freedesktop.Xwayland', 'com.rtosta.zapzap.nogpu',
+    'org.gnome.FileRoller',
+}
+
+
+def launcher_catalog():
+    system = os.environ.get('APX_ROFI_SECTION', 'apps') == 'system'
+    return [app for app in catalog() if (app['id'] in SYSTEM_APP_IDS) == system]
 
 FOLDER_STATE = Path.home()/'.local/state/apx-window-apps-v1/folders.json'
 DEFAULT_FOLDERS = {
@@ -113,7 +126,7 @@ WINDOW_CLASS_ALIASES = {'minecraft-launcher': {'minecraft launcher'},
                         'thunar': {'org.xfce.thunar'}}
 
 WINDOW_PRESENTATION = {'apx-host-console-v1':
-                       ('APX Terminal', '/usr/share/icons/Papirus/48x48/apps/utilities-terminal.svg')}
+                       ('APX Terminal', str(Path.home()/'.local/share/icons/APX-Graphite/scalable/devices/apx-host-terminal.svg'))}
 
 def launch_state():
     """Private per-session state; a bounded deadline avoids stale blue dots."""
@@ -468,7 +481,7 @@ def action_row(label, symbol, color, action, value, name):
 
 def rofi_rows():
     """Keep the catalogue visible while one application's actions are selected."""
-    apps = catalog()
+    apps = launcher_catalog()
     selected = os.environ.get('ROFI_INFO', '')
     data = os.environ.get('ROFI_DATA', '')
     retv = os.environ.get('ROFI_RETV', '0')
@@ -514,7 +527,7 @@ def rofi_rows():
             return
         chosen = selected
         confirming = False
-    print('\0prompt\x1f' + (folder or 'Apps'))
+    print('\0prompt\x1f' + ('Sistema' if os.environ.get('APX_ROFI_SECTION') == 'system' else 'Apps'))
     print('\0no-custom\x1ftrue')
     print('\0markup-rows\x1ftrue')
     print('\0use-hot-keys\x1ftrue')
@@ -559,7 +572,7 @@ def rofi_rows():
 def native_page():
     import io
     from contextlib import redirect_stdout
-    apps = catalog()
+    apps = launcher_catalog()
     original_catalog = globals()['catalog']
     globals()['catalog'] = lambda: apps
     output = io.StringIO()

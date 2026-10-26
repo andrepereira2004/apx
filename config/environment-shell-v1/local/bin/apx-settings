@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """APX settings window for graphical Environments."""
 
+import concurrent.futures
+import contextvars
 import configparser
 import json
 import os
@@ -9,11 +11,13 @@ import shutil
 import subprocess
 import sys
 import runpy
+import re
+import unicodedata
 
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import GLib, Gtk, Gio
+from gi.repository import GLib, Gtk, Gio, Pango
 
 
 HOME = Path.home()
@@ -28,28 +32,44 @@ SHELL = "/home/apx/.config/quickshell/apx/shell.qml"
 
 PREFERENCES = runpy.run_path(str(TOOLS / "apx-desktop-preferences-v1"))
 
-CSS = b"""
-window, .background { background: #0a1014; color: #eceef0; font-family: Selawik; }
-headerbar { background: #191d22; border-bottom: 1px solid #343a41; color: #eceef0; }
-stacksidebar, stacksidebar list { background: #10161b; border: 0; }
-stacksidebar row { color: #9ba3ac; padding: 12px 18px; border-radius: 7px; margin: 3px 8px; }
-stacksidebar row:selected { background: #30353b; color: #55e6ff; }
-.page { background: #0a1014; }
-.title { color: #eceef0; font-size: 23px; font-weight: 600; }
-.subtitle { color: #9ba3ac; font-size: 13px; }
-.card { background: #191d22; border: 1px solid #343a41; border-radius: 10px; padding: 14px; }
-.card-title { color: #eceef0; font-size: 15px; font-weight: 600; }
-.secondary { color: #9ba3ac; }
-button { background: #272c33; color: #eceef0; border: 1px solid #343a41; border-radius: 6px; padding: 8px 12px; }
-button:hover { background: #30353b; border-color: #55e6ff; }
-button.suggested-action { background: #246879; color: #ffffff; border-color: #55e6ff; }
-entry { background: #191d22; color: #eceef0; border-color: #343a41; }
-combobox button, spinbutton { background: #191d22; color: #eceef0; border-color: #343a41; }
-separator { background: #343a41; }
-"""
+CSS = (HOME / ".local/share/apx/graphite-apps.css").read_bytes()
+
+
+def search_text(value):
+    """Match Portuguese terms with or without accents."""
+    return "".join(c for c in unicodedata.normalize("NFKD", value.casefold())
+                   if not unicodedata.combining(c))
+
+
+
+def display_scales(width, height):
+    return [(str(value), str(round(value / 1.25 * 100)) + "%" +
+             (" · Padrão APX" if value == 1.25 else ""))
+            for value in (1.0, 1.25, 1.5, 1.75, 2.0)
+            if (width / value).is_integer() and (height / value).is_integer()]
+
+
+# Scoped to the GTK render call; worker threads execute ordinary commands.
+PAGE_READS = contextvars.ContextVar("apx_settings_page_reads", default=None)
+
+
+class PendingPageRead(Exception):
+    def __init__(self, argv, input_text):
+        self.argv = list(argv)
+        self.input_text = input_text
+        self.key = (tuple(argv), input_text)
 
 
 def command(argv, input_text=None):
+    reads = PAGE_READS.get()
+    if reads is not None:
+        key = (tuple(argv), input_text)
+        if key not in reads:
+            raise PendingPageRead(argv, input_text)
+        result, error = reads[key]
+        if error is not None:
+            raise error
+        return result
     result = subprocess.run(argv, input=input_text, capture_output=True, text=True,
                             timeout=20 if "bluetooth-scan" in argv else 10, check=False)
     if result.returncode:
@@ -110,6 +130,7 @@ def label(text, style=None):
 
 def button(text, callback, primary=False):
     widget = Gtk.Button(label=text)
+    widget.set_halign(Gtk.Align.START)
     if primary:
         widget.get_style_context().add_class("suggested-action")
     widget.connect("clicked", lambda _widget: callback())
@@ -119,41 +140,81 @@ def button(text, callback, primary=False):
 class Settings(Gtk.Window):
     def __init__(self):
         super().__init__(title="Definições APX")
-        self.set_default_size(860, 590)
-        self.set_size_request(660, 460)
+        self.set_default_size(980, 650)
+        self.set_size_request(460, 360)
+        self.layout_width = 980
+        self.navigation_history = ["overview"]
+        self.navigation_index = 0
+        self.history_move = False
+        self.form_rows = []
+        self.page_generation = 0
+        self.page_closed = False
+        self.page_future = None
+        self.page_executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+        self.connect("destroy", self.close_page_reads)
         self.set_border_width(0)
+        self.get_style_context().add_class("apx-graphite-app")
+        self.get_style_context().add_class("apx-settings-app")
         self.connect("destroy", lambda _window: Gtk.main_quit() if Gtk.main_level() else None)
 
         provider = Gtk.CssProvider()
         provider.load_from_data(CSS)
         Gtk.StyleContext.add_provider_for_screen(
-            self.get_screen(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            self.get_screen(), provider, Gtk.STYLE_PROVIDER_PRIORITY_USER + 1)
 
-        header = Gtk.HeaderBar()
-        header.set_show_close_button(True)
-        header.props.title = "Definições APX"
-        header.props.subtitle = "Sistema e Environment"
+        self.set_decorated(False)
+        self.status = Gtk.Label()
+        self.status.get_style_context().add_class("secondary")
+        self.status.set_no_show_all(True)
         search = Gtk.SearchEntry()
         search.set_placeholder_text("Pesquisar definições")
-        search.set_size_request(225, -1)
-        header.pack_end(search)
+        search.set_width_chars(12)
+        search.set_hexpand(True)
         search.connect("search-changed", self.on_search_changed)
-        self.set_titlebar(header)
 
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(container)
+        toolbar = Gtk.Box(spacing=6)
+        toolbar.set_border_width(6)
+        navigation_tools = Gtk.Box(spacing=4)
+        navigation_tools.set_size_request(207, -1)
+        navigation_tools.set_halign(Gtk.Align.START)
+        self.back_button = Gtk.Button.new_from_icon_name("go-previous-symbolic", Gtk.IconSize.MENU)
+        self.forward_button = Gtk.Button.new_from_icon_name("go-next-symbolic", Gtk.IconSize.MENU)
+        for control in (self.back_button, self.forward_button):
+            control.get_image().set_pixel_size(24)
+        self.back_button.set_tooltip_text("Página anterior")
+        self.forward_button.set_tooltip_text("Página seguinte")
+        self.back_button.connect("clicked", lambda _button: self.move_history(-1))
+        self.forward_button.connect("clicked", lambda _button: self.move_history(1))
+        self.back_button.set_sensitive(False); self.forward_button.set_sensitive(False)
+        navigation_buttons = Gtk.Box(spacing=4)
+        navigation_buttons.set_halign(Gtk.Align.START)
+        navigation_tools.pack_start(navigation_buttons, False, False, 0)
+        for control in (self.back_button, self.forward_button): navigation_buttons.pack_start(control, False, False, 0)
+        toolbar.pack_start(navigation_tools, False, False, 0)
+        toolbar.get_style_context().add_class("settings-toolbar")
+        toolbar.pack_start(search, True, True, 0)
+        container.pack_start(toolbar, False, False, 0)
         layout = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        self.add(layout)
-        self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
-                               transition_duration=150)
-        sidebar = Gtk.StackSidebar()
-        sidebar.set_stack(self.stack)
-        sidebar.set_size_request(194, -1)
+        container.pack_start(layout, True, True, 0)
+        self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.NONE)
+        self.stack.set_hhomogeneous(False)
+        self.navigation = Gtk.ListBox()
+        self.navigation.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        self.navigation.get_style_context().add_class("settings-navigation")
         sidebar_scroll = Gtk.ScrolledWindow()
         sidebar_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        sidebar_scroll.set_size_request(194, -1)
-        sidebar_scroll.add(sidebar)
+        sidebar_scroll.set_size_request(219, -1)
+        sidebar_scroll.set_min_content_width(219)
+        sidebar_scroll.set_max_content_width(219)
+        sidebar_scroll.set_propagate_natural_width(False)
+        self.sidebar_scroll = sidebar_scroll
+        sidebar_scroll.add(self.navigation)
         layout.pack_start(sidebar_scroll, False, False, 0)
         layout.pack_start(self.stack, True, True, 0)
 
+        self.overview = self.page("Bem-vindo", "Personaliza o APX ao teu gosto.")
         self.audio = self.page("Som", "Escolhe a saída, o microfone e os volumes.")
         self.network = self.page("Rede", "Ligação Wi-Fi e redes disponíveis.")
         self.bluetooth = self.page("Bluetooth", "Controla o adaptador e os dispositivos.")
@@ -189,35 +250,149 @@ class Settings(Gtk.Window):
             "accessibility": ("Acessibilidade", "texto contraste animações movimento"),
             "printing": ("Impressão", "impressoras scanner digitalizar trabalhos"),
         })
+        # Same vector family as Files; Gtk renders these at the window's scale.
+        self.icons = dict(zip(self.sections, [
+            "volume-2", "wifi", "bluetooth", "monitor", "keyboard", "paintbrush",
+            "grid-2x2", "battery", "hard-drive", "settings", "globe", "shield-check",
+            "rocket", "scale", "printer"]))
+        self.groups = [
+            ("Ligações e dispositivos", ["network", "audio", "bluetooth", "displays", "input"]),
+            ("Aspeto e utilização", ["appearance", "accessibility", "locale"]),
+            ("Aplicações", ["apps", "startup", "printing"]),
+            ("Sistema", ["power", "storage", "privacy", "system"]),
+        ]
+        self.stack.add_named(self.overview[0], "overview")
+        self.navigation_rows = {}
+        for heading, names in self.groups:
+            row = Gtk.ListBoxRow(); row.set_selectable(False); row.set_activatable(False)
+            caption = label({"Ligações e dispositivos": "Dispositivos", "Aspeto e utilização": "Personalização"}.get(heading, heading), "nav-heading"); caption.set_margin_start(14); caption.set_margin_top(14); caption.set_margin_bottom(5)
+            row.add(caption); self.navigation.add(row)
+            for name in names: self.add_navigation(name, self.sections[name][0], self.icons[name])
+        self.navigation.connect("row-selected", self.navigate)
+        self.connect("size-allocate", self.adapt_layout)
         for name, (title, _keywords) in self.sections.items():
             self.stack.add_titled(getattr(self, name)[0], name, title)
         self.stack.add_named(self.search_page[0], "search")
         self.stack.connect("notify::visible-child-name", self.on_page_changed)
-        self.render_audio()
-        self.render_network()
-        self.render_bluetooth()
-        self.render_displays()
-        self.render_input()
-        self.render_appearance()
-        self.render_apps()
-        self.render_power()
-        self.render_storage()
-        self.render_system()
+        self.last_page = "overview"
+        self.render_overview()
+        self.stack.set_visible_child_name("overview")
+
+    def move_history(self, step):
+        index = self.navigation_index + step
+        if not 0 <= index < len(self.navigation_history): return
+        self.navigation_index = index; self.history_move = True
+        self.stack.set_visible_child_name(self.navigation_history[index])
+        self.history_move = False
+
+    def adapt_layout(self, _window, allocation):
+        self.layout_width = allocation.width
+        orientation = Gtk.Orientation.VERTICAL if allocation.width - 219 < 540 else Gtk.Orientation.HORIZONTAL
+        for row in self.form_rows:
+            if row.get_orientation() != orientation: row.set_orientation(orientation)
+
+    def add_navigation(self, name, title, icon):
+        row = Gtk.ListBoxRow(); row.page_name = name
+        row.get_style_context().add_class("navigation-item")
+        content = Gtk.Box(spacing=8)
+        content.set_margin_start(40); content.set_margin_end(10)
+        content.set_margin_top(7); content.set_margin_bottom(7)
+        source = HOME / ".config/quickshell/apx/icons/lucide" / (icon + ".svg")
+        if not source.is_file() and icon == "printer":
+            # Files already ships the matching Lucide printer geometry.
+            source = HOME / ".local/share/icons/APX-Graphite/scalable/devices/printer-symbolic.svg"
+        svg = source.read_text().replace("currentColor", "#ffffff").replace("#c7d0d8", "#ffffff")
+        glyph = Gtk.Image.new_from_gicon(Gio.BytesIcon.new(GLib.Bytes.new(svg.encode())), Gtk.IconSize.MENU)
+        glyph.set_pixel_size(16)
+        glyph.set_size_request(16, 16)
+        content.pack_start(glyph, False, False, 0)
+        caption = label(title)
+        caption.set_line_wrap(False)
+        caption.set_ellipsize(Pango.EllipsizeMode.END)
+        row.set_tooltip_text(title)
+        content.pack_start(caption, True, True, 0)
+        row.add(content); self.navigation.add(row); self.navigation_rows[name] = row
+
+    def navigate(self, _list, row):
+        if row is not None and hasattr(row, "page_name"):
+            self.stack.set_visible_child_name(row.page_name)
+
+    def render_overview(self):
+        self.clear(self.overview[1])
+
+    def close_page_reads(self, _window):
+        self.page_closed = True
+        self.page_generation += 1
+        self.page_executor.shutdown(wait=False, cancel_futures=True)
+
+    def refresh_current(self):
+        name = self.stack.get_visible_child_name()
+        self.page_generation += 1
+        if self.page_future is not None:
+            self.page_future.cancel()
+        if name in self.sections:
+            self.status.hide()
+            self.render_page_step(name, self.page_generation, {})
+
+    def render_page_step(self, name, generation, reads):
+        if self.page_closed or generation != self.page_generation:
+            return False
+        body = getattr(self, name)[1]
+        # Partial forms are kept disabled until all reads have completed.
+        body.set_sensitive(False)
+        token = PAGE_READS.set(reads)
+        try:
+            getattr(self, "render_" + name)()
+        except PendingPageRead as pending:
+            future = self.page_executor.submit(command, pending.argv, pending.input_text)
+            self.page_future = future
+            key = pending.key
+            def completed(result):
+                if self.page_closed or result.cancelled():
+                    return
+                try:
+                    value = (result.result(), None)
+                except Exception as error:
+                    value = (None, error)
+                def resume():
+                    if not self.page_closed and generation == self.page_generation:
+                        reads[key] = value
+                        self.render_page_step(name, generation, reads)
+                    return False
+                GLib.idle_add(resume)
+            future.add_done_callback(completed)
+            loading = label("A carregar…", "secondary")
+            body.pack_start(loading, False, False, 0)
+            body.show_all()
+        except (OSError, ValueError, RuntimeError, TypeError, KeyError, subprocess.TimeoutExpired) as error:
+            self.clear(body)
+            self.card(body, "Não foi possível carregar esta página").pack_start(label(str(error)), False, False, 0)
+            body.show_all()
+            body.set_sensitive(True)
+        else:
+            body.set_sensitive(True)
+        finally:
+            PAGE_READS.reset(token)
+        return False
 
     def on_search_changed(self, entry):
-        query = entry.get_text().strip().casefold()
+        query = search_text(entry.get_text().strip())
         if not query:
             if self.stack.get_visible_child_name() == "search":
-                self.stack.set_visible_child_name("audio")
+                self.stack.set_visible_child_name(self.last_page)
             return
+        self.page_generation += 1
+        if self.page_future is not None: self.page_future.cancel()
         box = self.search_page[1]
         self.clear(box)
         matches = [(key, title) for key, (title, terms) in self.sections.items()
-                   if all(word in (title + " " + terms).casefold() for word in query.split())]
+                   if all(word in search_text(title + " " + terms) for word in query.split())]
         card = self.card(box, f"{len(matches)} resultado(s)")
         for key, title in matches:
             card.pack_start(button(title, lambda selected=key:
                                    self.stack.set_visible_child_name(selected)), False, False, 0)
+        if not matches:
+            card.pack_start(label("Experimenta outro termo, como som, ecrã ou touchpad.", "secondary"), False, False, 0)
         box.show_all()
         self.stack.set_visible_child_name("search")
 
@@ -225,15 +400,16 @@ class Settings(Gtk.Window):
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
-        content.set_margin_top(28)
-        content.set_margin_bottom(28)
-        content.set_margin_start(28)
-        content.set_margin_end(28)
+        content.set_margin_top(24)
+        content.set_margin_bottom(24)
+        content.set_margin_start(24)
+        content.set_margin_end(24)
         content.get_style_context().add_class("page")
         content.pack_start(label(heading, "title"), False, False, 0)
         content.pack_start(label(description, "subtitle"), False, False, 0)
         body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         content.pack_start(body, False, False, 12)
+        content.set_halign(Gtk.Align.FILL)
         scroll.add(content)
         return scroll, body
 
@@ -245,13 +421,15 @@ class Settings(Gtk.Window):
         return card
 
     def row(self, parent):
-        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL if self.layout_width - 219 < 540 else Gtk.Orientation.HORIZONTAL, spacing=8)
+        self.form_rows.append(row)
+        row.connect("destroy", lambda widget: self.form_rows.remove(widget) if widget in self.form_rows else None)
         parent.pack_start(row, False, False, 0)
         return row
 
     def clear(self, box):
         for child in box.get_children():
-            box.remove(child)
+            child.destroy()
 
     def error(self, problem):
         dialog = Gtk.MessageDialog(transient_for=self, modal=True,
@@ -267,38 +445,70 @@ class Settings(Gtk.Window):
             callback()
             if refresh:
                 refresh()
-        except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+            self.status.hide()
+        except (OSError, ValueError, RuntimeError, TypeError, KeyError, subprocess.TimeoutExpired) as exc:
+            self.status.show()
+            self.status.set_text("Operação não concluída")
             self.error(exc)
 
     def launch(self, argv):
-        subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                         stderr=subprocess.DEVNULL, start_new_session=True)
+        self.action(lambda: subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL, start_new_session=True))
 
     def render_audio(self):
-        box = self.audio[1]
-        self.clear(box)
+        box = self.audio[1]; self.clear(box)
         try:
             devices = get_json([str(AUDIO), "list"])
         except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
             self.card(box, "Áudio indisponível").pack_start(label(str(exc)), False, False, 0)
-            box.show_all()
-            return
-        for key, title, kind in (("sinks", "Saída de som", "sink"),
-                                 ("sources", "Microfone", "source")):
+            box.show_all(); return
+        for kind, title, alias in (("sink", "Saída de som", "@DEFAULT_AUDIO_SINK@"),
+                                   ("source", "Microfone", "@DEFAULT_AUDIO_SOURCE@")):
             card = self.card(box, title)
-            entries = devices.get(key, [])
+            entries = devices.get("sinks" if kind == "sink" else "sources", [])
             if not entries:
                 card.pack_start(label("Nenhum dispositivo disponível", "secondary"), False, False, 0)
-            for device in entries:
-                name = ("●  " if device.get("default") else "○  ") + device["name"]
-                card.pack_start(button(name, lambda ident=device["id"], selection=kind:
-                                       self.action(lambda: command([str(AUDIO), selection, str(ident)]),
-                                                   self.render_audio)), False, False, 0)
-        card = self.card(box, "Controlo avançado")
+                continue
+            names = {"APX Internal Output": "Colunas do portátil", "APX Internal Microphone": "Microfone interno"}
+            selected = next((str(device["id"]) for device in entries if device.get("default")), str(entries[0]["id"]))
+            choice = self.choice(card, "Dispositivo", [(str(device["id"]), names.get(device["name"], device["name"])) for device in entries], selected)
+            choice.connect("changed", lambda widget, target=kind: self.action(
+                lambda: command([str(AUDIO), target, widget.get_active_id()]), self.render_audio))
+            try:
+                state = command(["/usr/bin/wpctl", "get-volume", alias])
+                match = re.search(r"Volume:\s+([0-9.]+)", state)
+                if not match: raise ValueError("Volume indisponível")
+                row = self.row(card); row.pack_start(label("Volume"), False, False, 0)
+                scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 1)
+                scale.set_value(min(100, float(match[1]) * 100)); scale.set_digits(0)
+                scale.set_value_pos(Gtk.PositionType.RIGHT); scale.set_hexpand(True)
+                scale.connect("format-value", lambda _scale, value: str(round(value)) + "%")
+                row.pack_start(scale, True, True, 0)
+                pending = [None]
+                def changed(widget, target=alias, timer=pending):
+                    if timer[0] is not None: GLib.source_remove(timer[0])
+                    value = int(widget.get_value())
+                    def apply():
+                        timer[0] = None
+                        self.action(lambda: command(["/usr/bin/wpctl", "set-volume", "-l", "1", target, str(value) + "%"]))
+                        return False
+                    timer[0] = GLib.timeout_add(180, apply)
+                scale.connect("value-changed", changed)
+                def clean(_widget, timer=pending):
+                    if timer[0] is not None: GLib.source_remove(timer[0]); timer[0] = None
+                scale.connect("destroy", clean)
+                row = self.row(card)
+                row.pack_start(label("Som ativo" if kind == "sink" else "Microfone ativo"), True, True, 0)
+                enabled = Gtk.Switch(); enabled.set_active("MUTED" not in state)
+                enabled.set_valign(Gtk.Align.CENTER)
+                enabled.connect("notify::active", lambda widget, _prop, target=alias: self.action(lambda: command([
+                    "/usr/bin/wpctl", "set-mute", target, "0" if widget.get_active() else "1"])))
+                row.pack_end(enabled, False, False, 0)
+            except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired):
+                card.pack_start(label("Volume indisponível", "secondary"), False, False, 0)
+        card = self.card(box, "Mais opções")
         if Path("/usr/bin/pavucontrol").is_file():
-            card.pack_start(button("Volumes por aplicação e perfis", lambda: self.launch(
-                ["/usr/bin/pavucontrol"])), False, False, 0)
-        card.pack_start(button("Atualizar dispositivos", self.render_audio), False, False, 0)
+            card.pack_start(button("Volumes por aplicação", lambda: self.launch(["/usr/bin/pavucontrol"])), False, False, 0)
         box.show_all()
 
     def render_bluetooth(self):
@@ -435,7 +645,7 @@ class Settings(Gtk.Window):
         current = state.get("network_name") or "Sem ligação Wi-Fi"
         card = self.card(box, "Ligação atual")
         card.pack_start(label(current), False, False, 0)
-        card.pack_start(label(str(state.get("network_connectivity", "")), "secondary"), False, False, 0)
+        card.pack_start(label({"full": "Com acesso à internet", "limited": "Ligação limitada", "portal": "Requer iniciar sessão", "none": "Sem acesso à internet"}.get(state.get("network_connectivity"), "A verificar ligação"), "secondary"), False, False, 0)
         row = self.row(card)
         row.pack_start(button("Procurar redes", lambda: self.action(
             lambda: command([str(HOST), "wifi-scan"]), self.render_network)), False, False, 0)
@@ -466,10 +676,25 @@ class Settings(Gtk.Window):
             if not modes: continue
             card = self.card(box, "Configurar " + monitor["name"])
             current = min(modes, key=lambda mode: (0 if mode.startswith(str(monitor["width"]) + "x" + str(monitor["height"]) + "@") else 100000) + abs(float(mode.split("@")[1].rstrip("Hz")) - monitor["refreshRate"]))
-            mode = self.choice(card, "Resolução e frequência", [(value, value) for value in modes], current)
-            scale = self.choice(card, "Escala", [(str(value), str(round(value * 100)) + "%") for value in (1.0, 1.25, 1.5, 1.75, 2.0)], str(float(monitor["scale"])))
-            x = self.number(card, "Posição horizontal", monitor["x"], -16000, 16000)
-            y = self.number(card, "Posição vertical", monitor["y"], -16000, 16000)
+            mode = self.choice(card, "Qualidade da imagem", [(value, value) for value in modes], current)
+            scale = self.choice(card, "Tamanho dos elementos", display_scales(monitor["width"], monitor["height"]), str(float(monitor["scale"])))
+            def update_scales(widget, zoom=scale):
+                selected = widget.get_active_id()
+                if not selected: return
+                dimensions = selected.split("@")[0].split("x")
+                options = display_scales(int(dimensions[0]), int(dimensions[1]))
+                previous = zoom.get_active_id(); zoom.remove_all()
+                for key, title in options: zoom.append(key, title)
+                zoom.set_active_id(previous)
+                if zoom.get_active_id() is None:
+                    zoom.set_active_id("1.25")
+                    if zoom.get_active_id() is None: zoom.set_active(0)
+            mode.connect("changed", update_scales)
+            position = Gtk.Expander(label="Ajustar posição dos ecrãs")
+            position_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            position.add(position_box); card.pack_start(position, False, False, 0)
+            x = self.number(position_box, "Horizontal", monitor["x"], -16000, 16000)
+            y = self.number(position_box, "Vertical", monitor["y"], -16000, 16000)
             card.pack_start(button("Testar alteração", lambda output=monitor["name"], selected=mode, zoom=scale, left=x, top=y: self.action(lambda: self.try_display(output, selected.get_active_id(), float(zoom.get_active_id()), int(left.get_value()), int(top.get_value())))), False, False, 0)
         card = self.card(box, "Disposição")
         row = self.row(card)
@@ -495,8 +720,11 @@ class Settings(Gtk.Window):
         groups = (("keyboards", "Teclados", devices.get("keyboards", [])),
                   ("mice", "Ratos", [item for item in mice if "touchpad" not in item.get("name", "").lower()]),
                   ("touchpads", "Touchpads", [item for item in mice if "touchpad" in item.get("name", "").lower()]))
+        details = Gtk.Expander(label="Dispositivos ligados")
+        details_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        details.add(details_box)
         for key, title, entries in groups:
-            card = self.card(box, title)
+            card = self.card(details_box, title)
             if not entries:
                 card.pack_start(label("Nenhum dispositivo detetado", "secondary"), False, False, 0)
             for item in entries:
@@ -511,26 +739,40 @@ class Settings(Gtk.Window):
                     row.pack_start(button(title, lambda selected=action: self.action(
                         lambda: command([str(LAPTOP), selected]), self.render_input)), False, False, 0)
         prefs = PREFERENCES["load"]()
-        card = self.card(box, "Disposição e repetição")
+        card = self.card(box, "Teclado")
         layout = self.choice(card, "Teclado", [("pt", "Português"), ("us", "Inglês US"), ("gb", "Inglês UK"), ("pt,us", "Português / US"), ("us,pt", "US / Português")], prefs["layout"])
-        rate = self.number(card, "Teclas por segundo", prefs["repeat_rate"], 1, 100)
-        delay = self.number(card, "Atraso em milissegundos", prefs["repeat_delay"], 100, 2000)
+        rate = self.slider(card, "Velocidade de repetição", prefs["repeat_rate"], 1, 100, "")
+        delay = self.slider(card, "Espera antes de repetir", prefs["repeat_delay"], 100, 2000, " ms")
         card.pack_start(label("Com dois layouts, SUPER+Espaço alterna entre eles.", "secondary"), False, False, 0)
         card.pack_start(button("Aplicar teclado", lambda: self.action(lambda: PREFERENCES["save"]({
             "layout": layout.get_active_id(), "repeat_rate": int(rate.get_value()), "repeat_delay": int(delay.get_value())}))), False, False, 0)
         card = self.card(box, "Touchpad")
         natural = self.check(card, "Deslocamento natural", prefs["natural_scroll"])
         tap = self.check(card, "Toque para clicar", prefs["tap_to_click"])
-        card.pack_start(button("Aplicar touchpad", lambda: self.action(lambda: PREFERENCES["save"]({
-            "natural_scroll": natural.get_active(), "tap_to_click": tap.get_active()}))), False, False, 0)
+        natural.connect("notify::active", lambda widget, _property: self.action(lambda: PREFERENCES["save"]({"natural_scroll": widget.get_active()})))
+        tap.connect("notify::active", lambda widget, _property: self.action(lambda: PREFERENCES["save"]({"tap_to_click": widget.get_active()})))
+        trackpad = TOOLS / "apx-trackpad-sensitivity-v1"
+        gestures = TOOLS / "apx-trackpad-gestures-v1"
+        has_touchpad = any("touchpad" in item.get("name", "").lower() for item in mice)
+        if has_touchpad and trackpad.is_file():
+            speed = self.slider(card, "Velocidade do cursor",
+                                round((int(command([str(trackpad), "get"])) + 100) / 2), 0, 100)
+            self.bind_slider(speed, lambda value: command([str(trackpad), "set", str(value * 2 - 100)]))
+        if has_touchpad and gestures.is_file():
+            state = get_json([str(gestures), "get"])
+            for key, title in (("scroll", "Deslocamento"), ("workspaces", "Gestos entre workspaces")):
+                value = self.slider(card, {"scroll": "Velocidade ao deslocar", "workspaces": "Sensibilidade dos gestos"}[key], state[key], 25, 200)
+                self.bind_slider(value, lambda number, k=key: command([str(gestures), "set", k, str(number)]))
         card = self.card(box, "Rato externo")
         mouse = TOOLS / "apx-mouse-sensitivity-v1"
-        if mouse.is_file():
+        if mouse.is_file() and any("touchpad" not in item.get("name", "").lower() for item in mice):
             value = int(command([str(mouse), "get"]))
-            sensitivity = self.number(card, "Sensibilidade", value, -100, 100)
-            card.pack_start(button("Aplicar rato", lambda: self.action(lambda: command([str(mouse), "set", str(int(sensitivity.get_value()))]))), False, False, 0)
-        card.pack_start(button("Ver atalhos atuais", lambda: shell_call("openShortcuts")), False, False, 0)
+            sensitivity = self.slider(card, "Velocidade do cursor", round((value + 100) / 2), 0, 100)
+            self.bind_slider(sensitivity, lambda value: command([str(mouse), "set", str(value * 2 - 100)]))
+        card = self.card(box, "Atalhos de teclado")
+        card.pack_start(button("Ver atalhos atuais", lambda: self.action(lambda: shell_call("openShortcuts"))), False, False, 0)
         self.shortcut_controls(card)
+        box.pack_start(details, False, False, 0)
         box.show_all()
 
     def render_appearance(self):
@@ -538,7 +780,7 @@ class Settings(Gtk.Window):
         self.clear(box)
         preferences = gtk_preferences()
         card = self.card(box, "Visual das aplicações")
-        card.pack_start(label("O APX usa um tema escuro, ícones Graphite e Selawik.",
+        card.pack_start(label("Escolhe o aspeto das aplicações.",
                               "secondary"), False, False, 0)
         themes = {path.name for path in Path("/usr/share/themes").iterdir() if path.is_dir()}
         themes.update(("Adwaita", "Adwaita-dark", preferences["theme"]))
@@ -553,24 +795,25 @@ class Settings(Gtk.Window):
             row.pack_start(caption, False, False, 0)
             combo = Gtk.ComboBoxText()
             for item in sorted(options, key=str.casefold):
-                combo.append(item, item)
+                combo.append(item, {"Adwaita-dark": "Escuro", "Adwaita": "Claro", "HighContrast": "Contraste elevado", "APX-Graphite": "Ícones APX"}.get(item, item))
             combo.set_active_id(current)
             if combo.get_active_id() is None and options: combo.set_active(0)
             row.pack_start(combo, True, True, 0)
             return combo
 
+        themes.discard("APX-Graphite")
         theme = selector("Tema", themes, preferences["theme"])
         icon = selector("Ícones", icons, preferences["icons"])
         row = self.row(card)
         row.pack_start(label("Texto"), False, False, 0)
-        font = Gtk.Entry()
-        font.set_text(preferences["font"])
-        font.set_placeholder_text("Selawik 11")
+        font = Gtk.FontButton()
+        font.set_font_name(preferences["font"])
+        font.set_use_font(True)
         row.pack_start(font, True, True, 0)
         controls = self.row(card)
         controls.pack_start(button("Aplicar", lambda: self.action(
             lambda: apply_gtk_preferences(theme.get_active_id(), icon.get_active_id(),
-                                          font.get_text().strip()), self.render_appearance), True),
+                                          font.get_font_name()), self.render_appearance), True),
             False, False, 0)
         controls.pack_start(button("Restaurar APX", lambda: self.action(
             lambda: apply_gtk_preferences("Adwaita-dark", "APX-Graphite", "Selawik 11"),
@@ -588,7 +831,7 @@ class Settings(Gtk.Window):
         except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
             current = ""
             card.pack_start(label(str(exc), "secondary"), False, False, 0)
-        card.pack_start(label("Atual: " + (current or "não definido")), False, False, 0)
+        card.pack_start(label("Atual: " + (Gio.DesktopAppInfo.new(current).get_display_name() if current and Gio.DesktopAppInfo.new(current) else "não definido")), False, False, 0)
         browsers = {}
         for directory in (Path("/usr/share/applications"), HOME / ".local/share/applications"):
             if not directory.is_dir():
@@ -721,7 +964,7 @@ class Settings(Gtk.Window):
                     str(TOOLS / "apx-environment-update-v1")]
         card.pack_start(button("Abrir atualizações APX", lambda: self.launch(argv)), False, False, 0)
         card = self.card(box, "Ferramentas")
-        for title, argv in (("Gestor de tarefas", ["/usr/bin/xfce4-taskmanager"]),
+        for title, argv in (("Gestor de tarefas", [str(TOOLS / "apx-task-manager")]),
                             ("Gestor de ficheiros", [str(LAPTOP), "files"])):
             if Path(argv[0]).is_file() and (title != "Gestor de ficheiros" or not IS_HUB):
                 card.pack_start(button(title, lambda selected=argv: self.launch(selected)),
@@ -801,6 +1044,28 @@ class Settings(Gtk.Window):
         row.pack_start(combo, True, True, 0)
         return combo
 
+    def slider(self, parent, title, value, minimum, maximum, suffix="%"):
+        row = self.row(parent)
+        row.pack_start(label(title), False, False, 0)
+        scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, minimum, maximum, 1)
+        scale.set_digits(0); scale.set_value(value)
+        scale.set_hexpand(True); scale.set_value_pos(Gtk.PositionType.RIGHT)
+        scale.connect("format-value", lambda _scale, number: str(round(number)) + suffix)
+        row.pack_start(scale, True, True, 0)
+        return scale
+
+    def bind_slider(self, scale, operation):
+        timer = [None]
+        def changed(widget):
+            if timer[0] is not None: GLib.source_remove(timer[0])
+            value = int(widget.get_value())
+            def apply():
+                timer[0] = None; self.action(lambda: operation(value)); return False
+            timer[0] = GLib.timeout_add(180, apply)
+        def clean(_widget):
+            if timer[0] is not None: GLib.source_remove(timer[0]); timer[0] = None
+        scale.connect("value-changed", changed); scale.connect("destroy", clean)
+
     def number(self, parent, title, value, minimum, maximum):
         row = self.row(parent); row.pack_start(label(title), False, False, 0)
         spin = Gtk.SpinButton.new_with_range(minimum, maximum, 1); spin.set_value(value)
@@ -808,8 +1073,10 @@ class Settings(Gtk.Window):
         return spin
 
     def check(self, parent, title, value):
-        check = Gtk.CheckButton(label=title); check.set_active(value)
-        parent.pack_start(check, False, False, 0)
+        row = self.row(parent)
+        row.pack_start(label(title), True, True, 0)
+        check = Gtk.Switch(); check.set_active(value); check.set_valign(Gtk.Align.CENTER)
+        row.pack_end(check, False, False, 0)
         return check
 
     def render_locale(self):
@@ -854,7 +1121,7 @@ class Settings(Gtk.Window):
             if identity in protected or any(word in identity for word in ["portal", "polkit", "keyring"]):
                 check.set_sensitive(False)
             else:
-                check.connect("toggled", lambda widget, key=identity: self.action(lambda: PREFERENCES["set_autostart"](key, widget.get_active())))
+                check.connect("notify::active", lambda widget, _prop, key=identity: self.action(lambda: PREFERENCES["set_autostart"](key, widget.get_active())))
         apps = {app.get_id(): app for app in Gio.AppInfo.get_all() if app.get_id() and app.should_show()}
         options = [(key, app.get_display_name()) for key, app in sorted(apps.items(), key=lambda item: item[1].get_display_name().casefold())]
         if options:
@@ -897,28 +1164,16 @@ class Settings(Gtk.Window):
 
     def on_page_changed(self, _stack, _property):
         name = self.stack.get_visible_child_name()
-        if name in {"locale", "privacy", "startup", "accessibility", "printing"}:
-            self.action(lambda: getattr(self, "render_" + name)())
-        elif name == "audio":
-            self.render_audio()
-        elif name == "network":
-            self.render_network()
-        elif name == "bluetooth":
-            self.render_bluetooth()
-        elif name == "displays":
-            self.render_displays()
-        elif name == "input":
-            self.render_input()
-        elif name == "appearance":
-            self.render_appearance()
-        elif name == "apps":
-            self.render_apps()
-        elif name == "power":
-            self.render_power()
-        elif name == "storage":
-            self.render_storage()
-        elif name == "system":
-            self.render_system()
+        if name in self.sections or name == "overview":
+            if not self.history_move and name != self.navigation_history[self.navigation_index]:
+                self.navigation_history = self.navigation_history[:self.navigation_index + 1] + [name]
+                self.navigation_index += 1
+            self.back_button.set_sensitive(self.navigation_index > 0)
+            self.forward_button.set_sensitive(self.navigation_index < len(self.navigation_history) - 1)
+            self.last_page = name
+            self.status.hide()
+            if name in self.navigation_rows: self.navigation.select_row(self.navigation_rows[name])
+            self.refresh_current()
 
 
 if __name__ == "__main__":

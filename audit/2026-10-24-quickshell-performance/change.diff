@@ -1,0 +1,75 @@
+--- before/shell.qml
++++ after/shell.qml
+@@ -1024,6 +1024,7 @@
+     property bool controlsAppearanceOpen: false
+     property string controlsActivityKind: ""
+     Binding { target: DesktopActivity; property: "detailsVisible"; value: popup.open && root.popupKind === "media" }
++    Binding { target: Appearance; property: "detailsVisible"; value: popup.open && root.popupKind === "controls" && root.controlsAppearanceOpen }
+     property string ghostMessage: ""
+     property bool workspacesExpanded: true
+     property bool ghostGreetingVisible: false
+@@ -3141,6 +3142,7 @@
+         dynamicReadMetrics = reads
+     }
+     function refreshDynamicStatus() {
++        Appearance.refresh()
+         if (!hostStatusProcess.running) hostStatusProcess.running = true
+         if (!volumeProcess.running) volumeProcess.running = true
+         if (!microphoneProcess.running) microphoneProcess.running = true
+@@ -4277,7 +4279,7 @@
+     }
+ 
+     Timer {
+-        interval: 500
++        interval: popup.open ? 500 : 3000
+         running: true
+         repeat: true
+         triggeredOnStart: true
+@@ -4293,7 +4295,7 @@
+     }
+ 
+     Timer {
+-        interval: 500
++        interval: popup.open ? 500 : 3000
+         running: true
+         repeat: true
+         triggeredOnStart: true
+@@ -4343,7 +4345,7 @@
+     }
+ 
+     Timer {
+-        interval: 500
++        interval: popup.open ? 500 : 3000
+         running: true
+         repeat: true
+         triggeredOnStart: true
+--- before/Appearance.qml
++++ after/Appearance.qml
+@@ -25,6 +25,7 @@
+     readonly property int menuTop: 65
+     property var state: ({ icon_color: null, global_icon_color: "#d9dcea", effective_icon_color: "#d9dcea", wallpaper: "", warning: "" })
+     readonly property var opacityDefaults: ({bar: 93, menus: 95, terminal: 85, files: 85, rofi: 85})
++    property bool detailsVisible: false
+     property var pendingOpacity: ({})
+     property var opacityInFlight: ({})
+     function opacityPercent(key) {
+@@ -117,7 +118,7 @@
+         onExited: (code, status) => { if (code === 0) appearance.error = ""; if (Object.keys(appearance.pendingOpacity).length) appearance.opacitySave.restart() }
+     }
+     property Timer refreshTimer: Timer {
+-        interval: 500; running: true; repeat: true; triggeredOnStart: true
++        interval: appearance.detailsVisible ? 500 : 5000; running: true; repeat: true; triggeredOnStart: true
+         onTriggered: appearance.refresh()
+     }
+ }
+--- before/DesktopActivity.qml
++++ after/DesktopActivity.qml
+@@ -107,7 +107,7 @@
+         sendSeek()
+     }
+     property Timer progressClock: Timer {
+-        interval: 16; repeat: true
++        interval: activity.detailsVisible ? 16 : 250; repeat: true
+         running: activity.state.players.some(function(p) { return p.status === "Playing" })
+         onTriggered: activity.clock = Date.now()
+     }

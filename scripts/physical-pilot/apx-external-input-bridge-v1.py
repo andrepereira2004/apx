@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lease physical external HID nodes and relay udev into one graphical session.
+"""Lease physical external HID/camera nodes and relay udev into one graphical session.
 
 No key or pointer events are read. Only device metadata crosses namespaces.
 The parent launcher owns this process; losing its pinned container ends work.
@@ -66,7 +66,8 @@ class Bridge:
                     if not label.startswith("external_")}
         self.base_policies = {
             unit: [(node, access) for node, access in policies(unit)
-                   if not node.startswith('/dev/input/') or node in internal]
+                   if (not node.startswith('/dev/input/') or node in internal)
+                   and not re.fullmatch(r'/dev/video[0-9]+', node)]
             for unit in (outer, seatd)
         }
         self.external = {}
@@ -107,6 +108,13 @@ class Bridge:
                     result[str(node)] = (info.st_rdev, info.st_ino)
             except (FileNotFoundError, subprocess.CalledProcessError):
                 continue
+        # Admit only the pilot's identity-pinned internal capture device. Privacy
+        # switches can reconnect it after the Environment has already started.
+        camera = self.engine.resolve_camera_device()
+        if camera:
+            info = Path(camera).stat()
+            if stat.S_ISCHR(info.st_mode) and os.major(info.st_rdev) == 81:
+                result[camera] = (info.st_rdev, info.st_ino)
         return result
 
     def update_policies(self, devices):
@@ -190,7 +198,9 @@ class Bridge:
                 print(json.dumps({"event": "display-rescan", "node": card}), flush=True)
         self.display_snapshot = display_snapshot
         self.display_compositor = compositor
-        snapshot = tuple(sorted((str(p), p.stat().st_ino) for p in Path('/dev/input').glob('event*')))
+        snapshot = tuple(sorted((str(p), p.stat().st_ino)
+                                for p in [*Path('/dev/input').glob('event*'),
+                                          *Path('/dev').glob('video[0-9]*')]))
         if snapshot == self.snapshot:
             return
         devices = self.inventory()
@@ -207,7 +217,7 @@ class Bridge:
             info = target.stat()
             if not stat.S_ISCHR(info.st_mode) or info.st_rdev != identity[0]:
                 raise RuntimeError('unexpected container input node')
-            self.notify(node)
+            self.notify(node, "video4linux" if node.startswith("/dev/video") else "input")
             print(json.dumps({'event': 'external-input-admitted', 'node': node}), flush=True)
         # Unplug closes evdev FDs in libinput. Revoke access before removing
         # non-mounted nodes; the container owns the lifetime of startup binds.

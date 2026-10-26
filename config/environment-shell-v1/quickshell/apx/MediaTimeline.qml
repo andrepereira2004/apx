@@ -24,7 +24,7 @@ Column {
     }
     Row {
         width: parent.width
-        Text { width: parent.width / 2; text: DesktopActivity.timeLabel(seek.pressed ? seek.value : DesktopActivity.position(timeline.player)); color: "#b5bdd0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
-        Text { width: parent.width / 2; horizontalAlignment: Text.AlignRight; text: timeline.player.length > 0 ? DesktopActivity.timeLabel(timeline.player.length) : "Em direto"; color: "#b5bdd0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
+        Text { renderType: Text.CurveRendering; width: parent.width / 2; text: DesktopActivity.timeLabel(seek.pressed ? seek.value : DesktopActivity.position(timeline.player)); color: "#b5bdd0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
+        Text { renderType: Text.CurveRendering; width: parent.width / 2; horizontalAlignment: Text.AlignRight; text: timeline.player.length > 0 ? DesktopActivity.timeLabel(timeline.player.length) : "Em direto"; color: "#b5bdd0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
     }
 }

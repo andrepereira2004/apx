@@ -17,9 +17,9 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 hl.monitor({
     output   = "",
-    mode     = "preferred",
+    mode     = "highres",
     position = "auto",
-    scale    = "auto",
+    scale    = 1.25,
 })
 
 -- An Environment-local choice made in QuickShell; no Host display settings.
@@ -49,6 +49,8 @@ local terminal    = "/usr/bin/kitty --directory /home/apx"
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
+  hl.exec_cmd("/home/apx/.local/bin/apx-numlock-state-v1 restore")
+  hl.exec_cmd("/home/apx/.local/bin/apx-input-startup-audit-v1")
   hl.exec_cmd("/home/apx/.local/bin/apx-shell-v1")
 end)
 
@@ -72,6 +74,9 @@ if localeFile then
 end
 
 hl.env("XDG_DATA_DIRS", "/home/apx/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share")
+-- Qt applications use the same themed native file chooser as other apps.
+hl.env("QT_QPA_PLATFORMTHEME", "xdgdesktopportal")
+hl.env("GTK_USE_PORTAL", "1")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 
@@ -155,8 +160,12 @@ hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}
 hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
 hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } })
 hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
--- Overlay fade matches the 160ms OutCubic QuickShell menu transition.
+-- Shared deceleration for window entrances and QuickShell menus.
+hl.curve("apxFluid", { type = "bezier", points = { {0.2, 0.8}, {0.2, 1} } })
 hl.curve("apxMenuOutCubic", { type = "bezier", points = { {0.215, 0.61}, {0.355, 1} } })
+
+-- Workspace release glides to rest without overshoot; finger tracking stays 1:1.
+hl.curve("apxWorkspaceGlide", { type = "bezier", points = { {0.22, 1}, {0.36, 1} } })
 
 -- Soft window entrance with a small, damped overshoot.
 hl.curve("apxSoftWindowOpen", { type = "spring", mass = 1, stiffness = 220, dampening = 18 })
@@ -167,27 +176,25 @@ hl.curve("easy",           { type = "spring", mass = 1, stiffness = 238.1191, da
 hl.animation({ leaf = "global",        enabled = true,  speed = 10,   bezier = "default" })
 hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "easeOutQuint" })
 hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
-hl.animation({ leaf = "windowsIn", enabled = true, speed = 2.8, spring = "apxSoftWindowOpen", style = "popin 96%" })
--- Keep tiled layout reflow in step with window entrances; avoid the inherited spring.
-hl.animation({ leaf = "windowsMove", enabled = true, speed = 2.4, bezier = "apxMenuOutCubic" })
-hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.8, bezier = "apxMenuOutCubic", style = "popin 96%" })
-hl.animation({ leaf = "fadeIn", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic" })
-hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.8, bezier = "apxMenuOutCubic" })
+hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
+hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
+hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
+hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
 hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
 hl.animation({ leaf = "layers",        enabled = true,  speed = 3.81, bezier = "easeOutQuint" })
-hl.animation({ leaf = "layersIn", enabled = true, speed = 3.0, bezier = "apxMenuOutCubic", style = "fade" })
-hl.animation({ leaf = "layersOut", enabled = true, speed = 2.2, bezier = "apxMenuOutCubic", style = "fade" })
-hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 2.0, bezier = "apxMenuOutCubic" })
-hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.8, bezier = "apxMenuOutCubic" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic", style = "slidefade 12%" })
-hl.animation({ leaf = "workspacesIn", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic", style = "slidefade 12%" })
-hl.animation({ leaf = "workspacesOut", enabled = true, speed = 2.8, bezier = "apxMenuOutCubic", style = "slidefade 12%" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 3.2, bezier = "apxFluid", style = "fade" })
+hl.animation({ leaf = "layersOut", enabled = true, speed = 2.4, bezier = "easeInOutCubic", style = "fade" })
+hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 3.2, bezier = "apxFluid" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 2.4, bezier = "easeInOutCubic" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 4.2, bezier = "apxWorkspaceGlide", style = "slide" })
+hl.animation({ leaf = "workspacesIn", enabled = true, speed = 4.2, bezier = "apxWorkspaceGlide", style = "slide" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 4.2, bezier = "apxWorkspaceGlide", style = "slide" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
--- A lone window needs no focus indicator. Count tiled and floating windows.
+-- Floating dialogs must not change the border or geometry of the tiled parent.
 hl.window_rule({
     name = "apx-single-window-no-border",
-    match = { workspace = "w[1]" },
+    match = { float = false, workspace = "w[tv1]" },
     border_size = 0,
 })
 
@@ -251,8 +258,17 @@ hl.config({
 ---- INPUT ----
 ---------------
 
+-- Local cache avoids broker calls on the compositor event loop.
+local rememberedNumLock = false
+local numLockFile = io.open("/home/apx/.config/hypr/apx-numlock-state", "r")
+if numLockFile then
+    rememberedNumLock = numLockFile:read("*l") == "true"
+    numLockFile:close()
+end
+
 hl.config({
     input = {
+        numlock_by_default = rememberedNumLock,
         kb_layout  = "pt",
         kb_variant = "",
         kb_model   = "pc105",
@@ -267,6 +283,7 @@ hl.config({
             -- Content follows the fingers: dragging two fingers upward moves
             -- down through the page, matching the owner's requested direction.
             natural_scroll = true,
+            disable_while_typing = false,
         },
     },
 })
@@ -295,14 +312,13 @@ hl.bind("SUPER + CTRL + Home", hl.dsp.exec_cmd("/home/apx/.local/bin/apx-laptop-
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("/usr/bin/xfce4-taskmanager"))
+hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("/home/apx/.local/bin/apx-task-manager"))
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("quickshell -c apx ipc call host openEnvironments"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleControls"))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleCalendar"))
-hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleModel"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleBattery"))
 -- SUPER+Q is local. SUPER+H asks the capability-aware shell to open its
 -- terminal action, using the broker for this active graphical Environment.
@@ -432,11 +448,11 @@ hl.window_rule({
     float = true,
 })
 
--- Owner-requested touchpad trial: uniform scrolling at the accepted terminal speed.
+-- Owner-accepted adaptive pointer motion and uniform scrolling.
 -- Device-specific so external mice retain their own acceleration and scrolling.
 hl.device({
     name = "elan06fa:00-04f3:31dd-touchpad",
-    accel_profile = "flat",
+    accel_profile = "adaptive",
     sensitivity = -0.30,
     scroll_factor = 0.55,
     natural_scroll = true,
@@ -465,27 +481,29 @@ hl.window_rule({
 })
 
 -- Main file-manager windows enter like the resident menus.
--- Transient/progress dialogs retain their non-animated rules below.
+-- File dialogs share the soft entrance; progress windows remain immediate.
 hl.window_rule({
     name = "apx-thunar-menu-animation",
     match = { class = "^(thunar|Thunar|org.xfce.Thunar)$" },
-    animation = "popin 90%",
+    animation = "popin 97%",
     border_size = 2,
 })
 
--- APX coordinated motion v2: the launcher rises from the screen bottom.
+-- Animate Rofi entrance/exit only; internal mode changes remain immediate.
 -- QuickShell menus animate internally and retain their own content transition.
 hl.layer_rule({
     name = "apx-rofi-menu-motion",
     match = { namespace = "^rofi$" },
     animation = "slide bottom",
+    no_anim = false,
 })
 hl.window_rule({
     name = "apx-thunar-modal-dialogs",
     match = { class = "^(thunar|Thunar|org.xfce.Thunar)$", modal = true },
     float = true,
     center = true,
-    no_anim = true,
+    no_anim = false,
+    animation = "popin 94%",
 })
 hl.window_rule({
     name = "apx-thunar-progress-dialog",
@@ -501,7 +519,8 @@ hl.window_rule({
     float = true,
     center = true,
     size = { "monitor_w*0.78", "monitor_h*0.82" },
-    no_anim = true,
+    no_anim = false,
+    animation = "popin 94%",
 })
 
 -- Toggle workspace labels while keeping their icon in the bar.
@@ -514,3 +533,28 @@ if trackpadChoiceFile then
     trackpadChoiceFile:close()
     dofile(trackpadChoice)
 end
+
+-- Independent per-Environment scroll and workspace gesture preferences.
+local gestureChoice = "/home/apx/.config/hypr/apx-trackpad-gestures.lua"
+local gestureChoiceFile = io.open(gestureChoice, "r")
+if gestureChoiceFile then
+    gestureChoiceFile:close()
+    dofile(gestureChoice)
+end
+
+-- Smooth fractional scaling for legacy X11 applications such as the Launcher.
+hl.config({xwayland={use_nearest_neighbor=false}})
+
+-- Optional Environment-local native X11 density, enabled by compatible app wrappers.
+local x11Density = "/home/apx/.config/hypr/apx-x11-density.lua"
+local x11DensityFile = io.open(x11Density, "r")
+if x11DensityFile then x11DensityFile:close(); dofile(x11Density) end
+
+-- Save the owner's choice without consuming the normal Num Lock key event.
+hl.bind("Num_Lock", hl.dsp.exec_cmd("/home/apx/.local/bin/apx-numlock-state-v1 save"), {
+    release = true, non_consuming = true, locked = true, ignore_mods = true,
+    submap_universal = true, dont_inhibit = true,
+})
+hl.on("config.reloaded", function ()
+    hl.exec_cmd("/home/apx/.local/bin/apx-numlock-state-v1 restore")
+end)

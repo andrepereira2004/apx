@@ -15,10 +15,9 @@ Rectangle {
     property bool animateActivation: false
     property bool animateDeactivation: false
     property color activeSurface: "#da3a4055"
-    property color hoverBorderColor: "#69728a"
     property color accentColor: "#f0f0fa"
     property color textColor: "#c8ccdc"
-    property int activeBorderWidth: 1
+    property int inactiveBorderWidth: 0
     property var hoverOverride: null
     readonly property bool visuallyActive: (hoverOverride === null ? pointer.containsMouse : hoverOverride) || alternateActive
     signal activated()
@@ -28,14 +27,10 @@ Rectangle {
     scale: pointer.pressed || animateActivation || animateDeactivation ? 0.96 : 1
     radius: 16
     color: visuallyActive ? activeSurface : (grouped ? "transparent" : Appearance.capsuleSurface)
-    // Inset the contour so fractional output scaling cannot crop its top/bottom.
-    Rectangle {
-        anchors.fill: parent; anchors.margins: 1
-        radius: Math.max(0, button.radius - 1)
-        antialiasing: true
-        color: "transparent"
-        border.width: button.visuallyActive ? button.activeBorderWidth : (button.grouped ? 0 : 1)
-        border.color: button.visuallyActive ? (button.alternateActive ? button.accentColor : button.hoverBorderColor) : "#304f566c"
+    ButtonOutline {
+        selected: button.alternateActive
+        hovered: button.visuallyActive
+        idleWidth: button.inactiveBorderWidth
     }
     Accessible.role: Accessible.Button
     Accessible.name: accessibleLabel

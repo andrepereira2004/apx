@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+"${HOME}/.local/bin/apx-native-scale-v1" sync
+
 catalog="${HOME}/Applications"
 mkdir -p "${catalog}"
 find "${catalog}" -maxdepth 1 -type l -delete
 find "${catalog}" -maxdepth 1 -type f -name '*.desktop' -delete
 
 sources=(
-  /usr/share/applications
   "${HOME}/.local/share/applications"
+  /usr/share/applications
   /var/lib/flatpak/exports/share/applications
   "${HOME}/.local/share/flatpak/exports/share/applications"
 )

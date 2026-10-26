@@ -1,0 +1,38 @@
+<channel name="thunar" version="1.0">
+  <property name="last-view" type="string" value="ThunarIconView" />
+  <property name="last-icon-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_100_PERCENT" />
+  <property name="last-side-pane" type="string" value="ThunarShortcutsPane" />
+  <property name="shortcuts-icon-size" type="uint" value="16" />
+  <property name="misc-single-click" type="bool" value="false" />
+  <property name="misc-always-show-tabs" type="bool" value="false" />
+  <property name="misc-thumbnail-mode" type="string" value="THUNAR_THUMBNAIL_MODE_ONLY_LOCAL" />
+  <property name="hidden-bookmarks" type="array">
+    <value type="string" value="computer:///" />
+    <value type="string" value="file:///" />
+  </property>
+  <property name="hidden-devices" type="array">
+    <value type="string" value="APX_ROOT" />
+    <value type="string" value="APX_EFI" />
+    <value type="string" value="APXWINSETUP" />
+    <value type="string" value="APXWINTARGET" />
+    <value type="string" value="0ab135e1-1d10-4580-8fca-f4c6ac25ad1c" />
+    <value type="string" value="6AED-3812" />
+    <value type="string" value="3ad5fc06-c4eb-4bb2-936b-f75eff3bc1c4" />
+    <value type="string" value="18A055A7A0558BDE" />
+    <value type="string" value="A9F2-5E31" />
+    <value type="string" value="FC06BE3006BDEC30" />
+    <value type="string" value="BCC1-5AC9" />
+    <value type="string" value="f0ca74a0-90d1-408c-8f01-0668ce554a17" />
+    <value type="string" value="apx-usb" />
+    <value type="string" value="4E21-0000" />
+    <value type="string" value="Ventoy" />
+  </property>
+  <property name="last-window-width" type="int" value="1100" />
+  <property name="last-window-height" type="int" value="720" />
+  <property name="misc-symbolic-icons-in-sidepane" type="bool" value="true" />
+  <property name="misc-symbolic-icons-in-toolbar" type="bool" value="true" />
+  <property name="misc-show-delete-action" type="bool" value="false" />
+  <property name="last-menubar-visible" type="bool" value="false" />
+  <property name="last-statusbar-visible" type="bool" value="false" />
+  <property name="misc-small-toolbar-icons" type="bool" value="true" />
+</channel>

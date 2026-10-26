@@ -22,6 +22,21 @@ def query(*args):
     return subprocess.run([PACMAN, *args], capture_output=True, text=True, check=True).stdout
 
 
+def verify_runtime():
+    # Imports resolve native library versions without opening a window/account.
+    code = """import importlib.util
+if importlib.util.find_spec('PyQt6') is not None:
+    from PyQt6 import QtCore, QtGui, QtWidgets
+    if importlib.util.find_spec('PyQt6.QtWebEngineWidgets') is not None:
+        from PyQt6 import QtWebEngineCore, QtWebEngineWidgets
+"""
+    result = subprocess.run([sys.executable, '-I', '-c', code],
+                            capture_output=True, text=True, timeout=15)
+    if result.returncode:
+        raise RuntimeError('As dependências gráficas não carregam; instalação não verificada. '
+                           + result.stderr.strip()[-1500:])
+
+
 def verify(packages):
     result = []
     for package in packages:
@@ -34,6 +49,7 @@ def verify(packages):
         missing += [f for f in binaries if not Path(f).exists() or not os.access(f, os.X_OK)]
         if missing: raise RuntimeError('Instalação incompleta; faltam ficheiros: ' + ', '.join(missing))
         result.append({'package': package, 'version': version, 'desktop_entries': desktops, 'executables': binaries})
+    verify_runtime()
     catalog = Path.home()/'.local/bin/apx-application-catalog-v1'
     subprocess.run([str(catalog)], check=True)
     return result

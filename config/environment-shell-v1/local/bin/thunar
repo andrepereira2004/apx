@@ -1,0 +1,7 @@
+#!/bin/sh
+# Thunar-only presentation: APX label and sidebar-aligned location field.
+module=/home/apx/.local/libexec/apx-thunar-chrome-v1.so
+if [ -r "$module" ]; then
+    export GTK_MODULES="${GTK_MODULES:+$GTK_MODULES:}$module"
+fi
+exec /usr/bin/thunar "$@"

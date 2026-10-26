@@ -1,0 +1,38 @@
+#!/usr/bin/nft -f
+# vim:set ts=2 sw=2 et:
+
+# IPv4/IPv6 Simple & Safe firewall ruleset.
+# More examples in /usr/share/nftables/ and /usr/share/doc/nftables/examples/.
+
+destroy table inet filter
+table inet filter {
+  chain input {
+    type filter hook input priority filter
+    policy drop
+
+    ct state invalid drop comment "early drop of invalid connections"
+    ct state {established, related} accept comment "allow tracked connections"
+    iif lo accept comment "allow from loopback"
+    meta l4proto { icmp, icmpv6 } accept comment "allow icmp"
+    # DHCP replies for the Host and DHCP requests from APX environments.
+    udp dport 68 accept comment "allow DHCP client replies"
+    iifname "ve-*" udp dport 67 accept comment "allow APX environment DHCP"
+    pkttype host limit rate 5/second counter reject with icmpx type admin-prohibited
+    counter
+  }
+  chain forward {
+    type filter hook forward priority filter
+    # APX applies its own per-environment forwarding restrictions.
+    policy accept
+  }
+}
+
+# Experimental physical pilot: a TTL=1 Wi-Fi reply needs one APX routing hop.
+# Only replies belonging to source-NAT connections; no accept rules or new access.
+destroy table ip apx_reply_hop_v1
+table ip apx_reply_hop_v1 {
+ chain prerouting {
+  type filter hook prerouting priority mangle; policy accept;
+  iifname "wlan0" ct status snat ip ttl 1 counter ip ttl set 2 comment "APX established NAT replies: preserve one internal hop"
+ }
+}

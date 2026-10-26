@@ -22,7 +22,7 @@ LIVE_SOCKET = Path("/home/.apx-host-bridge/environment-switch-v1.sock")
 
 def connect() -> socket.socket:
     last_error: OSError | None = None
-    for endpoint in (PRIMARY_SOCKET, LIVE_SOCKET):
+    for endpoint in (PRIMARY_SOCKET, Path("/run/apx/environment-switch-refresh-v1.sock"), LIVE_SOCKET):
         connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         connection.settimeout(10)
         try:
@@ -39,11 +39,11 @@ def connect() -> socket.socket:
 def exchange(operation: str, target: str | None = None, generation: str | None = None,
              description: str | None = None, preset: str | None = None,
              modules: list[str] | None = None, system_kind: str | None = None,
-             size_gib: int | None = None, display_name: str | None = None):
+             size_gib: int | None = None, display_name: str | None = None, icon: str | None = None):
     with connect() as connection:
         if operation == "native.plan": connection.settimeout(35)
         connection.sendall(request_bytes(operation, target, generation, description, preset,
-                                         modules, system_kind, size_gib, display_name))
+                                         modules, system_kind, size_gib, display_name, icon))
         data = bytearray()
         while b"\n" not in data and len(data) <= MAX_MESSAGE_BYTES:
             chunk = connection.recv(4096)
@@ -73,6 +73,7 @@ def main() -> int:
     parser.add_argument("mode", choices=("catalog", "create", "destroy", "edit", "hub-menu", "identity", "management-status",
                                          "native-prepare-v3", "native-activate-v3", "native-rollback-v3", "native-retry-v3", "native-delete-v3", "native-open-v3", "native-discard", "native-open", "native-retry", "native-plan", "open", "return", "status", "storage", "waybar-identity"))
     parser.add_argument("--target")
+    parser.add_argument("--icon")
     parser.add_argument("--generation")
     parser.add_argument("--description")
     parser.add_argument("--display-name")
@@ -115,10 +116,12 @@ def main() -> int:
     if mode not in {"native-prepare-v3", "native-activate-v3", "native-rollback-v3", "native-retry-v3", "native-delete-v3", "native-open-v3", "create", "destroy", "edit", "native-discard", "native-open", "native-retry", "native-plan", "open"} \
             and (arguments.target is not None or arguments.generation is not None):
         parser.error(mode + " takes no target")
+    if mode != "edit" and arguments.icon is not None:
+        parser.error("icon is only valid when editing an Environment")
     modules = arguments.modules.split(",") if arguments.modules else None
     value = exchange(operation, arguments.target, arguments.generation, arguments.description,
                      arguments.preset, modules, arguments.system, arguments.size_gib,
-                     arguments.display_name)
+                     arguments.display_name, arguments.icon)
     if mode == "waybar-identity":
         label = value.get("display_name", value.get("name", "?"))
         role = str(value.get("role", "unknown"))

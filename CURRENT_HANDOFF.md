@@ -1,3 +1,3119 @@
+# Owner rejects remaining menu lag; icon unload regression fixed — 2026-10-26
+
+Owner reports still very slow, previously responsive. Confirmed a regression in
+new crisp ControlIcon: SVG source depended on effective visibility, so every
+submenu hide unloaded icons, and reentry synchronously loaded them again. Source
+now depends only on whether the file is Lucide, independent of visibility;
+original SVGs/2x resolution/logical sizes/tint unchanged. Native Qt test checks
+all97 SVGs stay Ready with nonempty source through hide/show; passes.
+
+Internal page switching now applies route immediately, with no screenshot,
+page fade/slide, timed input shield or width/height/position retarget animation.
+Opening/closing animations retained. Section focus/scroll reset retained. Main
+Gosty greeting verified still Boa tarde, André! and title Central de Controlo.
+
+A targetHeight deferred-measurement experiment removed binding-loop warnings
+but did not improve timing; reverted it. Whole-card sizing remains as before;
+existing7 native sizing checks pass. Do not describe layout cycles as proven
+cause of the navigation regression.
+
+Same measured routes: previous last fix272–468ms; immediate navigation alone
+147–303ms; with icons kept ready116–134ms including two host/nsenter/IPC process
+round trips. Five-route final check verifies actual visible section, input
+enabled, no transition shield and no page animation. Evidence:
+audit/2026-10-26-gosty-menu-speed/icons-kept-ready.json and
+audit/2026-10-26-menu-layout-cycle/final-navigation.json.
+Source/seed/five homes/pins deployed; latest backup
+/var/lib/apx/backups/20261026T145038Z-controls-followup; earlier navigation backup
+/var/lib/apx/backups/20261026T144932Z-controls-followup. Deployment0pending,
+whitespace clean. Owner-perceived response acceptance pending. No radio/settings,
+Hyprland reload, commit or push.
+
+# Gosty greeting corrected; Control Centre page switching shortened — 2026-10-26
+
+Owner clarifies greeting means bar's Gosty "Olá, André!", not dashboard title.
+Restored Central de Controlo header; refreshGhostGreeting now derives Bom dia /
+Boa tarde / Boa noite, André! from current local hour using lock's06/12/19
+boundaries on each opening. Confirmed live ghost_message and screenshot
+(greeting.png) show Boa tarde, André!, with original dashboard title.
+
+Removed outgoing GPU grabToImage wait from page navigation; new page is
+synchronized immediately and incoming fade/motion shortened260->140ms. Existing
+input guard ends with animation; geometry/open/close and icon resolution retained.
+Before native IPC measured438–614ms; after272–468ms on same four routes, including
+IPC overhead. This is a measured improvement, not proof that all perceived
+latency is solved. Some first-route layout work remains. Current log includes
+pre-existing targetHeight binding-loop warnings worth profiling if still slow.
+The first after sample was invalid (closed menu after JS library cache issue);
+fixed by evaluating greeting directly in shell, restored GhostLines unchanged,
+then reran measurement with explicit visible-menu assertion. Accepted after.json
+contains the valid rerun. No menu functionality/radio toggled.
+
+Source, seed, five homes and integrity pins deployed. Backups
+/var/lib/apx/backups/20261026T144313Z-controls-followup and
+/var/lib/apx/backups/20261026T144409Z-controls-followup. No Hyprland config reload,
+commit or push. Owner perceived speed acceptance pending.
+
+# Icons accepted; Control Centre time greeting applied — 2026-10-26
+
+Owner accepts original Lucide SVG2x resolution as "esta perfeito!". Requests
+main Control Centre greeting matching lock screen. ControlDashboard header now
+shows Bom dia, André06:00–11:59; Boa tarde, André12:00–18:59; Boa noite, André
+otherwise, exactly matching apx-lock-date-v1 --greeting. Uses existing controller
+currentDate clock updates, no added timer/process. Main dashboard header only;
+section names unchanged. Source/seed/five homes and pins applied, backup
+/var/lib/apx/backups/20261026T144038Z-controls-followup. No radio or compositor
+configuration changed, commit or push.
+
+# Original Lucide SVG resolution increased, no artwork changes — 2026-10-26
+
+Owner asks original Lucide icons with improved resolution. Compared original
+ToolButton, direct Qt Controls IconImage at1x/2x, and4x with mipmaps in same
+native Qt fixture; selected2x without mipmaps. ControlIcon now loads original
+Lucide SVG through Qt's tinted IconImage with explicit2x sourceSize. Original
+SVG files, logical sizes14px, stroke2, circles, centering unchanged. Non-Lucide
+icons keep prior ToolButton loader. Uses installed Qt Controls.impl primitive
+(internal Qt API: recheck on Qt upgrades). No Shape/path conversion.
+Narrow deployment source/seed/five homes and runtime/recovery pins; backup
+/var/lib/apx/backups/20261026T140937Z-controls-followup. All97 original SVGs
+load Ready with28px sourceSize at14px display and correct tint in native Qt test.
+Live capture after.png/detail.png reviewed: Bluetooth edges more distinct than
+previous crop, though tiny displayed size still limits detail. Owner visual
+acceptance pending; do not claim maximum possible sharpness. No radio toggled,
+no Hyprland config reload, commit or push.
+
+# Owner rejects vector conversion; original Lucide SVG loading restored — 2026-10-26
+
+Owner immediately rejects direct Shape/compiled path renderer and20px menu glyphs:
+"esta horrivel! usa os icones LUCIDE!!". Reverted the entire21-file deployment
+using backup /var/lib/apx/backups/20261026T140200Z-controls-followup, restored
+source ControlIcon/Appearance from pre-experiment copies, and removed the new
+LucidePaths.js from source/seed/five homes. Rejected generator and deploy helper
+retained only under audit/2026-10-26-vector-icons. Original Lucide SVG loader,
+14px shared menu size and original strokes restored; source/seed/five homes
+verified equal. Earlier radio icon-only selection contour retained.
+Do not retry Shape conversion or claim improved sharpness; owner rejects it.
+No radio toggled, no Hyprland config reload, no commit/push.
+
+# Radio icon upscale removed after owner feedback — 2026-10-26
+
+Owner rejects Bluetooth weight after preceding change. Verified all four radio
+SVG files (wifi, wifi-off, bluetooth, bluetooth-off) byte-normalized as XML equal
+to official lucide-icons/lucide main SVGs. Removed the added 3x rendering layer
+and restored shared Appearance.menuGlyphSize (14px) for both, centered in32px
+circles. Original24x24 viewBoxes and stroke-width2 untouched. Prior claim of
+consistent visual sharpness was not supported by owner acceptance.
+Applied source/seed/five homes and pins using same narrow deployment; backup
+/var/lib/apx/backups/20261026T123802Z-controls-followup. No radio toggled and no
+Hyprland config reload. Owner visual acceptance still pending.
+
+# Communication radio icon appearance — 2026-10-26
+
+Owner requests powered Wi-Fi/Bluetooth white contour only around the icon circle,
+plus equally rendered Lucide icons. MenuHover ignores card selected state when
+iconActionEnabled; keyboard/hover feedback remains. RadioIconButton uses shared
+18px Lucide dimensions and 3x layer texture for both vectors. Source, seed and
+five independent homes updated with runtime/recovery pins by bounded deployment;
+no Hyprland configuration reload. Backup:
+/var/lib/apx/backups/20261026T123127Z-controls-followup.
+Live QuickShell IPC responds after reload; no matching QML errors in journal.
+Visual owner acceptance pending. No radio toggled, commit or push.
+
+# Close-first live-only experiment active — 2026-10-26
+
+Owner observes remaining expansion under the outgoing window and explicitly selects testing close-before-expand. Installed audit/2026-10-26-window-only-defaults/close-first-test.lua through live eval only; no source/seed/home/pin changes or config reload. Normal tiled close (excluding floating, fullscreen, grouped and last-tile cases) selects a high-mass hold spring for windowsMove. Next event-loop turn starts a 170ms oneshot, exceeding existing 149ms geometry/146ms fade close. Then switches to a critical settle spring (mass1 stiffness1600 damping80), preserving animated spring state; after400ms restores accepted180ms easeOutQuint movement. Normal window.open_early cancels pending close sequence and immediately restores accepted opening reflow; overlapping open/close therefore prioritizes new opening. No polling/daemon/plugins, QuickShell or workspace changes. Timer callbacks self-expire via native Lua timer lifecycle. Hold is visual/subpixel, not a layout-engine removal delay.
+
+Isolated nested/headless test using same compositor, official entrance/exit defaults and two self-closing terminals verifies surviving coloured boundary remains unchanged while outgoing colour is detected. Last detected outgoing colour at 2230ms; first survivor expansion at 2379ms. Threshold/sampling limit: this verifies visible bounds, not compositor internals. Isolated callback returns idle:1, no parsing error; no nested process remains. Live test returns idle:29; user is also actively opening/closing windows, so live full-frame recording is not a controlled comparison. New review saved in Faculdade /home/apx/Videos/APX-fechar-primeiro-camara-lenta.mp4 and audit normal-recording-close-first/. Not opened automatically to avoid introducing more layout changes during owner's normal-app testing.
+
+Current live test disappears on config reload/session restart; saved historical spring config remains unchanged. User visual acceptance and persistence pending. Revert specifically by removing apxCloseFirstTest subscriptions, invalidating serial and applying windowsMove180ms/easeOutQuint; a full config reload also reverts prior accepted fast-move setting, so reapply if used.
+
+# Owner reports improved reflow; slower review opened — 2026-10-26
+
+Owner feedback on live-only windowsMove 1.8/easeOutQuint: "ok agora parece bem melhor!". Requests another slow-motion review to assess refinement. Opened the fast-move recording at approximately 4x slower than real screen time in Faculdade, looping mpv title Janelas-ajustadas-camara-lenta. Source normal-recording-fast-move/normal-windows-review-4x.mp4; deployed review file /home/apx/Videos/APX-janelas-ajuste-camara-lenta.mp4. No new animation adjustment or persistence in this step; active reflow override confirmed before playback. Review/persistence still pending; saved historical config still reverts this override on reload.
+
+# Temporary reflow-only diagnostic active; awaiting owner feedback — 2026-10-26
+
+Owner confirmed normal-windows-review.mp4 shows the exact unwanted existing-window delay. Applied one live-only Lua animation override: windowsMove enabled=true speed=1.8 bezier=easeOutQuint. This is a custom 180ms reflow diagnostic, NOT a claimed original Hyprland default. No source/seed/home animation config changed in this step. windowsIn remains spring:easy, close/fades/layers/workspaces untouched. New normal-recording-fast-move/ shows the existing Brave window opening space before the incoming terminal occupies its half, but existing app differs from baseline console and ~140ms capture intervals limit onset conclusions. User has been asked to test normal apps while the override is active. Visual acceptance and persistence decision remain pending.
+
+Current live override is intentionally different from saved configuration. A config-only reload restores the historical saved spring/inherited movement. Do not run deployment/reload during pending owner test. If rejected, restore via reload config-only; if accepted, explain the custom timing tradeoff before treating as chosen policy. No further fake-default claims. Main session running; temporary apps self-closed. Closed only the specifically launched review player before recording; no user application closed. Evidence temporary-fast-move-animations.json and normal-recording-fast-move/.
+
+# Historical restoration rejected; normal-window recording available — 2026-10-26
+
+Owner still sees existing window stuck while its neighbour opens after the recovered 08:39 candidate. Do not describe historical recovery as a fix or confirmed good reference. Recorded one regular Kitty opening beside the existing Host console and self-closing after two seconds; no special animation/window rules and no desktop config changes. Capture at ~130ms intervals limits onset precision; review clip is ~2x slower than actual elapsed screen time. Video normal-recording/normal-windows-review.mp4 and original frame timing normal-recording/timing.json. This recording is intended to align the user's exact visual symptom before more configuration changes. Quickshell and workspace animation remain untouched; no new packages, compositor restart or plugins. Cause remains unconfirmed.
+
+# Historical window candidate recovered from prior conversation — 2026-10-26
+
+Owner recalls a good test preceding a request to go back. Located exact prior-session message "volta para a anterior!" at 08:45:01 UTC. The corresponding rollback inventory 20261026T084045Z-controls-followup preserves the 08:39 factory-window state before entrance damping and Quickshell changes. Recovered only its six window/fade leaves, original easy spring, unoverridden windowsMove and main Thunar animation override popin97%. Other window-rule fields and all non-window animation leaves/curves retained. This follows the newly identified historical reference, superseding earlier classical/non-spring interpretation. Owner has not yet confirmed this is the good test or accepted the restored result.
+
+Source, independent seed, five homes and required integrity pins synchronized; each window leaf byte-equal historical reference. Only two animation lines changed, explicit windowsMove removed and main Thunar animation field restored relative to previous config. Config-only reload ok, configerrors empty; live windows/windowsIn use spring:easy and windowsMove is unoverridden. Quickshell bytes remain identical to pre-conversation inventory. New backup: /var/lib/apx/backups/20261026T094508Z-controls-followup. No whole-backup rollback, Quickshell reload or workspace change. Await owner normal-application feedback; no claim of visual correction.
+
+# Explicit window movement applied for owner testing — 2026-10-26
+
+Owner did not observe temporary coloured probes and requests tested motion applied to normal applications for direct feedback. Persisted explicit windowsMove enabled=true speed=4.79 bezier=easeOutQuint, equivalent to the intended classic inheritance, without claiming measured improvement. Only this one Hyprland line added to source, independent seed and five homes; all other configuration bytes preserved. Required integrity pins updated. Config-only reload accepted, configerrors empty; live windowsMove override confirmed. Quickshell bytes match pre-conversation inventory. Deployment helper is idempotent and preserves this explicit setting. Backup: /var/lib/apx/backups/20261026T093556Z-controls-followup. Actual symptom remains unresolved pending owner feedback on normal applications. No further temporary window tests requested or launched.
+
+# Window motion remains unresolved after owner testing — 2026-10-26
+
+Owner rejects the classic-curve result: existing window appears to wait/drag while a neighbour opens; reports all applications affected. Previous config-value checks did not establish visual correctness. No further persistent desktop configuration changes applied during diagnosis.
+
+Transient explicit windowsMove=4.79/easeOutQuint A/B gave similar rendered colour-bound progression to inherited windowsMove; restored with config-only reload. Disposable blue/red Kitty probes self-close. Narrow screencopy colour bounds show uneven resizing; captures can include occlusion and buffer-content effects, and are not direct animation-variable measurements. Initial IPC timing records expose goal geometry only and cannot establish visual onset.
+
+A separate time-limited compositor using the installed official example with only the classical easeOutQuint substitutions also shows uneven colour-bound progression on a 1280x720 headless output, without APX rules or QuickShell. This weakens a custom-curve-only explanation but does not prove a compositor regression or reproduce the owner's exact physical symptom. Independent compositor stopped; temporary config removed. Initial headless-only backend start failed; successful retry used Wayland backend plus a headless test output. Main compositor/session preserved.
+
+Evidence: colored-inherited.json, colored-explicit.json, clean-colored.json, clean-animations.json, clean-monitors.json and clean-session.log in this directory. New reproducible capture scripts are audit tools only. Quickshell bytes verified equal pre-conversation inventory; all deployed Hyprland files remain synchronized. Cause and correction remain open; awaiting whether owner observed the same symptom in the coloured probes. Do not claim resolved or replace more animation families.
+
+# Classic window motion selected — 2026-10-26
+
+Owner confirms classical non-spring Hyprland motion. Changed only windows/windowsIn to official v0.54.3 easeOutQuint defaults, speeds 4.79/4.1 and popin 87% entrance. windowsMove remains unoverridden and inherits windows. Verified every deployed Hyprland file differs by those two lines only; QuickShell matches pre-conversation inventory. Workspace/layer animation and all window rules preserved. Source, independent seed, five homes and required integrity pins synchronized. Live reload ok, configerrors empty, live animations confirm easeOutQuint and unoverridden windowsMove. Visual side-by-side opening/closing acceptance remains pending; no visual smoothness claim. Backup: /var/lib/apx/backups/20261026T090840Z-controls-followup. Updated bounded deployment helper to preserve classical defaults.
+
+# Window-only original motion — 2026-10-26
+
+Owner clarifies scope: only opening/closing and tiled neighbour reflow. Applied installed original windows/windowsIn/windowsOut/fadeIn/fadeOut values; removed custom windowsMove so it inherits original windows motion. Removed only main Thunar entrance override; floating dialog and layer rules retained. All other animation leaves and all curves verified unchanged per deployed file. QuickShell files unchanged against pre-conversation inventory; no shell touch/restart. Source, independent seed, five homes and required digest pins synchronized. Hyprland reload returns ok; configerrors empty; deployment recheck zero pending. Visual acceptance remains pending. Backup: /var/lib/apx/backups/20261026T085807Z-controls-followup. The old deploy-window-reflow helper remains rejected; use deploy-window-only-defaults-20261026.py for this scoped change.
+
+# Full pre-conversation configuration restored — 2026-10-26
+
+Owner reports configuration no longer matches previous behavior and requests
+restoration. Restored entire first backup inventory from
+/var/lib/apx/backups/20261026T083521Z-controls-followup. Verified every file hash
+equals inventory.before, including all five homes, source/seed, runtime/recovery
+pins. QuickShell ControlTile.qml/shell.qml hashes also equal pre-change backups
+across their deployed copies. Live Hyprland reload accepted, configerrors empty.
+This restores pre-conversation custom animations, superseding all factory/default
+and reflow candidates recorded below. Owner visual acceptance pending.
+Do not reapply deploy-window-reflow-20261026.py; it is a rejected candidate.
+
+# Scope correction: restore shell animation behavior — 2026-10-26
+
+Owner objects that windows remain incorrect and QuickShell was changed. Restored
+all non-window animation leaves and their curves from pre-conversation backup,
+including layers and workspaces. Verified live values match that backup; source
+ControlTile.qml/shell.qml equal pre-change backup. Six window/fade leaves retain
+factory v0.56.2 defaults; verified upstream example uses springs (not classic
+Bezier). Asked owner to distinguish installed spring defaults from classic
+non-bouncing defaults before further window changes. Configerrors empty.
+Backup:/var/lib/apx/backups/20261026T084845Z-controls-followup.
+
+# Original Hyprland animation block restored — 2026-10-26
+
+Owner still reports incorrect appearance. Follow-up inspection found window-rule
+animation overrides for Thunar and file pickers. Removed animation/no_anim fields
+from window rules, preserving geometry/matching/borders. Factory animation block
+retained. Source, seed, five homes and digest pins updated; reload accepted,
+configerrors empty. Backup:/var/lib/apx/backups/20261026T084743Z-controls-followup.
+Owner clarification requested on remaining symptom; visual acceptance pending.
+
+Owner explicitly insists on original Hyprland animations. Entire curves/animation
+block now byte-identical to installed /usr/share/hypr/hyprland.lua, including
+windows, workspace and layer animation leaves. No custom spring damping or
+windowsMove override. Source, seed, five homes and runtime/recovery pins updated.
+Live reload accepted, configerrors empty, deploy recheck0pending.
+Backup:/var/lib/apx/backups/20261026T084639Z-controls-followup.
+Deployment helper now restores this factory block, not rejected earlier candidates.
+Ligações unchanged from prior rollback. Owner visual acceptance pending.
+
+# Remember Num Lock and final lock greeting position — 2026-10-25
+
+Owner clarifies: remember the chosen Num Lock state, not always enabled. Replaced
+today's fixed true with shared authenticated keyboard.load/save boolean preference
+and independent local caches. Non-consuming Num Lock release binding saves actual
+main-keyboard state (including while locked); startup/config reload restores it.
+No polling/new daemon/device access. Broker private state keyboard.json uses atomic
+replacement and fsync, within existing service sandbox. Seed has no personal state.
+Source/seed/five homes/runtime/recovery pins synchronized; check0pending. Broker
+updated with existing bounded restart/socket refresh adapter and inode-preserving
+client updates. Initial observed main-keyboard state was false and retained.
+Live compositor-launched helper save/restore both exit0, authenticated operations
+accepted, configerrors empty. Direct namespace-entered test correctly rejected by
+process-lineage authorization; no weakening applied. Four new persistence/validation
+unit tests,8contract,9physical broker,7seed tests pass; peer tests recorded separately.
+Actual key release, Environment switch and full power cycle not exercised; owner
+physical acceptance remains pending. Details:docs/numlock-state-2026-10-25.md and
+audit/2026-10-25-numlock/. Backups:20261025T171746Z-radio-power and
+20261025T171800Z-controls-followup under /var/lib/apx/backups; initialization
+inventory in audit initialized-state.json. Supersedes always-on policy below.
+
+Owner final greeting placement: BELOW the always-visible password field, y=-72;
+time/date retained, no APX/layout/instructions. Applied source/seed/five homes;
+backup20261025T171600Z-controls-followup. Actual lock visual check pending.
+No firmware/boot/auth changes, reboot, commit or push.
+
+# Num Lock default and visible password field — 2026-10-25
+
+Owner requests Num Lock enabled across Environment entry and power cycles.
+Enabled native input.numlock_by_default in Lua and fallback config, preserving
+each independent local configuration. Source, seed, five homes and runtime/
+recovery digest pins synchronized; deploy recheck0pending. Active Hyprland
+reports bool=true/set=true; both keyboards numLock=true, configerrors empty.
+Seven desktop-seed tests pass. Actual reboot/switch not performed; startup
+persistence is configured, owner physical acceptance pending. Backup:
+/var/lib/apx/backups/20261025T171134Z-controls-followup. Bounded deploy/rollback:
+scripts/physical-pilot/deploy-numlock-20261025.py. Native option documented at
+https://wiki.hypr.land/configuring/core/config-options/ . No firmware change.
+
+Owner also clarifies password field must always remain visible. Restored
+fade_on_empty=false and Palavra-passe placeholder in source/seed/five homes;
+other minimal labels/date/greeting retained. Recheck0pending. Backup:
+/var/lib/apx/backups/20261025T171132Z-controls-followup. Supersedes hidden-field
+behavior below. No actual lock, reboot, commit or push.
+
+# Minimal lock screen — 2026-10-25
+
+Owner requests only time/date and a time-dependent greeting for André; weekday
+separator explicitly changed to |. Removed APX identity, keyboard-layout label
+and unlock instructions. Password field fades while empty and appears on typing;
+password-only authentication unchanged. Greeting uses local time:06–12 Bom dia,
+12–19 Boa tarde, otherwise Boa noite; refresh every minute. Deployed source,
+independent seed and five homes; runtime/recovery digest pins synchronized.
+Seven desktop-seed tests pass; deployment recheck0pending. Date/greeting helper
+executed successfully. No actual lock/unlock or visual acceptance claimed.
+Backups:/var/lib/apx/backups/20261025T171011Z-controls-followup and
+/var/lib/apx/backups/20261025T171026Z-controls-followup. Deployment/rollback helper:
+scripts/physical-pilot/deploy-minimal-lock-20261025.py. No commit/push/reboot.
+
+# YouTube fullscreen long-task follow-up — 2026-10-25
+
+Owner again asks to fix remaining delay. Active Hytale generation97014bb7 was
+used for disposable-profile follow-up. CPU/Long Animation Frames profiling
+attributes substantial work to YouTube fullscreenchange/setFullscreen(~91–125ms)
+and responsive MediaQueryList queryHandler(~150–202ms). Profiler-start overhead
+contaminates initial maximum gaps; follow-up resets sampling after profiler start.
+Official Ambient mode checkbox toggled true->false in disposable profile; stalls
+251.8–350ms persist across4transitions. No validated fix; no owner setting/profile,
+flag, extension or compositor change. Initial test has paused ready4video and
+tiled geometry, so continuous playback/full-width owner layout remain limits.
+Upstream Brave issue56204 describes similar macOS main-thread stall; not proof
+of same Linux bug. Evidence: audit/2026-10-25-brave-video-fullscreen/README.md,
+youtube-blocking-scripts.json,youtube-ambient-off-cpu-profile.json.
+No commit/push/reboot. Permanent correction remains unresolved.
+
+# Brave YouTube page fullscreen pause reproduced — 2026-10-25
+
+Owner reports native YouTube fullscreen transition (not SUPER+F) as frozen page/
+image then sudden switch. Isolated Brave Wayland profile reproduced page RAF
+max gaps217.2–417.6ms over8YouTube transitions; local canvas/decoded video stayed
+below25ms (decoded max16.7). Page script/style/layout work observed. Continuous
+YouTube playback counters did not progress in initial sample, so only page
+transition stall is established, not streamed decoder/GPU presentation behavior.
+Hide-ambient-layer and layout-containment ABAB experiments did not remove stalls;
+broad CSS/noanim comparisons incomplete due page-state changes, not adopted.
+No validated permanent fix; owner profile/tabs/flags/extensions untouched, no
+runtime configuration/service/package change. Evidence:
+audit/2026-10-25-brave-video-fullscreen/{README.md,probe.py,summary.json}.
+Next useful work: profile YouTube long tasks/Chromium fullscreen behavior before
+any further configuration change. No commit/push/reboot.
+
+# Rofi bottom-slide explicitly retained — 2026-10-25
+
+Owner rejects Rofi popin candidate and explicitly requires entrance from below
+as before. Restored named rofi layer animation slide bottom in source/seed/five
+homes/runtime/recovery pins and live compositor rule. Retained320ms apxFluid
+entry/240ms easeInOutCubic exit and lazy native apps/system startup. No internal
+Rofi transitions added. Prior popin statements below are superseded.
+
+# Desktop alignment, responsive launch and motion follow-up — 2026-10-25
+
+Owner requests horizontal/corner alignment, compact Bluetooth pairing, quicker
+Thunar/Rofi and boot/shutdown; later rejects abrupt application motion and asks
+Rofi to match smoothness of QuickShell Environment/Control Centre entry/exit.
+Final deployed candidate: outer margins20px, circular outer radius10px (matching
+Hyprland10/power2); Bluetooth row action104x32/radius8; applications320ms entry/
+240ms exit; Rofi popin97% entry320ms apxFluid and exit240ms easeInOutCubic.
+Earlier short180/140,220/160 and long-slide candidates superseded. No internal
+Rofi motion/prefetch. Visual owner acceptance remains pending.
+Apps/system native pages now load only when requested by Rofi; hidden system
+startup work removed. Trace first-icon callback209.5->132.3ms in single sample,
+not GPU/interactive timing. Both modes compile-Werror and actual opens pass;
+40app/2Bluetooth/7seed tests pass. Existing Thunar daemon starts asynchronously
+per Environment where installed; repeat empty-window median455.8->120.5ms,
+first still427.3ms; RSS52176KiB. Active Faculdade daemon started, no user window
+closed. Seed/five homes/runtime/recovery pins synced;0pending, configerrors empty.
+Latest motion backup: /var/lib/apx/backups/20261025T163550Z-controls-followup.
+Evidence: audit/2026-10-25-desktop-alignment/README.md and companion integration
+folder. Boot baseline32.282s, no boot config/reboot/shutdown action; reliable
+shutdown duration unavailable. LocalSend archive mode0600 cause confirmed,
+package correction remains pending. No package install, commit or push.
+
+# Live chooser integration and LocalSend desktop entry — 2026-10-25
+
+Owner authorizes continuing with Thunar retained. Active Faculdade session D-Bus
+confirms GTK/Hyprland portals and thunar.desktop default. Disposable GTK3 native
+open/save probe via portal shows floating Wayland dialogs, stable parent geometry
+and parent focus return after programmatic hide/destroy. No file selected/saved;
+empty temporary directory removed and zero probe windows remain. This does not
+validate Brave/Thunderbird, keyboard cancellation or perceived motion.
+Probe exposed unreadable LocalSend desktop entry: private Faculdade root file
+mode0600 changed to0644 only, hash/owner preserved. Session Gio now loads entry;
+Thunar remains default. No app launch/network transfer or service restart.
+Origin/package recurrence unresolved; no change to distributed package or siblings.
+Evidence/recovery: audit/2026-10-25-desktop-integration/{chooser-live.json,
+localsend-permission-fix.json,localsend-validation.json,README.md}.
+No commit/push. Next: per-app isolated chooser validation and package-mode origin.
+
+# Thunar default confirmed; candidate withdrawn — 2026-10-25
+
+Owner explicitly requires Thunar to remain the default file manager. Restored
+activation helper and corresponding repository seed/recovery hashes to their
+pre-candidate contents; removed the candidate-only tests. No live deployment had
+occurred. Prior entry describing the association reset as a problem is superseded.
+Inventory remains useful; continue chooser/focus integration with Thunar retained.
+
+# Desktop integration inventory and preference candidate — 2026-10-25
+
+Owner authorizes proceeding. Read-only package/config inventory across five
+registered Environments recorded in `audit/2026-10-25-desktop-integration/`;
+Faculdade contains Thunar/Brave/Thunderbird/ZapZap and all three portal packages.
+No live chooser/focus behavior measured. Installed activation helper in all five
+homes unconditionally resets directory association to Thunar. Repository candidate
+now preserves existing choice, initializes only when absent and reports failure.
+Runtime seed hash/recovery pin updated in repository only; no live deployment.
+4 behavioral preference tests, Bash syntax and7seed tests pass. Work-defaults
+12/14pass; two unrelated pre-existing bar/control expectation failures recorded.
+Next: disposable-file chooser/focus comparison before adopting further polish.
+No app launch, session/service/package changes, commit or push in this step.
+
+# Desktop integration planning — 2026-10-25
+
+Owner requests a phased plan for coherent application integration and macOS-like
+polish, with individual integrations to be evaluated. Proposal only:
+`docs/apx-desktop-integration-plan-2026-10-25.md`. Repository inspection found
+existing GTK/Qt portal settings, shared fonts/icons, chooser rules and activation
+helpers; live per-app coverage is not established by this inspection. Next step:
+read-only app/Environment matrix, then one demonstrated open/save/focus issue.
+Preserve accepted appearance, Rofi entrance/exit and no internal Rofi transitions
+or folder prefetch. No implementation or adoption decision in this planning step;
+no runtime/package/service changes, commit or push.
+
+# Rofi entrance/exit restored — 2026-10-25
+
+Owner clarifies animation removal applied to internal mode/folder changes only.
+Restored Rofi layer slide-bottom entrance/exit, explicitly no_anim=false, via
+source/seed/five homes/pins and accepted live named-rule eval. Internal Cairo
+transition remains removed; latest asynchronous folder continuity fix retained.
+Empty configerrors;7seed checks pass; deployment0pending. Backup:
+/var/lib/apx/backups/20261025T155519Z-controls-followup. No commit/push.
+
+# Rofi folder loading continuity — 2026-10-25
+
+Owner requests removing folder-entry blank/loading jump, explicitly without
+prefetch and after revoking Rofi animations. Native Files now retains the current
+visible entries/icons while requesting only the selected directory; swaps the
+complete page on asynchronous completion. Filter/selection resets are deferred
+to that commit. Additional entry activation remains blocked while loading;
+cancellation/generation checks still reject stale results. No child prefetch,
+recursive scan, animation, delay, new cache or content/thumbnail read added.
+Spinner updates suppressed while retained rows exist; initial/empty-page slow
+loading feedback remains. Error page reports one row instead of repeating it.
+
+Native delayed-helper behavioral harness extended: retained labels/count before
+commit, no premature input reset, blocked repeated activation, stale cancellation,
+final reset, icon laziness and error/retry all pass; compile-Wall/-Wextra/-Werror.
+Existing14Files and7seed checks pass. Real installed Rofi entered a directory,
+stayed open and cancelled normally. New deploy wrapper reuses bounded native
+Files installer, keeps Hub's legacy script mode unchanged. Applied source/seed/
+four native homes and pins; recheck0pending. Backup:
+/var/lib/apx/backups/20261025T110226Z-rofi-files-flicker.
+Owner visual acceptance pending; no all-folder preload or animations restored.
+Evidence: audit/2026-10-25-rofi-folder-continuity/. No commit/push.
+
+# Rofi animations removed — 2026-10-25
+
+Owner rejects both Rofi transition attempts and explicitly requests removal.
+Restored original secondary-click adapter source (no Cairo hook, snapshots,
+transition timer or mode animation); rebuilt/deployed library. Rofi layer rule
+now no_anim=true, disabling compositor entrance/exit too. Applied named rule
+live with eval, accepted; configerrors empty. Other application-window and
+QuickShell animations retained. Build recipe no longer links Cairo.
+Source/seed/five homes/pins synchronized;7seed tests pass, recheck0pending.
+Backups: /var/lib/apx/backups/20261025T105815Z-controls-followup and
+/var/lib/apx/backups/20261025T105840Z-controls-followup. Previous Rofi motion
+fixtures are historical rejected experiments, not deployed behavior. No commit/push.
+
+# Rofi page motion and softer window close — 2026-10-25
+
+Owner requests animated Rofi mode switches and gentler Brave/window open/close.
+Rejected whole-surface crossfade seen during candidate test; superseded by
+content-only motion following Control Centre: fixed header/search/card,18px
+horizontal list movement with260ms cubic deceleration/crossfade. Rapid mode
+changes restart from last presented content. Implemented in existing opt-in
+Rofi secondary-click preload at final Cairo draw boundary; public Rofi mode,
+size and redraw APIs resolved dynamically, no private struct offsets. Timer
+runs only during transitions. APX fixed Rofi theme list offset143px/insets19px
+is documented in source; alpha bounds find card placement. Custom themes that
+change header geometry need corresponding offset adjustment. Supported current
+Apps/Files/System modes; same-mode folder changes do not animate.
+
+Window entrance380ms popin97%, exit260ms popin98%, both apxFluid curve;
+fade follows duration. Applied via live compositor eval without reload. This
+changes window presentation, not app startup time; no owner Brave controlled.
+Battery investigated only at owner's request: same17x17 logical slot as other
+BarButton icons; SVG battery body is shorter within24x24 viewBox. No icon,
+proportion, battery setting or source edit made for that question.
+
+Source adapter/build recipe, binary, seed/five homes and integrity pins updated.
+Backup: /var/lib/apx/backups/20261025T105638Z-controls-followup.
+Native Cairo harness passes stationary header/content interpolation/rapid
+reversal/final pixel checks. Real Rofi cycles3modes and4rapid changes, with
+start/complete trace and normal cancellation. -Wall -Wextra -Werror compile
+passes.40application action tests and7seed tests pass. Deployment0pending.
+Owner visual acceptance of revised Rofi/window motion pending. No packages,
+commit/push or reboot. Candidate stage cleaned; evidence in this directory.
+
+
+# Coordinated desktop motion — 2026-10-25
+
+Owner authorizes applying fluidity improvements after research; previous text/icon
+appearance accepted. Menu opening now320ms and application windows320ms share
+Bezier(0.2,0.8;0.2,1), with zero terminal slope/no overshoot. Window layout
+reflow280ms uses same curve; close/workspace/gesture behavior unchanged.
+Control-page movement and opacity share260ms progress instead of200ms motion/
+100ms fade, lateral travel18px instead of28. Existing capture/queue/input shield,
+focus recovery, rounded masking and rendering quality retained.
+
+Applied source, independent seed, five homes and runtime/recovery pins. Backup:
+/var/lib/apx/backups/20261025T094703Z-controls-followup. Deployment0pending.
+Hyprland reload accepted with empty configerrors. QuickShell IPC stopped being
+ready after reload despite Configuration Loaded; restarted only supervised
+QuickShell process, after which diagnostics worked. No session/compositor restart.
+Full native QML parse and existing smooth scroll15frames pass;18Qt keyboard and
+7desktop-seed checks pass. Real submenu/back traversal passes3pages. Temporary
+kitty window opened/exited0, removed; prior focus restored by compositor.
+
+Six comparable menu openings before/after retain median8ms. Before max32ms,
+after max32ms;6intervals>17ms in each batch. Short frameSwapped callback sample,
+not GPU presentation or app launch timing. Evidence supports changed motion with
+no demonstrated reduction of frame stalls, and no material regression in this
+sample. Owner-perceived smoothness remains pending. Raw evidence and originals:
+audit/2026-10-25-fluid-motion/. No packages, commit/push or reboot.
+
+# Desktop fluidity research — 2026-10-25
+
+Owner asks for macOS-like smoothness and online Arch project references.
+Reviewed official Caelestia shell, end-4 dots-hyprland, HyDE and Hyprland animation
+docs. Caelestia explicitly targets fluid/morphing transitions and supports Arch;
+end-4 uses Hyprland/QuickShell. These are research references, not adopted stacks.
+Current display1920x1080@120.213Hz,125%; Hyprland0.56.2. Existing window openings
+280ms popin96%, menu opening300ms cubic, page transition200ms linear progress
+with derived cubic geometry. No configuration/package/desktop replacement made.
+
+Three live frameSwapped callback samples: controls/calendar/controls median8ms,
+max16/16/23ms; one interval>17ms total. Short diagnostic only, not GPU presentation
+measurement, app launch benchmark or proof of stutter-free operation. Probe off,
+menus closed. Raw audit/2026-10-25-fluidity-research/frames.json.
+Next useful work: profile app launch readiness independently, coordinate curves
+and reversals across compositor/QuickShell, then compare frame timing. A desktop
+shell cannot guarantee every application's internal scrolling/rendering.
+
+Sources:
+https://github.com/caelestia-dots/shell
+https://github.com/end-4/dots-hyprland
+https://github.com/HyDE-Project/HyDE
+https://wiki.hypr.land/configuring/core/animations/
+No commit/push.
+
+# QuickShell definition tuning — 2026-10-24
+
+Owner requests improving soft text/icons. Compared GPU fixtures at live125%
+scale: physical-resolution NativeRendering/CurveRendering and2x QtRendering/
+CurveRendering. Native case was softer; selected QtRendering in shell, dashboard,
+ControlTile and bar IconLabel. At2x texture sampling, normalized pixel error
+against direct Qt text fell from0.00814(curve)to0.00304(Qt); edge-energy ratio
+1.013 versus1.107. These are fixture proxies, not proof of owner-perceived
+sharpness. Retained existing texture scheme, font, layout and display mode.
+ControlIcon retains ToolButton/tint pipeline; removed18px minimum request so
+14/17px containers request their actual icon size, avoiding size mismatch.
+
+Applied source/seed/five homes and pins;18Qt navigation and7seed checks pass.
+Live settled menu captured/inspected, IPC responsive, deployment0pending.
+Backup: /var/lib/apx/backups/20261024T222156Z-controls-followup.
+Evidence: audit/2026-10-24-sharpness/. Owner visual acceptance pending.
+No monitor configuration, packages, commit or push.
+
+# Button contours and display definition — 2026-10-24
+
+Owner accepts focus contrast, reports soft QuickShell text/icons and requests
+contours nearer button edges. Live eDP-1 is1920x1080@120.213Hz, native maximum
+listed mode, scale1.25; no lower-resolution output found. Captured settled menu
+and bar: audit/2026-10-24-menu-rendering/before.png. Softness cannot be attributed
+solely to the panel: fractional sampling and popup render layers remain possible
+contributors. No claim of fixed sharpness; display scale/font/icon rendering
+unchanged, respecting prior rejected experiments.
+
+Shared ButtonOutline now has0px inset with matching parent radius; MenuHover
+uses the same radius. Added missing ButtonOutline deployment inventory entry.
+Applied seed/five homes and pins.18native Qt and7seed tests pass, recheck0pending.
+Backups: /var/lib/apx/backups/20261024T213339Z-controls-followup and
+/var/lib/apx/backups/20261024T213348Z-controls-followup. Owner edge-position
+acceptance pending. No commit/push.
+
+# Menu focus contrast follow-up — 2026-10-24
+
+Owner rejects excessively white selection. ControlTile keyboard background now
+uses restrained graphite #353a4a rather than configurable Appearance.active;
+focused radio uses #454d64 rather than multiplying surrounding brightness2.4x.
+Focus outline/navigation retained. Applied source/seed/five homes and pins;
+18Qt and7seed checks pass, deployment0pending. Backup
+/var/lib/apx/backups/20261024T212629Z-controls-followup. Owner visual acceptance
+pending. No commit/push.
+
+# Menu keyboard selection visibility — 2026-10-24
+
+Owner reports unusable arrow selection in Connections, Sound/Brightness and
+More Options, including Back. Live key injection confirmed focus moves and
+reaches Back; MenuButton's managed outline omitted its actual MouseArea focus.
+Bound its outline and active background to actual/pending keyboard focus.
+ControlTile body and RadioIconButton now distinguish focused actions even when
+the radio is already powered. Pointer actions and radio state are unchanged.
+
+Source, independent seed, five homes and runtime/recovery pins synchronized.
+18 native Qt checks and7desktop-seed checks pass. Live Down/Up/Enter reaches and
+activates Back in all three pages; actual owner trackpad/visual acceptance is
+pending. Deployment recheck0pending. Backup:
+/var/lib/apx/backups/20261024T212539Z-controls-followup.
+Evidence: audit/2026-10-24-menu-keyboard-focus/. No commit/push.
+
+# General APX reply routing correction — 2026-10-24
+
+Owner requests all apps and networks covered. Replaced wlan0-only workaround
+with uplink-independent IPv4 NAT reply handling: after reverse NAT, match the
+actual destination route ve-apx-* and raise only TTL1 to2. Covers current/future
+APX routed interfaces and all protocols/apps using this NAT path. No interface,
+SSID, destination website, app or Environment address is pinned. No firewall
+accept verdict added; per-Environment host/private/sibling restrictions retained.
+Experimental physical-pilot compatibility exception, not production approval.
+Native IPv6 is outside this IPv4 NAT correction; no IPv6 topology enabled.
+
+Existing enabled nftables startup config persists the fragment. Full config
+syntax passes; dedicated table applied without restarting services. Isolated
+network test reproduces TTL1 failure, verifies arbitrary-uplink recovery, normal
+TTL64 unchanged and non-APX routes excluded. Four existing network policy tests
+pass. Live Faculdade WhatsApp/Google/example.com all HTTPS200. Physical switching
+to another Wi-Fi/Ethernet remains untested. No account/session changes or reboot.
+Source config/environment-network-recovery-v1/reply-hop-pilot.nft; evidence and
+rollback audit/2026-10-24-zapzap-network/generalized/. No commit/push.
+
+# Faculdade / ZapZap network recovery — 2026-10-24
+
+Owner reports site inaccessible. Wi-Fi inbound replies observed with TTL=1:
+Host worked but APX routing expired the remaining hop. Narrow pilot nftables
+mangle rule now raises TTL1 to2 only for wlan0 source-NAT replies; existing
+isolation rules retained. Faculdade DNS/ping and WhatsApp HTTPS200 pass.
+Persisted in existing /etc/nftables.conf; syntax checked, only dedicated table
+applied live. No accounts/profiles removed. UI reload/owner acceptance pending.
+Evidence/rollback: audit/2026-10-24-zapzap-network/. No reboot/commit/push.
+
+# Wi-Fi password toggle fits its field — 2026-10-24
+
+Owner reports oversized Mostrar button. Wi-Fi password toggle now follows its
+40px field with 5px top/bottom inset (30px button) and6px corners, instead of
+shared menu action height. Width, label and toggle/focus behavior retained.
+Source, independent seed and five homes synchronized; runtime/recovery pins
+updated. Deployment recheck0pending; seven desktop-seed tests pass. Owner visual
+acceptance pending. Backup:20261024T091415Z-controls-followup under
+/var/lib/apx/backups. No commit/push.
+
+# Shared button contours and Logitech stability work — 2026-10-24
+
+Owner asks for workspace-style outlines on all QuickShell buttons while continuing
+Logitech diagnosis. Added shared ButtonOutline:1px inset contour, selected/focused
+#d9dcea and hover#69728a. Bar/media/menu/radio button families use it; suppress old
+outer borders during shared feedback. Source, seed, five homes and pins synchronized;
+7seed and8notification tests pass, deployment0pending. Controls visually checked;
+owner visual acceptance pending. Backups074004/074234/074430-controls-followup.
+
+Logitech: persistent narrowly matched receiver/Genesys hub power policy applied.
+Existing recovery now logs state changes only and tolerates unplug during scans;
+4regression tests pass. User confirms manual removal followed loss of response.
+New hub-path descriptor errors occurred despite hub power on; no cure claimed.
+Last scan receiver absent, stability test awaits reconnection. No whole-controller
+reset, arbitrary kernel quirk, firmware update or new daemon. Evidence:
+audit/2026-10-24-button-outlines/ and audit/2026-10-24-logitech-stability/.
+No commit/push or reboot.
+
+# Maintenance service isolation and media reconciliation — 2026-10-24
+
+Owner requests continued efficient and secure system review with minimal complexity.
+Hardened existing network-recovery and environment-storage oneshot units in source
+and Host: read-only system/home protections, namespace restrictions and appropriate
+capability boundaries. Both verified and executed successfully. No network fault
+injected; recovery branch that restarts network remains unexercised.
+
+Media watcher now reconciles every 5 s instead of 500 ms, retaining MPRIS events.
+Live 7 s output count fell from 14 to 2; isolated fake-player PropertiesChanged
+reached watcher in 27.71 ms. Restarted only the existing watcher; no new daemon.
+Source/seed/five homes and pins synchronized; deployment reports zero pending.
+24 existing regression tests pass. No additional deletion justified this round.
+USB 1-2.3 enumeration errors and absent Logitech receiver recorded, no controller reset.
+Evidence and rollback: /root/apx-maintenance-review-20261024/README.md.
+No reboot, package installation, commit or push.
+
+# Vulkan functional check, obsolete package cache and hardening — 2026-10-24
+
+Owner authorizes graphics testing and continued system space/security review.
+Three600-frame vkcube Wayland1280x720 mailbox executions succeed on explicit
+NVIDIA driver. This is a functional rendering/submission check, NOT game FPS or
+Windows comparison.30s observation found no game process; old Hytale log confirms
+NVIDIA renderer. Temporary test binaries removed; no package installation.
+
+Removed92downloaded package archives from failed17/08 coordinated operation,
+retaining all plan/state/log/database/rollback metadata.2015779816bytes of archive
+payload; settled observed physical free delta2015825920bytes (~1.88GiB), final
+free near97.66GiB. No snapshots or personal Backup.tar/Backup directory removed.
+
+Applied kernel.kptr_restrict=1 in new/etc/sysctl.d/60-apx-kernel-pointers.conf,
+previous value0saved. Firewall rules present; no failed Host units; OpenSSL package
+files verify unchanged. SecureBoot/AppArmor remain inactive pending boot/isolation
+validation. No comprehensive source/CVE scan claimed. No commit/push or reboot.
+Evidence/reversal: /root/apx-system-review-20261024/README.md.
+
+# Performance profile and additional cache cleanup — 2026-10-24
+
+Owner asks to continue optimization. On AC, changed native platform profile from
+low-power to performance; no forced CPU clocks, voltage, boot options or battery
+automation. Tested nvidia-powerd: AC ceiling reported130W, unsupported DC table
+warnings; daemon used13.86% of one thread in15s. No measured gaming benefit, so
+stopped it and retained disabled state; reported ceiling returned80W. QuickShell
+remains2.80% of one thread in that sample. No FPS comparison performed.
+Removed only stopped Hub/Minecraft Brave disk/code caches (~1.96GiB allocated
+entries), physical free delta68345856bytes (~65MiB); snapshots retained. TSC
+rejection confirmed across three recent boots; HPET remains, no override applied.
+Evidence and prior hardware state: /root/apx-performance-followup-20261024/.
+No reboot, commit or push. Game GPU/frametime comparison remains unmeasured.
+
+# QuickShell background performance and selective cleanup — 2026-10-24
+
+Owner authorizes QuickShell optimization and disposable-cache cleanup. Network,
+radio and audio status polling now uses3s with menus closed and500ms while open;
+opening a menu still requests immediate fresh status. Appearance uses5s in the
+background and500ms while its settings are visible, preserving immediate reads
+after writes. Media position uses250ms for the bar, retaining16ms in the detailed
+media menu. Notifications and explicit action paths retained.
+
+Source, independent seed, five homes and runtime/recovery digest pins synchronized;
+deployment recheck0pending. Live reload succeeded;7seed tests pass. Two15s CPU
+samples: QuickShell19.23% to2.93% of one thread; Hyprland20.10% to11.32%.
+Samples are session observations, not a controlled gaming benchmark. Live controls
+open/update/settle/close validation covers network, audio, volume and microphone.
+User visual acceptance remains pending. Backup20261024T071123Z-controls-followup.
+
+Pruned103 old package-cache archives, retaining2versions per package; removed
+Faculdade Gridcraft target build products (installed binary is independent) and
+stopped Faculdade Brave disk/code caches. About4.40GiB of allocated cache entries
+removed; physical free-space increase549195776bytes (~524MiB), limited by retained
+Btrfs snapshots/shared extents and concurrent filesystem activity. Profiles,
+credentials, shader caches, system ISOs, installed packages and snapshots retained.
+Evidence: audit/2026-10-24-quickshell-performance/ and
+/root/apx-quickshell-optimization-20261024/. No commit/push.
+
+# Automatic maximum monitor modes — 2026-10-23
+
+Owner requests automatic external monitor detection with maximum resolution and
+refresh. Common Hyprland defaults, per-Environment monitor rules, and laptop
+layout/display controls now use `highres`: prioritize supported resolution, then
+refresh at that resolution. This uses compositor-native connection handling;
+no polling service or fixed connector resolution. Placement and scale retained.
+Repository source, independent seed, five registered homes and digest pins
+updated with a bounded deployment; recheck reports zero pending changes.
+Live compositor confirms OMEN 27 G2 HDMI at1920x1080/165.003Hz and internal
+panel at1920x1080/120.213Hz, unchanged positions/scales and no config errors.
+180Hz is absent from currently advertised HDMI modes. Physical unplug/replug
+and other monitor models have not been tested. Hz selection does not guarantee
+application/game FPS. Recovery backup20261023T225810Z-controls-followup.
+Evidence: audit/2026-10-23-auto-monitor-modes/live-validation.json.
+Validation:10 laptop-action and7 seed tests pass. Additional UI scale suite
+has7 failures in unchanged QuickShell assertions; not repaired in this change.
+No commit/push.
+
+# Remove complete title-bar sections — 2026-10-23
+
+Owner clarifies removal means the entire top section, not just title text.
+Settings/Task Manager now have no titlebar widget and are undecorated. Files
+module no longer injects its header and disables decorations. Task Manager
+Advanced action moved to the search/services row, preserving its behavior.
+Settings status/error handling retained; app identity/window metadata unchanged.
+Existing windows reopened in original workspaces; Files Recent location retained.
+Live GTK confirms no Settings/Task Manager titlebar and retained Task Manager
+Advanced/services controls. Responsive navigation regression passes; seed7pass.
+Source/seed/five homes and pins synchronized. Backups:
+20261023T150801Z-controls-followup and20261023T150803Z-controls-followup.
+Evidence: audit/2026-10-23-header-alignment/no-title-bars.png. No commit/push.
+Supersedes preceding title/header designs. Owner visual acceptance pending.
+
+# Responsive Settings navigation and no visible application titles — 2026-10-23
+
+Owner reports slow Settings navigation, then asks to remove visible titles in
+Files/Settings/Task Manager. All three header custom-title slots are empty;
+window metadata and existing controls remain. Settings page reads now suspend
+rendering and run subprocess queries in a bounded2-worker executor; GTK widget
+work stays on the main thread, with a loading indication and disabled partial
+form. Generation checks discard stale results on navigation/search/close; queued
+requests cancelled and executor shut down on close. No transition delay.
+Destroyed replaced widgets now clean up their timers/form tracking. Explicit
+user write actions retain their existing paths; navigation performs reads only.
+
+Live test:300ms simulated query returns navigation in2.5ms, GTK heartbeat runs,
+stale completion ignored, fresh revisit completes. All other14 real read-only
+pages finish; measured navigation calls1–10ms. This is navigation latency, not
+system-data availability latency. Nine focused tests pass. Source/seed/five homes
+and digest pins synced; both deploy checks0pending. Existing app windows reopened
+on their original workspaces. Visual acceptance pending. No commit/push.
+Backups20261023T150607Z-controls-followup and20261023T150609Z-controls-followup.
+Evidence audit/2026-10-23-header-alignment/navigation-results.json and
+check-navigation.py. Files deploy no longer writes unrelated Thunar preferences.
+
+# Aligned application headers and Settings navigation inset — 2026-10-23
+
+Owner requests aligned title dividers across Files/Settings/Task Manager and
+Settings sidebar icons further right like Files. Removed theme text-button
+vertical margins that made Task Manager header59px; computed header heights now
+47px in all three. Files header measured through matching standalone GTK widget;
+Settings/Task Manager via actual application classes. Settings category content
+inset40px (previous14px), preserving219px sidebar and16px icons. Source/seed/five
+homes and digest pins synchronized; deployment0pending. Existing Settings/Task
+Manager windows reopened on their original workspaces. Evidence:
+audit/2026-10-23-header-alignment/measurements.json. Owner acceptance pending.
+No commit/push.
+
+# Files title and left-aligned arrows — 2026-10-23
+
+Owner refines Files: only back/forward arrows in toolbar, aligned left, and
+Gestor de Ficheiros title above. Presentation module now also hides menu/search
+toolbar items, removes navigation centering, and adds a native header with fixed
+custom title (native window title still identifies the folder). Header styling
+matches APX Settings. Folder/path/sidebar/grid remain native.24px toolbar request
+retained. Source/seed/five homes and pins synchronized;7seed tests pass, final
+recheck0pending. Reopened home-folder window on workspace4 and restored user's
+focused workspace after screenshot verification. No commit/push. Backups:
+20261023T145909Z-controls-followup and20261023T145958Z-controls-followup.
+Owner visual acceptance pending; evidence audit/2026-10-23-files-arrows/after.png.
+
+# Files toolbar: remove Home/Parent and enlarge navigation — 2026-10-23
+
+Owner requests toolbar Home removal,24px remaining navigation, then also removes
+Parent/up. Thunar-local presentation module hides only toolbar items with ids
+open-home/open-parent and registers a native24px toolbar icon size, leaving
+sidebar Home and native folder operations intact. Shared GTK sizes unchanged.
+Recompiled module with installed GTK3 headers and strict compiler warnings;
+source, independent seed, five homes and digest pins synchronized. Native
+preference experiments were ineffective and their task-created keys removed.
+Existing one-window /home/apx Files session was not busy; reopened on workspace4.
+Full-resolution screenshot confirms Home/Parent absent and navigation retained.
+Seven seed tests pass; final deployment check0 pending. Owner acceptance pending.
+Evidence: audit/2026-10-23-files-arrows/. No commit/push.
+
+# Task Manager transparency matches Settings — 2026-10-23
+
+Owner requests only transparency changes. Task Manager now uses Settings'80%
+body and95% header opacity; cards82% and list80% replace the earlier45% cards
+and completely transparent list. No layout/font/control changes. Computed GTK
+alphas verified; source/seed/five homes and digest pins synchronized, recheck0
+pending. Task Manager opened/reopened in the existing workspace context.
+Backup20261023T145212Z-controls-followup; evidence:
+audit/2026-10-23-task-transparency/computed-alpha.json. Visual acceptance pending.
+No commit/push.
+
+# Settings navigation arrows — 2026-10-23
+
+Owner requests larger arrows at the left. Back/forward icons now24px instead of
+16px; navigation group left-aligned within its existing toolbar area. Search
+alignment preserved. Live GTK verifies icon size, left alignment and functioning
+back/forward history. Source/seed/five homes and digest pins synchronized;
+deploy recheck0 pending. Settings reopened on previous workspace. No commit/push.
+
+# Settings selected row white outline — 2026-10-23
+
+Owner replaces the lateral selection marker with a white border around the
+selected category. Changed inset styling to a1px white outline on all sides,
+preserving dimensions, background and hover states. Source/seed/five homes and
+pins synchronized; deployment recheck0 pending. Settings reopened on its previous
+workspace. No commit/push. Supersedes the lateral marker below.
+
+# Settings sidebar selection and hover — 2026-10-23
+
+Owner accepts sidebar proportions and requests clearer active/hover states.
+Category-only rows now have graphite hover, a stronger selected background and
+3px pale inset marker; selected+hover is distinct. Headings remain neutral and
+row metrics unchanged. Four GTK computed background states verified distinct;
+seed7pass, deployment recheck0 pending, source/seed/five homes and pins synced.
+Reopened Settings on its previous workspace. Owner visual acceptance pending.
+Backup20261023T144721Z-controls-followup; evidence under
+ audit/2026-10-23-settings-sidebar/selection-colors.json. No commit/push.
+
+# Settings sidebar aligned with Files — 2026-10-23
+
+Owner rejected remaining Settings sidebar typography/icon sizing. Explicit label
+font JetBrains Mono10pt now avoids inheritance of the12px page font; all15 rows
+compute32px height,16px scalable Gio SVG icons using bundled Lucide geometry
+(the printer uses Files' existing Lucide SVG),8px icon/text gap and14px inset.
+Sidebar remains219px. Source, independent seed and five homes synchronized;
+runtime/recovery pins updated. Live Hytale Settings reopened on original workspace2,
+xwayland=false; full-resolution screenshot inspected. Two Lucide and seven seed
+tests pass; deployment recheck0 pending. Owner visual acceptance pending.
+Evidence and exact backup: audit/2026-10-23-settings-sidebar/. No commit/push.
+
+# Thunderbird close-current-message button — 2026-10-23
+
+Owner requested a button to close the current message. Added local APX MailExtension
+apx-close-message@apx.local1.0.0 using native messageDisplayAction. Header X clears
+selection and collapses the reading pane; selecting the same or another message
+reopens it. On message-only tabs, X closes that tab. No sending/deleting functions.
+Permissions accountsRead/messagesRead are required for selection APIs; no host
+origins, experiments, network code or retained message data. Source:
+config/thunderbird-close-message-v1/. Profile-only styling in existing graphite.
+
+Offline real-button tests verified close, same-message reopen, tab-close with
+main tab retained, unchanged local message count. Installed permanently through
+AddonManager on faculdade existing profile; active and button presence verified.
+Temporary control listeners closed and test profile/cache removed; app left open.
+Evidence/rollback: audit/2026-10-23-thunderbird-close/. No commit/push.
+
+# Thunderbird sidebar retained in tiled windows — 2026-10-23
+
+Owner clarifies Send was already good; reverted the immediately preceding
+Send-only refinement to its accepted pale styling. Actual issue was folder-pane
+compression in half-screen tiling. Sidebar now keeps219px minimum. At1100px or
+less, native vertical layout places message reading below the message list,
+preserving folders; wider windows retain native three-column layout. Narrow
+vertical layout uses40/60 height proportions and hides the native horizontal-drag
+message splitter there; wide splitter and sidebar resizing remain native.
+Collapsed message pane expands the list; collapsed sidebar does not leave a gap.
+Offline test verified758px stacked/234px sidebar and1536px three-column layouts,
+no horizontal content overflow, collapsed-message expansion. Test profile closed
+and removed. Source/profile CSS synchronized with backup. Existing live windows/
+drafts preserved; complete app restart needed to load new CSS. Owner acceptance
+pending. Evidence: audit/2026-10-23-thunderbird-responsive/. No commit/push.
+
+# Thunderbird Send button refinement — 2026-10-23
+
+Owner accepts the compose layout except Send. Replaced the large pale emphasis
+with a graphite button, subtle border, lighter label weight and16px icon.
+Applied source/profile CSS with appearance backup; no window/draft closed.
+Already-open Thunderbird process needs a complete restart to reload user CSS.
+No other layout/preference change; owner visual acceptance pending.
+
+# Thunderbird startup restoration and compose polish — 2026-10-23
+
+Owner requested no welcome/donation startup pages, restoration of the last email,
+and a cleaner compose window. Disabled start_page, donation-category in-app notices
+and scroll-to-new auto-selection through a marked user.js block. Installed official
+Last selected message2.1 (ATN988576, minimumTB148) via AddonManager; active on155,
+existing selection recorded. Complete source inspected; permissions storage,
+messagesRead/accountsRead, no network origins or send capability. Verified exact
+selected message index1 survives a full offline test-profile quit/reopen.
+
+Compose now has aligned dark recipient/subject fields, simpler primary toolbar,
+clear Send button and consistent editor surface. Content stylesheet is scoped to
+about:blank?compose; applying it left message HTML unchanged. Cc visibility and
+native controls checked; small compose verified at748px. Files/profile backups
+and evidence: audit/2026-10-23-thunderbird-startup/ and
+ audit/2026-10-23-thunderbird-compose/. Temporary control listener not retained;
+owner visual acceptance pending. No shell seed/account/transport changes or
+commit/push. Startup restoration requires a previously selected existing message.
+
+# Cleaner native Thunderbird workspace — 2026-10-23
+
+Owner found the first theme too close to stock dark Thunderbird and requested
+Outlook-inspired structure. Second version uses sans-serif UI, conditional
+single-tab-strip removal, flat message rows/separators, quieter secondary row
+actions with persistent flagged/spam states, a clearer compose button and flatter
+reply controls/reading-panel framing. Multiple tabs restore the native strip.
+Applied only to faculdade's existing profile with appearance-file backups.
+Native pane layouts and all account/mail settings retained. Offline disposable
+preview checked at739px/classic and1536px/vertical, including two-tab behavior;
+preview closed/removed. Real main window reopened in native Wayland. Owner visual
+acceptance pending. Evidence/rollback: audit/2026-10-23-thunderbird-clean/README.md.
+No package/seed changes, commit or push.
+
+# Native Thunderbird Graphite — 2026-10-23
+
+Owner requested styling consistent with APX File Manager and Control Centre.
+Applied UI-only CSS to faculdade's Thunderbird155.0.1 default-release profile,
+preserving prior appearance files. No account, mail or credential changes.
+Offline disposable preview verified colors/font and screenshots at1496/739px;
+preview closed and removed. Main native Wayland window reopened on workspace6
+at739x774; stylesheet digest/enabled preference verified. No shell seed changes.
+Owner visual acceptance pending; CSS may need maintenance after app updates.
+Backup/rollback/evidence: audit/2026-10-23-thunderbird-graphite/README.md.
+No commit/push.
+
+# Signed-in ChatGPT restart verified — 2026-10-23
+
+Owner reopened ChatGPT but still saw low resolution. Confirmed original host
+PID342310/container194304 from11:28 remained alive and X11; reopening only
+reused that process. Gracefully terminated it and launched the existing signed-in
+profile via gtk-launch and the managed desktop override. New main window verified
+xwayland=false with1920x1080/1.25 monitor; restored workspace2. No profile reset,
+monitor/browser scale changes, commit or push. Evidence:
+audit/2026-10-23-native-scale/restarted-main-profile.json.
+Owner visual acceptance remains pending.
+
+# Native application scaling with monitor size preserved — 2026-10-23
+
+Owner rejected the blanket100% monitor change. Restored faculdade's original
+monitor files from the pre-change copies; live output confirmed1920x1080/1.25.
+Brave remains native Wayland with its existing app-specific scale untouched.
+Added apx-native-scale-v1: local catalogue refresh detects vendor Electron
+bundles by sibling resources/app.asar/default_app.asar and generates owned user
+desktop overrides. Wrapper requests Wayland only when its session socket is
+reachable, retaining arguments and explicit backend choices; custom user entries
+are preserved. Vendor updates/removals refresh/remove only managed overrides.
+Catalogue now respects user-entry precedence. Existing package hook and session
+startup run synchronization, covering future matching native package installs.
+No blanket X11 unscaling; Minecraft's accepted native-X11/DPI setup preserved.
+Flatpak/AppImage and undetected/legacy X11 applications are not universally fixed.
+
+Source, independent seed and five homes synchronized with runtime/recovery pins;
+four behavior tests plus seven seed tests pass, deploy recheck zero pending.
+Separate-profile ChatGPT through the installed wrapper verified xwayland=false;
+monitor1.25 and Brave native verified simultaneously. Current signed-in ChatGPT
+process still needs a complete exit/reopen for backend change; visual acceptance
+is pending. No commit/push. Backup20261023T103849Z-controls-followup.
+Evidence: audit/2026-10-23-native-scale/verified-live.json.
+
+# Stable parent border with file dialogs — 2026-10-23
+
+Owner reports background movement persists after spring removal. Found the
+single-window border rule counted floating dialogs: opening a chooser switches
+the tiled parent from0px to2px border and can resize its content. Changed rule
+to count visible tiled windows only and apply only to tiled clients (w[tv1]).
+Floating file chooser retains its2px border. This addresses a separate geometry
+trigger; actual symptom resolution is not yet owner-confirmed. Source, seed and
+five homes synchronized; seven seed tests pass, recheck zero pending, live reload
+accepted/configerrors empty. Backup20261023T081224Z-controls-followup.
+No commit/push.
+
+# Window bounce removed — 2026-10-23
+
+Owner accepted the smoother chooser entrance but rejected bounce in the background
+application. Replaced general window and entrance springs with the existing
+monotonic OutCubic curve; retained chooser94% popin and280ms fade/entrance.
+This also removes bounce from other ordinary window entrances. Source, independent
+seed and five homes synchronized with runtime/recovery pins. Seven seed tests pass,
+zero pending deployment files; live reload accepted and configerrors empty.
+Perceptual background behavior awaits owner confirmation. No commit/push.
+
+# Softer file-dialog opening — 2026-10-23
+
+Owner requested smoother file-manager opening from applications such as Gridcraft.
+Enabled compositor animation for GTK portal file pickers and Thunar modal dialogs,
+using popin94% with the existing280ms window/fade entrance. Progress dialogs remain
+immediate. Applied independent seed and five homes, preserving unrelated local
+compositor settings; runtime/recovery pins synchronized. Active faculdade reload
+accepted, configerrors empty, seven desktop-seed tests pass; recheck zero pending.
+Owner perceptual confirmation and a real Gridcraft invocation remain pending.
+Backup: /var/lib/apx/backups/20261023T073759Z-controls-followup.
+Evidence/deploy: audit/2026-10-23-file-dialog-motion/ and
+scripts/physical-pilot/deploy-file-dialog-motion-20261023.py. No commit/push.
+
+# Settings opacity clarification — 2026-10-22
+
+Owner clarified that only the upper region was too transparent. Restored Settings
+body/sidebar80%; header and search toolbar now95%. Task Manager remains88%, with
+its existing translucent cards. Computed GTK body/header alpha checked80%/95%.
+Source/seed/five homes and digest pins synchronized; no commit/push.
+
+# Calmer Settings surface and subtle Task Manager glass — 2026-10-22
+
+Owner supersedes the earlier80% Settings surface: Settings now95%, Task Manager
+88% with translucent cards/list. Removed Settings Reload button. Shared window
+controls are compact/native-style, with no empty subtitle space; title font is
+unchanged. GTK computed alpha/header checks and seed7pass; digests synchronized,
+zero pending deploy files. Previously open apps restored to their workspaces.
+Evidence: audit/2026-10-22-thunar-settings/. No commit/push.
+
+# Thunar consistency, normalized mouse and sharp Minecraft — 2026-10-22
+
+Owner's final requested terminal icon is Lucide Croissant (supersedes ASCII).
+Settings now use the current219px Thunar sidebar, aligned search/back/forward
+navigation, native-like surface and simpler sliders/switches; raw device IDs and
+display coordinates are tucked into expanders. Thunar219 persisted as seed and
+five-home default while retaining other preferences. Control Centre/Settings
+mouse UI0–100% maps to existing raw-100…100 without resetting speed.
+
+Active Minecraft: redundant Minecraft Java shortcut removed after identical Exec
+confirmation; Launcher reuses its PNG icon. Already-installed Ristretto now owns
+image MIME defaults and actually opens PNG. Launcher uses opt-in native X11
+buffers plus matching Xft DPI120 at the selected1.25 output, preserving size and
+fixing low-resolution enlargement; real1870x973 XComposite capture verified.
+Only Minecraft opts in; monitor scale unchanged. Other X11 apps in that Environment
+share the Xwayland setting. Common seed includes an optional helper, no games.
+
+Source/seed/five-home pins synchronized, focused tests and live read-only checks
+pass; no package installation/removal, reboot or commit/push. Implementation,
+limits, exact backups and reversal: audit/2026-10-22-thunar-settings/README.md.
+
+# Task Manager subtitle removed — 2026-10-22
+
+Owner requested removal of the application-count subtitle. Removed both initial
+subtitle and periodic count updates; shared header title styling retained.
+Source/seed/five homes and runtime/recovery digests synchronized through the
+app-polish deployment helper. No commit/push.
+
+# Shared APX application headers — 2026-10-22
+
+Owner requests consistent window titles/chrome. Shared CSS now makes Settings
+and Task Manager titles14px JetBrains Mono/600 with matching header and button
+spacing, overriding Settings-only page-heading leakage. Computed GTK fonts match
+in both live apps. Reopened in prior workspaces; source/seed/five-home digests
+synchronized. Details: audit/2026-10-22-settings-fixed-sidebar/. No commit/push.
+
+# Settings sidebar fixed to File Manager proportions — 2026-10-22
+
+Owner supersedes the earlier sidebar-collapse choice: Settings navigation now
+stays visible at all widths.140px fixed width,16px icons and10pt JetBrains Mono
+match the current Thunar reference. Long labels retain full tooltips; form rows
+adapt to remaining width. Removed the compact category selector. Welcome and
+all pages retained, Task Manager unchanged. All16 pages fit600/740/980px; live
+half-screen rendering checked. Source/seed/five homes and digests synchronized.
+Evidence: audit/2026-10-22-settings-fixed-sidebar/. No commit/push.
+
+# Settings half-window layout and welcome — 2026-10-22
+
+Owner clarified Task Manager already fits tiling; it remains unchanged. Settings
+now use an adaptive search/category toolbar, collapse navigation below900px and
+stack fields below700px. Removed fixed page-width requests that prevented proper
+client resizing. Opening cards were replaced with the requested welcome message.
+All15 pages plus welcome pass minimum-width checks at600/740/980px; actual739px
+Hyprland tiling visually verified. Source/seed/five homes and digest pins match.
+Evidence: audit/2026-10-22-settings-half-window/. No commit/push.
+
+# Graphite applications and APX scale standard — 2026-10-22
+
+Owner requested and iterated Settings/Task Manager to match Rofi/Control Centre.
+Task Manager now has a simple application-family view, real GPU readings,
+application/service icons, dynamic Include/Exclude services toggle, confirmed
+identity-pinned close and native Advanced view. Settings retain15 pages with
+icon navigation, grouped opening cards, Network before Sound, no Início item,
+compact inner pages and direct sound controls. Owner chose monitor factor1.25
+as APX100%; defaults and scale labels reflect that standard. Unsupported scale
+choices are filtered per selected resolution. Xwayland nearest-neighbor scaling
+is disabled to smooth Launcher text without extra zoom.
+
+Owner also authorized interface optimization while preserving its appearance.
+Input-settings polling now runs only while Controls is open; slow sensor polling
+falls to5s while menus are closed. No visual layout/animation change. Short CPU
+samples improved but are not a controlled system-wide benchmark. A read-only
+process audit found no clearly unnecessary service for removal; nothing disabled
+or uninstalled. All future permanent removal remains for owner review.
+
+Source/seed/five homes/runtime/recovery digests synchronized; live GTK/IPC checks
+and focused tests pass, with existing battery/navigation and Control Centre scale
+fixture failures reproduced on the pre-change shell. No commit/push. Details,
+validation limits, screenshots and rollback inventory pointer:
+audit/2026-10-22-app-polish/README.md. Final Settings visual acceptance is pending.
+
+# Owner-requested support cleanup and Host terminal icon — 2026-10-22
+
+Owner explicitly requested deep cleanup of nonessential/test support software
+and a better Host-terminal icon. Inspected all five current roots, package
+dependencies, active shell paths and installed manifests. Removed unused Waybar,
+gpsd, Fuzzel and uwsm in the four workload Environments; their active desktop
+uses QuickShell/Rofi and does not call these legacy tools. Removed only a narrow
+allowlist of now-orphaned old document/search dependencies (not arbitrary orphans,
+development tools, games or personal data). 45 package removals across four roots.
+
+Optional tools bundled with required libraries are actually removed, not hidden:
+qv4l2/qvidcap, Avahi discovery/SSH/VNC GUIs, lstopo, xfce4-about, cmake-gui where
+installed, and rofi-theme-selector. Removed exact package-owned executable,
+desktop, icon/man paths (198 files across five roots). Each root's managed
+etc/pacman.d/apx-minimal-tools.conf, included in pacman options, uses NoExtract
+to preserve these component omissions on upgrades. Runtime libraries and core
+utilities remain; pacman -Qk honors these documented exclusions and passes.
+No Hidden/NoDisplay overrides were added. Thunar/Rofi current preferences,
+printing, multimedia, package/security/session facilities and chosen user apps
+are retained. This changes current roots, not immutable base/future package lists.
+
+Host-terminal desktop entry and unmatched-window fallback now use a custom SVG
+server/terminal icon in APX-Graphite. Source, independent seed, five homes and
+runtime/recovery digests updated. 40 catalogue tests and seven seed tests pass.
+Actual active Minecraft validation: FFmpeg synthetic frame processing succeeds,
+libv4l2 loads, database clean, Apps+Sistema completely/disjointly cover19 remaining
+entries (10/9), removed diagnostic IDs absent. Icon rendered in actual Rofi with
+no diagnostics; screenshot inspected. This does not establish real camera capture
+or audio hardware testing. Component/package recheck is empty; icon deployment
+recheck zero pending. No reboot/session restart, commit or push.
+
+Cleanup script: scripts/physical-pilot/cleanup-support-tools-20261022.py.
+Exact pre-change roots, plan and transaction/integrity logs:
+/var/lib/apx/backups/20261022T204448Z-support-cleanup. Initial runs stopped on
+pre-existing Hub differences (Rofi absent before cleanup too); validation was
+corrected to respect that baseline and resumed against the original snapshots.
+An extra failed-run snapshot set remains at20261022T204520Z-support-cleanup.
+Icon backup: /var/lib/apx/backups/20261022T204626Z-controls-followup.
+Evidence and bounded icon deploy: audit/2026-10-22-support-cleanup/ and
+scripts/physical-pilot/deploy-host-terminal-icon-20261022.py.
+
+# Catfish removed from current workload Environments — 2026-10-22
+
+Following the owner's Catfish follow-up in the application-cleanup discussion,
+removed only the catfish package in faculdade, hytale, minecraft and steam;
+Hub did not have it installed. Each own package context passed dependency preview,
+removal and pacman database validation. Application catalogues refreshed; package
+and desktop entry absent, Thunar retained. Rofi search is unchanged; Thunar's
+external “Search with Catfish” facility is no longer available. Personal settings
+were retained. Source/base package selections were not changed, so future
+Environment creation may still install Catfish. Exact prior versions remain
+in the existing read-only root recovery snapshots from application cleanup.
+Transaction evidence: /var/lib/apx/backups/20261022T204100Z-catfish-remove/.
+No other package removal, hidden entries, session restart, commit or push.
+
+# Supporting-software review and File Roller placement — 2026-10-22
+
+Owner requested File Roller in Sistema and a necessity review, particularly
+Catfish and the purported update manager. Moved File Roller to Sistema in source,
+independent seed and all five homes. Corrected uuctl from the erroneous
+“Gestão de atualizações” label to “Serviços da sessão”: its installed desktop
+entry and uwsm docs identify a user-unit manager, unrelated to APX updates.
+Catfish is a separate search GUI, optionally invoked by Thunar's built-in
+“Search with Catfish…” action; no installed package requires it. No new package
+removal or hiding. Review with dependency evidence and conditional recommendations:
+audit/2026-10-22-rofi-system/support-software-review.md.
+40 catalogue tests and seven seed tests pass; deployment recheck zero pending.
+Backup: /var/lib/apx/backups/20261022T201641Z-controls-followup.
+The earlier 12/19 live partition and screenshots predate moving File Roller.
+No commit/push or session restart.
+
+# Rofi Apps / Files / System tabs — 2026-10-22
+
+Owner requested a third Sistema tab for supporting/configuration software.
+Apps and Sistema now form an explicit-ID, disjoint partition of the complete
+existing application catalogue. Newly installed/unclassified apps stay in Apps;
+no desktop entry was hidden, deleted or uninstalled by this change. Known network,
+GPS, camera/hardware diagnostics, printing, preferences and support tools move to
+Sistema. Kitty, Mousepad, mpv, File Roller and primary ZapZap remain Apps; ZapZap's
+no-GPU alternative is Sistema. Shared catalogue/window actions remain intact.
+
+Both native modes compile from the same C source with separate names and launch
+the helper with an explicit section environment variable. Filtering applies to
+browse and search, preserving secondary actions and running-window indicators.
+Mode buttons now fit three tabs. Source, independent seed and all five homes
+updated; runtime/recovery digests refreshed. Hub keeps its existing Files script
+while the other four keep native Files. No unrelated Files implementation changes.
+40 application tests and seven seed tests pass. Actual Apps and Sistema GUIs
+rendered without diagnostics in Minecraft; screenshots inspected. Complete live
+catalogue partition:31 entries (12 Apps,19 Sistema), with no missing/duplicate IDs.
+Deployment recheck:zero pending files. Owner interaction confirmation pending.
+Backup: /var/lib/apx/backups/20261022T194542Z-controls-followup.
+Evidence: audit/2026-10-22-rofi-system/. Deployment:
+scripts/physical-pilot/deploy-rofi-system-20261022.py. No package changes,
+session restart, commit or push. Prior working-tree changes preserved.
+
+# Owner-selected application removal — 2026-10-22
+
+Owner requires installed applications to remain visible in Rofi; do not hide
+installed applications or configuration launchers to simplify the menu.
+Explicitly authorized removal of redundant terminals, one archive manager,
+Document Scanner and the document viewer if it cannot edit PDF content.
+Removed only alacritty, foot, xarchiver, evince and simple-scan in faculdade,
+hytale, minecraft and steam using each Environment's own package context.
+Kitty remains the existing configured terminal; File Roller remains with its
+Thunar archive integration. Set PDF association to Brave and common archive
+associations to File Roller. Refreshed each home application catalogue.
+No forced dependency removal or orphan sweep. gpsd remains required by Waybar;
+xgps/xgpsspeed remain visible. CUPS, Thunar preferences, Rofi theme selector,
+Mousepad and mpv remain unchanged. ZapZap's normal launch remains unchanged;
+both normal/no-GPU entries are owned by the same package and remain visible.
+Hub unchanged. All four pacman database checks pass; removal logs contain no
+errors/warnings. This verifies package state and associations, not a GUI PDF
+opening or archive extraction. Existing source/base package lists were not
+changed, so this is current Environment cleanup, not future-template policy.
+Read-only root recovery snapshots, MIME configuration backups and transaction
+evidence: /var/lib/apx/backups/20261022T193648Z-application-cleanup/.
+Bounded executor: /root/apx-app-cleanup-20261022.py. No session restart,
+commit or push; prior working-tree changes preserved.
+
+# Rofi Files first opening — bounded pre-paint preparation applied, 2026-10-22
+
+Owner confirms subsequent Apps/Files switches are correct but the first Files
+opening still blinks. Async initialization could still return the initial blank
+row before helper output arrived. Native initialization now allows up to50ms
+of nonblocking pipe reads before returning to Rofi's first paint, without running
+a nested UI loop. Complete metadata up to128KiB is parsed immediately. Slow or
+larger responses fall back to async loading, preserving consumed bytes (including
+split UTF-8). This trades a short bounded launcher startup wait for ready initial
+labels; it cannot guarantee blink-free display when storage/helper exceeds50ms.
+No persistent cache, daemon or filesystem watcher added.
+
+Real helper/Minecraft-home first-render harness: initialization29.1ms, loading=0,
+nine rows, first label Desktop, before any UI-loop iteration. This is headless
+first-render data readiness, not a compositor recording. Native behavioral tests
+pass fast first-page labels, bounded initialization with650ms delayed helper,
+partial UTF-8 fallback, navigation/cancellation/stale results and teardown.
+14 Python listing and seven seed integrity tests pass. Source/module/seed and
+faculdade/hytale/minecraft/steam deployed; runtime/recovery pins updated, recheck
+zero pending. Hub legacy configuration remains unchanged. Backup:
+/var/lib/apx/backups/20261022T191357Z-rofi-files-flicker.
+Evidence: audit/2026-10-22-rofi-files-flicker/{first-paint.txt,native-test.txt}.
+Close/reopen launcher to load replacement. Owner visual confirmation pending.
+No session restart, package installation, commit or push.
+
+# Rofi Files label latency follow-up — applied, 2026-10-22
+
+Owner confirms first flicker change improved opening but still notices delayed
+folder names. Removed display's visibility-timer gate: already prepared labels
+are now returned on the first render even before the next16ms visibility tick.
+Native harness explicitly checks prepared rows with visible=false. Moved legacy
+argparse/html, desktop-entry configparser, and launch-only subprocess imports off
+the native --list-json path. Normal listing returns identical JSON in the measured
+Minecraft home fixture. Paired15-run process timings: old median61.8ms, new29.6ms;
+this measures helper wall time on Host with HOME set to the Environment directory,
+not end-to-end compositor display time.
+
+14 file-listing tests, delayed native mode harness (including first-render labels)
+and seven seed integrity tests pass. Recompiled and applied helper/module to
+faculdade/hytale/minecraft/steam and independent seed; refreshed runtime/recovery
+pins. Hub legacy mode unchanged. Deployment check zero pending. Backup:
+/var/lib/apx/backups/20261022T191042Z-rofi-files-flicker.
+Evidence: audit/2026-10-22-rofi-files-flicker/helper-timing.json and native-test.txt.
+Owner visual confirmation of the second improvement is pending. Close/reopen
+Rofi to load it; no shell/session restart. No commit/push.
+
+# Rofi Files opening flicker — applied, 2026-10-22
+
+Owner reports a brief jump/flash opening Files and explicitly requested applying
+the prepared correction. Native mode now prefetches only the initial home page
+during initialization, detects visibility every16ms rather than80ms, and keeps
+same-directory rows during refresh. Spinner redraw stays limited to80ms; folder
+navigation clears different-directory rows. Existing cancellation/generation
+checks remain. Listing remains shallow and asynchronous.
+
+Compiled using read-only Rofi2.0 headers from Minecraft with Host GLib/JSON/Cairo
+headers/libraries, without installing packages. Native delayed-helper harness
+passes prefetch, preserved rows on return, navigation, cancellation, stale results,
+error/retry, visible-only icon fetch and teardown.14 Python listing tests and
+seven seed integrity tests pass. Applied compiled module to source/independent
+seed and faculdade/hytale/minecraft/steam; refreshed runtime/recovery digest pins.
+Recheck zero pending files. Hub uses the older script configuration and has no
+native Files module; it was left unchanged. No session or shell restart.
+
+Next launcher opening uses the replacement; an already-open launcher must be
+closed first. Owner visual confirmation remains pending; do not claim the visual
+symptom is verified fixed. Backup:
+/var/lib/apx/backups/20261022T190819Z-rofi-files-flicker.
+Deployment: scripts/physical-pilot/deploy-rofi-files-flicker-20261022.py.
+Evidence/native harness/build artifacts: audit/2026-10-22-rofi-files-flicker/.
+Restore inventory paths from backup preserving recorded ownership/mode to revert.
+No commit/push.
+
+# Title smoke matches menu tone — 2026-10-22
+
+Owner accepted the gradient profile but requested a less dark colour matching
+the menu. Backdrop RGB now uses popupPanel directly, removing Qt.darker(...,1.18).
+The accepted opacity profile, opaque start and outline inset remain. Native
+title tests 8/8 and seed integrity 7/7 pass; deployed seed/five homes with
+refreshed digest pins, zero pending files. Backup:
+/var/lib/apx/backups/20261022T190411Z-controls-followup. No commit/push.
+
+# Three-quarter gradient stop — 2026-10-22
+
+Owner clarified the desired profile: 100% opaque at the top, 75% opacity at
+75% of the backdrop height, then fade to 0% through the final 25%. Moved the
+75%-opacity stop from position 0.5 to 0.75; retained the previously requested
+8px opaque start and border inset. Native title tests 8/8 and seed integrity
+7/7 pass; deployed seed/five homes with refreshed digest pins, zero pending.
+Backup: /var/lib/apx/backups/20261022T190240Z-controls-followup. No commit/push.
+
+# Lower gradient start — 2026-10-22
+
+Owner accepted the corrected vertical gradient and requested its start slightly
+lower. The first 8px of the inset backdrop now stay fully opaque before fading;
+the 75% midpoint and transparent bottom remain. Native title tests 8/8 and seed
+integrity 7/7 pass. Deployed seed/five homes with digest pins; zero pending files.
+Backup: /var/lib/apx/backups/20261022T190004Z-controls-followup. No commit/push.
+
+# Corrected vertical title gradient — 2026-10-22
+
+Owner corrected the gradient direction and requested exact opacity stops.
+Pinned-title backdrop now explicitly uses Gradient.Vertical: 100% opaque at
+position 0, 75% at position 0.5, transparent at position 1. This supersedes
+the increasing-downward gradient in the previous entry. The 1px outline inset,
+continuous content behind the title, existing fade animation and 460px shared
+menu height remain. Native title tests 8/8, full QML parse, scroll motion and
+seed integrity 7/7 pass. Applied seed/five homes with runtime/recovery pins;
+deploy check zero pending. No commit/push.
+
+# Title smoke gradient and shared menu height — 2026-10-22
+
+Owner rejected the backdrop covering outlines and partial actions vanishing
+beneath the pinned title. The shared backdrop is inset 1px from the menu outline,
+with an 8%→35%→90% dark gradient increasing down the title band and an 18px tail
+fading back to transparent. Content now scrolls continuously behind the title;
+the whole-action opacity rule no longer hides rows crossing its upper region.
+The existing bottom whole-card cutoff remains. Header consumes clicks while
+wheel events pass through. Keyboard clearance and title transition remain.
+
+Owner also requested a larger common height to fit the unread shortcut.
+Appearance.menuMaxHeight is now 460 (was 400), still bounded by available screen
+space. Real active minecraft IPC verifies Control Centre content and viewport
+are both 434px; all eight actions, including the unread-count shortcut, are
+fully visible with opacity 1 and enabled pointer input.
+
+Native gradient/title tests 8/8, keyboard 16/16, bottom-card/notification-scroll
+8/8, seed integrity 7/7, full QML parse and existing smooth-scroll fixture pass.
+Applied independent seed and five homes with runtime/recovery digest pins;
+deploy --check reports zero pending files. Backup:
+/var/lib/apx/backups/20261022T185521Z-controls-followup.
+Evidence: audit/2026-10-22-title-smoke/. No commit/push.
+
+# Dedicated notifications page and Up navigation — 2026-10-22
+
+Owner requested the last Control Centre card become an unread-count button
+opening a dedicated notifications page instead of embedding the inbox.
+ControlDashboard now has a fixed-height bell shortcut (including zero unread),
+using the existing notifications activity route and page transition. The page
+has the title Notificações, back navigation, grouped messages and read actions.
+The inbox's existing continuous scrolling and app/thread grouping are retained.
+
+Owner also rejected Up entering at the last visible row and reported inability
+to reach the complete menu top. Generic menus now consume initial Up without
+selection at scroll zero; after wheel scrolling Up enters at the first visible
+action. At the first action another Up clears queued reveals and scrolls to zero,
+revealing headings too. Environment-menu initial Up is also consumed; ordinary
+Calendar date movement and native text editing remain unchanged.
+
+Native tests: notifications/shortcut/inbox 9/9; keyboard/navigation 16/16, including
+wheel-to-top and no delayed scroll reversal. Full shell parse, existing scroll
+motion fixture and seed integrity 7/7 pass. Applied seed/five homes and refreshed
+runtime/recovery digest pins; deployment check has zero pending files.
+Backup: /var/lib/apx/backups/20261022T185153Z-controls-followup. No commit/push. Evidence and validation runner:
+audit/2026-10-22-notifications-menu/; keyboard fixture/results under
+ audit/2026-10-21-arrow-navigation/.
+
+# Camera trace length and menu opening — 2026-10-22
+
+Owner reported a missing-looking trace and stuttering Control Centre opening.
+Real bounded ffplay capture in the active minecraft Environment confirmed the
+existing white trace moves around the 88px status capsule. Owner then requested
+2.5 times its length: CameraIndicator now covers 15% of the perimeter (from 6%),
+with unchanged 2px white stroke and 1800ms lap. Native UI 8/8, rendered pixel
+movement and camera-detection tests 2/2 pass. No camera frames saved.
+
+Popup and rounded-mask textures now allocate at final viewport dimensions,
+avoiding GPU texture reallocations on every opening/closing frame. Full QML
+parse and the existing scroll-motion fixture pass. Three live Control Centre
+openings after deployment recorded median frameSwapped gaps of 8,9,8ms and
+maximum gaps of 24,19,16ms. These are application frame callbacks, not compositor
+presentation. The owner changed active Environment from hytale to minecraft
+during diagnosis, so retained before/after files are not a controlled benchmark.
+Subjective smoothness remains for owner confirmation.
+
+Applied independent seed and five homes with runtime/recovery digest pins;
+deploy --check reports zero pending. Backups: /var/lib/apx/backups/
+20261022T184704Z-controls-followup (texture change) and
+20261022T184804Z-controls-followup (trace length). Details/evidence:
+audit/2026-10-22-camera-menu-motion/. No commit/push.
+
+# Shorter white camera trace — 2026-10-22
+
+Camera trace refinement: owner requested half the previous length. Trace now
+spans6% of the perimeter (previously12%), pure #ffffff at2px for a solid white
+core. Removed the faint full-perimeter ring. Native UI8/8 pass; deployed seed
+and five homes with digest pins.
+
+# Single short camera trace and fullscreen notice — 2026-10-22
+
+Owner requested one shorter pure-white continuous trace around the capsule,
+replacing the dash segments that restarted at path joins. CameraIndicator now
+paints one continuous sampled perimeter stroke, 12% of the perimeter, #ffffff,
+with rounded ends; one phase animation controls its travel. Icon stays static.
+Native UI8/8 and native parse/motion passed; real normal/fullscreen capture
+confirmed status island outside fullscreen and temporary OSD inside fullscreen.
+Owner subsequently requested10 seconds: camera OSDs in fullscreen now use10000ms;
+other shortcut durations retain their existing defaults. Real timed validation
+is recorded in fullscreen-camera-duration.json. No video/images saved.
+
+# Camera button perimeter animation — 2026-10-22
+
+Owner refined the ongoing camera animation: trace the capsule button perimeter,
+not a ring around its glyph. CameraIndicator now stretches across MediaIsland,
+with a white quarter-perimeter dash following the rounded capsule outline.
+The camera glyph remains static and independent. Dash offset animates only
+while capture status is active/visible. Native UI tests8/8, full parse and
+15-frame motion checks pass. Applied to seed/five homes with digest pins.
+
+# Camera hotplug and status-island placement — 2026-10-22
+
+Owner confirmed the real camera preview worked. Fixed the identity-pinned pilot
+bridge to reconcile camera nodes after the physical privacy switch reconnects
+them: dynamic device policies, private mapped node and video4linux announcement.
+Only the already approved internal capture identity is admitted. Disconnect
+revokes the device lease while retaining keyboard/graphics permissions. Source
+and installed /usr/lib/apx bridge updated; active hytale bridge restarted.
+Backup: /var/lib/apx/backups/20261022T182107Z-camera-hotplug.
+Eight bridge tests and two camera-activity tests pass. Actual Environment ffplay
+preview opened, camera_active became true, and returned false after the bounded
+preview process ended. No frames saved. No facial authentication restored.
+
+Owner then requested moving the ongoing-use indicator from the right button
+group to the same separate status island used by physical camera on/off events.
+MediaIsland now holds the animated camera icon while capture is active outside
+fullscreen. Brief hardware/other shortcut notices retain priority; ongoing
+camera status resumes afterwards. Source, independent seed and five homes
+updated with runtime digest pins. Native parse and 15-frame motion checks pass.
+
+# Grouped inbox, stable scrolling, menu titles and camera indicator — 2026-10-22
+
+Owner requested persistent unread messages, macOS-inspired grouping by app and
+person/process, no blinking while scrolling, a numeric unread label, titles
+slightly further right, and a white tracing border while the camera is in use
+outside fullscreen. These are applied to source, independent seed and five
+graphical homes with runtime/recovery digest pins.
+
+NotificationInbox now renders collapsible application stacks and nested groups
+using explicit thread hints when available, otherwise equal app-provided titles
+(the app must identify the sender/job; no person is guessed from message bodies).
+Opening a stack preserves its state across updates; group reads snapshot IDs so
+new arrivals and other groups remain unread. Label is X mensagens por ler, with
+singular handling. All retained unread entries participate in groups. Media
+polls no longer invalidate the notification model. Continuous notification
+content uses normal clipped scrolling instead of whole-button opacity/frame
+fitting; other settings retain their whole-card rules.
+
+Messages are retained privately per Environment in
+~/.local/state/apx/notifications-v1.json, mode0600, bounded to200 recent records
+including read tombstones. IDs include a local persistent sequence and capture
+the notification bus/daemon identity, avoiding daemon-restart ID collisions.
+Expired alerts stay unread until explicitly read. Full content remains local;
+no real notification content was exported to audit. Short APX Browser handoff
+banners remain deliberately transient. History collected before this change is
+limited to the entries still available in Mako; this cannot recover older losses.
+
+Titles use a shared8px extra inset, including common, dashboard and inner settings
+headings. A32px camera-use indicator has a16px glyph and a white90-degree arc
+orbiting its border; rotation runs only while active/visible and the bar hides it
+in fullscreen. Detection reads PipeWire metadata and open /dev/video descriptors
+for physical cameras only, excluding screen capture. No camera is opened and no
+frames/content are read. Synthetic detection/animation tests pass; subsequent real camera verification
+and revised placement are recorded in the newer entry above.
+
+Validation:37 focused Python tests pass (notification actions/history, media,
+camera metadata, installer, package coherence, independent seed). Native UI
+fixture8 results pass, including grouped expansion/read snapshots, equal-payload
+stability and visible-only camera animation. Native scroll regression8 results
+pass, including stable notification viewport, while retaining previous whole-card
+behavior. Full shell PARSE_PASS and15-frame SMOOTH_PASS pass. Live IPC reports
+new8px inset and current unread/camera state without parse errors. Owner's active
+Environment changed to hytale during work; its existing Controls menu was not
+closed or replaced. Synthetic notification-stack preview was inspected.
+Deploy rechecks zero pending. No commit/push.
+
+Deploy/reversal: scripts/physical-pilot/deploy-inbox-camera-20261022.py uses
+shared --rollback backup-path. Backups20261022T180808Z-controls-followup and
+20261022T181011Z-controls-followup cover the final inbox/camera additions.
+Evidence audit/2026-10-22-inbox-camera/.
+
+# ZapZap repair, consistent file selection, installation checks — 2026-10-22
+
+ZapZap failed because freshly installed Python PyQt bindings required Qt_6.12,
+while the accepted desktop uses Qt6.11.2. Its AUR dependency transaction used
+pacman-S without completing pending repository updates. Restored four cached,
+signed matching dependencies in faculdade only: python-pyqt6 to6.11.0-3,
+qt6-positioning/webchannel to6.11.2-1 and qt6-webengine to6.11.2-1. Qt6-base,
+QuickShell, GPU packages and other Environments' packages were not upgraded.
+Import checks and actual ZapZap windows pass. The test runner initially omitted
+XDG_SESSION_TYPE, causing an artificial xcb abort; the real Wayland startup works.
+
+Added an Environment-local, root-owned pretransaction package-coherence check
+for pacman/AUR transactions and the same hook/helper to future-creation runtime.
+Partial transactions with pending repository upgrades are refused before package
+changes. Complete plans pass; the existing three Host-coupled NVIDIA holds remain
+allowed. No automatic broad upgrade was submitted. apx-install now validates
+available PyQt/QtWebEngine imports rather than equating files with a runnable app.
+Five coherence tests and six installer tests pass, including future-root hook
+contents; live incomplete/complete-plan checks pass without installing packages.
+
+All five homes and future sessions prefer Qt's xdgdesktopportal theme and GTK
+portals, with Thunar for inode/directory. Hub's missing explicit folder default
+was added without changing browser associations. Native Qt-to-GTK portal chooser
+was verified with a synthetic empty folder, with no file selected/sent. Shared
+chooser CSS uses APX colours/font and restrained headers/navigation. A currently
+running app cannot acquire a new Qt theme from an environment update. ZapZap was
+still reusing its old tray process; installed an Environment-local zapzap wrapper
+and normally shut down/reopened the old process through its documented SIGTERM
+bridge. New process/window and QT_QPA_PLATFORMTHEME/GTK_USE_PORTAL were verified.
+No message/account/profile was deleted. This is the common default, not a claim
+that applications hardcoding custom file dialogs can be universally overridden;
+a native selector is not a normal Thunar window. New/updated supported apps use
+the common picker; already running applications need normal restart.
+
+Deploy scripts: deploy-zapzap-integration-20261022.py,
+deploy-package-coherence-20261022.py, deploy-notifications-chooser-20261022.py,
+deploy-zapzap-launcher-20261022.py under scripts/physical-pilot/.
+Backups recorded in audit/2026-10-22-zapzap-launch/ and
+ audit/2026-10-22-notifications-chooser/. Package repair command/inventory is
+scripts/physical-pilot/repair-zapzap-20261022.py. No Host packages modified.
+
+# Centered file-manager navigation — 2026-10-22
+
+Owner requested navigation icons centered above the Places sidebar. The native
+presentation module now balances the visible group inside that column, keeping
+icons16px and the location field aligned to the divider. The first toolbar item
+is non-homogeneous so its leading margin cannot stretch every button. Native
+geometry verifies equal37/37px gaps and entry/divider209/209; after moving the
+divider40px gaps57/57 and entry/divider249/249, then restoration. Source, seed,
+five homes and pins applied. Normal home-folder window was reopened only after
+Busy=false; live header inspected. Final module backup:
+20261022T141950Z-controls-followup. Evidence
+ audit/2026-10-22-files-centered-navigation/. No resolution/grid changes.
+
+# Files navigation equal to Places icons — 2026-10-22
+
+Owner requested navigation icons match the Places sidebar. Both native requests
+are16px; removed the toolbar artwork reduction (transform1 instead of.8625).
+Source/independent seed/five homes and digest pins applied. GTK CSS parser,
+active sidebar16 setting, seven seed tests and zero-pending deploy check pass.
+Exactly one home-folder Thunar window and GTK Busy=false confirmed before
+normal quit/reopen on its existing workspace3. Screenshot inspected: matching
+icon sizes, APX label and divider-aligned path field retained. No resolution,
+sidebar size, folder-grid zoom or actual account/path change.
+Backup /var/lib/apx/backups/20261022T135642Z-controls-followup.
+Evidence audit/2026-10-22-files-equal-icons/. No commit/push.
+
+# Files: final +15% icons, APX label and aligned path field — 2026-10-22
+
+Owner requested15% larger icons relative to the displayed12px candidate,
+uppercase APX, and the path field beginning at the sidebar/content divider.
+Native small-toolbar allocation remains16px; CSS artwork scale .8625 gives
+13.8 logical pixels (=12 *1.15), with no display-resolution/scale/grid-zoom change.
+
+Added a GTK3 presentation module scoped to ThunarWindow: displays sidebar text
+apx as APX and dynamically aligns the location entry with the content-side edge
+of the sidebar divider. Alignment follows divider movement/window allocation;
+no sidebar resets the extra margin, narrow fields keep80px available, breadcrumb
+mode retains native behavior. The real account, /home/apx path, filesystem names,
+bookmarks and file operations are unchanged. A local thunar wrapper loads the
+module only for Thunar; three Environment-local D-Bus service overrides route
+normal activation through that wrapper. Shared gtk-modules setting was tried,
+found ineffective and removed; no global module activation remains.
+
+Original C source: scripts/physical-pilot/apx-thunar-chrome-v1.c. Built x86_64
+shared object with the pilot Environment's GTK3 compiler/headers, -Wall -Wextra
+-Werror (unused callback arguments excluded), no new packages. Independent seed
+and five homes receive their own library/wrapper/services/CSS; runtime/recovery
+pins updated. Deployment helper now handles binary shared-object assets without
+text decoding. Local GTK theme/font/module preferences remain intact.
+
+Native probe using the installed module: initial entry/divider both209px;
+after moving divider40px both249px; restored both209px. All three pass and
+native toolbar request is16px. No GTK critical/assertion/module-load errors.
+Normal D-Bus activation verified module in process environment; opened home
+folder in the normal session and inspected final screenshot: APX label, aligned
+path field and larger icons. Left Files visible for owner review. Seven seed
+tests pass and deployment recheck zero pending. No package/identity/lifecycle
+change, commit or push.
+
+Deployment: scripts/physical-pilot/deploy-files-balanced-20261022.py.
+Backups: 20261022T112257Z-controls-followup (intermediate icon size),
+20261022T135021Z-controls-followup (module/CSS),
+20261022T135213Z-controls-followup (normal activation and settings cleanup).
+Use shared wrapper --rollback with exact backup path in reverse order for full
+reversal. Evidence: audit/2026-10-22-files-balanced-label/.
+
+# Actual native toolbar sizing and current-window refresh — 2026-10-22
+
+Owner reported unchanged toolbar sizes and inconsistent APX/home icon. The
+existing Thunar process still rendered older icons/CSS. Enabled native
+misc-small-toolbar-icons (24px large toolbar to16px small toolbar request);
+CSS transform now .75 yields12px artwork rather than only shrinking a24px slot.
+Home toolbar now uses exactly the existing sidebar user-home-symbolic artwork.
+No display resolution, monitor scale or folder-grid zoom change.
+
+Source/independent seed/five homes and pins updated, preserving each home's
+other Thunar XML preferences and generated opacity CSS. Applied live xfconf
+preference. Inspected current window: exactly one Thunar, title apx - Thunar;
+GTK Application Busy false. Gracefully quit/reopened only that file-manager
+process at /home/apx, preserving displayed folder. Before/after screenshots of
+the actual window confirm visibly smaller navigation and updated home icon.
+Other graphical applications and Host terminal untouched. Owner's open UI
+was restored to Files on workspace2 for visible result. Seven seed tests pass;
+deployment recheck zero pending. Backup:
+/var/lib/apx/backups/20261022T111915Z-controls-followup.
+Evidence audit/2026-10-22-files-native-size/. No commit/push.
+
+# Files navigation at half original size — 2026-10-22
+
+Owner corrected requested reduction to50%. Toolbar image transform is now .4,
+half the original .8 (previous candidate .6). Applied source/independent seed/
+five graphical homes and digest pins. GTK CSS parser and seven seed tests pass;
+deploy recheck zero pending. Existing file-manager processes not stopped.
+Backup: /var/lib/apx/backups/20261022T111553Z-controls-followup.
+
+# Compact Files navigation and Zotero removal — 2026-10-22
+
+Owner requested smaller, cleaner top-left file-manager icons, then explicitly
+requested uninstalling Zotero. Thunar toolbar now uses original thin outlined
+symbolic chevrons/home/menu in APX-Graphite, rendered at scale .6 instead of .8
+(25% reduction). Button padding reduced to2px. Symbolic paths use filled outlines
+so GTK recolouring preserves the drawing. Source/independent seed/five homes and
+runtime/recovery digests updated. Shared deploy helper permits the scoped icon
+assets; wrapper preserves generated per-home opacity CSS. Native GTK parse and
+icon lookup pass. Instrumented separate Thunar instance confirms actual toolbar
+icon names and screenshot verifies final appearance. Seven seed tests pass;
+deploy recheck zero pending. Existing file-manager processes were not stopped.
+Backups: 20261022T111221Z-controls-followup (initial),
+20261022T111324Z-controls-followup (symbolic rendering correction).
+Evidence: audit/2026-10-22-files-navigation/.
+
+Zotero was an unpacked application only in faculdade /opt/zotero, with a local
+desktop symlink. No Zotero packages/Flatpaks or running process found in inspected
+registered environments. Removed program directory and launcher; desktop database
+refresh succeeds, both targets absent. Application contents removed as Environment
+user; empty root-owned-parent directory removed by fixed Host path afterwards.
+Personal library/profile/documents retained. No application-data backup made.
+Evidence: audit/2026-10-22-zotero-remove/result.json. No commit/push.
+
+# Terminal and Files visual alignment — 2026-10-22
+
+Owner requested the same Control Centre styling for terminal and file manager.
+Kitty now uses graphite #101117, #d9dcea text/cursor, #353a4a selection,
+JetBrains Mono 11 and 18px padding. ANSI success/warning/error colours retained.
+Thunar CSS uses matching graphite surfaces, outlines, selection/hover states,
+rounded entries/buttons and scoped JetBrains Mono 10pt. Shared GTK dialogs and
+file chooser palette also updated; other applications' font settings unchanged.
+Appearance generator uses graphite for Files and the default terminal while
+preserving saved opacity and terminal window-tint preference. Rofi unchanged.
+
+Applied source, independent seed and all five graphical homes plus digest pins.
+Existing Kitty instances receive normal configuration reload via appearance
+helper. Existing Thunar processes may retain loaded GTK CSS until they exit;
+did not quit them or interrupt file operations. A separate temporary DBus Thunar
+instance and Kitty window were opened, captured and closed for validation.
+Both screenshots inspected; GTK CSS parser and Kitty native config loader pass.
+Seven desktop-seed tests and four terminal/files opacity cases pass.
+Deployment recheck zero pending paths, preserving generated per-home CSS block.
+Backup: /var/lib/apx/backups/20261022T110608Z-controls-followup.
+Wrapper: scripts/physical-pilot/deploy-terminal-files-style-20261022.py;
+rollback uses --rollback backup-path. No commit/push.
+
+# Rofi visual alignment — 2026-10-22
+
+Owner requested matching Rofi to the current Control Centre. Applied graphite
+#101117 panel, #1b1d26 result/search/tab cards, #353a4a selection, matching
+text/outline palette and 18px outer/14px inner corners. Seven results retained;
+rows now 50px with 6px spacing. Appearance generation applies saved Rofi opacity
+only to the outer panel, avoiding stacked transparency on cards. Existing icon
+accent preferences remain. Source, independent seed and all five graphical
+homes updated with runtime/recovery digest pins. No application actions changed.
+
+Rofi native theme parse and live apps launch passed without stderr; screenshot
+inspected in faculdade, labels fit. Seven desktop-seed tests and four generated
+opacity cases pass. Deployment recheck zero pending files. Backup:
+/var/lib/apx/backups/20261022T102640Z-controls-followup.
+Deploy/reversal wrapper: scripts/physical-pilot/deploy-rofi-style-20261022.py
+(using shared --rollback backup-path). No commit/push.
+
+# Password-only authentication; startup cursor investigation — 2026-10-22
+
+Owner explicitly revoked all facial unlock/authentication, including sudo,
+and requested uninstalling the detection program. Replaced lock PAM in Hub,
+faculdade, hytale, minecraft and steam with password-only pam_unix/faillock
+and retained account/session/login paths. Hub sudo now uses its normal
+system-auth password stack; no live PAM stack anywhere contains pam_howdy.
+Uninstalled howdy-apx and python-dlib in all five Environments through their
+own package contexts; Host packages untouched. Removed active models/config,
+Howdy residual directories, installed UI helper/module, private enrollment,
+and ordinary cached installers. Historical read-only snapshots were preserved;
+they may contain old program/model copies and are not active authentication.
+No new biometric backups were made. Existing stale, zero-length Oct18 pacman
+locks were removed after verifying no package manager was running.
+
+Removed future-creation enrollment/imports/face packages from source and installed
+runtime; public seed no longer includes the face status helper. Lock text is
+static password instructions, empty Enter ignored. Removed retired source support
+module and its obsolete tests; updated creation/default-lock tests and durable
+AGENTS guidance. Historical build/deployment documents are not active product
+and must not be used to reinstall the retired feature.
+
+Authentication validation: actual PAM loader in a private mount namespace with
+synthetic password modules accepted a valid token/rejected an invalid token for
+hyprlock and sudo (four cases, repeated after package removal), without reading
+real credentials or camera. Nine creation-feature tests, seven seed tests and
+focused lock-default test pass. Full work-default suite has 13 passes and the
+known unrelated pre-existing bar-layout assertion failure. Live reload clean;
+all five package/model/PAM states verified; deployment recheck zero pending.
+Backups without biometric data: 20261022T084829Z-password-only,
+20261022T085331Z-controls-followup. No real lock/reboot or password change.
+
+For the cursor, no delayed acceleration program was found. Added a short,
+read-only 8-second startup sampler, once per session, from the compositor start
+callback before the shell launch. Collects seven IPC timings, output refresh,
+device names and CPU pressure; no input events, cursor positions or camera.
+Overwrites only each Environment's private latest report. User entered faculdade
+during this task: first monitor query took156ms, later queries6–8ms. This is
+startup process/IPC responsiveness evidence, not cursor FPS or proof that the
+acceleration profile was late. Actual cold-boot Hub measurement is pending the
+next ordinary boot/entry; do not claim the startup symptom is fixed.35/100 and
+adaptive remain configured. Evidence audit/2026-10-22-password-only/.
+No commit or push.
+
+# Uniform 35/100 trackpad cursor — 2026-10-22
+
+Owner requested 35/100 in every Environment persistently and clarified the
+perceived smoothness delay happens during the first seconds entering Hub.
+Persisted raw sensitivity -0.30 (UI35) and explicit adaptive profile in Hub,
+faculdade, hytale, minecraft and steam independent preference files. Added that
+preference to the independent seed/pinned inventory so new Environments start
+at35 too. Settings helper now preserves explicit adaptive profile when saving
+cursor sensitivity. Existing UI remains adjustable; this is an owner-requested
+uniform current/default choice, not a lock or a cross-Environment settings sync.
+Scroll/workspace preferences and pointer power are unchanged.
+
+Source/live paths show no delayed acceleration activation service: these values
+load directly in compositor Lua configuration independently of shell polling.
+Boot/re-entry perceived delay is not reproduced or explained yet. Do not claim
+this change proves a startup-delay fix. No reboot/session restart performed.
+
+Seven pointer/gesture tests and seven seed tests pass. Live Hub apply succeeds,
+configerrors empty, five saved profiles verified and recheck zero pending.
+Backup /var/lib/apx/backups/20261022T084259Z-controls-followup. Evidence:
+audit/2026-10-22-trackpad-uniform/. No package/lifecycle change, commit or push.
+
+# Concurrent unlock input — 2026-10-22
+
+Owner requested typing the unlock code while face capture runs. Applied Howdy
+native concurrent password conversation and face-first lock PAM ordering in Hub
+and four graphical workloads, retaining password fallback/faillock paths. Updated
+private opt-in config/PAM/digests for future workloads, lock instructions in source,
+seed/five homes and runtime/recovery pins. Rechecks: zero pending files.
+
+Native mode cancels the prompt thread (upstream stability caveat); six private
+namespace fixture cases pass against the installed native Howdy module. Tests use
+synthetic face/password/faillock, not live credentials or camera. 21 face tests
+and seven seed tests pass; work-default lock regression passes, with an unrelated
+existing bar-layout assertion still failing. Physical owner unlock is pending.
+Howdy config is Environment-wide: existing other Howdy consumers also receive the
+concurrent prompt; their PAM rules were not changed. No packages, face models,
+passwords or session restart. Backups 20261022T072852Z-parallel-unlock and
+20261022T072907Z-controls-followup. Evidence/reversal:
+audit/2026-10-22-parallel-unlock/README.md. No commit/push.
+
+# Semantic Trackpad icons — 2026-10-22
+
+Owner requested the three Trackpad items better represent each section. Asked
+icons vs labels; after an optional response window proceeded with icons only,
+preserving the previously explicitly requested Cursor/Scroll/Workspaces labels.
+Cursor uses Lucide mouse-pointer-2, Scroll uses arrow-up-down, Workspaces uses
+the existing square-stack. The cursor circle retains its existing trackpad power
+action and off indicator. Other two are passive illustrations, without fake
+button behavior. Existing style, sliders, values and keyboard behavior unchanged.
+
+New icons are official Lucide SVG assets under the existing Lucide license.
+Applied source, independent seed and five graphical homes with digest pins.
+Live screenshot inspected: all three icons render and cards fit. Seven seed
+tests pass; deployment recheck zero pending. Backup:
+/var/lib/apx/backups/20261021T230422Z-controls-followup.
+Evidence audit/2026-10-22-trackpad-icons/. No settings, package, lifecycle action,
+commit or push.
+
+# Short trackpad labels and workspace glide — 2026-10-21
+
+Owner requested labels exactly Scroll and Workspaces and another refinement of
+workspace animation. Visible/accessibility labels shortened. Workspace/In/Out
+use a dedicated apxWorkspaceGlide cubic curve (0.22,1;0.36,1), 4.2 animation
+units (nominal 420ms), full horizontal slide. Terminal slope is zero, no overshoot;
+this lengthens and softens the settle after release. Physical finger tracking,
+three-finger gesture, stored sensitivity and other animation curves unchanged.
+Physical feel awaits owner feedback; compositor acceptance is not perceptual proof.
+
+Live eval and reload accepted, configerrors empty; animations JSON confirms new
+curve. Full native shell parse and existing 15-frame smooth fixture pass; seven
+seed tests pass. Source, seed/five homes and pins applied, recheck zero pending.
+Backup /var/lib/apx/backups/20261021T225942Z-controls-followup. Original source
+copies and animations evidence: audit/2026-10-21-workspace-glide/.
+No packages, lifecycle action, commit or push.
+
+# Arrow keys across settings sliders — 2026-10-21
+
+Owner accepted Trackpad keyboard adjustment and requested the same for the other
+sliders, including sound, brightness and mouse. MenuSlider now defaults to direct
+Left/Right by one and Shift+Left/Right by five; Up/Down and Tab retain navigation.
+This includes combined/separate volume, screen brightness, microphone and mouse.
+Standalone ControlSlider (personalization opacity) uses the same convention and
+emits moved on keyboard updates. No value/range or hardware settings were changed
+by deployment. Media timeline seeking retains its native player-specific keys.
+
+Mouse writes now preserve focus and queue the newest held-arrow value, protecting
+optimistic state from stale status replies. Mouse drag captures released value
+before model rebinding. Microphone volume has its own latest-value write queue;
+status polling cannot overwrite pending/in-flight changes. Existing volume and
+screen-brightness write queues remain in use.
+
+Validation: 11 native Qt results pass against actual shared MenuSlider, settings
+cards, mouse/gesture/microphone queue functions and standalone ControlSlider.
+Includes one/five-point steps, bounds, held-key final value, microphone busy
+writes, opacity updates and retained gesture drag/keyboard behavior. Full native
+shell parse and 15-frame smooth fixture pass; seven seed tests pass. Applied
+source/independent seed/five graphical homes with runtime/recovery pins; recheck
+zero pending files. Backup /var/lib/apx/backups/20261021T225817Z-controls-followup.
+Evidence: audit/2026-10-21-all-slider-arrows/.
+No package install, hardware adjustment, lifecycle action, commit or push.
+
+# Trackpad submenu and normalized keyboard controls — 2026-10-21
+
+Owner requested all three controls inside one Trackpad menu, scales 0–100,
+and arrow-key adjustment. More options now has one Trackpad entry; its page
+contains Cursor, Scroll · 2 dedos, Workspaces · 3 dedos plus back navigation.
+The existing named control-page state/transition handles this nested route;
+generic ActivityPanel excludes it, main header names it, depth is two.
+
+UI normalization preserves saved physical settings: cursor maps 0–100 to
+-100–100, gestures map 0–100 to existing 25–200. Zero is the minimum speed,
+not device disable. Stored file formats and actual current settings are unchanged.
+Only trackpad sliders enable immediate Left/Right adjustment by one, Shift by
+five; Up/Down and Tab retain menu navigation. Cursor drag now captures released
+value before model rebinding too. Focus is retained during writes. Queued latest
+updates preserve held-arrow input and independent pending gesture choices;
+readback does not overwrite pending choices. Failed writes refresh saved state.
+
+Seven native Qt results pass using actual MenuSlider, gesture cards and queue
+functions: direct arrows, Shift, queued rapid keys/readback, normalized endpoints,
+mouse drag/release and independence. Seven backend/trackpad tests and seven seed
+tests pass. Full shell PARSE_PASS and existing 15-frame smooth fixture pass.
+Live submenu screenshot inspected; all three cards fit and display 0–100 values.
+Source, independent seed, five homes and digest pins applied. Recheck zero
+pending files. Backup /var/lib/apx/backups/20261021T225520Z-controls-followup;
+pre-edit source in audit/2026-10-21-trackpad-submenu/shell.before.qml.
+No browser flags, packages, lifecycle action, commit or push.
+
+# Independent trackpad settings — 2026-10-21
+
+Owner requested independent cursor and gesture sensitivity, then clarified all
+scroll/workspace gestures and corrected workspace switching to three fingers.
+More options now has separate Cursor, Scroll · 2 dedos and Workspaces · 3 dedos
+sliders. Cursor uses the existing helper and range. New Environment-local helper
+stores scroll factor (25–200%) and inverse workspace swipe distance (25–200%,
+100%=300px) in an independently sourced preference file, without touching cursor
+sensitivity, adaptive acceleration or disable-while-typing. Saves are serialized,
+validated, atomic, with prior live state restored on persistence failure.
+
+Live test initially used scroll80; owner subsequently interacted with the live
+controls (screenshot shows their cursor/scroll choices). Do not overwrite those.
+Gesture remains three-finger horizontal. No browser restart or flags/extensions.
+Scroll amount is adjustable; browser-managed inertia/friction was not changed
+and must not be described as macOS-equivalent or system-wide kinetic scrolling.
+
+Validation: seven trackpad/helper tests (including existing pointer setting),
+seven desktop seed tests, five native Qt slider results (real drag/release
+and keyboard independence), native full-shell PARSE_PASS and 15-frame smooth
+fixture pass. Slider commits retain the dragged value across binding restoration. Live helper writes and compositor reload succeed with no config errors.
+Live More options screenshot inspected; additional workspace slider is below
+scroll in the existing scrollable menu. Source, seed and five graphical homes
+applied; deployment recheck zero pending files. Backups:
+/var/lib/apx/backups/20261021T224519Z-controls-followup
+/var/lib/apx/backups/20261021T224531Z-controls-followup
+/var/lib/apx/backups/20261021T224636Z-controls-followup
+Original source copies in audit/2026-10-21-trackpad-gestures/.
+No package install, lifecycle operation, commit or push.
+
+# Accepted trackpad motion and workspace swipe — 2026-10-21
+
+Owner accepted and requested persistence of adaptive acceleration for the ELAN
+trackpad and disable_while_typing=false after reporting reduced initial delay.
+This is owner-observed improvement, not a proven hardware diagnosis. Existing
+per-Environment sensitivity overrides and scroll settings remain. Dynamic-cursors
+was unloaded and its temporary source/build deleted; no cursor effect remains.
+Owner also requested smoother three-finger workspace transitions: replaced
+slidefade 12% with full horizontal slide, speed 3.5 and apxMenuOutCubic easing
+on workspaces/In/Out. Live config reload has no errors; physical gesture feel
+awaits owner evaluation. Source, installed seed, five graphical homes and digest
+pins updated. Backup: /var/lib/apx/backups/20261021T223509Z-controls-followup;
+pre-edit source: /var/lib/apx/backups/20261021T223503Z-trackpad-workspaces.
+No packages, lifecycle action, commit or push.
+
+# Shared pinned-title content clipping — 2026-10-21
+
+Owner requested all menus match the accepted shortcut-list backdrop. Interactive
+cards already had whole-card guards, but passive cards/labels could still paint
+under the pinned title. Added a common clipped viewport around menuFlick,
+reserving its headerInset for all menu content. Counter-offset keeps the
+Flickable's screen position, scroll geometry and arrow reveal coordinates stable.
+Shared alpha0.65, gradient and title animation retained; when no pinned title is
+visible the full viewport is restored. Main dashboard retains its existing
+appearance (no pinned title). Native title11, arrow14 and whole-card7 results
+pass; full candidate parse passes. Source/seed/five homes applied and deployment
+recheck zero pending files. Backup:
+/var/lib/apx/backups/20261021T221511Z-controls-followup.
+No settings, lifecycle action, commit or push.
+
+# Shortcut rows no longer paint beneath translucent title — 2026-10-21
+
+Owner reported the shortcut-list title backdrop appeared less transparent.
+The common 0.65 backdrop alpha was already identical; shortcut rows were opaque
+noninteractive rectangles without whole-card clipping, unlike other guarded
+menu cards. Added menuButtonFits-based opacity to each shortcut row, preserving
+layout and hiding rows intersecting the pinned-title region or viewport edges.
+No per-menu alpha override was introduced. Common appearance/animation retained.
+Ten native title results pass, including a row crossing the title, an adjacent
+visible row, alpha0.65 and opacity restoration on return. Native full shell
+parse passes. Applied source/seed/five homes with pins; live shell responds
+and recheck zero pending files. Backup:
+/var/lib/apx/backups/20261021T221221Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/ current fixture/results.
+No settings, lifecycle operation, commit or push.
+
+# Uniform Control Centre card outlines — 2026-10-21
+
+Owner reported uneven top-box contour. The top dashboard card used radius18
+while the outer clipping mask used radius20, thinning its corners. Dashboard
+now receives the current popup radius and effective window DPR. Shared inline
+DashboardCard draws each of its three outlines one physical pixel inset, with
+antialiasing and a whole-physical-pixel stroke (round(DPR)/DPR logical width).
+The first card matches the outer radius; remaining cards retain radius18.
+Background opacity, contents, icons, fonts and hit regions remain unchanged.
+GPU pixel fixture extracts the actual inline card component and compares
+integrated stroke coverage on all four flat sides at DPR1/1.25/1.5/2: all 12
+results pass. At1.5 every side measures ~2 physical pixels; at1/1.25 ~1 pixel.
+Native full shell parse and seven seed tests pass. Applied source/seed/five
+homes with pins; live menu screenshot inspected and recheck zero pending files.
+Evidence: audit/2026-10-21-dashboard-outline/ (before/after, scale tests/status).
+Backup: /var/lib/apx/backups/20261021T152335Z-controls-followup.
+No settings, lifecycle action, commit or push.
+
+# Per-window display scaling — 2026-10-21
+
+Owner required adaptation when changing screens. Found QScreen DPR rounds to
+2 while current QWindow effective DPR is 1.5 on Wayland. Popup now binds to
+Window.window.devicePixelRatio for physical position alignment; mask/content
+buffer scale explicitly rounds that effective DPR upward to retain the accepted
+fractional-scale text quality. No fixed 1.5, font/icon/monitor changes. Added
+read-only render_scale/render_texture_scale/texture sizes to popupStatus.
+Per-output bars, focus/trigger routing, removal cleanup and automatic compositor
+monitor scale were already present and retained. Documented requirement in
+PROJECT_STATE. GPU fixtures passed at effective 1/1.25/1.5/2 (12 results), with
+five scroll positions each and pixel/mask/DPR checks. Text fixture 3 and seed
+7 results pass; full native shell parse passes. Source/seed/five homes applied,
+pins refreshed and recheck zero pending. Live output/DPR in evidence JSON.
+Physical second-monitor/mixed-DPI hotplug still needs owner hardware validation.
+Evidence: audit/2026-10-21-display-scaling/. Backup:
+/var/lib/apx/backups/20261021T151836Z-controls-followup.
+No monitor/settings/lifecycle operation, commit or push.
+
+# Curve text retained; icon experiment reverted immediately — 2026-10-21
+
+Owner authorized comparing menu/terminal text, then requested sharper text and
+icons in both bar and menus. Terminal uses Cascadia Mono 11.5pt; shell keeps its
+JetBrains Mono and existing pixel sizes. Native font rasterization was compared
+but showed irregular strokes at 150%; Text.CurveRendering was chosen instead
+for 191 Text objects in shell/shared components. Popup/mask textures now match
+physical resolution (1x physical, no previously rejected 2x supersampling).
+Popup position aligns to physical pixels when settled, keeping animations free.
+GPU comparison: curve text edge-contrast ratio ~0.933 versus ~0.55 baseline;
+proxy only, not identical glyph fidelity. Full current source parse passes;
+sharpness 3, sticky title 9, corners 3, navigation 14, seed 7 and battery 6 results
+passed during this task. Typeface, sizes and terminal settings were not changed.
+
+The subsequent shared IconImage replacement was rejected by the owner as ugly.
+ControlIcon.qml was immediately restored byte-for-byte from the pre-icon-change
+backup, including its original ToolButton rendering. This applies to bar and
+menus. No further icon tuning is authorized by inference from that rejection.
+Text/physical-position changes remain applied. Source/seed/five homes updated
+with pins; live shell responds and recheck zero pending files.
+Current revert backup: /var/lib/apx/backups/20261021T151208Z-controls-followup.
+Typography backup: /var/lib/apx/backups/20261021T150745Z-controls-followup.
+Evidence: audit/2026-10-21-native-menu-text/. No lifecycle action, commit or push.
+
+# Owner reverted sharpness experiment — 2026-10-21
+
+Owner requested returning to the previous rendering. Source shell restored
+byte-for-byte from the seed backup preceding the sharpness change; comparison
+showed only the six added texture/sampling lines. Applied source/seed/five homes
+and refreshed pins. Rounded clipping and all earlier title/menu behaviour remain.
+Rounded GPU fixture restored to locating the effect block, three results pass.
+Sharpness fixture retained only as a measurement experiment without the rejected
+quality gate. Live shell responds; recheck zero pending. Revert backup:
+/var/lib/apx/backups/20261021T150121Z-controls-followup.
+No lifecycle action, commit or push.
+
+# Sharper masked menus at fractional display scale — 2026-10-21
+
+Owner reported softened text/icons after rounded clipping. GPU side-by-side
+fixture at the actual 150% scale confirmed masked text lost horizontal edge
+contrast (edge-energy ratio ~0.55 versus unmasked reference). Added explicit
+physical-pixel texture sizes for popup/mask, disabled mipmaps, and supersampled
+the popup content at twice physical resolution with smooth final reduction.
+Mask itself uses physical resolution. The supersampled fixture ratio is ~1.29;
+this is an edge-contrast proxy, not proof of identical glyph rendering. Fonts,
+font sizes, display scale and compositor settings remain unchanged. The bar
+remains on its original native render path.
+Three native GPU sharpness results pass (real text and ControlIcon specimens;
+image inspected), three rounded-corner results across five scroll positions pass,
+and seven seed tests pass. Applied source/seed/five homes with pins; live shell
+responds and deployment recheck zero pending files. Evidence:
+audit/2026-10-21-menu-sharpness/ and updated rounded-scroll-clip fixture.
+Backup: /var/lib/apx/backups/20261021T145900Z-controls-followup.
+No settings, lifecycle operation, commit or push.
+
+# Consistent rounded scroll clipping — 2026-10-21
+
+Owner reported uneven transparent top corners while scrolling Central Control.
+Rectangle.clip only cuts a rectangular viewport; moving child cards could paint
+outside the outer rounded contour. Added one rounded alpha mask to the complete
+popup layer using QtQuick.Effects.MultiEffect. Mask follows actual frame size and
+radius and is enabled only while popup is open. Existing split-card backgrounds,
+translucency, title timing and fitting remain unchanged.
+Native full shell parse passes. GPU/Wayland Qt pixel fixture checks all four
+corners and symmetric top-edge samples at five scroll positions, verifies content
+still renders, and accounts for physical 150% scaling. Three results pass.
+Seven seed tests pass. Applied source/seed/five homes and refreshed pins. Live
+Central Control opened and screenshot inspected: menu content renders and rounded
+contour is intact. Final recheck zero pending files.
+Evidence: audit/2026-10-21-rounded-scroll-clip/. Backup:
+/var/lib/apx/backups/20261021T145333Z-controls-followup.
+No device/settings/lifecycle action, commit or push.
+
+# Softer lower edge on title backdrop — 2026-10-21
+
+Owner requested further refinement. Dark translucent backdrop remains at 65%
+behind the title but fades to transparent through its final 10px, removing the
+hard lower boundary. Full-width coverage, top corners, title clearance and
+accepted animation timing remain unchanged. A single gradient avoids doubled
+opacity. Nine native title results pass, including gradient stop locations and
+alpha. Applied source/seed/five homes with pins; live shell responds and recheck
+zero pending files. Backup:
+/var/lib/apx/backups/20261021T144730Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# Translucent full-width title backdrop — 2026-10-21
+
+Owner corrected the opaque/inset backdrop: requested translucent dark material
+and complete top-area coverage. Backdrop alpha is now 0.65, covering the menu's
+full width from y0 including top/side padding. A single rounded rectangle uses
+the outer menu radius; clipping its lower extension leaves square lower edges
+without double-blending or corner gaps. Text placement and 35px effective scroll
+inset remain unchanged. Accepted entrance/exit timing remains unchanged.
+Nine native title results pass, including fractional alpha, full-width/top
+coverage, corner geometry and navigation clearance. Native full shell parse
+passes. Applied source/seed/five homes with pins; live shell responds and recheck
+zero pending files. Backup:
+/var/lib/apx/backups/20261021T144622Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# Dark backdrop behind centred title — 2026-10-21
+
+Owner approved text entrance and requested a dark background to stop content
+showing through the centred title. Added an opaque rounded 8px backdrop, using
+the current menu colour darkened by 1.18. Entrance backdrop stays steady while
+the accepted 420ms title fade runs; no divider or background-building animation.
+Return backdrop dissolves with the existing 240ms exit progress so the original
+title can still return smoothly. Eight native title results pass, including
+opaque/darker entrance backdrop, exit alpha and reversal. Applied source/seed/
+five homes with pins; live shell responds and recheck zero pending files.
+Backup: /var/lib/apx/backups/20261021T144401Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# More perceptible title entrance without a bar — 2026-10-21
+
+Owner found the entrance too subtle after removing the bar. Entrance now uses
+420ms InOutSine while exit retains 240ms InOutQuad; both remain text-only with
+transparent background and no separator. Direction comes from Behavior.targetValue
+so timing cannot use the preceding state during a binding change. Eight native
+Qt title results pass, including an intermediate entrance beyond 240ms, reversal
+and completed exit. Applied source/seed/five homes with pins; live shell responds
+and recheck zero pending. Backup:
+/var/lib/apx/backups/20261021T144226Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# Animate title alone without creating a header bar — 2026-10-21
+
+Owner identified the entrance background/line as appearing to construct a new
+top bar. Sticky overlay is now fully transparent and has no extra separator;
+only the title text participates in the existing complementary fade. Original
+menu background remains the sole panel surface. Timing, scrolling/title inset
+and original-title return are unchanged. Seven native Qt title results pass,
+including zero overlay alpha during entry, exit and settled state. Applied
+source/seed/five homes with pins; live shell responds and recheck zero pending.
+Backup: /var/lib/apx/backups/20261021T144007Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# Matching title entrance and return — 2026-10-21
+
+Owner requested the entrance match the accepted exit. Both directions now use
+the same background alpha and complementary original/sticky title opacity,
+driven by the existing 240ms InOutQuad reveal progress. No motion or timing
+change. Seven native title results pass, with intermediate entrance cover alpha
+and complementary opacity checks added. Applied source/seed/five homes with
+pins; live shell responds and recheck zero pending files. Backup:
+/var/lib/apx/backups/20261021T143823Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# Smooth return of original title — 2026-10-21
+
+Owner approved entrance and disliked return. Preserved entrance timing/style.
+On return only, the sticky background now dissolves with revealProgress instead
+of staying opaque until removal, and the original header fades back with the
+complementary progress. This prevents the original title abruptly popping into
+view after the cover disappears. Seven native title results pass, including
+intermediate original opacity, cover alpha, entry invariance and reversal.
+Native full shell parse passes. Applied source/seed/five homes with pins;
+live shell responds and recheck zero pending. Backup:
+/var/lib/apx/backups/20261021T143647Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# Discreet stationary title fade — 2026-10-21
+
+Owner disliked the title motion after the timing refinement. Removed text
+translation entirely. Current effect fades only title and separator over 240ms
+InOutQuad, with the overlay background kept steady instead of fading the whole
+surface over underlying content. Entry/exit share reversible progress and the
+same mounted/inset lifecycle. Six native title results pass. Applied source,
+seed and five homes with pins; live shell responds and recheck zero pending.
+Backup: /var/lib/apx/backups/20261021T143108Z-controls-followup.
+No lifecycle action, commit or push.
+
+# Gentler sticky-title animation — 2026-10-21
+
+Owner requested a smoother title animation. Reveal now uses a 320ms InOutSine
+curve (previously 180ms OutCubic), with reduced 6px/2px text travel. This softens
+both onset and finish while preserving the same reversible progress and inset.
+Six native title results pass, including intermediate entrance/exit/reversal.
+Applied source/seed/five homes with pins refreshed. Live shell responds and
+recheck zero pending files. Backup:
+/var/lib/apx/backups/20261021T142941Z-controls-followup.
+Evidence: audit/2026-10-21-sticky-title/. No lifecycle action, commit or push.
+
+# Animated sticky title and Environment return to top — 2026-10-21
+
+Owner requested title entrance/exit animation and Up navigation past the first
+Environment to see the title. Sticky title now fades with a small 10px/4px
+translation over 180ms; rapid scroll reversal retargets the same progress.
+Overlay stays mounted and reserves its inset until exit finishes. At the first
+openable Environment, another Up clears stale reveal work and scrolls to zero,
+keeping the Environment selected. No actionable selection of the title needed.
+Six native title results (including intermediate animation and reversal), 14
+navigation results and seven seed tests pass. Native full shell parse passes.
+Applied source/seed/five homes with runtime/recovery pins; live shell responds
+and deployment recheck zero pending. Evidence: updated sticky-title and
+arrow-navigation audit fixtures/results. Backup:
+/var/lib/apx/backups/20261021T142841Z-controls-followup.
+No settings, lifecycle action, commit or push.
+
+# Menu frame ends at last complete action — 2026-10-21
+
+Owner requested shrinking the menu itself when a partial next button is hidden.
+The visible frame now ends after the last complete action plus normal padding
+when the viewport's bottom cuts another action. Nested controls use their outer
+card's boundary. Scrolling retains an independently sized nominal viewport so
+frame fitting cannot recursively collapse the menu or change scroll bounds.
+Pages with no clipped action and the end of content retain natural sizing.
+Sticky title and whole-card input/visibility guards remain in effect.
+Seven native Qt frame-fit results, five sticky-title results, 13 navigation
+results, six scroll results, six battery/action and seven seed tests pass.
+Full native shell parse passes. Applied source/seed/five homes and refreshed
+runtime/recovery pins. Live Environment menu: last full card ends at y345,
+frame is 367px (normal 10+12px padding), nominal viewport remains 378px, next
+card y352/h50 is hidden and non-clickable. Evidence snapshot in
+ audit/2026-10-21-whole-card-height/live-status.json. Recheck zero pending files.
+Backup: /var/lib/apx/backups/20261021T142606Z-controls-followup.
+No settings, lifecycle action, commit or push.
+
+# Title centres only after scrolling out of view — 2026-10-21
+
+Owner clarified the menu title should keep its original position at the top,
+and become fixed/centred horizontally only after scrolling completely out of
+view. Added a conditional header overlay using the actual original title for
+standard menus and calendar/editor. Returning above the threshold hides the
+overlay and restores the normal scrolling title. Menus without a title remain
+unchanged. Keyboard reveal, visible-entry search and clipped-card guards account
+for the overlay's 35px inset so selected actions are not obscured.
+Five native Qt title results pass (threshold, centring, fixed position, return,
+and keyboard occlusion), plus 13 arrow-navigation, 6 scroll and 7 seed results.
+Full shell native parse passes; applied source/seed/five homes and refreshed
+runtime/recovery pins. Live shell responds. Recheck zero pending files.
+Evidence: audit/2026-10-21-sticky-title/. Backup:
+/var/lib/apx/backups/20261021T141837Z-controls-followup.
+No settings, lifecycle action, commit or push.
+
+# Viewport-aware arrow entry and persistent columns — 2026-10-21
+
+Owner requested another refinement after confirming arrow scrolling improved.
+Generic navigation now starts from fully visible controls in the current
+viewport, including when wheel scrolling left old Qt focus offscreen; this
+supersedes the previous first-Up-enters-at-bottom behaviour. Vertical navigation
+remembers its horizontal column across full-width actions and resets that anchor
+on horizontal/Tab movement, new entry, pointer focus or popup opening. Deferred
+reveal requests are coalesced into the latest target so stale callbacks cannot
+pull the viewport back during quick navigation. Text fields retain native arrows.
+Applied source/seed/five homes, refreshed runtime/recovery pins. Native shell
+parse, 13 Qt navigation results, 6 Qt scroll results, 6 battery/action tests and
+7 seed tests pass. Live shell responds; deployment recheck zero pending files.
+Evidence: audit/2026-10-21-arrow-navigation/ (updated current fixtures/results).
+Backup: /var/lib/apx/backups/20261021T141220Z-controls-followup.
+No settings, lifecycle operation, commit or push.
+
+# Arrow-key menu navigation refinement — 2026-10-21
+
+Owner reported unreliable arrow scrolling. Direction now uses each control's
+actual bounds, while visibility uses its complete card. Up/down can reach inset
+rows, preserve nearest column and skip disabled controls; left/right stay in
+the same row. First Up/Backtab starts at the last eligible control. Scroll adds
+8px clearance and rechecks after layout; oversized targets reveal their start.
+Radio controls reveal their complete parent card. Focus recovery restores the
+previous eligible control instead of unconditionally returning to the first,
+and waits through page transitions. Environment list/create/edit Up/Down clamp
+at ends; create/edit Tab retains cycling. Text fields keep native cursor arrows.
+Applied source/seed/five homes with refreshed runtime/recovery pins. Native full
+shell parse passes; 9 new Qt navigation results, 6 existing Qt scroll results,
+6 battery/action tests and 7 seed tests pass. Live Hytale shell responds; owner
+switched from Hub during validation, so final native parse ran in active Hytale.
+No settings, lifecycle operation, commit or push requested by validation.
+Evidence: audit/2026-10-21-arrow-navigation/. Deployment recheck zero pending.
+Backup: /var/lib/apx/backups/20261021T133940Z-controls-followup.
+
+# Local AI interface retired; rainbow removed — 2026-10-21
+
+Owner requested removal of the rainbow effect and its code, and the entire
+local-AI interface/concept. Terminated only the identified standalone rainbow
+QuickShell instance; removed its audit source directory and live Hub cache.
+No rainbow process remains. Removed model bar widget, model menu/selector,
+storage actions, model state/processes/polling, IPC and Super+I bindings from
+both Hyprland configurations. Local AI is no longer an APX product objective;
+PROJECT_STATE and three historical model documents explicitly record retirement.
+Legacy model data, encrypted storage and recovery tooling were preserved.
+Applied source/seed/five graphical homes with runtime/recovery pins refreshed.
+Live shell responsive; compositor reports zero toggleModel bindings. Source,
+seed and all five installed UI copies contain no model UI hooks. Native shell
+parse passes; six battery/action and seven seed checks pass. Nine failures in
+broader layout/Environment suites reproduce against the pre-removal shell backup.
+Evidence: audit/2026-10-21-remove-local-ai/. Backup:
+/var/lib/apx/backups/20261021T132359Z-controls-followup. Recheck zero pending files.
+No commit, push, storage deletion or lifecycle operation.
+
+# Camera/Fn feedback and idle widget appearance — 2026-10-21
+
+Added camera privacy feedback to the existing transient island, silent on first
+sample and independent of audio availability. Owner confirmed it works; then
+requested distinct state glyphs. Camera/airplane now have off glyphs; touchpad
+retains its touchpad/touchpad-off pair. Removed idle island outline and stale
+hover tint during transient display. Fn observer was absent in live Hub; added
+1.5s restart timer and verified automatic recovery after a targeted process exit.
+Native shell parse passes; read-only feedback IPC confirms transient display.
+11 hardware-profile checks pass; one existing stale source assertion fails,
+unrelated to these changes. Physical Fn state/last icon refinement awaits owner check.
+Applied source/seed/five homes and refreshed runtime/recovery pins; recheck zero.
+Evidence: audit/2026-10-21-camera-fn-osd/README.md. Latest backup:
+/var/lib/apx/backups/20261021T131226Z-controls-followup.
+No commit, push or lifecycle operation.
+
+# Bar edge alignment correction inward — 2026-10-21
+
+Owner clarified groups should move inward, reversing the previous outward
+adjustment. Both inner anchor margins now use 8px, for 16px total screen inset.
+This is a visual spacing adjustment; exact client-edge alignment has not been
+confirmed by screenshot. Applied source, seed and graphical homes with pins.
+Deployment recheck zero pending files. Backup:
+/var/lib/apx/backups/20261021T130500Z-environments-minimal.
+No lifecycle action, commit or push.
+
+# Bar groups align with application edges — 2026-10-21
+
+Owner requested left/right QuickShell button groups align with application
+window edges. Removed the extra 2px inner anchors on both groups: with the
+existing 8px panel margins, capsule edges now match configured gaps_out = 8.
+Applied source, independent seed and graphical homes with runtime/recovery pins.
+Four icon regression tests pass; deployment recheck zero pending files.
+Backup: /var/lib/apx/backups/20261021T130407Z-environments-minimal.
+Alignment is based on configured tiled-window gaps; floating/fullscreen windows
+may have different geometry. No lifecycle action, commit or push.
+
+# Environment button idle contour — 2026-10-21
+
+Owner reported Environment button contour while unselected. BarButton now
+exposes inactiveBorderWidth; Environment sets it to zero, preserving its fill
+and existing hover/open outlines. Other buttons retain their prior defaults.
+Applied source, independent seed and graphical homes with runtime/recovery pins.
+Four Environment icon tests pass; deployment recheck zero pending files.
+Backup: /var/lib/apx/backups/20261021T130224Z-environments-minimal.
+No Environment lifecycle action, commit or push.
+
+# HUB Environment star hub icon — 2026-10-21
+
+Owner requested star-hub, resolved to official Lucide graph-star (no star-hub
+asset exists). Shared Hub bar/menu icon now uses graph-star. Applied source,
+independent seed and graphical homes with runtime/recovery pins refreshed.
+Four icon tests pass; deployment recheck zero pending files.
+Backup: /var/lib/apx/backups/20261021T130116Z-environments-minimal.
+No Environment lifecycle action, commit or push.
+
+# HUB Environment graph icon — 2026-10-21
+
+Owner requested Lucide graph-hub for the HUB Environment. Shared active Hub
+icon now uses the official graph-hub SVG in bar/menu surfaces. Applied source,
+independent seed and graphical homes with runtime/recovery digest pins updated.
+Four Environment icon tests pass; deployment recheck reports zero pending files.
+Backup: /var/lib/apx/backups/20261021T125956Z-environments-minimal.
+No Environment lifecycle action, commit or push.
+
+# Whole-button visibility at menu scroll edges — 2026-10-21
+
+Owner rejected partially clipped buttons and reported Environment keyboard
+scroll still failing. Shared menu actions now install a viewport guard: a card
+that cannot fit wholly inside the settled viewport has opacity zero and its
+pointer buttons disabled, while retaining layout, enabled state and keyboard
+eligibility. Original opacity/pointer bindings restore once fully visible.
+Keyboard focus reveals the full visual card. Environment navigation now enables
+keyboard scroll on every arrow/Tab event, including pointer-opened create/edit
+forms where Environment logical focus was already enabled but the generic
+keyboard flag remained false. Added read-only scroll/card fields to popupStatus.
+Six Qt fixture results pass using current Environment key handler and visibility
+helpers, including initially false keyboard flag, repeated Down/Up, whole-card
+visibility, pointer suppression, opacity restoration and stable content height.
+Full shell native parse, smooth-scroll and four layout results pass.
+Applied source/shared BounceMouseArea, seed/five homes and runtime/recovery pins.
+Backup: /var/lib/apx/backups/20261021T125731Z-environments-minimal.
+Deployment recheck zero pending. Live Environment inspection at validation time
+was a workload read-only menu (173px content, no overflow), so long-list and
+create/edit regression evidence is from the Qt fixture, not that live capture.
+Evidence: audit/2026-10-21-keyboard-scroll/. No Environment switch/create/update,
+settings action, commit or push submitted during validation.
+
+# Keyboard selection follows menu scroll — 2026-10-21
+
+Owner requested arrow navigation scroll menus so a trackpad is unnecessary.
+Shared visibility helper now serves generic Qt focus and logical Environment/
+Calendar selection. Logical selection schedules a reveal after layout settles,
+without stealing text-field focus. Environment rows, create/edit fields, icon
+choices, feature drawers/cards and Calendar actions reveal their selected item.
+Scroll cancels wheel inertia, clamps to content bounds and leaves visible items
+in place. Pointer selection does not trigger keyboard reveals.
+Native full-shell parse and smooth-scroll pass. Dedicated Qt keyboard fixture
+uses current shell visibility helper: five results pass, including repeated
+Down/Up keys, selection visibility, focus preservation, bounds and pointer guard.
+Applied source/seed/five graphical homes and runtime/recovery pins; recheck zero
+pending. Backup: /var/lib/apx/backups/20261021T125158Z-environments-minimal.
+Evidence: audit/2026-10-21-keyboard-scroll/. No real settings or Environment
+lifecycle operation, commit or push during validation.
+
+# Simplified Environment creation form — 2026-10-21
+
+Owner requested removal of name/description example prompts and optional label,
+vertically centred Name/Description, title-only APX/Windows choices, removal of
+the APX applications/files/password note, and updated Name/APX icons.
+Creation inputs now align labels and editable text at the card vertical centre;
+Name uses Lucide book-a and APX uses the closed package glyph. System-choice
+empty descriptions collapse; Windows preservation/space note stays conditional.
+Applied source, independent seed, five graphical homes and runtime/recovery pins.
+Backup: /var/lib/apx/backups/20261021T124855Z-environments-minimal.
+Native layout/scroll fixture: four results pass; deployment check zero pending;
+whitespace check clean. No Environment created or metadata changed, commit/push.
+
+# Expanded Environment icon picker — 2026-10-21
+
+Owner requested more Environment icons, including gaming, exclusively Lucide.
+Expanded picker and metadata contract from 16 to 48 choices, preserving existing
+choices and persistence. Added official Lucide gamepad-2, joystick, trophy,
+dice-5, target, rocket, puzzle and medal SVGs; other additions reuse bundled
+Lucide assets. Applied Host contract, independent seed and five graphical homes
+with runtime/recovery pins and backups, latest:
+/var/lib/apx/backups/20261021T124542Z-environment-icons and
+/var/lib/apx/backups/20261021T124543Z-environments-minimal.
+Four icon tests pass including contract/picker parity, SVG existence and icon
+roundtrips. Broader switch suite: 27 pass, 3 fail on existing source-string
+expectations unrelated to this extension; no claim of a clean full suite.
+No Environment icon choice changed during validation, commit or push.
+
+# Bounded menu height and removed Host shortcuts — 2026-10-21
+
+Owner requested all menus stop growing vertically and scroll beyond the main
+Control Centre height, then requested removal of Terminal do Host and Sair para
+o Host from that centre. Removed only those two dashboard controls; underlying
+Host actions/authorization remain. The resulting current main centre is 400px.
+Shared Appearance.menuMaxHeight=400 caps popup targetHeight, alongside the
+available-screen bound and content height. Short menus remain content-sized;
+long Wi-Fi, Calendar, Environment and other contents use the existing clipped
+Flickable/continuous wheel scrolling. No per-frame content relayout introduced.
+Native sizing fixture: four results pass including long-content height cap and
+scroll position; full shell parse/scroll pass; seven seed tests pass. Live IPC
+verifies central, Wi-Fi and Calendar target heights all 400. Source/seed/five
+homes/pins applied; deployment recheck zero pending, whitespace clean. Backup:
+/var/lib/apx/backups/20261021T110718Z-environments-minimal.
+Evidence: audit/2026-10-21-menu-height-limit/live-heights.json and
+ audit/2026-10-20-menu-layout-performance/layout-test.log.
+No actual settings/actions, packages, Environment switch, commit or push.
+
+# Wider calendar and smaller wireless actions — 2026-10-21
+
+Owner requested a horizontal Calendar increase, then smaller Wi-Fi Disconnect
+and Bluetooth Search controls and continuation after interruption. Calendar
+width increased 380->440px while retaining compact 32px calendar controls.
+Only the Wi-Fi Disconnect and Bluetooth Search controls reduce from 108x50 to
+104x32px, radius 8, centred in their existing cards. Existing hover feedback,
+busy/visibility guards and action callbacks preserved.
+Full native shell compilation and smooth-scroll fixture pass; seven seed tests
+pass. Source/seed/five homes/pins applied, zero pending deployment files,
+whitespace clean. Backup:
+/var/lib/apx/backups/20261021T103943Z-environments-minimal.
+No actual disconnect, Bluetooth scan or settings operations performed by
+validation; no packages, Environment switch, commit or push.
+
+# Date/time separator — 2026-10-21
+
+Owner requested a vertical bar between date and time in the QuickShell calendar
+button. Clock label now uses " | " instead of " · ". Applied source/seed/five
+homes and integrity pins with backup:
+/var/lib/apx/backups/20261021T100629Z-environments-minimal.
+No behavioural changes, commit or push.
+
+# Calendar proportions corrected — 2026-10-21
+
+Owner reported oversized Calendar controls. Calendar now has its own compact
+32px action height, 30px date cells and 380px popup width (previously 500).
+Applied navigation/title alignment, Day/Month/Year tabs, Today/New event,
+year-month selector, event/editor/reminder actions. Calendar MenuButtons use
+plain compact glyphs rather than full menu icon circles. Other menus retain
+50px actions and 32px circles. Existing keyboard and event callbacks preserved.
+Full native compile/scroll pass, explicit calendar-selection behaviour passes,
+seven seed tests pass; deployment recheck zero pending and whitespace clean.
+Live calendar captured and visually inspected in Faculdade: balanced compact
+header, tabs, date grid and actions. Source/seed/five homes/pins applied; backup:
+/var/lib/apx/backups/20261021T100100Z-environments-minimal.
+Evidence: audit/2026-10-21-calendar-compact/calendar.png.
+No event created/changed, control operations, packages, Environment switch,
+commit or push during validation.
+
+# Proportional menu reduction to bar-button circle size — 2026-10-21
+
+Owner requested smaller menu buttons/icons, preserving proportions and matching
+the QuickShell bar. BarButton's normal height is 32px. After offering circle vs
+whole-row interpretations and receiving no answer, proceeded with the stated
+default: menu circles 36->32, action height 56->50, glyph 16->14, radius 14->12,
+equal circle insets 10->9 and label offset 56->50 (integer-rounded 32/36 ratio).
+Shared sizing tokens now derive the whole menu icon treatment; actual SVG sizes
+change without texture scaling. Main menu glyphs, radio icons, control tiles,
+dashboard, creation choices and circle surfaces follow it. Bar stays unchanged.
+Native Qt fixture verifies shared 50px rows, 32px circles and equal 9px margins;
+six results pass. Full candidate parse/scroll, seven seed and six battery tests
+pass. Live Control Centre capture inspected in active Faculdade. Source/seed/
+five homes/pins applied, zero pending, whitespace clean. Backup:
+/var/lib/apx/backups/20261021T095505Z-environments-minimal.
+Evidence: audit/2026-10-21-proportional-buttons/controls.png.
+No real control operations, packages, Environment switch, commit or push.
+
+# Equal icon-circle insets — 2026-10-21
+
+Owner requested equal upper/lateral/lower space around button icons. Shared
+menuIconInset=(56-36)/2 gives 10px on all three sides; label inset follows at
+56px, retaining 10px between circle and label. Applied MenuButton/ControlTile,
+radio action positions, creation fields and matching menu rows/slider offsets.
+Action height, circle size, glyph size and callbacks remain unchanged. Native Qt
+fixture asserts circle x/y/bottom margins are all 10px for shared action and
+control components; six results pass. Full shell parse/scroll and seven seed
+tests pass. Source/seed/five homes/pins applied, deployment recheck zero pending,
+whitespace clean. Backup:
+/var/lib/apx/backups/20261021T094941Z-environments-minimal.
+No real control operations, packages, Environment switch, commit or push.
+
+# Wi-Fi-sized standard menu actions — 2026-10-21
+
+Owner selected the connected Wi-Fi card as the sizing reference, superseding
+44px and the intermediate request for 48px. Its existing height is 56px.
+Appearance.menuActionHeight now uses 56; existing Wi-Fi/control/input/creation
+cards bind to the same token. MenuButton and ControlTile captions share the
+36px icon circle, 16px glyph and x54 label alignment. Control/dashboard actions,
+Environment, AI, Battery and Calendar actions inherit the shared height.
+Calendar date cells use a separate 36px height to avoid enlarging the month grid
+with every action-size change; month surface now matches menu card styling.
+Verified live calendar and Control Centre screenshots in active Faculdade;
+current Environment icon correctly remains book-open. Native creation/control
+fixture: six results pass; battery actions: six pass; seed integrity: seven pass.
+Full shell compilation and scroll fixture pass. Applied source/seed/five homes
+and digest pins, zero pending deployment files, whitespace clean. Backup:
+/var/lib/apx/backups/20261021T094608Z-environments-minimal.
+Evidence: audit/2026-10-21-menu-sizing/. No settings or Environment switches,
+packages, commit or push performed by validation.
+
+# Compact creation and consistent menu actions — 2026-10-20
+
+Owner requested creation menu cleanup inspired by Control Centre, removal of
+Basic/Complete choices (intermediate default only), removal of the included-apps
+card and smaller controls. Then requested common button sizes across Environment,
+AI, Battery, Control Centre and Calendar. Implemented the form with 460px width,
+labelled fields/circular icons, APX/Windows choices and collapsed customization.
+New shared Appearance menuActionHeight=44/menuActionRadius=14 drives menu buttons,
+control/dashboard tiles, Environment entries, calendar actions and battery mode
+rows. AI selector and action rows follow the same height. Existing native Windows
+preview/confirmation and action authorization remain; no real operation submitted.
+Six native Qt form results pass (typing, fake submit, systems/storage, modules,
+keyboard and shared dimensions), six battery tests, seven seed tests, three icon
+tests; full candidate parse/scroll pass. Deployment recheck zero pending paths,
+whitespace clean. Source/seed/five homes/pins applied; latest backup:
+/var/lib/apx/backups/20261020T225657Z-environments-minimal.
+Evidence: audit/2026-10-20-environment-create/README.md and sibling
+2026-10-20-menu-button-consistency/. Captured central/calendar/environment menus;
+owner interaction closed some other captures, so blank captures were discarded.
+No Environment created/switched by agent, packages, commit or push.
+
+# Generation-bound Environment icons replace private Hub reads — 2026-10-20
+
+Owner reported icons reverting in other workloads. Hub startup resets .config
+permissions, masking the temporary root ACL. Replaced that design: icon now
+travels through the existing authenticated Hub metadata edit request, is stored
+atomically in root-owned 0600 /var/lib/apx/environments/.icon-NAME-GENERATION.json,
+and is returned by both catalogue and active identity. Hub lists, bar, edit form
+and workload menu all use this authoritative value. Migrated five existing
+choices without changing generations/lifecycle. New generation defaults to box.
+Removed Hub INI reads and temporary ACLs; original private directory modes restored.
+New client/contract are backward compatible for old requests and preserve bind
+inodes on deployment. New deployment refreshes only a replaceable active-session
+fallback socket after broker restart, waits for a new socket and reapplies the
+active generation's translated socket ownership. Earlier live update briefly
+left Minecraft retrying identity against an unlinked socket; owner returned to
+Hub while the refresh adapter was being corrected. Final current Hub IPC ready.
+Restricted-service namespace/empty-capability catalogue verifies all five choices;
+all installed workload shells/assets match. 13 focused results pass. Broader switch
+suite: 28 pass, two pre-existing stale static assertions (disabled Windows hook,
+old menu-height expression). Evidence: audit/2026-10-20-environment-icons/.
+Backups: /var/lib/apx/backups/20261020T224329Z-environment-icons,
+20261020T224423Z-environment-icons and 20261020T224740Z-environments-minimal.
+Owner accepted continuation and now requests creation-menu reorganization.
+No agent-initiated Environment switch, packages, commit or push.
+
+# Active icon correction verified in running Hytale — 2026-10-20
+
+Owner reported cube still visible. Live shell IPC confirmed identity.icon=box.
+Cause: switch broker has an empty capability set; private Hub apx/.config
+ancestors blocked traversal despite UID 0. Added root-only execute ACL entries
+on those two directories (no directory listing permission); deployment records
+original ACLs at audit/2026-10-20-environments-minimal/icon-directory-acls.before.txt.
+Restore with setfacl --restore using that file if rolling back this change.
+No service capability or workload access was expanded. Existing INI is readable;
+only the authenticated active generation's allowlisted choice is returned.
+Identity now polls every 5 seconds after initial readiness, correcting the prior
+entry's inaccurate claim that identity already refreshed after startup.
+Live running Hytale now reports identity.icon=swords and environment_icon=swords;
+both bar and menu bind to that property. Evidence: hytale-active-icon.json in
+the same audit directory. 3 bar-icon and 7 seed tests pass, deployment has zero
+pending files, whitespace clean. Shell source/seed/five homes/pins applied;
+backup /var/lib/apx/backups/20261020T223938Z-environments-minimal.
+No Environment switch, packages, commit or push.
+
+# Active Environment uses its selected Hub icon — 2026-10-20
+
+Owner requested the edited Hub icon beside the active Environment name in the
+QuickShell bar and Environment menu. Host identity now exposes only the active
+name/generation icon from the existing Hub QSettings choices, with a bounded
+64KiB read, allowlist and box fallback. Shell binds both locations to identity;
+Hub retains its dashboard glyph. Existing identity polling refreshes the choice.
+Validated all five saved choices, unknown generation and malformed/oversized/
+invalid fallback cases; 3 bar-icon and 7 seed-integrity tests pass. Service is
+active; deployment recheck zero pending files; whitespace clean. Applied service,
+source, independent seed, five homes and digest pins. Backups:
+/var/lib/apx/backups/20261020T223450Z-environment-active-icon and
+/var/lib/apx/backups/20261020T223450Z-environments-minimal.
+No Environment switch, packages, commit or push. Workload visual confirmation
+remains owner-observed; validation did not switch away from the current session.
+
+# Stable layout during menu openings — 2026-10-20
+
+Owner asked to locate and correct menu frame spikes. Found menuFlick.width was
+bound to the animated outer width, changing descendant text/list layout on each
+frame. Bind it to destination targetWidth instead; outer geometry/clip/fades and
+final layout remain. Native Qt fixture confirms stable wrapped-content width and
+height during reveal and correct response to real destination resizing.
+Live 9-opening batches on 120.213Hz eDP-1: before max 37ms with 9 intervals >20ms;
+after max 16ms with zero >20ms. Median remains 8ms. Distinct content widths per
+opening fall from 29–33 to 1; Central Control target heights from 4 to 1.
+These are window frameSwapped callback intervals, not compositor presentation;
+no guarantee of flawless 120Hz under all workloads. No new background work.
+19 focused test results pass, full candidate parse passes, live final menu capture
+inspected, deployment recheck zero pending, whitespace clean. Source/seed/five
+homes/pins applied; backup:
+/var/lib/apx/backups/20261020T223111Z-controls-followup.
+Evidence: audit/2026-10-20-menu-layout-performance/README.md.
+No settings, playback, packages, Environment switch, commit or push.
+
+# Menu performance reconciliation — 2026-10-20
+
+Owner requested smooth menu transitions with bounded performance cost. Applied
+unchanged-report suppression for Host/pointer/hardware/appearance/notifications
+while preserving 500ms freshness and pending-action/seek/playback reconciliation.
+Added disabled-by-default IPC frame probe. Native popup-window measurements on
+120.213Hz eDP-1: nine openings, median 8–9ms, maxima 16–27ms; occasional stalls
+remain, so neither perfect 120Hz nor pre/post FPS improvement is claimed.
+An experiment deferring the opening status burst showed no consistent benefit
+and was reverted; existing animation curves/durations and refresh timing remain.
+31 focused tests pass, full native QML compilation passes, zero deployment paths
+pending. Wider suites have eight pre-existing failures described in evidence.
+Applied source/seed/five graphical homes/pins; original-state backup:
+/var/lib/apx/backups/20261020T222652Z-controls-followup.
+Final deployment backup: /var/lib/apx/backups/20261020T222831Z-controls-followup.
+Evidence: audit/2026-10-20-menu-performance/README.md.
+No packages, settings/playback changes, Environment switch, commit or push.
+
+# Repository QuickShell cleanup — 2026-10-20
+
+Owner requested removal of unnecessary files while preserving current behaviour.
+Removed seven ignored Python cache files from the repository shell configuration
+and four Lucide SVGs with no current UI references: bluetooth-connected,
+circle-check, headphones and plus. Removed their repository seed manifest entries
+and refreshed the repository recovery runtime digest. Historical audit material,
+backups, installed seed and running graphical homes were preserved; this cleanup
+is repository-only and needs no live shell reload.
+Repaired two stale battery-menu JavaScript fixtures by supplying current bar and
+navigation dependencies and extracting only the hit-test function.
+Validation: 25 tests passed across battery actions, desktop seed integrity,
+media progress and bar icons; git diff --check clean.
+
+# Restore white selected Playback contour — 2026-10-20
+
+Owner reports the hover flash now appears resolved and requests white border
+while selected/compact. Restored Appearance.iconColor for selected outline;
+hover remains #69728a and idle contour unchanged. Explicit pre-close hover hold
+remains intact. Native fixture verifies selected white, direct transition to
+hover outline on close with no idle-frame fill/contour, and pointer restoration:
+five results pass. Applied source/seed/homes/pins; backup:
+/var/lib/apx/backups/20261020T221918Z-controls-followup.
+No playback/settings changes, commit or push.
+
+# Explicit Playback closing hover transfer — 2026-10-20
+
+Owner clarified the idle flash occurs immediately after clicking to close, with
+the pointer still above the expanding capsule. Previous transfer only began
+when hoverOverride became null and could be cancelled by an intermediate false
+overlay hover; its 120ms expiry was also arbitrary. Removed that timer/last-value
+scheme. closePopup now captures authoritative overlay hover before setting
+popupClosing and explicitly holds MediaIsland hover through false/null override
+transitions. Native bar enter with override null completes transfer; native exit
+or actual overlay movement outside the media target cancels it. No timer expiry.
+Selected/hover palette stays unified. Content/width animation and 18px progress
+margins unchanged. Native fixture reproduces false override then null with a
+180ms native-hover gap: same fill/outline preserved, then real enter/exit and
+explicit movement cancellation restore idle correctly. Five native results,
+full parse/scroll and 12 media/bar tests pass. This is native Qt event-fixture
+coverage; physical visual acceptance remains pending.
+Applied source/seed/homes/pins; backup:
+/var/lib/apx/backups/20261020T221829Z-controls-followup.
+No real playback/settings changes, commit or push.
+
+# Playback overlay hover continuity and inset preview progress — 2026-10-20
+
+Owner reports blink when media capsule expands after closing, theorizing it is
+recreated. The same MediaIsland instance handles both widths; hover authority
+changes from popup overlay to native bar. Added bounded 120ms transfer of the
+last true overlay hover when override becomes null, cleared on native enter/exit
+or timeout. No stale highlight if last overlay hover was false. Selected and
+hovered now use the same #69728a outline (fill was already identical), removing
+the selected-white to hover-grey restyle during expansion under the same pointer.
+Content geometry unchanged. Preview progress gets symmetric 18px side insets
+(previously 10px), clamping width at zero for the compact capsule.
+Native real-component fixture: five results pass, including close/expand hover
+transfer without idle fill or border restyle, native pointer exit restoration,
+no false transfer, 18px progress margins and existing selection/hover tests.
+Full candidate parse/scroll and 12 media/bar tests passed before final palette-only
+adjustment, then native fixture reran successfully. Applied source/seed/homes/pins;
+latest backup /var/lib/apx/backups/20261020T221625Z-controls-followup.
+Physical compositor visual acceptance remains pending. No playback/settings
+operations, commit or push.
+
+# Stable Playback selected surface throughout contraction — 2026-10-20
+
+Owner still perceived a repeated selection blink on contraction. Removed the
+independent border/fill colour Behaviors from MediaIsland: selected appearance
+applies once at entry and stays fixed while width contracts. Content positioning,
+300ms capsule width animation, selected/hover routing remain unchanged.
+Native actual-component fixture asserts selected=true and identical fill/border
+colour and width over 22 samples at 16ms through the entire contraction,
+plus hover transitions/restoration and no scale bounce: four results pass.
+Full parse/scroll pass. This checks logical surface values, not captured physical
+GPU frame luminance. Owner visual acceptance remains pending.
+Source/seed/homes/pins applied; backup:
+/var/lib/apx/backups/20261020T221223Z-controls-followup.
+No real playback/settings changes, commit or push.
+
+# Playback correction limited to selection surface — 2026-10-20
+
+Owner clarified that content movement was already correct; the issue was border
+and selected tone only. Removed previous summary Row width animation/subpixel
+anchor override, restoring original content/title positioning. Border colour now
+interpolates over 120ms matching the existing fill transition; press scale remains
+disabled on this capsule to avoid jolting its outline. Native fixture checks
+intermediate border colour, constant selected fill/outline through contraction
+completion and hover transitions, and no press scale; four results pass. Existing
+hover restoration and full native parse/scroll pass. Source/seed/homes/pins applied;
+backup /var/lib/apx/backups/20261020T221052Z-controls-followup.
+No real media/settings operations, commit or push.
+
+# Playback collapse continuity and brighter battery disclosure — 2026-10-20
+
+Owner reported a small selection jump as Playback capsule contracts. MediaIsland
+summary Row now interpolates width with the same 300ms OutCubic curve as capsule
+width, rather than snapping to icon-only width as title visibility changes.
+Subpixel centre alignment preserves continuity; disabled only this capsule's
+press bounce. Selection and hover stay intact. Native actual-component fixture:
+4 results pass, including no initial icon-position snap, intermediate contraction,
+bounded frame-to-frame movement, no press scale, and existing hover restoration.
+Owner also requested white battery Details/graphics text and glyph. Disclosure
+label, list icon and chevron now use textMain rather than textDim.
+Full parse/scroll and 12 existing media/bar tests pass. Applied source/seed/homes
+and digest pins; backup /var/lib/apx/backups/20261020T220923Z-controls-followup.
+No real playback/audio/profile changes, commit or push.
+
+# Faster dynamic shell information (owner target <=1s) — 2026-10-20
+
+Owner requested faster battery icon and other changing bar/menu information,
+then specified at most one second. Replaced shared 10s battery/volume/mic/Host/
+hardware reconciliation with guarded 500ms reads; pointer sensitivity and device
+availability, radio, active-audio state and Hub model status also poll at 500ms.
+Opening popups requests immediate fresh reads. Notifications and appearance
+reconciliation are 500ms; existing MPRIS event updates retained with 500ms
+position/fallback reconciliation rather than 2s. Duplicate in-flight reads are
+prevented. External services/hardware still determine when source state exists;
+this is measured normal-session responsiveness, not a real-time system guarantee.
+
+Added read-only dynamic timing samples to popupStatus IPC. Live 35-sample check:
+battery max query 110ms / max successful-sample gap 574ms; volume 29/511ms;
+microphone level 29/510ms; capture activity 60/523ms; network 254/521ms;
+hardware 112/552ms. All observed groups stayed below one second without changing
+settings or toggling devices. Evidence: audit/2026-10-20-dynamic-refresh/timings.json.
+The previous audio activity socket refused connections. Shell now uses a new
+Environment-local read-only pw-dump helper for running source/capture-stream
+activity; it does not change audio or Host service policy. Five graph cases pass.
+Native parse/scroll and 12 existing media/bar tests pass. Source/seed/graphical
+homes and digest pins deployed; final backup:
+/var/lib/apx/backups/20261020T220750Z-controls-followup.
+Deployment recheck: zero pending files. No packages, device/settings changes,
+Environment switches, commit or push.
+
+# Correct battery icon removal scope — 2026-10-20
+
+Owner clarified the requested removal was inside the battery menu, not the bar.
+Restored bar battery glyph. Removed the 36px circle/glyph to the left of the
+menu's large capacity; capacity/status now align at the same 14px inset as the
+level bar. Other icons retained. Supersedes previous bar-icon removal entry.
+Native parse/scroll passed. Applied source/seed/homes/pins; backup:
+/var/lib/apx/backups/20261020T220502Z-controls-followup.
+No battery/profile setting changed; no commit or push.
+
+# Battery bar percentage only — 2026-10-20
+
+Owner requested removing the icon next to battery percentage in the bar. Set
+batteryButton iconName empty; percentage, accessibility status, hover/selection
+and popup action retained. Battery-menu icons unchanged. Source/seed/homes/pins
+applied; whitespace check clean. No settings change, commit or push.
+
+# GPU section title simplified to Modo — 2026-10-20
+
+Owner requested only “Modo” instead of Graphics/current-mode text. Replaced the
+section heading with static secondary-colour “Modo”, removing the inline current
+profile and pending-restart suffix. Selected GPU button remains the indicator.
+Existing confirmation/restart flow unchanged. Applied source/seed/homes/pins;
+whitespace check clean. No settings changed, commit or push.
+
+# Restyled GPU restart confirmation and simpler names — 2026-10-20
+
+Owner requested a nicer restart notice, removal of the repeated warning at page
+end, and labels “Híbrido” / “GPU Dedicada”. GPU options and gpuLabel now use those
+names consistently. Confirmation uses the shared 14px card radius/subtle contour,
+a 36px circle with Lucide rotate-cw, explicit heading, normal-weight explanatory
+text and differentiated Cancel/Later versus Confirm/Restart buttons. Actions are
+disabled while busy. Existing prepare/confirm/reboot stages and explanatory
+hardwareMessage preserved. Removed the always-present final restart warning;
+actual gpu_error remains visible only on a real reported error.
+Native parse/scroll checks pass; source/seed/homes/pins applied. Backup:
+/var/lib/apx/backups/20261020T220140Z-controls-followup.
+No real GPU prepare/confirm or reboot invoked during validation. No commit/push.
+
+# Smooth battery energy-selection feedback — 2026-10-20
+
+Owner wanted animation when changing items after rejecting pending wording.
+Energy cards now interpolate selected/background colour and selection-indicator
+opacity over 160ms OutCubic. Availability dims only unsupported modes, rather
+than flashing all supported cards dim while a request is in flight. Busy guard
+still prevents repeat requests; selection follows confirmed hardware state.
+No movement/scale animation or temporary message/height change introduced.
+Native real-row fixture: four results pass, including intermediate colour,
+confirmed end colour, unchanged height and opacity while busy, plus existing
+click/geometry checks. Full parse/scroll passed. Applied source/seed/homes/pins;
+backup /var/lib/apx/backups/20261020T220006Z-controls-followup.
+No actual profile toggled, commit or push.
+
+# Remove pending energy-mode wording — 2026-10-20
+
+Owner rejected “A aplicar” feedback as well. Energy heading is now always
+“Modo de energia”; no transient message is added during a normal profile change.
+Busy guard, confirmed selected mode, error reporting and stable height retained.
+Applied source/seed/homes/pins; whitespace check clean. No actual profile change,
+commit or push.
+
+# Stable battery menu height during energy-mode changes — 2026-10-20
+
+Owner clarified the unwanted jump was menu expansion/contraction, not the press
+animation. Cause: setPlatformProfile populated hardwareMessage during the action,
+adding a wrapped row; success cleared it and removed the row. Platform apply now
+clears that shared message instead and shows pending feedback inside the existing
+single-line Mode-of-energy heading, keeping ordinary pending/success geometry
+unchanged. Actual errors can still appear in the error row. GPU confirmation
+messages and actions remain unchanged. Existing press-bounce opt-out retained.
+Actual JS handler executed with mocked process: no transient row, correct action
+routing, duplicate/busy guard preserved. Full native parse/scroll passed.
+Evidence: audit/2026-10-20-battery-environment/stable-height-validation.log.
+Source/seed/homes/pins applied; backup:
+/var/lib/apx/backups/20261020T215915Z-controls-followup.
+No actual energy profile changed by validation, commit or push.
+
+# Remove repeated battery charging footer — 2026-10-20
+
+Owner rejected the lower plugged-in/charging line because status already appears
+beside capacity. Bottom icon/text now show only remaining autonomy while
+discharging. Other states retain the single main status and collapse summary
+height from 130px to 98px, removing the empty footer gap. Native parse/scroll
+checks pass. Source/seed/homes/pins deployed; backup:
+/var/lib/apx/backups/20261020T215837Z-controls-followup.
+No battery/profile setting changed; no commit or push.
+
+# Remove energy-mode press bounce — 2026-10-20
+
+Owner disliked the small jump when selecting battery energy modes. Added a
+default-on pressAnimationEnabled switch to BounceMouseArea and disable it only
+on the three energy-mode actions. Hover, keyboard handling and profile selection
+remain. Real-component native fixture presses/releases all three: scale stays
+1 and each click submits exactly one mocked action; 3 results pass. Existing
+centres/label checks and full parse/scroll checks pass. No real profile toggled.
+Source/seed/homes/pins applied; backup:
+/var/lib/apx/backups/20261020T215813Z-controls-followup. No commit or push.
+
+# Owner-specified 1px right adjustment — 2026-10-20
+
+Moved the three battery energy circles 1px right from previous -2px offset;
+current x=(container.width-circle.width)/2-1. Names unchanged. Native geometry
+fixture: 3 passed. Source/seed/homes/pins deployed. No profile change or commit.
+
+# Owner-specified 2px left shift of battery mode circles — 2026-10-20
+
+Owner explicitly requested 2px left from the exact calculated centre. Applied
+x=(container.width-circle.width)/2-2 to the three circles only. Names unchanged.
+Native geometry fixture: 3 results pass, confirming exactly -2 logical pixels
+relative to each card centre. Source/seed/homes/pins deployed. No profile action,
+commit or push.
+
+# Exact horizontal energy-circle centring — 2026-10-20
+
+Owner rejected iterative optical offsets and requested exact centring. Removed
+all circle horizontal anchors/offsets and bind x to (container.width-width)/2.
+The group has symmetric 4px side margins, so this yields equal card-side gaps
+without Qt centre-anchor pixel snapping. Real-row Qt fixture now checks centre
+and left/right gap equality within 0.00001 logical pixel: three results pass.
+Each 101.333333px card has circle centre x50.666667px (previous centre-anchor
+snapping produced x51 before optical corrections). Names remain inside cards.
+Deployed source/seed/homes/pins. No actual profile changes, commit or push.
+
+# Additional battery-circle optical offset — 2026-10-20
+
+Owner still perceived rightward bias. Moved only the three energy-mode circles
+another 2px left (total horizontal offset -3px); label positions unchanged.
+Real-row native fixture passes all 3 results for the requested offset, centred
+glyphs and labels inside cards. Deployment applied with pins refreshed. No
+profile action performed, commit or push.
+
+# Optical circle alignment and labels back inside energy cards — 2026-10-20
+
+Owner still perceived circles slightly right and requested labels inside again.
+Energy cards now use compact 76px surfaces with centred circle/label group,
+6px spacing and 1px optical left offset on circles. Names sit inside the same
+clickable card; requested Lucide glyphs retained. Supersedes separate labels.
+Native parse/scroll passed; source/seed/homes/pins applied. Backup:
+/var/lib/apx/backups/20261020T215413Z-controls-followup.
+No profile/settings changed; no commit or push.
+
+# Flatter battery energy buttons with independent labels — 2026-10-20
+
+Owner clarified the battery buttons should be flatter with circles centred in
+each rectangle. Replaced 96px cards with 52px button surfaces and separate
+centred labels below. Circle is directly centre-anchored in the 52px surface;
+full control including label still routes to the same profile action. Existing
+availability/busy guards and selected indicator remain. Keyboard and hover
+feedback target the button surface. Native real-row fixture checks circle/glyph
+centres on all three flattened surfaces: 3 results pass. Parse/scroll pass.
+Applied source/seed/homes/pins; backup:
+/var/lib/apx/backups/20261020T215325Z-controls-followup.
+No profile or battery setting changed; no commit or push.
+
+# Requested Lucide glyphs and circle-to-card centring — 2026-10-20
+
+Owner clarified the circle itself must sit at the rectangular energy-card centre,
+and specified leaf/Poupar, scale/Equilibrado, cross/health and gpu/dedicated NVIDIA.
+Added the four unmodified official Lucide SVG assets from upstream icons paths.
+Downloads used active workload networking after Host DNS failed; no network
+configuration changed. Updated deployment asset list and digest pins.
+Energy cards are 96px tall with the 32px circle directly centre-anchored to each
+card, glyph centred inside, and label separately below the circle. Supersedes
+previous combined-content centring. Native real-row fixture verifies all three
+circle/glyph centres within 0.5 logical pixel (Qt pixel alignment) of card centre:
+three results pass. Full parse/scroll passed; live battery capture inspected.
+No real profile changes. Source/seed/homes applied; backup:
+/var/lib/apx/backups/20261020T214738Z-controls-followup.
+Evidence: audit/2026-10-20-battery-environment/validate-centres.log and battery.png.
+No commit or push.
+
+# Energy-card content centring — 2026-10-20
+
+Owner perceived icons/buttons off-centre. Horizontal centres were already shared,
+but hard-coded circle/text y offsets left the combined content above centre.
+Replaced offsets with a centred Column per card, 6px icon-label gap and common
+horizontal axis. Circle antialiasing enabled. Profile actions unchanged.
+Native parse/scroll passed. Applied source/seed/homes/pins; backup:
+/var/lib/apx/backups/20261020T214002Z-controls-followup.
+No real profile change, commit or push.
+
+# Horizontal energy modes — 2026-10-20
+
+Owner requested the three energy buttons side by side. Battery now uses an
+equal-width Row: three 78px cards, Lucide icon circle above centred label,
+selected indicator and existing profile availability/busy/action guards.
+Labels: Poupar, Equilibrado, Desempenho. Distinct compact details disclosure
+retained. Native candidate parse/scroll checks passed. Source/seed/homes/pins
+applied; backup /var/lib/apx/backups/20261020T213913Z-controls-followup.
+No actual energy profile change, commit or push.
+
+# Distinct battery-details disclosure — 2026-10-20
+
+Owner wanted Details/graphics to look different from energy choices. Replaced
+its 56px filled icon-circle card with a compact 40px transparent outlined row,
+small list glyph, secondary text and right-side Lucide chevron rotating between
+down/up. Stable label, accessible Show/Hide names, shared keyboard/click handling
+and existing GPU-confirmation disable guard retained. No energy mode change.
+Native parse and scroll checks passed; source/seed/homes and pins applied.
+Backup: /var/lib/apx/backups/20261020T213736Z-controls-followup.
+No actual settings changed, commit or push.
+
+# Lucide battery menu and workload-only Environment presentation — 2026-10-20
+
+Owner requested a better battery menu with Lucide icons and an improved
+Environment menu in workloads, explicitly leaving Hub for later. Battery summary
+now has a state-aware battery circle, large capacity, status, level bar and
+remaining-time row. Energy modes use full-width 56px cards with battery-low,
+cpu and zap icons. Details/GPU controls, power and health metrics use Lucide
+icons and matching card radii. Existing profile actions, busy guards and GPU
+confirmation semantics preserved. No profile or lifecycle changes performed.
+Workload Environment menu uses an 80px active identity card and 56px return
+button with box/check/log-out icons. Hub-only card and management controls retain
+their existing presentation. Owner subsequently rejected the explanatory footer;
+it is removed. Errors can still appear when an actual return fails.
+Native parse/scroll checks passed. Live battery/workload captures inspected;
+initial capture retains the subsequently removed footer. Focused 14 tests:
+12 pass, two JS fixture errors; same two errors reproduced against HEAD shell
+(6-test baseline: 4 pass, 2 errors), proving they predate this change.
+Evidence: audit/2026-10-20-battery-environment/.
+Source/seed/graphical homes and pins applied. Latest backup:
+/var/lib/apx/backups/20261020T213654Z-controls-followup.
+No real energy/GPU/lifecycle operations, commit or push.
+
+# Playback bar hover restoration and matching outline — 2026-10-20
+
+Owner reported permanent selected-looking Playback background, then missing
+hover contour. MediaIsland now follows the same overlay-aware hover override
+as BarButton. Its BounceMouseArea opts out of menu-only hover feedback through
+a new default-on menuFeedbackEnabled property; keyboard activation/bounce remain.
+Bar capsule owns its colour and inset antialiased 1px outline: hover #69728a,
+selected icon colour, idle original contour. Selecting the media popup remains
+a distinct active state; exiting hover/closing restores idle.
+Native Qt real-component fixture verifies colour restoration, selected state,
+overlay hover override, actual pointer entry/exit, inset and hover/idle borders:
+3 results passed. Twelve existing media/bar tests pass via unittest (pytest is
+not installed). Full candidate parse/scroll checks passed. Applied source,
+seed and graphical homes with digest pins; latest backup:
+/var/lib/apx/backups/20261020T213245Z-controls-followup.
+Evidence: audit/2026-10-20-media-hover/. No playback settings changed or commit.
+
+# Media menu opening fade aligned with Control Centre — 2026-10-20
+
+Owner perceived a different opening animation in Playback and wondered about
+low battery. Code confirms common 300ms OutCubic geometry but an extra 200ms
+content-opacity multiplier on media, absent for controls. Removed that extra
+multiplier for media so both use the same island-progress content reveal.
+Media presence/track animations and other popup behavior remain unchanged.
+No battery-specific opening animation found; no claim of measured low-battery
+frame performance. Native candidate parse and smooth-scroll checks passed.
+Applied source, seed, graphical homes and pins; backup:
+/var/lib/apx/backups/20261020T213055Z-controls-followup.
+No playback, battery/profile or audio setting changed. Owner visual acceptance
+of the aligned opening remains pending. No commit or push.
+
+# Keyboard intensity cards and faster airplane radio state — 2026-10-20
+
+Owner requested matching keyboard-menu styling and quicker Wi-Fi/Bluetooth
+status in the airplane menu. Keyboard now has a 72px icon/status card and a
+92px intensity card showing confirmed level/max, percentage and discrete bars.
+Icon keeps the existing cycle action; opening refreshes hardware status.
+Airplane menu no longer waits for the 10-second full Host report: dedicated
+500ms visible-page polling reads Wi-Fi power from kernel rfkill (including hard
+block) and Bluetooth power from the existing authorized BlueZ status endpoint.
+Opening and completion of DesktopActivity actions request an immediate refresh.
+Reads are serialized per process, with no overlapping polling. No optimistic
+service-state invention. Read sample timestamps are exposed in diagnostic IPC.
+Native parse/scroll checks passed. Actual kernel command returned valid booleans
+in 5ms. Live IPC proved both successful sample timestamps advance over 1.2s;
+no radio toggle performed. This verifies refresh cadence, not end-to-end hardware
+transition latency. Host-launched direct Bluetooth query was correctly rejected
+by existing process-lineage authorization; actual QuickShell query succeeded.
+Keyboard and airplane captures saved/inspected under
+ audit/2026-10-20-control-details/; sample evidence: radio-read-validation.json.
+Applied source, seed, graphical homes and pins; latest backup:
+/var/lib/apx/backups/20261020T212952Z-controls-followup.
+No actual keyboard/radio setting changed by validation; no commit or push.
+
+# Airplane menu visual refinement — 2026-10-20
+
+Owner disliked the first airplane details menu. Replaced the title, separate
+status tile and plain-text list with a compact 72px mode card (same working
+power icon), followed by two passive 72px service cards. Each card shows the
+established icon circle, service name, authoritative powered state and a short
+description of affected functionality. A single sentence explains the mode's
+effect. Shared Back geometry and 10/12px menu padding retained.
+Added navigation-only openAirplaneControls IPC for repeatable capture.
+Native QML parse and smooth-scroll regression passed. Live page captured and
+inspected: text fits, service states and aligned icon/label geometry visible.
+Evidence: audit/2026-10-20-control-details/airplane.png and live-status.json.
+Applied source/seed/graphical homes and digest pins; backup:
+/var/lib/apx/backups/20261020T212542Z-controls-followup.
+No radio toggle or other device setting changed during validation. No commit.
+
+# Slightly larger bottom padding — 2026-10-20
+
+Owner still perceived the lower content margin as slightly smaller. Added 2px
+of optical compensation: bottom inset 12px, top/sides remain 10px, using the
+same shared geometry for menus and submenus. Height includes the extra inset;
+scroll viewport excludes it. Split dashboard retains its own card padding.
+Native candidate parse and smooth-scroll checks passed; source, seed and
+graphical homes deployed with pins refreshed. No settings changed or commit.
+
+# Equal menu content spacing (owner clarification) — 2026-10-20
+
+Owner clarified that “borders” meant content padding rather than the outline.
+Supersedes the contour change below: restored the original shared outline.
+Popup now uses one 10px inset for all four viewport edges, with width based on
+the actual panel width. Removed the extra horizontal 1px content offset.
+Panel height now fits content plus both insets, capped only by screen space,
+so fixed per-menu height caps no longer cut the last row unnecessarily.
+Long menus still scroll within the same inset viewport. Split dashboard cards
+retain their own existing internal padding and separation.
+Native candidate parse and smooth-scroll regression passed. Applied source,
+seed and graphical homes with refreshed pins. Backup:
+/var/lib/apx/backups/20261020T211913Z-controls-followup.
+Six live menu captures passed after retrying a transient empty IPC response;
+Connectivity image inspected with equal edge spacing. Deployment check: zero
+pending files. No actual control settings changed; no commit or push.
+
+# Control details, passive input cards and uniform menu contour — 2026-10-20
+
+Owner requested separate airplane/keyboard card navigation and quick icon actions,
+a matching More-options Back button, passive mouse/trackpad card bodies, no
+last-pointer warning, off glyphs for unavailable input, and uniform menu edges.
+Airplane card now opens a details page listing exactly the backend targets
+(WLAN and Bluetooth), their effects and current power states. Keyboard card opens
+current hardware level/max and percentage. Both original icon actions remain.
+New pages reuse the existing activity route and animated navigation. More-options
+Back now uses the shared default. Input bodies no longer receive clicks or whole
+card hover; circles and sliders remain interactive. Missing/off mouse uses a new
+mouse-off SVG and trackpad uses touchpad-off. Pointer warning text is hidden;
+backend fallback protection remains unchanged. Shared menu contour is rendered
+above content with an identical inset, width and antialiasing on all four sides.
+
+Native candidate QML parse and smooth-scroll regression passed. Applied source,
+seed and registered graphical homes with digest pins. Backup:
+/var/lib/apx/backups/20261020T211807Z-controls-followup.
+No actual radio, keyboard illumination or pointer setting changed by validation.
+Six live menu captures passed on retry (first capture run interrupted during a
+transition); More-options image inspected. Deployment recheck: zero pending files.
+No commit or push. Owner visual acceptance remains pending.
+
 # Owner-requested accumulated commit and push — 2026-10-20
 
 Owner explicitly requested committing all changes since the previous commit and
@@ -6674,3 +9790,30 @@ playback, sound or brightness was changed by validation. Applied source, seed,
 five homes and updated runtime/recovery pins. Backup:
 /var/lib/apx/backups/20261017T175002Z-osd-fullscreen-state.
 Deploy/revert: scripts/physical-pilot/deploy-osd-fullscreen-state-20261017.py.
+
+
+## 2026-10-24 Windows Pessoal entry restored
+
+Owner reports Hub refusing Windows Pessoal. Live journal rejected native.boot-v3
+with the generic creation-validation message. Native release integrity manifest
+still pinned three pre-update switch client/daemon/contract digests. Reviewed
+deltas against pinned bytes (daemon baseline recovered from
+/var/lib/apx/backups/20261013-environment-return): icon metadata, socket fallback
+and supervised return recovery; live files equal repository sources. Refreshed
+only those three manifest digests, preserving all critical paths and checks.
+Backup: /var/lib/apx/backups/20261023T232552Z-windows-integrity.
+Live enabled() and Windows Pessoal validate-only boot preflight pass; no reboot
+or actual boot requested. Owner menu/boot confirmation pending. Native Hub4 and
+icon4 tests pass. Switch suite27/30 pass; three existing source-string assertions
+fail (socket fallback and changed UI expectations); no runtime failure inferred.
+Evidence: audit/2026-10-24-windows-integrity/result.json. No commit/push.
+
+
+## 2026-10-24 Calendar bar button contraction removed
+
+Owner requests no contraction when pressing calendar. Calendar BarButton now
+overrides scale to1, retaining hover/active colours, icon and popup actions.
+Source, independent seed and five homes synchronized; runtime/recovery pins
+updated. Existing live Hyprland files preserved. Seven desktop-seed tests pass.
+Backup: /var/lib/apx/backups/20261023T232703Z-controls-followup.
+Live pointer/visual acceptance pending. No commit/push.

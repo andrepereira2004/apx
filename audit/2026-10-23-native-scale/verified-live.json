@@ -1,0 +1,50 @@
+{
+  "monitors": [
+    {
+      "width": 1920,
+      "height": 1080,
+      "scale": 1.25
+    }
+  ],
+  "clients": [
+    {
+      "class": "apx-host-console-v1",
+      "pid": 199989,
+      "xwayland": false,
+      "size": [
+        1496,
+        778
+      ]
+    },
+    {
+      "class": "apx-settings",
+      "pid": 213543,
+      "xwayland": false,
+      "size": [
+        739,
+        774
+      ]
+    },
+    {
+      "class": "brave-browser",
+      "pid": 1128,
+      "xwayland": false,
+      "size": [
+        1496,
+        778
+      ]
+    },
+    {
+      "class": "apx-chatgpt-wayland-check",
+      "pid": 245290,
+      "xwayland": false,
+      "size": [
+        739,
+        774
+      ]
+    }
+  ],
+  "configerrors": [
+    ""
+  ]
+}

@@ -7,7 +7,9 @@ AUDIT=REPO/'audit/2026-10-20-environments-minimal'
 SOURCE=REPO/'config/environment-shell-v1'
 SEED=Path('/usr/share/apx/config-seeds/environment-shell-v1')
 class transform:
- RELATIVES = ['quickshell/apx/shell.qml']
+ RELATIVES = ['quickshell/apx/Appearance.qml', 'quickshell/apx/RadioIconButton.qml', 'quickshell/apx/ControlTile.qml', 'quickshell/apx/ControlDashboard.qml', 'quickshell/apx/shell.qml']
+ RELATIVES += ['quickshell/apx/BounceMouseArea.qml', 'quickshell/apx/BarButton.qml']
+ RELATIVES += ['quickshell/apx/icons/lucide/'+name+'.svg' for name in ['graph-hub', 'graph-star', 'gamepad-2', 'joystick', 'trophy', 'dice-5', 'target', 'rocket', 'puzzle', 'medal']]
  @staticmethod
  def transform(rel, text): return (SOURCE/rel).read_text()
 def atomic(path,data,mode,uid,gid):

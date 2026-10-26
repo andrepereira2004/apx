@@ -1,0 +1,121 @@
+Oct 24 07:54:00 archlinux kernel: usb 1-2: new high-speed USB device number 2 using xhci_hcd
+Oct 24 07:54:00 archlinux kernel: usb 1-2: New USB device found, idVendor=05e3, idProduct=0610, bcdDevice=71.00
+Oct 24 07:54:00 archlinux kernel: usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+Oct 24 07:54:00 archlinux kernel: usb 1-2: Product: USB2.1 Hub
+Oct 24 07:54:00 archlinux kernel: usb 1-2: Manufacturer: GenesysLogic
+Oct 24 07:54:00 archlinux kernel: usb 1-2.1: new full-speed USB device number 4 using xhci_hcd
+Oct 24 07:54:00 archlinux kernel: usb 1-2.1: New USB device found, idVendor=1532, idProduct=0a24, bcdDevice= 2.00
+Oct 24 07:54:00 archlinux kernel: usb 1-2.1: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+Oct 24 07:54:00 archlinux kernel: usb 1-2.1: Product: Razer BlackWidow V3 Tenkeyless
+Oct 24 07:54:00 archlinux kernel: usb 1-2.1: Manufacturer: Razer
+Oct 24 07:54:02 archlinux kernel: usb 1-2.3: new full-speed USB device number 6 using xhci_hcd
+Oct 24 07:54:02 archlinux kernel: usb 1-2.3: New USB device found, idVendor=046d, idProduct=c53f, bcdDevice=44.01
+Oct 24 07:54:02 archlinux kernel: usb 1-2.3: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+Oct 24 07:54:02 archlinux kernel: usb 1-2.3: Product: USB Receiver
+Oct 24 07:54:02 archlinux kernel: usb 1-2.3: Manufacturer: Logitech
+Oct 24 07:54:46 apx-host kernel: input: Logitech G305 as /devices/pci0000:00/0000:00:08.1/0000:05:00.3/usb1/1-2/1-2.3/1-2.3:1.2/0003:046D:C53F.0008/0003:046D:4074.000A/input/input22
+Oct 24 07:54:46 apx-host kernel: logitech-hidpp-device 0003:046D:4074.000A: input,hidraw9: USB HID v1.11 Keyboard [Logitech G305] on usb-0000:05:00.3-2.3/input2:1
+Oct 24 07:55:04 apx-host kernel: logitech-hidpp-device 0003:046D:4074.000A: HID++ 4.2 device connected.
+Oct 24 08:19:29 apx-host kernel: usb 1-2.3: reset full-speed USB device number 6 using xhci_hcd
+Oct 24 08:19:30 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:19:30 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:19:30 apx-host kernel: usb 1-2.3: reset full-speed USB device number 6 using xhci_hcd
+Oct 24 08:19:30 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:19:30 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:19:30 apx-host kernel: usb 1-2.3: reset full-speed USB device number 6 using xhci_hcd
+Oct 24 08:19:30 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:19:31 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:19:31 apx-host kernel: usb 1-2.3: device not accepting address 6, error -71
+Oct 24 08:19:31 apx-host kernel: usb 1-2.3: WARN: invalid context state for evaluate context command.
+Oct 24 08:19:31 apx-host kernel: usb 1-2.3: reset full-speed USB device number 6 using xhci_hcd
+Oct 24 08:19:31 apx-host kernel: usb 1-2.3: device not accepting address 6, error -22
+Oct 24 08:19:31 apx-host kernel: usb 1-2.3: USB disconnect, device number 6
+Oct 24 08:19:32 apx-host kernel: usb 1-2.3: new full-speed USB device number 7 using xhci_hcd
+Oct 24 08:19:32 apx-host kernel: usb 1-2.3: New USB device found, idVendor=046d, idProduct=c53f, bcdDevice=44.01
+Oct 24 08:19:32 apx-host kernel: usb 1-2.3: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+Oct 24 08:19:32 apx-host kernel: usb 1-2.3: Product: USB Receiver
+Oct 24 08:19:32 apx-host kernel: usb 1-2.3: Manufacturer: Logitech
+Oct 24 08:19:32 apx-host kernel: input: Logitech G305 as /devices/pci0000:00/0000:00:08.1/0000:05:00.3/usb1/1-2/1-2.3/1-2.3:1.2/0003:046D:C53F.000D/0003:046D:4074.000E/input/input32
+Oct 24 08:19:32 apx-host kernel: logitech-hidpp-device 0003:046D:4074.000E: input,hidraw9: USB HID v1.11 Keyboard [Logitech G305] on usb-0000:05:00.3-2.3/input2:1
+Oct 24 08:22:28 apx-host kernel: usb 1-2.3: reset full-speed USB device number 7 using xhci_hcd
+Oct 24 08:22:28 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:28 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:28 apx-host kernel: usb 1-2.3: reset full-speed USB device number 7 using xhci_hcd
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: reset full-speed USB device number 7 using xhci_hcd
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: device not accepting address 7, error -71
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: WARN: invalid context state for evaluate context command.
+Oct 24 08:22:29 apx-host kernel: usb 1-2.3: reset full-speed USB device number 7 using xhci_hcd
+Oct 24 08:22:30 apx-host kernel: usb 1-2.3: device not accepting address 7, error -22
+Oct 24 08:22:30 apx-host kernel: usb 1-2.3: USB disconnect, device number 7
+Oct 24 08:22:30 apx-host kernel: usb 1-2.3: new full-speed USB device number 8 using xhci_hcd
+Oct 24 08:22:30 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:30 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:31 apx-host kernel: usb 1-2.3: new full-speed USB device number 9 using xhci_hcd
+Oct 24 08:22:31 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:31 apx-host kernel: usb 1-2.3: device descriptor read/64, error -32
+Oct 24 08:22:31 apx-host kernel: usb 1-2-port3: attempt power cycle
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: new full-speed USB device number 10 using xhci_hcd
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: device not accepting address 10, error -71
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: WARN: invalid context state for evaluate context command.
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: new full-speed USB device number 11 using xhci_hcd
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: Device not responding to setup address.
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: device not accepting address 11, error -71
+Oct 24 08:22:32 apx-host kernel: usb 1-2.3: WARN: invalid context state for evaluate context command.
+Oct 24 08:22:32 apx-host kernel: usb 1-2-port3: unable to enumerate USB device
+Oct 24 08:31:32 apx-host kernel: usb 3-2: new full-speed USB device number 3 using xhci_hcd
+Oct 24 08:31:32 apx-host kernel: usb 3-2: New USB device found, idVendor=046d, idProduct=c53f, bcdDevice=44.01
+Oct 24 08:31:32 apx-host kernel: usb 3-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+Oct 24 08:31:32 apx-host kernel: usb 3-2: Product: USB Receiver
+Oct 24 08:31:32 apx-host kernel: usb 3-2: Manufacturer: Logitech
+Oct 24 08:31:33 apx-host kernel: input: Logitech G305 as /devices/pci0000:00/0000:00:08.1/0000:05:00.4/usb3/3-2/3-2:1.2/0003:046D:C53F.0011/0003:046D:4074.0012/input/input33
+Oct 24 08:31:33 apx-host kernel: logitech-hidpp-device 0003:046D:4074.0012: input,hidraw9: USB HID v1.11 Keyboard [Logitech G305] on usb-0000:05:00.4-2/input2:1
+Oct 24 08:32:55 apx-host kernel: logitech-hidpp-device 0003:046D:4074.0012: HID++ 4.2 device connected.
+Oct 24 08:37:06 apx-host kernel: usb 3-2: reset full-speed USB device number 3 using xhci_hcd
+Oct 24 08:37:17 apx-host kernel: usb 3-2: USB disconnect, device number 3
+Oct 24 08:38:03 apx-host kernel: usb 1-2.2: new full-speed USB device number 12 using xhci_hcd
+Oct 24 08:38:03 apx-host kernel: usb 1-2.2: New USB device found, idVendor=046d, idProduct=c53f, bcdDevice=44.01
+Oct 24 08:38:03 apx-host kernel: usb 1-2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+Oct 24 08:38:03 apx-host kernel: usb 1-2.2: Product: USB Receiver
+Oct 24 08:38:03 apx-host kernel: usb 1-2.2: Manufacturer: Logitech
+Oct 24 08:38:04 apx-host kernel: input: Logitech G305 as /devices/pci0000:00/0000:00:08.1/0000:05:00.3/usb1/1-2/1-2.2/1-2.2:1.2/0003:046D:C53F.0015/0003:046D:4074.0016/input/input34
+Oct 24 08:38:04 apx-host kernel: logitech-hidpp-device 0003:046D:4074.0016: input,hidraw9: USB HID v1.11 Keyboard [Logitech G305] on usb-0000:05:00.3-2.2/input2:1
+Oct 24 08:38:05 apx-host kernel: logitech-hidpp-device 0003:046D:4074.0016: HID++ 4.2 device connected.
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: reset full-speed USB device number 12 using xhci_hcd
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: reset full-speed USB device number 12 using xhci_hcd
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: reset full-speed USB device number 12 using xhci_hcd
+Oct 24 08:38:14 apx-host kernel: usb 1-2.2: Device not responding to setup address.
+Oct 24 08:38:15 apx-host kernel: usb 1-2.2: Device not responding to setup address.
+Oct 24 08:38:15 apx-host kernel: usb 1-2.2: device not accepting address 12, error -71
+Oct 24 08:38:15 apx-host kernel: usb 1-2.2: WARN: invalid context state for evaluate context command.
+Oct 24 08:38:15 apx-host kernel: usb 1-2.2: reset full-speed USB device number 12 using xhci_hcd
+Oct 24 08:38:15 apx-host kernel: usb 1-2.2: device not accepting address 12, error -22
+Oct 24 08:38:15 apx-host kernel: usb 1-2.2: USB disconnect, device number 12
+Oct 24 08:38:16 apx-host kernel: usb 1-2.2: new full-speed USB device number 13 using xhci_hcd
+Oct 24 08:38:16 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:16 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:16 apx-host kernel: usb 1-2.2: new full-speed USB device number 14 using xhci_hcd
+Oct 24 08:38:16 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:16 apx-host kernel: usb 1-2.2: device descriptor read/64, error -32
+Oct 24 08:38:16 apx-host kernel: usb 1-2-port2: attempt power cycle
+Oct 24 08:38:17 apx-host kernel: usb 1-2.2: new full-speed USB device number 15 using xhci_hcd
+Oct 24 08:38:17 apx-host kernel: usb 1-2.2: Device not responding to setup address.
+Oct 24 08:38:17 apx-host kernel: usb 1-2.2: Device not responding to setup address.
+Oct 24 08:38:18 apx-host kernel: usb 1-2.2: device not accepting address 15, error -71
+Oct 24 08:38:18 apx-host kernel: usb 1-2.2: WARN: invalid context state for evaluate context command.
+Oct 24 08:38:18 apx-host kernel: usb 1-2.2: new full-speed USB device number 16 using xhci_hcd
+Oct 24 08:38:18 apx-host kernel: usb 1-2.2: Device not responding to setup address.
+Oct 24 08:38:18 apx-host kernel: usb 1-2.2: Device not responding to setup address.
+Oct 24 08:38:18 apx-host kernel: usb 1-2.2: device not accepting address 16, error -71
+Oct 24 08:38:18 apx-host kernel: usb 1-2.2: WARN: invalid context state for evaluate context command.
+Oct 24 08:38:18 apx-host kernel: usb 1-2-port2: unable to enumerate USB device

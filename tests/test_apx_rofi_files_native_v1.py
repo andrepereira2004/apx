@@ -23,12 +23,19 @@ class NativeFilesModeTests(unittest.TestCase):
             helper.write_text('''#!/usr/bin/python3
 import json,os,sys,time
 p=sys.argv[2]
-time.sleep(.65)
+time.sleep(float(os.environ.get('APX_TEST_DELAY', '.65')))
 if p.endswith('/Fail'):
     print('invalid JSON')
 else:
     names=[('Docs','directory'),('Grande.zip','file')] if p==os.path.expanduser('~') else [('child.txt','file')]
-    print(json.dumps({'directory':p,'entries':[{'path':p+'/'+n,'label':n,'icon':'folder' if k=='directory' else 'text-x-generic','kind':k,'search':n} for n,k in names]}))
+    output=json.dumps({'directory':p,'entries':[{'path':p+'/'+n,'label':n,'icon':'folder' if k=='directory' else 'text-x-generic','kind':k,'search':n+'ç'} for n,k in names]},ensure_ascii=False).encode()
+    if os.environ.get('APX_TEST_PARTIAL'):
+        split=output.index(bytes([195]))+1
+        sys.stdout.buffer.write(output[:split]);sys.stdout.buffer.flush()
+        time.sleep(.12)
+        sys.stdout.buffer.write(output[split:])
+    else:
+        sys.stdout.buffer.write(output)
 ''')
             helper.chmod(0o755)
             flags = subprocess.check_output(['pkg-config', '--cflags', '--libs', *PACKAGES], text=True).split()

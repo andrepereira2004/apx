@@ -34,4 +34,6 @@
   <property name="misc-show-delete-action" type="bool" value="false" />
   <property name="last-menubar-visible" type="bool" value="false" />
   <property name="last-statusbar-visible" type="bool" value="false" />
+  <property name="misc-small-toolbar-icons" type="bool" value="true" />
+  <property name="last-separator-position" type="int" value="219" />
 </channel>

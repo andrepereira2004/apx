@@ -1,0 +1,272 @@
+{
+  "pages": {
+    "audio": {
+      "seconds": 0.0,
+      "cards": 3,
+      "text": [
+        "Saída de som",
+        "Dispositivo",
+        "Volume",
+        "Som ativo",
+        "Microfone",
+        "Dispositivo",
+        "Volume",
+        "Microfone ativo",
+        "Mais opções",
+        "Volumes por aplicação"
+      ]
+    },
+    "network": {
+      "seconds": 0.26,
+      "cards": 2,
+      "text": [
+        "Ligação atual",
+        "MEO-243F10_EXT",
+        "Com acesso à internet",
+        "Procurar redes",
+        "Desligar",
+        "Redes disponíveis",
+        "MEO-243F10_EXT  ·  ligada",
+        "FFPAULINO",
+        "MEO-243F10",
+        "MEO-BCE350",
+        "MEO-WiFi"
+      ]
+    },
+    "bluetooth": {
+      "seconds": 0.24,
+      "cards": 2,
+      "text": [
+        "Adaptador",
+        "Ligado",
+        "Desligar",
+        "Procurar dispositivos",
+        "Dispositivos",
+        "Nenhum dispositivo encontrado.",
+        "Atualizar"
+      ]
+    },
+    "displays": {
+      "seconds": 0.01,
+      "cards": 3,
+      "text": [
+        "AU Optronics 0xD1ED",
+        "eDP-1  ·  1920 × 1080  ·  120 Hz",
+        "Configurar eDP-1",
+        "Resolução e frequência",
+        "Escala",
+        "Posição horizontal",
+        "Posição vertical",
+        "Testar alteração",
+        "Disposição",
+        "Externo à esquerda",
+        "Externo à direita"
+      ]
+    },
+    "input": {
+      "seconds": 0.1,
+      "cards": 7,
+      "text": [
+        "Teclados",
+        "ite-tech.-inc.-ite-device(8910)-keyboard",
+        "Disposição: Portuguese",
+        "at-translated-set-2-keyboard",
+        "Disposição: Portuguese",
+        "Ratos",
+        "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+        "elan06fa:00-04f3:31dd-mouse",
+        "Touchpads",
+        "elan06fa:00-04f3:31dd-touchpad",
+        "Ativar",
+        "Desativar",
+        "Disposição e repetição",
+        "Teclado",
+        "Teclas por segundo",
+        "Atraso em milissegundos",
+        "Com dois layouts, SUPER+Espaço alterna entre eles.",
+        "Aplicar teclado",
+        "Touchpad",
+        "Deslocamento natural",
+        "Toque para clicar",
+        "Aplicar touchpad",
+        "Velocidade do cursor (0–100)",
+        "Aplicar velocidade",
+        "Deslocamento (%)",
+        "Aplicar deslocamento",
+        "Gestos entre workspaces (%)",
+        "Aplicar gestos entre workspaces",
+        "Rato externo",
+        "Sensibilidade",
+        "Aplicar rato",
+        "Atalhos de teclado",
+        "Ver atalhos atuais",
+        "Aplicação",
+        "Novo atalho",
+        "Adicionar atalho"
+      ]
+    },
+    "appearance": {
+      "seconds": 0.0,
+      "cards": 1,
+      "text": [
+        "Visual das aplicações",
+        "O APX usa um tema escuro, ícones Graphite e Selawik.",
+        "Tema",
+        "Ícones",
+        "Texto",
+        "Aplicar",
+        "Restaurar APX",
+        "As aplicações já abertas podem precisar de ser reiniciadas."
+      ]
+    },
+    "apps": {
+      "seconds": 0.09,
+      "cards": 7,
+      "text": [
+        "Navegador predefinido",
+        "Atual: brave-browser.desktop",
+        "● Brave",
+        "Ficheiros e tipos",
+        "Gestor de ficheiros: thunar.desktop",
+        "Usar Thunar para pastas",
+        "PDF",
+        "Nenhuma aplicação compatível instalada",
+        "Imagens",
+        "Nenhuma aplicação compatível instalada",
+        "Vídeo",
+        "Nenhuma aplicação compatível instalada",
+        "Áudio",
+        "Nenhuma aplicação compatível instalada",
+        "Texto",
+        "Nenhuma aplicação compatível instalada"
+      ]
+    },
+    "power": {
+      "seconds": 0.19,
+      "cards": 4,
+      "text": [
+        "Bateria",
+        "BAT0: 100% · Full",
+        "Brilho do ecrã integrado",
+        "− 5%",
+        "+ 5%",
+        "Perfil de desempenho",
+        "Atual: balanced",
+        "○ Poupar energia",
+        "● Equilibrado",
+        "○ Desempenho",
+        "Inatividade",
+        "Bloquear",
+        "Apagar ecrã",
+        "Suspender em bateria",
+        "Suspender na tomada",
+        "A suspensão automática só é aceite com bloqueio anterior. A tampa é controlada pelo sistema.",
+        "Aplicar tempos"
+      ]
+    },
+    "storage": {
+      "seconds": 0.14,
+      "cards": 3,
+      "text": [
+        "Disco APX",
+        "101.6 GiB livres de 216.4 GiB",
+        "Espaço por Environment",
+        "Windows: 170.0 GiB",
+        "Hytale: 21.2 GiB",
+        "Faculdade: 13.5 GiB",
+        "Minecraft: 9.9 GiB",
+        "Hub: 7.4 GiB",
+        "Steam: 5.7 GiB",
+        "Atualizar",
+        "Medir novamente"
+      ]
+    },
+    "system": {
+      "seconds": 0.37,
+      "cards": 3,
+      "text": [
+        "Atualizações",
+        "Abrir atualizações APX",
+        "Ferramentas",
+        "Gestor de tarefas",
+        "Gestor de ficheiros",
+        "Armazenamento APX: 102 GiB livres de 216 GiB",
+        "Sessão e serviços",
+        "Hora sincronizada: sim",
+        "Fuso horário: Europe/Lisbon",
+        "Environment: Minecraft",
+        "Versão: hyprland-base-v2",
+        "Serviços de rede e Bluetooth: ok"
+      ]
+    },
+    "locale": {
+      "seconds": 0.0,
+      "cards": 1,
+      "text": [
+        "Idioma e formatos",
+        "Idioma",
+        "Formatos",
+        "Guardar",
+        "A alteração entra em vigor ao voltar a abrir o Environment. Apenas idiomas já instalados aparecem aqui."
+      ]
+    },
+    "privacy": {
+      "seconds": 0.0,
+      "cards": 3,
+      "text": [
+        "Histórico do copiar e colar",
+        "Guardar histórico neste Environment",
+        "Aplicar",
+        "Apagar histórico",
+        "Abrir histórico",
+        "O histórico fica separado por Environment e está desligado por defeito.",
+        "Documentos recentes",
+        "Limpar lista de recentes",
+        "Permissões Flatpak",
+        "Consulta as permissões de câmara, som, rede e ficheiros de cada aplicação.",
+        "Ver permissões"
+      ]
+    },
+    "startup": {
+      "seconds": 0.01,
+      "cards": 1,
+      "text": [
+        "Aplicações ao iniciar a sessão",
+        "AT-SPI D-Bus Bus",
+        "Certificate and Key Storage",
+        "Secret Storage Service",
+        "Print Queue Applet",
+        "User folders update",
+        "Adicionar",
+        "Adicionar ao arranque",
+        "Estas escolhas aplicam-se no próximo arranque deste Environment. Os componentes essenciais mantêm o arranque próprio."
+      ]
+    },
+    "accessibility": {
+      "seconds": 0.0,
+      "cards": 2,
+      "text": [
+        "Movimento",
+        "Reduzir animações",
+        "Aplicar",
+        "Texto e contraste",
+        "Tamanho do texto",
+        "Contraste elevado nas aplicações GTK",
+        "Aplicar",
+        "O tema e o texto afetam as aplicações GTK. A escala dos monitores é configurada em Ecrãs."
+      ]
+    },
+    "printing": {
+      "seconds": 0.01,
+      "cards": 1,
+      "text": [
+        "Impressoras e digitalização",
+        "Configurar impressoras",
+        "Nenhuma impressora disponível: lpstat: No destinations added."
+      ]
+    }
+  },
+  "errors": [],
+  "accent_search": true,
+  "search_return": true
+}

@@ -1,0 +1,295 @@
+{
+  "scope": "local canvas-stream video in isolated native HTML fullscreen; not YouTube/network/codec reproduction",
+  "video_source": "YouTube anonymous public Big Buck Bunny",
+  "xwayland": false,
+  "results": [
+    {
+      "viewports": [
+        {
+          "time": 4705.9,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 4714.2,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 4897.5,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 4851.19999999553,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 1,
+      "enter": true,
+      "promise_ms": 150.3,
+      "max_raf_gap_ms": 241.8,
+      "raf_gaps_over_25ms": 3,
+      "samples": 57
+    },
+    {
+      "viewports": [
+        {
+          "time": 5606.8,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 5615.2,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 5881.4,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 5799.5999999940395,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 1,
+      "enter": false,
+      "promise_ms": 45.9,
+      "max_raf_gap_ms": 417.6,
+      "raf_gaps_over_25ms": 2,
+      "samples": 16
+    },
+    {
+      "viewports": [
+        {
+          "time": 6407.5,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 6415.8,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 6590.6,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 6549.5999999940395,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 2,
+      "enter": true,
+      "promise_ms": 146.9,
+      "max_raf_gap_ms": 250.1,
+      "raf_gaps_over_25ms": 2,
+      "samples": 58
+    },
+    {
+      "viewports": [
+        {
+          "time": 7308,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 7316.4,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 7574.6,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 7498.69999999553,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 2,
+      "enter": false,
+      "promise_ms": 44.2,
+      "max_raf_gap_ms": 375,
+      "raf_gaps_over_25ms": 3,
+      "samples": 18
+    },
+    {
+      "viewports": [
+        {
+          "time": 8100.4,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 8108.7,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 8275.3,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 8229.79999999702,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 3,
+      "enter": true,
+      "promise_ms": 130.8,
+      "max_raf_gap_ms": 241.8,
+      "raf_gaps_over_25ms": 3,
+      "samples": 57
+    },
+    {
+      "viewports": [
+        {
+          "time": 8984.4,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 8992.7,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 9234.3,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 9150.19999999553,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 3,
+      "enter": false,
+      "promise_ms": 40.0,
+      "max_raf_gap_ms": 300,
+      "raf_gaps_over_25ms": 4,
+      "samples": 24
+    },
+    {
+      "viewports": [
+        {
+          "time": 9776.6,
+          "width": 739,
+          "height": 638
+        },
+        {
+          "time": 9784.9,
+          "width": 739,
+          "height": 718
+        },
+        {
+          "time": 9951.3,
+          "width": 1536,
+          "height": 808
+        }
+      ],
+      "events": [
+        {
+          "time": 9910.19999999553,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 4,
+      "enter": true,
+      "promise_ms": 134.9,
+      "max_raf_gap_ms": 217.2,
+      "raf_gaps_over_25ms": 2,
+      "samples": 61
+    },
+    {
+      "viewports": [
+        {
+          "time": 10668.2,
+          "width": 1536,
+          "height": 808
+        },
+        {
+          "time": 10676.4,
+          "width": 1536,
+          "height": 727
+        },
+        {
+          "time": 10902.4,
+          "width": 739,
+          "height": 638
+        }
+      ],
+      "events": [
+        {
+          "time": 10835.79999999702,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 39,
+      "dropped": 3,
+      "cycle": 4,
+      "enter": false,
+      "promise_ms": 42.2,
+      "max_raf_gap_ms": 275.1,
+      "raf_gaps_over_25ms": 3,
+      "samples": 30
+    }
+  ]
+}

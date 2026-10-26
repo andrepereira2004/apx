@@ -1,0 +1,7 @@
+{
+  "display_scale": 1.5,
+  "baseline_mask_edge_energy_ratio": 0.5503977885359983,
+  "physical_texture_only_ratio": 0.8357091907496216,
+  "final_supersampled_ratio": 1.2932255792882588,
+  "metric": "horizontal text edge energy relative to native rendering; not pixel-identical glyph fidelity"
+}

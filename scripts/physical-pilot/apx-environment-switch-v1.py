@@ -22,7 +22,7 @@ import uuid
 sys.path.insert(0, "/usr/lib/apx")
 import apx_native_hub_v3 as native_v3
 from apx_environment_switch_contract import (  # noqa: E402
-    MAX_MESSAGE_BYTES, PROFILE, parse_message, valid_description, valid_display_name,
+    MAX_MESSAGE_BYTES, PROFILE, ENVIRONMENT_ICONS, parse_message, valid_description, valid_display_name,
 )
 from apx_host_services_peer import (  # noqa: E402
     HostServicesPeer, HostServicesPeerError, authorize_active_environment_peer,
@@ -107,7 +107,7 @@ def environment_view(record: dict[str, object]) -> dict[str, object]:
         system_label = "WINDOWS" if system_kind == "windows11" else "UBUNTU"
     except FileNotFoundError:
         pass
-    return {"category": category, "description": description, "display_name": display_name, "generation": record["generation"],
+    return {"icon": selected_environment_icon(record), "category": category, "description": description, "display_name": display_name, "generation": record["generation"],
             "name": name, "release": record["release"], "role": record["role"], "state": record["state"],
             "system_kind": system_kind, "system_label": system_label,
             "session_restore": record.get("session_restore") is True,
@@ -226,7 +226,10 @@ def catalog() -> list[dict[str, object]]:
         pass
     v3 = native_v3.catalogue()
     replaced = {item["name"] for item in v3}
-    return [item for item in values if item["name"] not in replaced] + v3
+    result = [item for item in values if item["name"] not in replaced] + v3
+    for item in result:
+        item["icon"] = selected_environment_icon(item)
+    return result
 
 
 def request_native_boot() -> dict[str, object]:
@@ -248,7 +251,7 @@ def request_native_boot() -> dict[str, object]:
 
 
 def request_metadata_update(target: str, generation: str, display_name: str,
-                            description: str) -> dict[str, object]:
+                            description: str, icon: str | None = None) -> dict[str, object]:
     runner = Path(METADATA_RUNNER)
     info = runner.lstat()
     if runner.is_symlink() or not runner.is_file() or info.st_uid != 0 or info.st_gid != 0 \
@@ -265,6 +268,7 @@ def request_metadata_update(target: str, generation: str, display_name: str,
         "--property=ReadWritePaths=/var/lib/apx/native-environments",
         METADATA_RUNNER, "--target", target, "--generation", generation,
         "--display-name", display_name, "--description", description,
+        *(("--icon", icon) if icon is not None else ()),
     ), text=True, capture_output=True, check=False)
     if result.returncode:
         detail = (result.stderr.strip() or result.stdout.strip() or
@@ -630,6 +634,25 @@ def request_direct_switch(source: str, target: str) -> str:
         raise
 
 
+def selected_environment_icon(identity: dict[str, object]) -> str:
+    """Read the Host-owned icon for this exact Environment generation."""
+    path = ENVIRONMENTS / (".icon-" + str(identity["name"]) + "-" + str(identity["generation"]) + ".json")
+    try:
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+        try:
+            info = os.fstat(descriptor)
+            raw = os.read(descriptor, 1025)
+        finally:
+            os.close(descriptor)
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_gid != 0 or len(raw) > 1024:
+            return "box"
+        value = json.loads(raw)
+        icon = value.get("icon")
+        return icon if value.get("name") == identity["name"] and value.get("generation") == identity["generation"] and isinstance(icon, str) and icon in ENVIRONMENT_ICONS else "box"
+    except (OSError, ValueError, AttributeError):
+        return "box"
+
+
 def active_identity(peer: HostServicesPeer) -> dict[str, object]:
     try:
         authorize_official_hub_peer(peer)
@@ -690,6 +713,8 @@ def apply(operation: str, payload: dict[str, object], peer: HostServicesPeer) ->
         if record.get("generation") != generation \
                 or record.get("state") not in {"stopped", "ready"}:
             raise RuntimeError("o Environment selecionado mudou")
+        if "icon" in payload:
+            return request_metadata_update(target, generation, display_name, description, payload["icon"])
         return request_metadata_update(target, generation, display_name, description)
     if operation == "environment.destroy":
         authorize_hub_management(peer)

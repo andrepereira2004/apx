@@ -1,0 +1,26 @@
+{
+  "before": {
+    "tabs": 1,
+    "collapsed": false,
+    "selected": 0,
+    "count": 4
+  },
+  "closed": {
+    "tabs": 1,
+    "collapsed": true,
+    "selected": -1,
+    "count": 4
+  },
+  "reopenedSameMessage": {
+    "tabs": 1,
+    "collapsed": false,
+    "selected": 0,
+    "count": 4
+  },
+  "messageTabClosed": {
+    "tabs": 1,
+    "collapsed": false,
+    "selected": 0,
+    "count": 4
+  }
+}

@@ -1,22 +1,29 @@
 from test_apx_media_progress import helper
-import unittest,json
+import unittest,json,tempfile
+from pathlib import Path
 from unittest.mock import patch
 from types import SimpleNamespace
 
 class NotificationActions(unittest.TestCase):
-    def setUp(self): self.m=helper()
+    def setUp(self):
+        self.m=helper()
+        self.tmp=tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.m.NOTIFICATION_STORE=Path(self.tmp.name)/'notifications.json'
+        owner=patch.object(self.m,'notification_owner',return_value='bus:owner')
+        owner.start();self.addCleanup(owner.stop)
     def test_capabilities_and_history(self):
         active=[dict(id=7,summary='Test',actions={'default':'Abrir'})]
         with patch.object(self.m.subprocess,'run',side_effect=[SimpleNamespace(returncode=0,stdout=json.dumps(active)),SimpleNamespace(returncode=0,stdout=json.dumps(active+[dict(id=8)]))]):
             notes,count=self.m.notifications()
-        self.assertEqual(count,1)
-        self.assertTrue(notes[0]['can_open'])
-        self.assertFalse(notes[1]['can_open'])
+        self.assertEqual(count,2)
+        self.assertTrue(next(n for n in notes if n['mako_id']==7)['can_open'])
+        self.assertFalse(next(n for n in notes if n['mako_id']==8)['can_open'])
     def test_open_uses_default_action(self):
         with patch.object(self.m,'notifications',return_value=([dict(id=7,active=True,can_open=True)],1)),patch.object(self.m.subprocess,'run',return_value=SimpleNamespace(returncode=0)) as run:
             self.m.notification_action('open','7')
         self.assertEqual(run.call_args.args[0],['/usr/bin/makoctl','invoke','-n','7','default'])
-    def test_mark_all_targets_snapshot_and_preserves_history(self):
+    def test_mark_all_targets_live_and_archived_snapshot(self):
         with patch.object(self.m,'notifications',return_value=([dict(id=7,active=True),dict(id=8,active=False)],1)),patch.object(self.m.subprocess,'run',return_value=SimpleNamespace(returncode=0)) as run:
             self.m.notification_action('read-all')
         self.assertEqual(run.call_count,1)
@@ -29,3 +36,41 @@ class NotificationActions(unittest.TestCase):
     def test_backend_failure_is_reported(self):
         with patch.object(self.m,'notifications',return_value=([dict(id=7,active=True)],1)),patch.object(self.m.subprocess,'run',return_value=SimpleNamespace(returncode=1)):
             with self.assertRaises(RuntimeError):self.m.notification_action('read','7')
+
+    def test_expiry_and_service_restart_keep_unread_history(self):
+        item=dict(id=7,summary='Saved test',actions={'default':'Open'})
+        responses=[SimpleNamespace(returncode=0,stdout=json.dumps([item])),SimpleNamespace(returncode=0,stdout='[]')]
+        with patch.object(self.m.subprocess,'run',side_effect=responses):
+            notes,_=self.m.notifications()
+        ident=notes[0]['id']
+        with patch.object(self.m.subprocess,'run',side_effect=[SimpleNamespace(returncode=0,stdout='[]'),SimpleNamespace(returncode=0,stdout=json.dumps([item]))]):
+            notes,count=self.m.notifications()
+        self.assertEqual(count,1);self.assertFalse(notes[0]['active']);self.assertEqual(notes[0]['id'],ident)
+        with patch.object(self.m,'notification_owner',return_value='new-bus:new-owner'),patch.object(self.m.subprocess,'run',side_effect=responses):
+            notes,count=self.m.notifications()
+        self.assertEqual(count,2);self.assertNotEqual(notes[0]['id'],ident)
+        self.assertEqual(len({n['id'] for n in notes}),2)
+
+    def test_archived_read_does_not_resurrect(self):
+        item=dict(id=7,summary='Read test')
+        responses=[SimpleNamespace(returncode=0,stdout='[]'),SimpleNamespace(returncode=0,stdout=json.dumps([item]))]
+        with patch.object(self.m.subprocess,'run',side_effect=responses):
+            notes,_=self.m.notifications()
+        ident=notes[0]['id']
+        with patch.object(self.m,'notifications',return_value=(notes,1)),patch.object(self.m.subprocess,'run') as run:
+            self.m.notification_action('read',str(ident))
+            run.assert_not_called()
+        with patch.object(self.m.subprocess,'run',side_effect=responses):
+            notes,count=self.m.notifications()
+        self.assertEqual(count,0);self.assertEqual(notes,[])
+        self.assertEqual(self.m.NOTIFICATION_STORE.stat().st_mode & 0o777,0o600)
+
+    def test_group_read_uses_snapshot_and_leaves_other_groups(self):
+        notes=[dict(id=1,active=False),dict(id=2,active=False),dict(id=3,active=False)]
+        with patch.object(self.m,'notifications',return_value=(notes,3)),patch.object(self.m,'mark_notifications_read') as mark:
+            self.m.notification_action('read-group','[1,2]')
+        self.assertEqual([call.args[0] for call in mark.call_args_list],[{1},{2}])
+        for raw in ('[true]','["1"]','[-1]','[]','{}','not-json'):
+            with patch.object(self.m,'notifications',return_value=(notes,3)),patch.object(self.m,'mark_notifications_read') as mark:
+                with self.assertRaises(ValueError):self.m.notification_action('read-group',raw)
+                mark.assert_not_called()

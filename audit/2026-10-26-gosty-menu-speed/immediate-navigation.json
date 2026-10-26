@@ -1,0 +1,50 @@
+[
+  {
+    "action": "openConnectivityControls",
+    "settled_ms": 302,
+    "samples": [
+      {
+        "ms": 302,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openControls",
+    "settled_ms": 147,
+    "samples": [
+      {
+        "ms": 147,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openBrightnessControls",
+    "settled_ms": 303,
+    "samples": [
+      {
+        "ms": 303,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  },
+  {
+    "action": "openControls",
+    "settled_ms": 165,
+    "samples": [
+      {
+        "ms": 165,
+        "transition": false,
+        "progress": 1,
+        "blocked": false
+      }
+    ]
+  }
+]

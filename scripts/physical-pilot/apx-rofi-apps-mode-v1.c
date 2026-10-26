@@ -9,6 +9,10 @@
 #include <rofi/rofi-icon-fetcher.h>
 #include <string.h>
 
+#ifndef APX_MODE_NAME
+#define APX_MODE_NAME "apps"
+#endif
+
 typedef struct RofiViewState RofiViewState;
 extern RofiViewState *rofi_view_get_active(void);
 extern Mode *rofi_view_get_mode(RofiViewState *);
@@ -22,7 +26,7 @@ typedef struct {
     JsonArray *rows;
     GArray *visible;
     gchar *data, *message;
-    gboolean searching, reset_filter, creating;
+    gboolean searching, reset_filter, creating, initial_loaded;
     guint timer, selected_row;
     gint active_row;
 } State;
@@ -45,9 +49,15 @@ static JsonObject *entry(const State *s, guint index) {
     if (!s->rows || index >= s->visible->len) return NULL;
     return json_array_get_object_element(s->rows, g_array_index(s->visible, guint, index));
 }
+static void trace(const gchar *stage) {
+    if (g_getenv("APX_ROFI_TIMING"))
+        g_printerr("APX_ROFI_TIMING %s %s %" G_GINT64_FORMAT "\n", APX_MODE_NAME, stage, g_get_monotonic_time());
+}
 static gboolean load(State *s, const gchar *info, const gchar *retv, const gchar *input) {
+    trace("load_begin");
     GSubprocessLauncher *l = g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_STDOUT_PIPE | G_SUBPROCESS_FLAGS_STDERR_SILENCE);
     g_subprocess_launcher_unsetenv(l, "LD_PRELOAD");
+    g_subprocess_launcher_setenv(l, "APX_ROFI_SECTION", APX_MODE_NAME, TRUE);
     g_subprocess_launcher_setenv(l, "ROFI_RETV", retv, TRUE);
     g_subprocess_launcher_setenv(l, "ROFI_INFO", info ? info : "", TRUE);
     g_subprocess_launcher_setenv(l, "ROFI_DATA", s->data ? s->data : "", TRUE);
@@ -78,6 +88,7 @@ static gboolean load(State *s, const gchar *info, const gchar *retv, const gchar
     s->rows = json_object_get_array_member(page, "rows");
     if (s->reset_filter) s->searching = FALSE;
     rebuild(s);
+    trace("load_end");
     return TRUE;
 }
 static gboolean tick(gpointer value) {
@@ -92,12 +103,10 @@ static gboolean tick(gpointer value) {
     return G_SOURCE_CONTINUE;
 }
 static int init(Mode *sw) {
+    trace("init");
     State *s = g_new0(State, 1); s->mode = sw;
     s->visible = g_array_new(FALSE, FALSE, sizeof(guint));
     mode_set_private_data(sw, s);
-    if (!load(s, "", "0", "")) {
-        s->message = g_strdup("Não foi possível carregar as aplicações. Fecha e volta a abrir.");
-    }
     s->timer = g_timeout_add(30, tick, s);
     return TRUE;
 }
@@ -109,7 +118,19 @@ static void destroy(Mode *sw) {
     g_free(s->data); g_free(s->message); g_free(s);
     mode_set_private_data(sw, NULL);
 }
-static unsigned int count(const Mode *sw) { State *s = mode_get_private_data(sw); return s ? s->visible->len : 0; }
+/* Rofi initializes every configured mode, including hidden tabs. Load a page
+ * only when its view requests entries/message; retain it for this invocation. */
+static void ensure_initial_page(State *s) {
+    if (!s || s->initial_loaded) return;
+    s->initial_loaded = TRUE;
+    if (!load(s, "", "0", ""))
+        s->message = g_strdup("Não foi possível carregar as aplicações. Fecha e volta a abrir.");
+}
+static unsigned int count(const Mode *sw) {
+    State *s = mode_get_private_data(sw);
+    ensure_initial_page(s);
+    return s ? s->visible->len : 0;
+}
 static int match(const Mode *sw, rofi_int_matcher **tokens, unsigned int index) {
     State *s = mode_get_private_data(sw); JsonObject *e = entry(s, index);
     return e && ((s->creating && !strcmp(str(e, "info"), "organize:create")) || helper_token_match(tokens, str(e, "match")));
@@ -127,6 +148,7 @@ static char *display(const Mode *sw, unsigned int index, int *state, GList **att
     return get_entry ? g_strdup(e ? str(e, "display") : "") : NULL;
 }
 static cairo_surface_t *icon(const Mode *sw, unsigned int index, unsigned int height) {
+    if (index == 0) trace("icon_zero");
     State *s = mode_get_private_data(sw); JsonObject *e = entry(s, index);
     if (!e) return NULL;
     guint uid = rofi_icon_fetcher_query(str(e, "icon"), height);
@@ -136,7 +158,7 @@ static char *completion(const Mode *sw, unsigned int index) {
     State *s = mode_get_private_data(sw); JsonObject *e = entry(s, index);
     return g_strdup(e ? str(e, "label") : "");
 }
-static char *message(const Mode *sw) { State *s = mode_get_private_data(sw); return g_strdup(s->message); }
+static char *message(const Mode *sw) { State *s = mode_get_private_data(sw); ensure_initial_page(s); return g_strdup(s->message); }
 static ModeMode result(Mode *sw, int event, char **input, unsigned int index) {
     State *s = mode_get_private_data(sw);
     if (event & MENU_CANCEL) return MODE_EXIT;
@@ -162,7 +184,7 @@ static ModeMode result(Mode *sw, int event, char **input, unsigned int index) {
     return s->reset_filter ? RESET_DIALOG : RELOAD_DIALOG;
 }
 G_MODULE_EXPORT Mode mode = {
-    .abi_version = ABI_VERSION, .name = "apps", .cfg_name_key = "display-apps",
+    .abi_version = ABI_VERSION, .name = APX_MODE_NAME, .cfg_name_key = "display-" APX_MODE_NAME,
     ._init = init, ._destroy = destroy, ._get_num_entries = count, ._result = result,
     ._token_match = match, ._get_display_value = display, ._get_icon = icon,
     ._get_completion = completion, ._get_message = message, .type = MODE_TYPE_SWITCHER

@@ -101,6 +101,30 @@ class BridgeTests(unittest.TestCase):
             subject.forward_display_events(["/dev/dri/card2"])
             relay.assert_not_called()
 
+    def test_camera_inventory_uses_identity_pinned_resolver(self):
+        import os, stat
+        subject=bridge.Bridge.__new__(bridge.Bridge)
+        subject.engine=Mock()
+        subject.engine.resolve_camera_device.return_value='/dev/video0'
+        with patch.object(bridge.Path, 'glob', return_value=[]), patch.object(bridge.Path, 'stat',
+                return_value=Mock(st_mode=stat.S_IFCHR, st_rdev=os.makedev(81, 0), st_ino=99)):
+            self.assertEqual(subject.inventory(), {'/dev/video0': (os.makedev(81, 0), 99)})
+            subject.engine.resolve_camera_device.return_value=None
+            self.assertEqual(subject.inventory(), {})
+
+    def test_camera_revoked_without_revoking_connected_keyboard(self):
+        subject=bridge.Bridge.__new__(bridge.Bridge)
+        subject.managed={'/dev/video0', '/dev/input/event17'}
+        subject.base_policies={'outer.service':[('/dev/dri/card1','rw')]}
+        with patch.object(subject, 'check'), patch.object(bridge, 'run') as run:
+            subject.update_policies({'/dev/video0': (81, 99), '/dev/input/event17': (13, 22)})
+            self.assertIn('DeviceAllow=/dev/video0 rw', run.call_args.args[0])
+            subject.update_policies({'/dev/input/event17': (13, 22)})
+            args=run.call_args.args[0]
+            self.assertNotIn('DeviceAllow=/dev/video0 rw', args)
+            self.assertIn('DeviceAllow=/dev/input/event17 rw', args)
+            self.assertIn('DeviceAllow=/dev/dri/card1 rw', args)
+
     def test_changed_session_blocks_policy_writes(self):
         subject=bridge.Bridge.__new__(bridge.Bridge)
         with patch.object(subject,'check',side_effect=RuntimeError('changed')),patch.object(bridge,'run') as run:

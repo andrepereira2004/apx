@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/croissant.svg
+Lucide Croissant SVG; only stroke color adapted to APX Graphite.

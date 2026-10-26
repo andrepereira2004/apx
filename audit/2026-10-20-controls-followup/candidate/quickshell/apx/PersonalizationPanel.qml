@@ -55,7 +55,7 @@ Column {
         Accessible.checkable: false
         BounceMouseArea { id: actionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: action.clicked() }
     }
-    component Caption: Text {
+    component Caption: Text { renderType: Text.CurveRendering;
         width: parent ? parent.width : 300
         color: "#b5bdd0"
         font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
@@ -137,8 +137,8 @@ Column {
             width: panel.width; spacing: 2
             Row {
                 width: parent.width
-                Text { width: parent.width - 48; text: opacityRow.modelData.label; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
-                Text { width: 48; horizontalAlignment: Text.AlignRight; text: Math.round(opacitySlider.value) + "%"; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
+                Text { renderType: Text.CurveRendering; width: parent.width - 48; text: opacityRow.modelData.label; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
+                Text { renderType: Text.CurveRendering; width: 48; horizontalAlignment: Text.AlignRight; text: Math.round(opacitySlider.value) + "%"; color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize }
             }
             ControlSlider {
                 id: opacitySlider

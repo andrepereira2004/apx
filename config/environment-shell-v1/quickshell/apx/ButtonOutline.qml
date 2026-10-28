@@ -12,6 +12,7 @@ Rectangle {
     color: "transparent"
     antialiasing: true
     border.width: selected || hovered ? 1 : idleWidth
+    border.pixelAligned: true
     border.color: selected ? Appearance.buttonSelectedBorder : hovered ? Appearance.buttonHoverBorder : Appearance.buttonIdleBorder
     visible: border.width > 0
 }

@@ -15,6 +15,8 @@ import "GhostLines.js" as GhostLines
 ShellRoot {
     id: root
 
+    NotificationToasts { id: notificationToasts }
+
     // One bar per output; a single shared menu/service state follows its trigger.
     property var selectedBar: null
     readonly property var bar: selectedBar || (barVariants.instances.length ? barVariants.instances[0] : null)
@@ -409,6 +411,7 @@ ShellRoot {
         return t * t * (3 - 2 * t)
     }
     property int controlPageDirection: 1
+    property real controlPageOffset: 0
     property bool controlPageCapturing: false
     property bool controlPageQueued: false
     property int controlPageGeneration: 0
@@ -428,14 +431,14 @@ ShellRoot {
         controlPageQueued = false
         controlPageCapture = null
         controlPageProgress = 1
+        controlPageOffset = 0
     }
     function startControlTransition() {
-        // Internal navigation updates in one turn, without capture, fade or
-        // an input shield holding the new page behind a timed transition.
+        if (controlPageRequestedRoute === menuRoute && controlPageAnimation.running) return
         cancelControlTransition()
         controlPageRequestedRoute = menuRoute
-        syncRenderedControls()
-        menuFlick.contentY = 0
+        controlPageDirection = controlDepth(root) >= controlDepth(renderedControls) ? 1 : -1
+        controlPageAnimation.restart()
         popupBackground.forceActiveFocus()
         Qt.callLater(function() {
             if (!popup.open || root.popupClosing || !root.menuKeyboardNavigation) return
@@ -458,11 +461,21 @@ ShellRoot {
         root.islandContentOpacity = 1
         root.startControlTransition()
     })
-    NumberAnimation {
+    SequentialAnimation {
         id: controlPageAnimation
-        target: root; property: "controlPageProgress"; from: 0; to: 1
-        duration: 140; easing.type: Easing.BezierSpline
-        easing.bezierCurve: [0.2, 0.8, 0.2, 1, 1, 1]
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "controlPageProgress"; to: 0; duration: 90; easing.type: Easing.InQuad }
+            NumberAnimation { target: root; property: "controlPageOffset"; to: -root.controlPageDirection * 10; duration: 90; easing.type: Easing.InQuad }
+        }
+        ScriptAction { script: {
+            root.syncRenderedControls()
+            menuFlick.contentY = 0
+            root.controlPageOffset = root.controlPageDirection * 10
+        } }
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "controlPageProgress"; to: 1; duration: 190; easing.type: Easing.OutCubic }
+            NumberAnimation { target: root; property: "controlPageOffset"; to: 0; duration: 190; easing.type: Easing.OutCubic }
+        }
         onFinished: {
             root.controlPageCapture = null
             Qt.callLater(function() {
@@ -974,8 +987,8 @@ ShellRoot {
     SequentialAnimation {
         id: calendarNavigationAnimation
         ParallelAnimation {
-            NumberAnimation { target: root; property: "calendarPageOpacity"; to: 0; duration: 75; easing.type: Easing.InQuad }
-            NumberAnimation { target: root; property: "calendarPageOffset"; to: -root.calendarMoveDirection * 10; duration: 75; easing.type: Easing.InQuad }
+            NumberAnimation { target: root; property: "calendarPageOpacity"; to: 0; duration: 90; easing.type: Easing.InQuad }
+            NumberAnimation { target: root; property: "calendarPageOffset"; to: -root.calendarMoveDirection * 10; duration: 90; easing.type: Easing.InQuad }
         }
         ScriptAction { script: {
             if (root.calendarPendingView.length) root.calendarView = root.calendarPendingView
@@ -985,8 +998,8 @@ ShellRoot {
             root.calendarPageOffset = root.calendarMoveDirection * 10
         } }
         ParallelAnimation {
-            NumberAnimation { target: root; property: "calendarPageOpacity"; to: 1; duration: 150; easing.type: Easing.OutCubic }
-            NumberAnimation { target: root; property: "calendarPageOffset"; to: 0; duration: 150; easing.type: Easing.OutCubic }
+            NumberAnimation { target: root; property: "calendarPageOpacity"; to: 1; duration: 190; easing.type: Easing.OutCubic }
+            NumberAnimation { target: root; property: "calendarPageOffset"; to: 0; duration: 190; easing.type: Easing.OutCubic }
         }
     }
     property string calendarSelectedDateKey: ""
@@ -3870,6 +3883,13 @@ ShellRoot {
     }
     IpcHandler {
         target: "host"
+        function notificationRefresh(): void { notificationToasts.refresh() }
+        function notificationToastStatus(): string { return JSON.stringify(notificationToasts.status()) }
+        function notificationPanelStatus(): string {
+            return JSON.stringify({open: popup.open, kind: root.popupKind,
+                section: root.controlsActivityKind, bar: !!root.bar,
+                target: !!root.controlCenterButton})
+        }
         function transitionStatus(): string {
             return JSON.stringify({ startup: root.startupCover, ready: root.startupReady,
                 bar_rendered: root.startupBarRendered, identity_ready: root.identityReady,
@@ -4011,6 +4031,10 @@ ShellRoot {
             root.popupKind = "controls"
             root.popupTarget = controlCenterButton
             root.showPopup()
+        }
+        function openNotifications(): void {
+            openControls()
+            Qt.callLater(function() { root.openActivitySection("notifications") })
         }
 
         function openConnectivityControls(): void { openControls(); root.openControlSection("connectivity") }
@@ -4423,7 +4447,7 @@ ShellRoot {
         property bool pending: root.bluetoothDevicePendingAddress === device.address
         signal activated()
         signal forgetRequested()
-        width: parent ? parent.width : 300; height: connected ? 56 : 44; radius: connected ? 14 : 10
+        width: parent ? parent.width : 300; height: connected ? 56 : 44; radius: Appearance.menuActionRadius
         color: root.controlButtonSurface
         LucideIcon {
             name: "bluetooth"; width: Appearance.menuGlyphSize; height: width
@@ -4757,7 +4781,6 @@ ShellRoot {
                 spacing: 6
                 BarButton {
                     id: calendarButton
-                    scale: 1
                     grouped: true
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === calendarButton : null
                     activeSurface: root.controlButtonHover
@@ -4905,6 +4928,7 @@ ShellRoot {
                 BarButton {
                     grouped: true
                     id: batteryButton
+                    scale: (animateActivation || animateDeactivation) ? 0.92 : 1
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === batteryButton : null
                 activeSurface: root.controlButtonHover
                     accentColor: root.textMain
@@ -4949,6 +4973,7 @@ ShellRoot {
                 BarButton {
                     grouped: true
                     id: controlCenterButton
+                    scale: (animateActivation || animateDeactivation) ? 0.92 : 1
                     x: ghostGreeting.width
                     compactSymbol: false
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === controlCenterButton : null
@@ -5235,7 +5260,7 @@ ShellRoot {
             width: Math.max(popupBackground.width, root.outgoingPageRect.width) + 56
             height: Math.max(popupBackground.height, root.outgoingPageRect.height)
             visible: enabled
-            enabled: popup.open && root.popupKind === "controls" && (root.controlPageCapturing || controlPageAnimation.running)
+            enabled: popup.open && root.popupKind === "controls" && root.controlPageCapturing
             acceptedButtons: Qt.AllButtons
             hoverEnabled: true
             onWheel: (wheel) => { wheel.accepted = true }
@@ -5277,8 +5302,8 @@ ShellRoot {
             visible: popup.open
             property real targetWidth: Math.min(popup.menuWidth, popup.width - 16)
             Behavior on targetWidth { enabled: root.popupKind !== "controls" && popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
-            readonly property real contentInset: splitControls ? 0 : 10
-            readonly property real contentBottomInset: splitControls ? 0 : 12
+            readonly property real contentInset: splitControls ? 0 : (root.popupKind === "controls" ? 8 : 10)
+            readonly property real contentBottomInset: splitControls ? 0 : (root.popupKind === "controls" ? 8 : 12)
             readonly property Item scrollingHeader: root.popupKind === "calendar"
                 ? (root.calendarEditor ? calendarEditorHeader : calendarMenuHeader) : scrollingMenuHeader
             readonly property bool headerScrolledOut: scrollingHeader && scrollingHeader.visible
@@ -5290,14 +5315,14 @@ ShellRoot {
             // Scrolling uses a stable viewport; only its visible frame fits to whole cards.
             // Feeding the fitted frame back into Flickable would repeatedly shrink it.
             property real viewportHeight: viewportTargetHeight
-            Behavior on viewportHeight { enabled: root.popupKind !== "controls" && root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+            Behavior on viewportHeight { enabled: root.popupKind !== "controls" && root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
             readonly property real targetHeight: root.menuHeightForCompleteActions(viewportHeight)
             readonly property real settledHeight: targetHeight
             property real settledX: Math.max(Appearance.desktopEdgeInset, Math.min(root.popupLeftMargin, popup.width - targetWidth - Appearance.desktopEdgeInset))
             Behavior on settledX { enabled: root.popupKind !== "controls" && popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
             readonly property bool alignPhysicalPixels: root.islandProgress === 1 && !root.popupClosing
                 && !root.controlPageCapturing && !controlPageAnimation.running
-            readonly property real animatedX: root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress + (root.popupKind === "controls" ? root.controlPageDirection * 18 * (1 - root.controlPageMotion) : 0)
+            readonly property real animatedX: root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress
             x: alignPhysicalPixels ? Math.round(animatedX * renderScale) / renderScale : animatedX
             property real settledY: Appearance.menuTop
             Behavior on settledY { enabled: root.popupKind !== "controls" && popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
@@ -5308,7 +5333,7 @@ ShellRoot {
             Keys.onPressed: function(event) { root.navigateGenericMenu(event) }
             // All menus emerge from their trigger using the Calendar geometry animation.
             scale: 1
-            opacity: Math.min(1, root.islandProgress * 5) * (root.popupKind === "controls" ? root.controlPageBlend : 1)
+            opacity: Math.min(1, root.islandProgress * 5)
             transformOrigin: Item.TopLeft
             clip: true
             // Rectangle.clip is rectangular: mask every scrolling child to one contour.
@@ -5329,14 +5354,13 @@ ShellRoot {
             NumberAnimation {
                 id: popupOpenAnimation
                 target: root; property: "islandProgress"; to: 1
-                duration: 320; easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.2, 0.8, 0.2, 1, 1, 1]
+                duration: 300; easing.type: Easing.OutCubic
                 onFinished: root.flushEnvironmentCatalog()
             }
             NumberAnimation {
                 id: popupCloseAnimation
                 target: root; property: "islandProgress"; to: 0
-                duration: root.pendingPopupRequest ? 140 : 240; easing.type: Easing.InOutCubic
+                duration: root.pendingPopupRequest ? 140 : 240; easing.type: Easing.OutCubic
                 onFinished: if (root.popupClosing) root.finishClosePopup()
             }
             NumberAnimation {
@@ -5434,7 +5458,7 @@ ShellRoot {
                 // animated outer card clips the reveal without reflowing every frame.
                 width: Math.max(0, popupBackground.targetWidth - popupBackground.contentInset * 2)
                 height: Math.max(0, root.islandOrigin.height + (popupBackground.viewportHeight - root.islandOrigin.height) * root.islandProgress - popupBackground.contentInset - popupBackground.contentBottomInset)
-                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "controls" || root.popupKind === "media" ? 1 : root.islandContentOpacity)
+                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "controls" ? root.controlPageProgress : (root.popupKind === "media" ? 1 : root.islandContentOpacity))
                 enabled: !root.popupClosing && root.islandProgress > .8
                 contentWidth: width
                 contentHeight: menuContent.implicitHeight
@@ -5490,7 +5514,8 @@ ShellRoot {
                 Column {
                     id: menuContent
                     width: parent.width
-                    spacing: 5
+                    spacing: root.popupKind === "controls" ? 8 : 5
+                    transform: Translate { x: root.popupKind === "controls" ? root.controlPageOffset : 0 }
 
                     Column {
                         id: calendarMenu
@@ -5923,7 +5948,12 @@ ShellRoot {
                             label: "Notas e partilha"; onActivated: root.calendarDetailsOpen = !root.calendarDetailsOpen
                         }
                         Column {
-                            width: parent.width; spacing: 6; visible: root.calendarDetailsOpen
+                            width: parent.width; spacing: 6
+                            height: root.calendarDetailsOpen ? implicitHeight : 0
+                            visible: height > 0; clip: true
+                            opacity: root.calendarDetailsOpen ? 1 : 0
+                            Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+                            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         Text { renderType: Text.QtRendering; text: "Notas (opcional)"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         EventField { id: calendarNotesField; text: root.draftNotes; placeholder: "Local, descrição, ligação…"; onTextChanged: root.draftNotes = text }
 
@@ -5942,7 +5972,12 @@ ShellRoot {
                             onActivated: root.calendarRemindersOpen = !root.calendarRemindersOpen
                         }
                         Column {
-                            width: parent.width; spacing: 6; visible: root.calendarRemindersOpen
+                            width: parent.width; spacing: 6
+                            height: root.calendarRemindersOpen ? implicitHeight : 0
+                            visible: height > 0; clip: true
+                            opacity: root.calendarRemindersOpen ? 1 : 0
+                            Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+                            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         Text { renderType: Text.QtRendering; text: "Avisar antes"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         Row {
                             width: parent.width; spacing: 5
@@ -6608,7 +6643,7 @@ ShellRoot {
                         visible: root.renderedControls.controlsActivityKind === "airplane"
                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar às ligações"; onActivated: root.openControlSection("connectivity") }
                         Rectangle {
-                            width: parent.width; height: 72; radius: 14
+                            width: parent.width; height: 72; radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface
                             RadioIconButton {
                                 x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
@@ -6633,7 +6668,7 @@ ShellRoot {
                             ]
                             Rectangle {
                                 required property var modelData
-                                width: parent.width; height: 72; radius: 14
+                                width: parent.width; height: 72; radius: Appearance.menuActionRadius
                                 color: root.controlButtonSurface
                                 Rectangle {
                                     x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
@@ -6672,7 +6707,7 @@ ShellRoot {
                         visible: root.renderedControls.controlsActivityKind === "keyboard"
                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar ao som e brilho"; onActivated: root.openControlSection("brightness") }
                         Rectangle {
-                            width: parent.width; height: 72; radius: 14
+                            width: parent.width; height: 72; radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface
                             RadioIconButton {
                                 x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
@@ -6691,7 +6726,7 @@ ShellRoot {
                         }
                         Text { renderType: Text.QtRendering; text: "Intensidade atual"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                         Rectangle {
-                            width: parent.width; height: 92; radius: 14
+                            width: parent.width; height: 92; radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface
                             Text { renderType: Text.QtRendering;
                                 x: 14; y: 14
@@ -6738,6 +6773,7 @@ ShellRoot {
                             RadioIconButton {
                                 x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
                                 iconName: root.wifiDisplayPowered() ? "wifi" : "wifi-off"
+                                cardOutlineEnabled: false
                                 powered: root.wifiDisplayPowered()
                                 busy: wifiPowerProcess.running
                                 actionLabel: root.wifiDisplayPowered() ? "Desativar Wi-Fi" : "Ativar Wi-Fi"
@@ -6776,7 +6812,7 @@ ShellRoot {
                                 id: disconnectButton
                                 visible: root.wifiDisplayActive() && root.wifiTogglePhase !== "connecting"
                                 anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                width: visible ? 104 : 0; height: 32; radius: 8
+                                width: visible ? 104 : 0; height: 32; radius: Appearance.menuActionRadius
                                 label: "Desconectar"
                                 brightActionHover: true
                                 actionSurface: parent.color
@@ -6802,14 +6838,14 @@ ShellRoot {
                             id: wifiPasswordCard
                             visible: root.wifiPasswordVisible
                             width: parent.width
-                            height: visible ? wifiCredentialFields.implicitHeight + 24 : 0
-                            radius: 14
+                            height: visible ? wifiCredentialFields.implicitHeight + 16 : 0
+                            radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                             Column {
                                 id: wifiCredentialFields
-                                x: 12; y: 12; width: parent.width - 24; spacing: 10
+                                x: 8; y: 8; width: parent.width - 16; spacing: 8
                                 Row {
-                                    width: parent.width; spacing: 10; height: 40
+                                    width: parent.width; spacing: 8; height: 40
                                     Rectangle {
                                         width: Appearance.menuIconCircleSize; height: width; radius: width / 2; color: root.controlButtonActive
                                         anchors.verticalCenter: parent.verticalCenter
@@ -7039,7 +7075,7 @@ ShellRoot {
                                     id: bluetoothSearchButton
                                     visible: root.bluetoothDisplayPowered()
                                     anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                    width: visible ? 104 : 0; height: 32; radius: 8
+                                    width: visible ? 104 : 0; height: 32; radius: Appearance.menuActionRadius
                                     label: bluetoothScanProcess.running ? "A procurar…" : "Procurar"
                                     brightActionHover: true
                                     actionSurface: parent.color
@@ -7050,13 +7086,13 @@ ShellRoot {
                             Rectangle {
                                 id: bluetoothPairCard
                                 visible: root.bluetoothPairPhase.length > 0
-                                width: parent.width; height: visible ? bluetoothPairFields.implicitHeight + 24 : 0
-                                radius: 14; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
+                                width: parent.width; height: visible ? bluetoothPairFields.implicitHeight + 16 : 0
+                                radius: Appearance.menuActionRadius; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                                 Column {
                                     id: bluetoothPairFields
-                                    x: 12; y: 12; width: parent.width - 24; spacing: 10
+                                    x: 8; y: 8; width: parent.width - 16; spacing: 8
                                     Row {
-                                        width: parent.width; height: 40; spacing: 10
+                                        width: parent.width; height: 40; spacing: 8
                                         Rectangle { width: Appearance.menuIconCircleSize; height: width; radius: width / 2; anchors.verticalCenter: parent.verticalCenter; color: Qt.lighter(root.controlButtonSurface, 1.6); LucideIcon { anchors.centerIn: parent; name: "bluetooth"; width: Appearance.menuGlyphSize; height: width } }
                                         Column {
                                             width: parent.width - 46; anchors.verticalCenter: parent.verticalCenter; spacing: 3
@@ -7120,11 +7156,11 @@ ShellRoot {
                             Rectangle {
                                 id: bluetoothForgetCard
                                 visible: root.bluetoothRemoveAddress.length > 0
-                                width: parent.width; height: visible ? bluetoothForgetFields.implicitHeight + 24 : 0
-                                radius: 14; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
+                                width: parent.width; height: visible ? bluetoothForgetFields.implicitHeight + 16 : 0
+                                radius: Appearance.menuActionRadius; color: root.controlButtonSurface; border.width: 1; border.color: root.controlButtonOutline
                                 Column {
                                     id: bluetoothForgetFields
-                                    x: 12; y: 12; width: parent.width - 24; spacing: 10
+                                    x: 8; y: 8; width: parent.width - 16; spacing: 8
                                     Text { renderType: Text.QtRendering; width: parent.width; elide: Text.ElideRight; text: root.bluetoothRemoveName; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.DemiBold }
                                     Text { renderType: Text.QtRendering; width: parent.width; wrapMode: Text.Wrap; text: "Esquecer este dispositivo? Para voltar a usá-lo, será necessário emparelhar novamente."; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                                     Row {
@@ -7173,12 +7209,12 @@ ShellRoot {
                         wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
                     }
                     Column {
-                        width: parent.width; spacing: 10
+                        width: parent.width; spacing: 8
                         visible: root.renderedControls.controlsBrightnessOpen
                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("brightness") }
                         Rectangle {
                             id: combinedVolumeCard
-                            width: parent.width; height: Appearance.menuActionHeight; radius: 14
+                            width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface
                             BounceMouseArea {
                                 id: combinedVolumeCardMouse
@@ -7222,7 +7258,7 @@ ShellRoot {
                         }
                         Rectangle {
                             id: combinedBrightnessCard
-                            width: parent.width; height: Appearance.menuActionHeight; radius: 14
+                            width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface
                             BounceMouseArea {
                                 id: combinedBrightnessCardMouse
@@ -7274,10 +7310,10 @@ ShellRoot {
                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Som"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                     }
                     Column {
-                        width: parent.width; spacing: 5; visible: root.renderedControls.controlsAudioOpen
+                        width: parent.width; spacing: 8; visible: root.renderedControls.controlsAudioOpen
 
                         Rectangle {
-                            width: parent.width; height: 80; radius: 14
+                            width: parent.width; height: 80; radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface; border.width: 0; border.color: root.controlButtonOutline
                             RadioIconButton {
                                 x: 6; y: 3
@@ -7337,9 +7373,9 @@ ShellRoot {
                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Microfone"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                     }
                     Column {
-                        width: parent.width; spacing: 5; visible: root.renderedControls.controlsMicrophoneOpen
+                        width: parent.width; spacing: 8; visible: root.renderedControls.controlsMicrophoneOpen
                         Rectangle {
-                            width: parent.width; height: 80; radius: 14
+                            width: parent.width; height: 80; radius: Appearance.menuActionRadius
                             color: root.controlButtonSurface; border.width: 0; border.color: root.controlButtonOutline
                             RadioIconButton {
                                 x: 6; y: 3
@@ -7418,7 +7454,7 @@ ShellRoot {
                 }
 
                 Column {
-                    width: parent.width; spacing: 10
+                    width: parent.width; spacing: 8
                     visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsAppearanceOpen && root.renderedControls.controlsActivityKind !== "trackpad"
                     MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: { root.controlsMoreOpen = false; menuFlick.contentY = 0 } }
                     MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "paintbrush"; label: "Personalização"; onActivated: { Appearance.refresh(); personalizationPanel.section = ""; root.controlsAppearanceOpen = true; menuFlick.contentY = 0 } }
@@ -7435,7 +7471,7 @@ ShellRoot {
                     }
                     Rectangle {
                         id: mouseSensitivityCard
-                        width: parent.width; height: Appearance.menuActionHeight; radius: 14; color: root.controlButtonSurface
+                        width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; color: root.controlButtonSurface
                         border.width: 0; border.color: root.controlButtonOutline
                         RadioIconButton {
                             x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
@@ -7484,12 +7520,12 @@ ShellRoot {
 
                 Column {
                     id: trackpadSettingsPage
-                    width: parent.width; spacing: 10
+                    width: parent.width; spacing: 8
                     visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && root.renderedControls.controlsActivityKind === "trackpad" && !root.renderedControls.controlsAppearanceOpen && !root.renderedControls.shortcutsOpen
                     MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar às opções"; onActivated: { root.controlsActivityKind = ""; menuFlick.contentY = 0 } }
                     Rectangle {
                         id: trackpadSensitivityCard
-                        width: parent.width; height: 72; radius: 14; color: root.controlButtonSurface
+                        width: parent.width; height: 72; radius: Appearance.menuActionRadius; color: root.controlButtonSurface
                         border.width: 0; border.color: root.controlButtonOutline
                         RadioIconButton {
                             x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
@@ -7536,7 +7572,7 @@ ShellRoot {
                     Text { renderType: Text.QtRendering; visible: root.trackpadSensitivityError.length > 0; width: parent.width; text: root.trackpadSensitivityError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
                     Rectangle {
                         id: trackpadScrollCard
-                        width: parent.width; height: 72; radius: 14; color: root.controlButtonSurface
+                        width: parent.width; height: 72; radius: Appearance.menuActionRadius; color: root.controlButtonSurface
                         Rectangle {
                             x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
                             width: Appearance.menuIconCircleSize; height: width; radius: width / 2
@@ -7574,7 +7610,7 @@ ShellRoot {
                     }
                     Rectangle {
                         id: trackpadWorkspacesCard
-                        width: parent.width; height: 72; radius: 14; color: root.controlButtonSurface
+                        width: parent.width; height: 72; radius: Appearance.menuActionRadius; color: root.controlButtonSurface
                         Rectangle {
                             x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
                             width: Appearance.menuIconCircleSize; height: width; radius: width / 2
@@ -7788,7 +7824,7 @@ ShellRoot {
                             anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             width: Appearance.menuGlyphSize; height: width; name: "chevron-right"; tint: root.textMain
                             rotation: root.batteryDetailsOpen ? 270 : 90
-                            Behavior on rotation { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+                            Behavior on rotation { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
                         }
                         BounceMouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor

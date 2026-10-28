@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import "NotificationGroups.js" as Groups
 
 Column {
@@ -9,8 +10,10 @@ Column {
     property var groups: []
     property var groupKeys: []
     property var expandedApps: ({})
-    property var expandedThreads: ({})
+    readonly property var desktopApplications: DesktopEntries.applications.values
     spacing: 8
+    move: Transition { NumberAnimation { properties: "x,y"; duration: 280; easing.type: Easing.OutCubic } }
+    add: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 200 } }
     function rebuild() {
         groups = Groups.build(notes)
         var keys = groups.map(function(g) { return g.key })
@@ -21,10 +24,20 @@ Column {
         next[key] = !next[key]
         expandedApps = next
     }
-    function toggleThread(key) {
-        var next = Object.assign({}, expandedThreads)
-        next[key] = !next[key]
-        expandedThreads = next
+    function iconFor(group) {
+        var applications = desktopApplications
+        var note = group.notes.find(function(n) { return !!n.icon || !!n.desktop_entry }) || group.notes[0] || ({})
+        var icon = String(note.icon || "")
+        if (icon.length) {
+            if (icon.startsWith("file://")) return icon
+            if (icon.startsWith("/")) return "file://" + icon
+            var supplied = Quickshell.iconPath(icon, true)
+            if (supplied.length) return supplied
+        }
+        var entryId = String(note.desktop_entry || "")
+        var entry = entryId ? (DesktopEntries.byId(entryId) || DesktopEntries.byId(entryId.replace(/\.desktop$/, ""))) : null
+        if (!entry) entry = DesktopEntries.heuristicLookup(group.app)
+        return entry ? Quickshell.iconPath(entry.icon, true) : ""
     }
     function readGroup(items) {
         DesktopActivity.action(["notification", "read-group", JSON.stringify(items.map(function(n) { return n.id }))])
@@ -32,83 +45,68 @@ Column {
     onNotesChanged: rebuild()
     Component.onCompleted: rebuild()
 
-    component Message: Column {
+    component Message: Rectangle {
         id: message
         required property var note
-        property bool compact: false
-        spacing: 6
-        Text {
-            renderType: Text.CurveRendering
-            width: parent.width; text: message.note.title || ""
-            textFormat: Text.PlainText; wrapMode: Text.WordWrap
-            maximumLineCount: message.compact ? 2 : 2147483647; elide: Text.ElideRight
-            color: "#e1e5f0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize
+        height: messageContent.implicitHeight + 26
+        radius: 12
+        color: messageMouse.containsMouse && note.can_open ? "#2b303d" : "#20232d"
+        border.width: 1
+        border.color: messageMouse.containsMouse && note.can_open ? "#536577" : "#343b48"
+        Behavior on color { ColorAnimation { duration: 160 } }
+        Behavior on border.color { ColorAnimation { duration: 160 } }
+        Accessible.role: Accessible.Button
+        Accessible.name: (note.title || "Notificação") + (note.can_open ? ", abrir aplicação" : ", sem ação de abertura")
+        activeFocusOnTab: !!note.can_open
+        function open() {
+            if (note.can_open && !DesktopActivity.busy)
+                DesktopActivity.action(["notification", "open", String(note.id)])
         }
-        Text {
-            renderType: Text.CurveRendering
-            width: parent.width; visible: text.length > 0
-            text: message.note.body || ""; textFormat: Text.PlainText; wrapMode: Text.WordWrap
-            maximumLineCount: message.compact ? 2 : 2147483647; elide: Text.ElideRight
-            color: "#b5bdd0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
+        MouseArea {
+            id: messageMouse
+            anchors.fill: parent
+            enabled: !!message.note.can_open && !DesktopActivity.busy
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: message.open()
         }
-        Row {
-            visible: !message.compact
-            width: parent.width; spacing: 6
-            ControlTile {
-                visible: !!message.note.can_open; showCaption: true
-                width: (parent.width - 6) * .36; iconName: "bring-to-front"; caption: "Abrir"
-                enabled: !DesktopActivity.busy
-                onActivated: DesktopActivity.action(["notification", "open", String(message.note.id)])
-            }
-            ControlTile {
-                showCaption: true; width: message.note.can_open ? (parent.width - 6) * .64 : parent.width
-                iconName: "check"; caption: "Marcar como lida"; enabled: !DesktopActivity.busy
-                onActivated: DesktopActivity.action(["notification", "read", String(message.note.id)])
-            }
-        }
-    }
-    component Thread: Column {
-        id: thread
-        required property var threadData
-        readonly property bool multiple: threadData.notes.length > 1
-        readonly property bool expanded: !multiple || !!inbox.expandedThreads[threadData.key]
-        spacing: 6
-        Item {
-            visible: thread.multiple
-            width: parent.width; height: 30
-            Accessible.role: Accessible.Button
-            Accessible.name: thread.threadData.title + ", " + thread.threadData.notes.length + " mensagens"
-            activeFocusOnTab: visible
+        Keys.onReturnPressed: message.open()
+        Keys.onSpacePressed: message.open()
+        Column {
+            id: messageContent
+            x: 14; y: 12; width: parent.width - 27; spacing: 8
             Text {
                 renderType: Text.CurveRendering
-                anchors.left: parent.left; anchors.right: arrow.left; anchors.verticalCenter: parent.verticalCenter
-                text: thread.threadData.title + " · " + thread.threadData.notes.length
-                color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize
-                elide: Text.ElideRight
+                width: parent.width; text: message.note.title || ""
+                textFormat: Text.PlainText; wrapMode: Text.WordWrap
+                color: "#f1f5fb"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize; font.weight: Font.DemiBold
             }
-            LucideIcon { id: arrow; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; name: "chevron-right"; rotation: thread.expanded ? 90 : 0; width: 14; height: 14 }
-            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: inbox.toggleThread(thread.threadData.key) }
-            Keys.onReturnPressed: inbox.toggleThread(thread.threadData.key)
-            Keys.onSpacePressed: inbox.toggleThread(thread.threadData.key)
-        }
-        Loader {
-            width: parent.width; visible: active; active: !thread.expanded
-            sourceComponent: Message { note: thread.threadData.notes[0]; compact: true }
-        }
-        Loader {
-            width: parent.width; visible: active; active: thread.expanded
-            sourceComponent: Column {
-                spacing: 10
-                Repeater {
-                    model: thread.threadData.notes
-                    Message { required property var modelData; width: parent.width; note: modelData }
+            Text {
+                renderType: Text.CurveRendering
+                width: parent.width; visible: text.length > 0
+                text: message.note.body || ""; textFormat: Text.PlainText; wrapMode: Text.WordWrap
+                color: "#b8c5d5"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
+            }
+            Row {
+                width: parent.width; height: 26; spacing: 8
+                Text {
+                    width: parent.width - readButton.width - parent.spacing
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: message.note.can_open ? "Abrir aplicação" : "Notificação arquivada"
+                    color: "#8fa3b6"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
+                }
+                Rectangle {
+                    id: readButton
+                    width: 26; height: 26; radius: 8
+                    color: readMouse.containsMouse ? "#385065" : "#303b4d"
+                    border.width: 1; border.color: "#4a5b70"
+                    Accessible.role: Accessible.Button
+                    Accessible.name: "Marcar como lida"
+                    LucideIcon { anchors.centerIn: parent; name: "check"; width: 14; height: 14 }
+                    MouseArea { id: readMouse; anchors.fill: parent; enabled: !DesktopActivity.busy; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                        onClicked: DesktopActivity.action(["notification", "read", String(message.note.id)]) }
                 }
             }
-        }
-        ControlTile {
-            visible: thread.multiple; width: parent.width; iconName: "check"; showCaption: true
-            caption: "Marcar conversa como lida"; enabled: !DesktopActivity.busy
-            onActivated: inbox.readGroup(thread.threadData.notes)
         }
     }
     Text {
@@ -116,6 +114,12 @@ Column {
         renderType: Text.CurveRendering
         width: parent.width; text: Groups.unreadLabel(inbox.notes.length)
         color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize
+    }
+    Text {
+        renderType: Text.CurveRendering
+        width: parent.width; visible: DesktopActivity.error.length > 0
+        text: DesktopActivity.error; textFormat: Text.PlainText; wrapMode: Text.WordWrap
+        color: "#f0b7b7"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
     }
     ControlTile {
         width: parent.width; visible: inbox.notes.length > 0
@@ -125,69 +129,77 @@ Column {
     }
     Repeater {
         model: inbox.groupKeys
-        Rectangle {
-            id: stack
+        Item {
+            id: groupItem
             required property string modelData
-            readonly property var group: inbox.groups.find(function(g) { return g.key === stack.modelData }) || ({app: "", notes: [], threads: []})
-            readonly property bool expanded: group.notes.length <= 1 || !!inbox.expandedApps[modelData]
-            width: inbox.width; height: content.implicitHeight + 20; radius: 14
-            color: "#1b1d26"
+            readonly property var group: inbox.groups.find(function(g) { return g.key === groupItem.modelData }) || ({app: "", notes: [], threads: []})
+            readonly property bool expanded: !!inbox.expandedApps[modelData]
+            width: inbox.width; height: 54 + details.height
+            clip: true
             Rectangle {
-                visible: stack.group.notes.length > 1 && !stack.expanded
-                x: 5; y: parent.height - 3; width: parent.width - 10; height: 7; radius: 6
-                color: "#292d3a"; z: -1
-            }
-            Column {
-                id: content
-                x: 10; y: 10; width: parent.width - 20; spacing: 8
+                id: groupButton
+                width: parent.width; height: 52; radius: 12
+                color: groupMouse.containsMouse ? "#2b303d" : "#1d2029"
+                border.width: 1; border.color: groupMouse.containsMouse ? "#4b586b" : "#333947"
+                Behavior on color { ColorAnimation { duration: 160 } }
+                Behavior on border.color { ColorAnimation { duration: 160 } }
                 Item {
-                    width: parent.width; height: 30
-                    Accessible.role: stack.group.notes.length > 1 ? Accessible.Button : Accessible.StaticText
-                    Accessible.name: stack.group.app + ", " + stack.group.notes.length + " mensagens"
-                    activeFocusOnTab: stack.group.notes.length > 1
-                    LucideIcon { id: bell; anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; name: "bell"; width: 16; height: 16 }
+                    anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12
+                    Accessible.role: Accessible.Button
+                    Accessible.name: groupItem.group.app + ", " + groupItem.group.notes.length + " mensagens"
+                    activeFocusOnTab: true
+                    Image {
+                        id: appIcon
+                        anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter
+                        width: 24; height: 24; sourceSize.width: 48; sourceSize.height: 48
+                        source: inbox.iconFor(groupItem.group); fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                    }
+                    LucideIcon { id: bell; anchors.centerIn: appIcon; visible: appIcon.status !== Image.Ready; name: "bell"; width: 16; height: 16 }
                     Text {
                         renderType: Text.CurveRendering
-                        anchors.left: bell.right; anchors.leftMargin: 8; anchors.right: count.left; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                        text: stack.group.app; elide: Text.ElideRight
-                        color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize
+                        anchors.left: appIcon.right; anchors.leftMargin: 12; anchors.right: count.left; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
+                        text: groupItem.group.app; elide: Text.ElideRight
+                        color: "#e9eff7"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize; font.weight: Font.DemiBold
                     }
-                    Text {
-                        id: count; renderType: Text.CurveRendering
-                        anchors.right: appArrow.left; anchors.rightMargin: 6; anchors.verticalCenter: parent.verticalCenter
-                        text: stack.group.notes.length; color: "#a4abc0"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
+                    Rectangle {
+                        id: count; width: 26; height: 24; radius: 8
+                        anchors.right: appArrow.left; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
+                        color: "#37475a"
+                        Text { anchors.centerIn: parent; text: groupItem.group.notes.length; color: "#d7e8f4"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
                     }
                     LucideIcon {
                         id: appArrow; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                        visible: stack.group.notes.length > 1
-                        name: "chevron-right"; rotation: stack.expanded ? 90 : 0; width: 14; height: 14
+                        name: "chevron-right"; rotation: groupItem.expanded ? 90 : 0; width: 16; height: 16
+                        Behavior on rotation { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
                     }
                     MouseArea {
-                        anchors.fill: parent; enabled: stack.group.notes.length > 1; cursorShape: Qt.PointingHandCursor
-                        onClicked: inbox.toggleApp(stack.modelData)
+                        id: groupMouse; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; hoverEnabled: true
+                        onClicked: inbox.toggleApp(groupItem.modelData)
                     }
-                    Keys.onReturnPressed: if (stack.group.notes.length > 1) inbox.toggleApp(stack.modelData)
-                    Keys.onSpacePressed: if (stack.group.notes.length > 1) inbox.toggleApp(stack.modelData)
+                    Keys.onReturnPressed: inbox.toggleApp(groupItem.modelData)
+                    Keys.onSpacePressed: inbox.toggleApp(groupItem.modelData)
                 }
-                Loader {
-                    width: parent.width; visible: active; active: !stack.expanded && stack.group.notes.length > 0
-                    sourceComponent: Message { note: stack.group.notes[0]; compact: true }
-                }
-                Loader {
-                    width: parent.width; visible: active; active: stack.expanded
-                    sourceComponent: Column {
-                        spacing: 10
-                        Repeater {
-                            model: stack.group.threads
-                            Thread { required property var modelData; width: parent.width; threadData: modelData }
-                        }
+            }
+            Item {
+                id: details; y: 54; width: parent.width
+                height: groupItem.expanded ? detailContent.implicitHeight + 12 : 0
+                opacity: groupItem.expanded ? 1 : 0
+                clip: true
+                Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                Column {
+                    id: detailContent; y: 6; width: parent.width; spacing: 8
+                    Repeater {
+                        model: groupItem.group.notes
+                        Message { required property var modelData; width: detailContent.width; note: modelData }
                     }
-                }
-                ControlTile {
-                    visible: stack.group.notes.length > 1; width: parent.width
-                    iconName: "check"; showCaption: true; caption: "Marcar grupo como lido"
-                    enabled: !DesktopActivity.busy
-                    onActivated: inbox.readGroup(stack.group.notes)
+                    ControlTile {
+                        visible: groupItem.group.notes.length > 1; width: parent.width
+                        iconName: "check"; showCaption: true; caption: "Marcar grupo como lido"
+                        enabled: !DesktopActivity.busy
+                        onActivated: inbox.readGroup(groupItem.group.notes)
+                    }
                 }
             }
         }

@@ -38,7 +38,7 @@ Column {
         signal clicked()
         implicitHeight: 44
         width: parent ? parent.width : 300
-        radius: 14
+        radius: Appearance.menuActionRadius
         activeFocusOnTab: true
         Keys.onPressed: function(event) {
             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {

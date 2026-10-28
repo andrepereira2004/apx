@@ -24,7 +24,7 @@ QtObject {
     readonly property int menuActionHeight: Math.round(56 * menuSizeRatio)
     readonly property int menuIconInset: (menuActionHeight - menuIconCircleSize) / 2
     readonly property int menuLabelInset: menuIconInset + menuIconCircleSize + menuIconGap
-    readonly property int menuActionRadius: Math.round(14 * menuSizeRatio)
+    readonly property int menuActionRadius: desktopCornerRadius
     readonly property int calendarActionHeight: 32
     readonly property int calendarDayHeight: 30
     // Maximum height measured from the current main Control Centre.

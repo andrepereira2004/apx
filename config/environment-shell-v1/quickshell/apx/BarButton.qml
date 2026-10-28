@@ -18,11 +18,13 @@ Rectangle {
     property color accentColor: "#f0f0fa"
     property color textColor: "#c8ccdc"
     property int inactiveBorderWidth: 0
+    property int minimumWidth: 36
+    property int horizontalPadding: 24
     property var hoverOverride: null
     readonly property bool visuallyActive: (hoverOverride === null ? pointer.containsMouse : hoverOverride) || alternateActive
     signal activated()
 
-    implicitWidth: Math.max(36, Math.ceil(Math.max(normalContent.implicitWidth, activeContent.implicitWidth)) + 24)
+    implicitWidth: Math.max(minimumWidth, Math.ceil(Math.max(normalContent.implicitWidth, activeContent.implicitWidth)) + horizontalPadding)
     implicitHeight: Math.max(32, iconSize + 6)
     scale: pointer.pressed || animateActivation || animateDeactivation ? 0.96 : 1
     radius: 16

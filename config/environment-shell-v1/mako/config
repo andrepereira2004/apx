@@ -20,6 +20,8 @@ format=<span foreground="#9ba3ac" size="small">%a</span>\n<span foreground="#ece
 text-alignment=left
 anchor=top-right
 max-visible=3
+max-history=50
+on-notify=exec /usr/bin/quickshell -c apx ipc call host notificationRefresh
 
 # Terminal notifications must remain useful without becoming permanent UI.
 # A separate focus watcher dismisses them as soon as their terminal is visited;
@@ -40,7 +42,8 @@ ignore-timeout=1
 [app-name="APX Browser"]
 default-timeout=5000
 ignore-timeout=1
-history=0
+history=1
+anchor=top-right
 on-button-left=invoke-default-action
 on-touch=invoke-default-action
 
@@ -48,3 +51,20 @@ on-touch=invoke-default-action
 [app-name="APX Browser" category=apx-redirect-wait]
 default-timeout=120000
 ignore-timeout=1
+
+[app-name="APX Captura"]
+width=520
+height=340
+max-icon-size=260
+icon-location=top
+default-timeout=5000
+ignore-timeout=1
+history=0
+layer=overlay
+on-button-left=invoke-default-action
+on-touch=invoke-default-action
+on-button-right=dismiss
+
+# Mako continues to own D-Bus and history; QuickShell draws swipeable cards.
+[mode=apx-animated]
+invisible=1

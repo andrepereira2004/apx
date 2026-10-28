@@ -10,6 +10,7 @@ import select
 import stat
 import struct
 import subprocess
+import time
 
 
 ITE_NAME = "ITE Tech. Inc. ITE Device(8910) Keyboard"
@@ -21,6 +22,9 @@ VIDEO_NAME = "Video Bus"
 IDEAPAD_NAME = "Ideapad extra buttons"
 EV_KEY = 1
 KEY_PRINT = 99
+KEY_AC_PRINT = 210
+KEY_SELECTIVE_SCREENSHOT = 634
+_last_capture = 0.0
 KEY_BRIGHTNESSDOWN = 224
 KEY_BRIGHTNESSUP = 225
 EVENT = struct.Struct("llHHI")
@@ -82,18 +86,17 @@ def call_shell(method: str) -> None:
 
 def launch_action(action: str) -> None:
     try:
-        subprocess.Popen(
-            (LAPTOP_ACTION, action),
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            start_new_session=True,
-        )
+        command = (["/usr/bin/python3", "/home/apx/.local/bin/apx-screenshot-v1"]
+                   if action == "screenshot" else [LAPTOP_ACTION, action])
+        subprocess.Popen(command, stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         start_new_session=True)
     except OSError:
         call_shell("hotkeyFailed")
 
 
 def handle_key(name: str, code: int, value: int, scan: int | None = None) -> None:
+    global _last_capture
     if value != 1:
         return
     # Only semantic brightness events, never raw F5/F6. The real Fn events
@@ -102,8 +105,13 @@ def handle_key(name: str, code: int, value: int, scan: int | None = None) -> Non
         call_shell("brightnessDown")
     elif name in (ITE_NAME, VIDEO_NAME) and code == KEY_BRIGHTNESSUP:
         call_shell("brightnessUp")
-    elif name == AT_NAME and code == KEY_PRINT:
-        launch_action("screenshot")
+    elif name == IDEAPAD_NAME and code == KEY_SELECTIVE_SCREENSHOT and scan == 0x104:
+        # Physical Fn+PrtSc: Lenovo ACPI scan 0x104, KEY_SELECTIVE_SCREENSHOT.
+        # Ordinary Print and Win+Shift+S are intentionally not capture actions.
+        now = time.monotonic()
+        if now - _last_capture > 0.4:
+            _last_capture = now
+            launch_action("screenshot")
     elif name == IDEAPAD_NAME and code == 364 and scan == 0x101:
         # Three isolated Fn+F9 presses proved KEY_FAVORITES with scan 0x101.
         # The earlier 0x10d/KEY_UNKNOWN assignment was not this physical key.

@@ -166,9 +166,12 @@ QtObject {
         command: ["/home/apx/.local/bin/apx-desktop-activity-v1", "get-notifications"]
         stdout: StdioCollector { onStreamFinished: activity.accept(text) }
     }
+    function refreshNotifications() {
+        if (!busy && !notificationsProcess.running) notificationsProcess.running = true
+    }
     property Timer notificationsTimer: Timer {
         interval: 500; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: if (!activity.busy && !activity.notificationsProcess.running) activity.notificationsProcess.running = true
+        onTriggered: activity.refreshNotifications()
     }
     property Process actionProcess: Process {
         onExited: function(code, status) {

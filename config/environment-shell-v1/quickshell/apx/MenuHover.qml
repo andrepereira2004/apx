@@ -5,6 +5,7 @@ Item {
     id: feedback
     anchors.fill: parent
     property bool keyboardFocused: false
+    property bool outlineEnabled: true
     property bool hasSurface: false
     Component.onCompleted: hasSurface = parent && parent.color !== undefined
     readonly property bool hovered: pointer.hovered && enabled
@@ -17,7 +18,7 @@ Item {
         restoreMode: Binding.RestoreBindingOrValue
     }
     readonly property bool selected: keyboardFocused || parent.keyboardFocused === true || (parent.selected === true && parent.iconActionEnabled !== true) || parent.checked === true
-    readonly property bool outlineVisible: enabled && (selected || hovered) && parent.outlineManaged !== true
+    readonly property bool outlineVisible: enabled && outlineEnabled && (selected || hovered) && parent.outlineManaged !== true
     // Avoid drawing the old outer border underneath the common inset contour.
     Binding {
         target: feedback.parent

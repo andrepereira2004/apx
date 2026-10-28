@@ -1,7 +1,7 @@
 from test_apx_media_progress import helper
-import unittest,json,tempfile
+import unittest,json,tempfile,sys,types
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch,Mock
 from types import SimpleNamespace
 
 class NotificationActions(unittest.TestCase):
@@ -23,6 +23,46 @@ class NotificationActions(unittest.TestCase):
         with patch.object(self.m,'notifications',return_value=([dict(id=7,active=True,can_open=True)],1)),patch.object(self.m.subprocess,'run',return_value=SimpleNamespace(returncode=0)) as run:
             self.m.notification_action('open','7')
         self.assertEqual(run.call_args.args[0],['/usr/bin/makoctl','invoke','-n','7','default'])
+    def test_app_icon_and_desktop_entry_survive_history(self):
+        item=dict(id=7,app_name='Example',app_icon='example-icon',desktop_entry='example.desktop',summary='Saved')
+        responses=[SimpleNamespace(returncode=0,stdout=json.dumps([item])),SimpleNamespace(returncode=0,stdout='[]')]
+        with patch.object(self.m.subprocess,'run',side_effect=responses):
+            notes,_=self.m.notifications()
+        self.assertEqual(notes[0]['icon'],'example-icon')
+        self.assertEqual(notes[0]['desktop_entry'],'example.desktop')
+        self.assertTrue(notes[0]['can_open'])
+        with patch.object(self.m.subprocess,'run',side_effect=[SimpleNamespace(returncode=0,stdout='[]'),SimpleNamespace(returncode=0,stdout=json.dumps([item]))]):
+            notes,_=self.m.notifications()
+        self.assertFalse(notes[0]['active'])
+        self.assertTrue(notes[0]['can_open'])
+    def test_archived_notification_opens_installed_desktop_app(self):
+        app=Mock();app.launch.return_value=True
+        desktop=Mock();desktop.new.return_value=app
+        repository=types.ModuleType('gi.repository');repository.GioUnix=SimpleNamespace(DesktopAppInfo=desktop)
+        gi=types.ModuleType('gi');gi.repository=repository
+        note=dict(id=7,active=False,can_open=True,default_action=False,desktop_entry='example.desktop')
+        with patch.dict(sys.modules,{'gi':gi,'gi.repository':repository}),patch.object(self.m,'notifications',return_value=([note],1)),patch.object(self.m.subprocess,'run') as run:
+            self.m.notification_action('open','7')
+        desktop.new.assert_called_once_with('example.desktop')
+        app.launch.assert_called_once_with([],None)
+        run.assert_not_called()
+    def test_toast_id_opens_its_exact_notification(self):
+        note=dict(id=42,mako_id=7,active=True,can_open=True,default_action=True)
+        with patch.object(self.m,'notifications',return_value=([note],1)),patch.object(self.m.subprocess,'run',return_value=SimpleNamespace(returncode=0)) as run:
+            self.m.notification_action('open-mako','7')
+        self.assertEqual(run.call_args.args[0],['/usr/bin/makoctl','invoke','-n','7','default'])
+    def test_old_history_resolves_unique_installed_app(self):
+        item=dict(id=7,app_name='Thunderbird',summary='Saved')
+        responses=[SimpleNamespace(returncode=0,stdout='[]'),SimpleNamespace(returncode=0,stdout=json.dumps([item]))]
+        with patch.object(self.m,'desktop_entries_by_name',return_value={'thunderbird':'org.mozilla.Thunderbird.desktop'}),patch.object(self.m.subprocess,'run',side_effect=responses):
+            notes,_=self.m.notifications()
+        self.assertEqual(notes[0]['desktop_entry'],'org.mozilla.Thunderbird.desktop')
+        self.assertTrue(notes[0]['can_open'])
+    def test_temporary_capture_notice_is_not_saved_in_centre(self):
+        capture=dict(id=7,app_name='APX Captura',summary='Captura de ecrã')
+        with patch.object(self.m.subprocess,'run',side_effect=[SimpleNamespace(returncode=0,stdout=json.dumps([capture])),SimpleNamespace(returncode=0,stdout='[]')]):
+            notes,count=self.m.notifications()
+        self.assertEqual((notes,count),([],0))
     def test_mark_all_targets_live_and_archived_snapshot(self):
         with patch.object(self.m,'notifications',return_value=([dict(id=7,active=True),dict(id=8,active=False)],1)),patch.object(self.m.subprocess,'run',return_value=SimpleNamespace(returncode=0)) as run:
             self.m.notification_action('read-all')

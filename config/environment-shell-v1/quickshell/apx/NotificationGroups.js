@@ -6,7 +6,8 @@ function build(notes) {
     var byApp = {}
     notes.forEach(function(note) {
         var app = String(note.app || "Aplicação")
-        var key = JSON.stringify(app)
+        var identity = String(note.desktop_entry || app).replace(/\.desktop$/, "")
+        var key = JSON.stringify([identity, app])
         var group = byApp[key]
         if (!group) {
             group = {key: key, app: app, notes: [], threads: [], byThread: {}}

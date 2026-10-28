@@ -125,8 +125,10 @@ def folder_row(label, key):
 WINDOW_CLASS_ALIASES = {'minecraft-launcher': {'minecraft launcher'},
                         'thunar': {'org.xfce.thunar'}}
 
-WINDOW_PRESENTATION = {'apx-host-console-v1':
-                       ('APX Terminal', str(Path.home()/'.local/share/icons/APX-Graphite/scalable/devices/apx-host-terminal.svg'))}
+WINDOW_PRESENTATION = {
+    'apx-host-console-v1': ('APX Terminal', '/home/apx/.local/share/icons/APX-Graphite/scalable/devices/apx-host-terminal.svg'),
+    'hytaleclient': ('Hytale', 'com.hypixel.HytaleLauncher'),
+}
 
 def launch_state():
     """Private per-session state; a bounded deadline avoids stale blue dots."""
@@ -225,6 +227,16 @@ def launch_worker(app_id, token, command):
 
 def resolve_icons(apps):
     apps = list(apps)
+    def flatpak_export_icon(icon):
+        if not icon or '/' in icon:
+            return None
+        for root in (Path.home()/'.local/share/flatpak/exports/share',
+                     Path('/var/lib/flatpak/exports/share')):
+            for size in ('48x48', '256x256'):
+                path = root/'icons/hicolor'/size/'apps'/(icon + '.png')
+                if path.is_file():
+                    return str(path)
+        return None
     try:
         cache = json.loads(ICON_CACHE.read_text())
         if type(cache) is not dict:
@@ -238,6 +250,12 @@ def resolve_icons(apps):
             cache = {}
     except (OSError, ValueError):
         cache = {}
+    export_changed = False
+    for app in apps:
+        exported = flatpak_export_icon(app['icon'])
+        if exported and cache.get(app['icon']) != exported:
+            cache[app['icon']] = exported
+            export_changed = True
     unresolved = {app['icon'] for app in apps
                   if app['icon'] not in cache or not Path(cache[app['icon']]).is_file()}
     if unresolved:
@@ -255,6 +273,7 @@ def resolve_icons(apps):
             else:
                 info = theme.lookup_icon(icon, 48, 0) if theme is not None else None
                 cache[icon] = info.get_filename() if info is not None else fallback
+    if unresolved or export_changed:
         ICON_CACHE.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         import tempfile
         descriptor, temporary = tempfile.mkstemp(prefix='.icons-', dir=ICON_CACHE.parent)
@@ -700,6 +719,13 @@ def perform(action, value):
             raise SystemExit('Aplicação já não disponível')
         if action in ('open', 'nvidia'):
             app = apps[value]
+            if value == 'apx-terminal' and action == 'open':
+                # The Host-console broker checks the live QuickShell ancestry.
+                # A detached launch-worker can outlive Rofi and lose that proof.
+                subprocess.run(['/home/apx/.local/bin/apx-host-console-open'],
+                               check=True, timeout=10)
+                record_use(value)
+                return
             if action == 'nvidia':
                 if not nvidia_on_demand():
                     raise SystemExit('NVIDIA sob pedido indisponível neste modo')

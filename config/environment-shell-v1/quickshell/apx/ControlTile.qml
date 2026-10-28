@@ -11,6 +11,7 @@ Rectangle {
     property bool selected: false
     property bool quiet: false
     property bool attention: false
+    property bool showOutline: true
     property bool iconActionEnabled: false
     property bool iconActionAvailable: true
     property string iconActionLabel: ""
@@ -42,7 +43,7 @@ Rectangle {
     Rectangle { visible: tile.attention; width: 5; height: 5; radius: 3; color: Appearance.iconColor; anchors.right: parent.right; anchors.top: parent.top; anchors.margins: 6 }
     Accessible.role: Accessible.Button
     Accessible.name: caption
-    BounceMouseArea { id: mouse; anchors.fill: parent; anchors.leftMargin: tile.iconActionEnabled ? Appearance.menuIconInset + Appearance.menuIconCircleSize : 0; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: tile.activated() }
+    BounceMouseArea { id: mouse; anchors.fill: parent; anchors.leftMargin: tile.iconActionEnabled ? Appearance.menuIconInset + Appearance.menuIconCircleSize : 0; hoverEnabled: true; outlineEnabled: tile.showOutline; cursorShape: Qt.PointingHandCursor; onClicked: tile.activated() }
     RadioIconButton {
         visible: tile.iconActionEnabled
         x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter

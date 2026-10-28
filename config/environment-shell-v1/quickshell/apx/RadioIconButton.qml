@@ -8,6 +8,7 @@ Rectangle {
     property bool powered: false
     property bool busy: false
     property bool cardHoverEnabled: true
+    property bool cardOutlineEnabled: true
     signal activated()
     width: Appearance.menuIconCircleSize; height: width; radius: width / 2
     antialiasing: true
@@ -24,6 +25,7 @@ Rectangle {
     MenuHover {
         parent: button.parent; z: 100
         enabled: button.cardHoverEnabled && button.enabled && !button.parent.children.some(child => child.keyboardActivationPending !== undefined)
+        outlineEnabled: button.cardOutlineEnabled
     }
     HoverHandler { id: iconHover; blocking: false }
     scale: mouse.pressed ? .94 : 1

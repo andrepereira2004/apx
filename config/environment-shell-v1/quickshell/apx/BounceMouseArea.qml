@@ -5,6 +5,7 @@ MouseArea {
     property var menuViewportGuard: null
     property bool keyboardActivationPending: false
     property bool menuFeedbackEnabled: true
+    property bool outlineEnabled: true
     property bool pressAnimationEnabled: true
     // Shared pointer feedback for every menu action; keyboard focus stays cyan.
     hoverEnabled: true
@@ -37,6 +38,7 @@ MouseArea {
         z: 100
         enabled: bounceMouse.enabled && bounceMouse.menuFeedbackEnabled
         keyboardFocused: bounceMouse.activeFocus || bounceMouse.keyboardActivationPending
+        outlineEnabled: bounceMouse.outlineEnabled
     }
 
     NumberAnimation {

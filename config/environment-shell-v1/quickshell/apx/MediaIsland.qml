@@ -42,7 +42,7 @@ Rectangle {
         active: island.cameraUsage && island.transientActive
         visible: active
     }
-    clip: true
+    clip: false
     readonly property bool compact: selected && !showingTransient
     readonly property string displayTitle: {
         if (showingTransient) {

@@ -18,4 +18,5 @@ RadioIconButton 1.0 RadioIconButton.qml
 MenuHover 1.0 MenuHover.qml
 CameraIndicator 1.0 CameraIndicator.qml
 NotificationInbox 1.0 NotificationInbox.qml
+NotificationToasts 1.0 NotificationToasts.qml
 ButtonOutline 1.0 ButtonOutline.qml

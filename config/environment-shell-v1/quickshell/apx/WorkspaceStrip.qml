@@ -96,6 +96,8 @@ Item {
                 delegate: BarButton {
                     id: workspaceButton
                     grouped: strip.grouped
+                    minimumWidth: 32
+                    horizontalPadding: 16
                     required property var modelData
                     label: modelData.name
                     alternateLabel: label

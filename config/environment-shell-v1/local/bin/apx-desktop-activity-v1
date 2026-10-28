@@ -86,6 +86,27 @@ def watch_media():
 NOTIFICATION_STORE = Path.home() / '.local/state/apx/notifications-v1.json'
 
 
+def desktop_entries_by_name():
+    """Resolve only unique installed application names for older notifications."""
+    try:
+        from gi.repository import Gio
+        names = {}
+        for app in Gio.AppInfo.get_all():
+            ident = app.get_id()
+            label = app.get_display_name()
+            if ident and label and ident.endswith('.desktop'):
+                names.setdefault(label.casefold(), set()).add(ident)
+        resolved = {}
+        for label, ids in names.items():
+            canonical = {ident for ident in ids if not ident.startswith('userapp-')}
+            candidates = canonical or ids
+            if len(candidates) == 1:
+                resolved[label] = next(iter(candidates))
+        return resolved
+    except Exception:
+        return {}
+
+
 def notification_owner():
     from gi.repository import GLib
     try:
@@ -131,6 +152,7 @@ def notification_store():
 
 def notifications():
     owner = notification_owner()
+    installed = desktop_entries_by_name()
     current = []; seen = set()
     if owner:
         for action in ('list', 'history'):
@@ -142,20 +164,32 @@ def notifications():
             if not isinstance(data, list): continue
             for item in data:
                 if not isinstance(item, dict) or type(item.get('id')) is not int or item['id'] in seen: continue
-                if item.get('app_name', item.get('app-name')) == 'APX Browser': continue
+                if item.get('app_name', item.get('app-name')) in ('APX Browser', 'APX Captura'): continue
                 seen.add(item['id'])
                 hints = item.get('hints') if isinstance(item.get('hints'), dict) else {}
                 thread = next((str(hints[k])[:300] for k in
                                ('x-apx-thread-id', 'x-dunst-stack-tag', 'x-canonical-private-synchronous')
                                if isinstance(hints.get(k), str) and hints[k]), '')
+                app_name = str(item.get('app_name', item.get('app-name', '')) or 'Aplicação')[:120]
+                desktop_entry = str(item.get('desktop_entry') or installed.get(app_name.casefold(), ''))[:200]
                 current.append(dict(mako_id=item['id'], owner=owner, thread_key=thread,
-                                    app=str(item.get('app_name', item.get('app-name', '')) or 'Aplicação')[:120],
+                                    app=app_name,
+                                    icon=str(item.get('app_icon') or '')[:500],
+                                    desktop_entry=desktop_entry,
                                     title=str(item.get('summary', ''))[:300], body=str(item.get('body', ''))[:2000],
-                                    active=action == 'list', can_open=action == 'list' and 'default' in (item.get('actions') or {})))
+                                    active=action == 'list',
+                                    default_action=action == 'list' and 'default' in (item.get('actions') or {}),
+                                    can_open=(action == 'list' and 'default' in (item.get('actions') or {}))
+                                    or bool(desktop_entry)))
     with notification_store() as store:
         by_key = {(r['owner'], r['mako_id']): r for r in store['records']}
         for record in store['records']:
-            record['active'] = False; record['can_open'] = False
+            if record.get('app') == 'APX Captura':
+                record['read'] = True
+            if not record.get('desktop_entry'):
+                record['desktop_entry'] = installed.get(str(record.get('app', '')).casefold(), '')
+            record['active'] = False; record['default_action'] = False
+            record['can_open'] = bool(record.get('desktop_entry'))
         for note in sorted(current, key=lambda n: n['mako_id']):
             key = (note['owner'], note['mako_id'])
             record = by_key.get(key)
@@ -176,9 +210,16 @@ def mark_notifications_read(ids):
 
 
 def notification_action(action, raw_id=None):
-    if action not in ('read', 'read-all', 'read-group', 'open'):
+    if action not in ('read', 'read-all', 'read-group', 'open', 'open-mako'):
         raise ValueError('Ação de notificação inválida.')
     notes, _ = notifications()
+    if action == 'open-mako':
+        if not raw_id or not re.fullmatch(r'[0-9]{1,10}', raw_id):
+            raise ValueError('Notificação inválida.')
+        matches = [n for n in notes if n.get('active') and n.get('mako_id') == int(raw_id)]
+        if not matches:
+            raise ValueError('Esta notificação já não está disponível.')
+        return notification_action('open', str(matches[0]['id']))
     if action == 'read-all':
         # Snapshot IDs: notifications arriving during this action stay unread.
         targets = notes
@@ -197,7 +238,18 @@ def notification_action(action, raw_id=None):
     for note in targets:
         if action == 'open' and not note.get('can_open'):
             raise ValueError('Esta aplicação não disponibiliza uma ação para abrir.')
-        if note['active']:
+        if action == 'open' and not note.get('default_action', note['active'] and note.get('can_open') and not note.get('desktop_entry')):
+            from gi.repository import GioUnix
+            desktop_entry = note.get('desktop_entry', '')
+            if not re.fullmatch(r'[A-Za-z0-9_.-]{1,200}(?:\.desktop)?', desktop_entry):
+                raise ValueError('Esta aplicação não disponibiliza uma ação para abrir.')
+            app = GioUnix.DesktopAppInfo.new(desktop_entry if desktop_entry.endswith('.desktop') else desktop_entry + '.desktop')
+            if app is None or not app.launch([], None):
+                raise RuntimeError('Não foi possível abrir a aplicação.')
+            if note['active']:
+                subprocess.run(['/usr/bin/makoctl', 'dismiss', '-n', str(note['mako_id'])],
+                               capture_output=True, text=True, timeout=3)
+        elif note['active']:
             if note.get('owner') and notification_owner() != note['owner']:
                 raise RuntimeError('O serviço de notificações mudou; tenta novamente.')
             command = ['/usr/bin/makoctl', 'invoke' if action == 'open' else 'dismiss',

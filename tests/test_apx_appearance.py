@@ -19,6 +19,42 @@ def helper():
 
 
 class AppearanceTests(unittest.TestCase):
+    def test_webp_wallpaper_is_converted_before_selection(self):
+        app = helper()
+        with tempfile.TemporaryDirectory() as folder:
+            app.HOME = Path(folder)
+            app.STATE = app.HOME / '.config/apx/appearance.json'
+            app.IMAGES = app.HOME / '.local/share/apx/appearance/wallpapers'
+            picture = app.HOME / 'photo.webp'
+            picture.write_bytes(b'webp image')
+            pixbuf = types.SimpleNamespace(
+                get_file_info=lambda _: (object(), 20, 20),
+                new_from_file=lambda _: types.SimpleNamespace(
+                    savev=lambda filename, *_: Path(filename).write_bytes(b'png image')))
+            repository = types.ModuleType('gi.repository')
+            repository.GdkPixbuf = types.SimpleNamespace(Pixbuf=pixbuf)
+            gi = types.ModuleType('gi')
+            gi.require_version = lambda *_: None
+            with mock.patch.dict(sys.modules, {'gi': gi, 'gi.repository': repository}):
+                app.wallpaper(str(picture))
+            selected = Path(app.local()['wallpaper'])
+            self.assertEqual(selected.suffix, '.png')
+            self.assertEqual(selected.read_bytes(), b'png image')
+
+    def test_wallpaper_layout_is_local_and_validated(self):
+        app = helper()
+        with tempfile.TemporaryDirectory() as folder:
+            app.HOME = Path(folder)
+            app.STATE = app.HOME / '.config/apx/appearance.json'
+            with mock.patch.object(app, 'global_style', return_value=dict(app.DEFAULT_STYLE)), mock.patch.object(app, 'apply_theme'):
+                self.assertEqual((app.status()['wallpaper_fit'], app.status()['wallpaper_zoom']), ('crop', 100))
+                with mock.patch('builtins.print'):
+                    app.main(['wallpaper-fit', 'fit'])
+                    app.main(['wallpaper-zoom', '135'])
+                self.assertEqual((app.status()['wallpaper_fit'], app.status()['wallpaper_zoom']), ('fit', 135))
+                with self.assertRaises(ValueError): app.main(['wallpaper-fit', 'invalid'])
+                with self.assertRaises(ValueError): app.main(['wallpaper-zoom', '201'])
+
     def test_shared_contract_rejects_paths_keys_and_non_boolean_flags(self):
         good=dict(color='#Ab12EF',icons=True,buttons=False,windows=True)
         self.assertEqual(validate_payload('appearance.save',good)['color'],'#ab12ef')

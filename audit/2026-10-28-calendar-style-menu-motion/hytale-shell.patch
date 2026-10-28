@@ -1,0 +1,99 @@
+--- audit/2026-10-28-menu-motion-redesign/before/hytale-shell-seed.qml	2026-10-28 15:07:32.361406152 +0000
++++ /tmp/apx-hytale-calendar-candidate.qml	2026-10-28 15:14:11.709344794 +0000
+@@ -409,6 +409,7 @@
+         return t * t * (3 - 2 * t)
+     }
+     property int controlPageDirection: 1
++    property real controlPageOffset: 0
+     property bool controlPageCapturing: false
+     property bool controlPageQueued: false
+     property int controlPageGeneration: 0
+@@ -428,14 +429,14 @@
+         controlPageQueued = false
+         controlPageCapture = null
+         controlPageProgress = 1
++        controlPageOffset = 0
+     }
+     function startControlTransition() {
+-        // Internal navigation updates in one turn, without capture, fade or
+-        // an input shield holding the new page behind a timed transition.
++        if (controlPageRequestedRoute === menuRoute && controlPageAnimation.running) return
+         cancelControlTransition()
+         controlPageRequestedRoute = menuRoute
+-        syncRenderedControls()
+-        menuFlick.contentY = 0
++        controlPageDirection = controlDepth(root) >= controlDepth(renderedControls) ? 1 : -1
++        controlPageAnimation.restart()
+         popupBackground.forceActiveFocus()
+         Qt.callLater(function() {
+             if (!popup.open || root.popupClosing || !root.menuKeyboardNavigation) return
+@@ -458,11 +459,21 @@
+         root.islandContentOpacity = 1
+         root.startControlTransition()
+     })
+-    NumberAnimation {
++    SequentialAnimation {
+         id: controlPageAnimation
+-        target: root; property: "controlPageProgress"; from: 0; to: 1
+-        duration: 140; easing.type: Easing.BezierSpline
+-        easing.bezierCurve: [0.2, 0.8, 0.2, 1, 1, 1]
++        ParallelAnimation {
++            NumberAnimation { target: root; property: "controlPageProgress"; to: 0; duration: 90; easing.type: Easing.InQuad }
++            NumberAnimation { target: root; property: "controlPageOffset"; to: -root.controlPageDirection * 10; duration: 90; easing.type: Easing.InQuad }
++        }
++        ScriptAction { script: {
++            root.syncRenderedControls()
++            menuFlick.contentY = 0
++            root.controlPageOffset = root.controlPageDirection * 10
++        } }
++        ParallelAnimation {
++            NumberAnimation { target: root; property: "controlPageProgress"; to: 1; duration: 190; easing.type: Easing.OutCubic }
++            NumberAnimation { target: root; property: "controlPageOffset"; to: 0; duration: 190; easing.type: Easing.OutCubic }
++        }
+         onFinished: {
+             root.controlPageCapture = null
+             Qt.callLater(function() {
+@@ -5235,7 +5246,7 @@
+             width: Math.max(popupBackground.width, root.outgoingPageRect.width) + 56
+             height: Math.max(popupBackground.height, root.outgoingPageRect.height)
+             visible: enabled
+-            enabled: popup.open && root.popupKind === "controls" && (root.controlPageCapturing || controlPageAnimation.running)
++            enabled: popup.open && root.popupKind === "controls" && root.controlPageCapturing
+             acceptedButtons: Qt.AllButtons
+             hoverEnabled: true
+             onWheel: (wheel) => { wheel.accepted = true }
+@@ -5297,7 +5308,7 @@
+             Behavior on settledX { enabled: root.popupKind !== "controls" && popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+             readonly property bool alignPhysicalPixels: root.islandProgress === 1 && !root.popupClosing
+                 && !root.controlPageCapturing && !controlPageAnimation.running
+-            readonly property real animatedX: root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress + (root.popupKind === "controls" ? root.controlPageDirection * 18 * (1 - root.controlPageMotion) : 0)
++            readonly property real animatedX: root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress
+             x: alignPhysicalPixels ? Math.round(animatedX * renderScale) / renderScale : animatedX
+             property real settledY: Appearance.menuTop
+             Behavior on settledY { enabled: root.popupKind !== "controls" && popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+@@ -5308,7 +5319,7 @@
+             Keys.onPressed: function(event) { root.navigateGenericMenu(event) }
+             // All menus emerge from their trigger using the Calendar geometry animation.
+             scale: 1
+-            opacity: Math.min(1, root.islandProgress * 5) * (root.popupKind === "controls" ? root.controlPageBlend : 1)
++            opacity: Math.min(1, root.islandProgress * 5)
+             transformOrigin: Item.TopLeft
+             clip: true
+             // Rectangle.clip is rectangular: mask every scrolling child to one contour.
+@@ -5434,7 +5445,7 @@
+                 // animated outer card clips the reveal without reflowing every frame.
+                 width: Math.max(0, popupBackground.targetWidth - popupBackground.contentInset * 2)
+                 height: Math.max(0, root.islandOrigin.height + (popupBackground.viewportHeight - root.islandOrigin.height) * root.islandProgress - popupBackground.contentInset - popupBackground.contentBottomInset)
+-                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "controls" || root.popupKind === "media" ? 1 : root.islandContentOpacity)
++                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "controls" ? root.controlPageProgress : (root.popupKind === "media" ? 1 : root.islandContentOpacity))
+                 enabled: !root.popupClosing && root.islandProgress > .8
+                 contentWidth: width
+                 contentHeight: menuContent.implicitHeight
+@@ -5491,6 +5502,7 @@
+                     id: menuContent
+                     width: parent.width
+                     spacing: root.popupKind === "controls" ? 8 : 5
++                    transform: Translate { x: root.popupKind === "controls" ? root.controlPageOffset : 0 }
+ 
+                     Column {
+                         id: calendarMenu

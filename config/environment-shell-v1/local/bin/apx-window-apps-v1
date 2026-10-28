@@ -47,18 +47,8 @@ UTILITY_NAMES = {
     'gcr-viewer': 'Ver certificados', 'uuctl': 'Serviços da sessão (uuctl)',
 }
 
-# Explicit support-tool IDs keep newly installed applications in Apps by default.
-# This partitions only the launcher; the full catalogue still owns window actions.
-SYSTEM_APP_IDS = set(UTILITY_NAMES) - {'Alacritty', 'foot', 'foot-server', 'footclient'} | {
-    'apx-settings', 'xfce4-taskmanager', 'org.pulseaudio.pavucontrol',
-    'org.freedesktop.Xwayland', 'com.rtosta.zapzap.nogpu',
-    'org.gnome.FileRoller',
-}
-
-
 def launcher_catalog():
-    system = os.environ.get('APX_ROFI_SECTION', 'apps') == 'system'
-    return [app for app in catalog() if (app['id'] in SYSTEM_APP_IDS) == system]
+    return catalog()
 
 FOLDER_STATE = Path.home()/'.local/state/apx-window-apps-v1/folders.json'
 DEFAULT_FOLDERS = {
@@ -546,7 +536,7 @@ def rofi_rows():
             return
         chosen = selected
         confirming = False
-    print('\0prompt\x1f' + ('Sistema' if os.environ.get('APX_ROFI_SECTION') == 'system' else 'Apps'))
+    print('\0prompt\x1fApps')
     print('\0no-custom\x1ftrue')
     print('\0markup-rows\x1ftrue')
     print('\0use-hot-keys\x1ftrue')

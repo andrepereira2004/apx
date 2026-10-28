@@ -72,6 +72,8 @@ Item {
 
     BarButton {
         id: workspaceSymbol
+        outlineHost: strip.barWindow.contentItem
+        outlineShown: strip.visible
         border.width: 0
         grouped: strip.grouped
         height: 32
@@ -85,16 +87,22 @@ Item {
         id: labelsViewport
         x: workspaceSymbol.width
         width: (labels.implicitWidth > 0 ? labels.implicitWidth + 4 : 0) * strip.reveal
-        height: 32; clip: true
+        // Leave room above and below the buttons for the antialiased outline.
+        // Clipping exactly at their 32 px bounds removes the top stroke.
+        y: -2
+        height: 36; clip: true
         opacity: strip.reveal
         enabled: strip.expanded
         Row {
             id: labels
-            x: 4; height: 32; spacing: 4
+            x: 4; y: 2; height: 32; spacing: 4
             Repeater {
                 model: strip.page
                 delegate: BarButton {
                     id: workspaceButton
+                    outlineHost: strip.barWindow.contentItem
+                    outlineShown: strip.visible && strip.reveal > 0
+                    outlineOpacity: strip.reveal
                     grouped: strip.grouped
                     minimumWidth: 32
                     horizontalPadding: 16
@@ -120,6 +128,9 @@ Item {
             }
             BarButton {
                 id: nextWorkspaceButton
+                outlineHost: strip.barWindow.contentItem
+                outlineShown: strip.visible && strip.reveal > 0
+                outlineOpacity: strip.reveal
                 grouped: strip.grouped
                 visible: strip.workspaces.length > 5
                 label: ""

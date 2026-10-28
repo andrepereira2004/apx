@@ -28,6 +28,7 @@ Item {
         restoreMode: Binding.RestoreBindingOrValue
     }
     ButtonOutline {
+        outlineTarget: feedback
         outlineRadius: Math.max(0, (feedback.parent.radius || 0))
         selected: feedback.selected
         hovered: feedback.hovered

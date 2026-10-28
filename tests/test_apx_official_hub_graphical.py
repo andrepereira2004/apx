@@ -23,6 +23,18 @@ def load_launcher():
 
 
 class OfficialHubGraphicalTests(unittest.TestCase):
+    def test_faculdade_package_workaround_is_removed_on_next_launch(self):
+        subject = load_launcher()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = root / "etc/pacman.conf"
+            config.parent.mkdir()
+            config.write_text("[options]\nHoldPkg     = pacman glibc\n#CheckSpace\nNoExtract = usr/share/zoneinfo/Europe/Lisbon\n")
+            with mock.patch.object(subject, "ENVIRONMENT", Path("/var/lib/apx/environments/faculdade")), \
+                    mock.patch.object(subject, "ROOT", root):
+                subject.prepare_environment_pacman_config()
+            self.assertEqual(config.read_text(), "[options]\nHoldPkg     = pacman glibc\nIgnorePkg = nvidia-utils lib32-nvidia-utils opencl-nvidia\nCheckSpace\n")
+
     def test_extended_startup_refreshes_cursor_then_restores_position(self):
         subject = load_launcher()
         monitors = [
@@ -140,7 +152,7 @@ class OfficialHubGraphicalTests(unittest.TestCase):
             "open_and_verify_kitty", "Kitty did not create a Hyprland window",
             "verify_desktop_shell", 'process_pids(b"quickshell")',
             '"--private-users=pick"', '"--private-users-ownership=chown"',
-            '"--timezone=bind"',
+            '"--timezone=symlink"', 'prepare_environment_pacman_config()',
             'f"--bind={HOME}:/home:idmap"', "resolve_user_namespace",
             "prepare_device_leases", "activate_device_leases", "cleanup_device_leases",
             "official-hub-recovery-v1.lock", "fcntl.flock(descriptor, fcntl.LOCK_EX)",

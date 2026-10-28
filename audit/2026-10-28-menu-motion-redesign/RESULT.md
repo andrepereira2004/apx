@@ -1,0 +1,9 @@
+# Menu transition redesign
+
+This page-wrapper attempt was rejected by the owner and rolled back. The current Control Centre transition is recorded in `../2026-10-28-calendar-style-menu-motion/RESULT.md`.
+
+The Control Centre now animates each page's own height and opacity over 280/190 ms. The previous full-page fade and vertical slide remain removed. Main controls, connectivity, Wi-Fi, Bluetooth, audio, microphone, activity, more options, trackpad, personalization and shortcuts use the same page wrapper. The outgoing page leaves layout immediately so it cannot stack under the incoming page. The battery details expand over 280 ms, with the competing outer viewport animation disabled for that menu. Calendar motion is unchanged.
+
+The repository shell and component were copied to the inactive Faculdade Environment. At the owner's request, a patch containing only these menu-motion changes was applied to Hytale's shell. Hytale's live shell and component match the validated candidate; the Hytale-specific patch is `hytale-shell.patch`. During initial work an entire Faculdade shell was accidentally copied to Hytale. The configured Hytale seed was restored before applying the targeted patch. The original Hytale shell was not captured before that copy, so prior local customizations in that single file, if any, cannot be confirmed. Backups of the Hytale seed and the Faculdade shell are in `before/`.
+
+`qmllint` reported no syntax errors for both shells and the component. `git diff --check` passed. Live Hytale QuickShell loaded successfully, IPC navigation worked, and visual captures before, during and after Control Centre navigation showed no overlapping pages in the final version. Faculdade's files match the repository source, but its live visual validation remains pending until it is active.

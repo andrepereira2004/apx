@@ -19,6 +19,7 @@ Rectangle {
     color: activeFocus ? "#454d64" : Qt.lighter(surroundingColor, iconHover.hovered && enabled ? 1.95 : 1.6)
     border.width: 0
     ButtonOutline {
+        outlineTarget: button
         selected: button.activeFocus || button.powered
         hovered: iconHover.hovered && button.enabled
     }

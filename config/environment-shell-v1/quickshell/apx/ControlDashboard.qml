@@ -9,13 +9,16 @@ Column {
     property real displayScale: 1
     property real topCornerRadius: Appearance.desktopCornerRadius
     readonly property real outlineWidth: Math.max(1, Math.round(displayScale)) / displayScale
+    readonly property real topCardHeight: dashboardContent.implicitHeight + 2 * buttonSpacing
     readonly property int buttonSpacing: 8
     readonly property int pairedButtonSpacing: 6
     component DashboardCard: Rectangle {
         id: card
+        property bool showInsetOutline: true
         color: dashboard.controller.popupPanel
         antialiasing: true
         Rectangle {
+            visible: card.showInsetOutline
             anchors.fill: parent
             anchors.margins: 1 / dashboard.displayScale
             radius: Math.max(0, card.radius - anchors.margins)
@@ -30,8 +33,9 @@ Column {
     readonly property bool brightnessPressed: false
     spacing: buttonSpacing
     DashboardCard {
+        showInsetOutline: false
         width: dashboard.width
-        height: dashboardContent.implicitHeight + 2 * dashboard.buttonSpacing
+        height: dashboard.topCardHeight
         radius: dashboard.topCornerRadius
         Column {
             id: dashboardContent

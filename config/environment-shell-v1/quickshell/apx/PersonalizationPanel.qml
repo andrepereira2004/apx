@@ -17,6 +17,18 @@ Column {
     onSectionChanged: navigation()
     signal back()
     signal chooseImage()
+    property int pendingWallpaperZoom: -1
+    Timer {
+        id: wallpaperZoomSave
+        interval: 250
+        onTriggered: {
+            if (Appearance.busy) { restart(); return }
+            if (panel.pendingWallpaperZoom >= 0) {
+                Appearance.change("wallpaper-zoom", String(panel.pendingWallpaperZoom))
+                panel.pendingWallpaperZoom = -1
+            }
+        }
+    }
     spacing: 8
 
     function updateStyle(key, value) {
@@ -173,6 +185,27 @@ Column {
         }
     }
     Action { text: Appearance.busy ? "A guardar…" : "Escolher imagem…"; iconName: "folder"; enabled: !Appearance.busy; onClicked: panel.chooseImage() }
+    Caption { text: "Enquadramento"; color: "#e1e5f0"; font.pixelSize: Appearance.bodySize }
+    Row {
+        width: parent.width; spacing: 6
+        Action { width: (parent.width - 12) / 3; text: "Preencher"; selected: Appearance.wallpaperFit === "crop"; enabled: !Appearance.busy; onClicked: Appearance.change("wallpaper-fit", "crop") }
+        Action { width: (parent.width - 12) / 3; text: "Encaixar"; selected: Appearance.wallpaperFit === "fit"; enabled: !Appearance.busy; onClicked: Appearance.change("wallpaper-fit", "fit") }
+        Action { width: (parent.width - 12) / 3; text: "Esticar"; selected: Appearance.wallpaperFit === "stretch"; enabled: !Appearance.busy; onClicked: Appearance.change("wallpaper-fit", "stretch") }
+    }
+    Row {
+        width: parent.width; spacing: 8
+        Caption { width: parent.width - 60; text: "Zoom"; color: "#e1e5f0"; font.pixelSize: Appearance.bodySize }
+        Caption { width: 52; text: Math.round(wallpaperZoom.value) + "%"; color: "#e1e5f0"; font.pixelSize: Appearance.bodySize }
+    }
+    ControlSlider {
+        id: wallpaperZoom
+        width: parent.width; height: 36; from: 50; to: 200; stepSize: 5
+        activeFocusOnTab: true
+        Accessible.name: "Zoom do wallpaper"
+        Binding { target: wallpaperZoom; property: "value"; value: panel.pendingWallpaperZoom >= 0 ? panel.pendingWallpaperZoom : Appearance.wallpaperZoom; when: !wallpaperZoom.pressed }
+        onMoved: { panel.pendingWallpaperZoom = Math.round(value); wallpaperZoomSave.restart() }
+        onPressedChanged: if (!pressed) { panel.pendingWallpaperZoom = Math.round(value); wallpaperZoomSave.restart() }
+    }
     Action { text: "Voltar à rotação automática"; iconName: "rotate-cw"; enabled: !Appearance.busy && Appearance.wallpaper.length > 0; onClicked: Appearance.change("wallpaper", "default") }
     }
     Caption { visible: Appearance.error.length > 0 || !!Appearance.state.warning; text: Appearance.error || Appearance.state.warning || ""; color: "#ffa8b7" }

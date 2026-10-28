@@ -92,7 +92,14 @@ def expand(source):
     def icon_image(name):
         gi.require_version("Rsvg", "2.0")
         from gi.repository import Rsvg
-        svg = (Path.home() / ".config/quickshell/apx/icons/lucide" / (name + ".svg")).read_bytes()
+        icon_path = Path.home() / ".config/quickshell/apx/icons/lucide" / (name + ".svg")
+        if not icon_path.is_file():
+            fallback = {"redo-2": "edit-redo-symbolic", "copy": "edit-copy-symbolic",
+                        "save": "document-save-symbolic"}.get(name, "image-missing-symbolic")
+            icon = Gtk.Image.new_from_icon_name(fallback, Gtk.IconSize.MENU)
+            icon.set_size_request(18, 18)
+            return icon
+        svg = icon_path.read_bytes()
         handle = Rsvg.Handle.new_from_data(svg.replace(b"currentColor", b"#d9dcea"))
         icon = Gtk.DrawingArea()
         icon.set_size_request(18, 18)

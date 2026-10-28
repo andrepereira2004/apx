@@ -1,3 +1,147 @@
+# Environments opening ghost contour follow-up — 2026-10-28
+
+The owner reported a ghost contour during Environments opening. The external
+menu frame was visible at full strength from the button-sized first frame.
+It now fades in after the menu clears its origin while the button outline
+remains immediate. Before/after top-bar captures are in
+`audit/2026-10-28-environment-outline-animation/`. Installed source, five
+homes, seed and pins match; Hytale QuickShell loaded the change. The owner
+confirmed the visual result. Backup and test details are in
+CURRENT_HANDOFF.md.
+
+# Outline comparison and Rofi two-tab restoration — 2026-10-28
+
+Separate active-state captures of Environments and Media show the same
+1 logical pixel white selected outline; small apparent differences on their
+curves come from 125% rasterization. Evidence and exact states are in
+`audit/2026-10-28-outline-comparison/`.
+
+The owner requested removal of the Rofi Sistema tab and restoration of all its
+applications to Apps. The live launcher, seed and five homes now expose Apps
+and Ficheiros only; the full application catalogue remains in Apps with its
+secondary actions. Runtime/recovery pins were updated. Backup and validation
+are in CURRENT_HANDOFF.md. No commit/push.
+
+# Environments and playback outline follow-up — 2026-10-28
+
+After owner confirmation of the workspace border, Environments and Media were
+reported as remaining unoverlaid. Their outlines now render as siblings above
+their own bar surface; the other button outlines retain the shared top-layer
+approach. Installed seed/five homes and pins match repository source. Hytale
+QuickShell loaded at 19:05:31 UTC; visual acceptance pending. Backup and tests
+are recorded in CURRENT_HANDOFF.md. No commit/push.
+
+# Shared QuickShell bar outline overlay — 2026-10-28
+
+After confirming the active workspace outline, the owner requested the same
+top-layer rendering for selected and hovered Calendar, Environment, Media,
+Apps/Rofi, Files, Battery and Control Centre buttons. The common outline now
+follows each button's mapped bar geometry, with workspace label outlines
+outside their clipped viewport. The first live reload failed on a missing
+legacy `outlineRadius` property; restoring that and the MenuHover/RadioIconButton
+targets let the active Hytale QuickShell load at 19:01:59 UTC. Source, five
+homes, independent seed and pins synchronized, deployment recheck empty.
+Backups and visual acceptance state are in CURRENT_HANDOFF.md. No commit/push.
+
+# Brave chooser history and active menu follow-up — 2026-10-28
+
+The independent Environment GTK portal now remembers the last folder confirmed
+for an upload or save and restores it for the next portal chooser, even if the
+browser suggests an older folder. This is per Environment and begins with the
+first confirmed selection after installation. The prior portal sidebar filter
+remains. The active Hytale portal was idle and stopped for D-Bus reactivation;
+Brave was not restarted. Source, binary, seed, five homes, runtime/recovery pins
+were synchronized with backup `20261028T185553Z-controls-followup`.
+
+The menu source deployed with the earlier entrance and frame-overlay changes,
+an active-workspace outline outside the clipping viewport, and a 300 ms eased
+Control Centre close. Hytale QuickShell loaded the updated configuration.
+Compile and 47 relevant automated tests passed; deployment recheck is empty.
+Owner visual and chooser behavior confirmation is still pending. No commit/push.
+
+# Thunar sidebar hover and selection — 2026-10-28
+
+Thunar sidebar places now have a dark hover surface and a brighter persistent selected surface with white text. The previously transparent hover/selection CSS was replaced, and source, seed, five homes and pins were synchronized. Hytale GTK parsed the installed CSS; visual acceptance remains pending. Backup is recorded in CURRENT_HANDOFF.md.
+
+# Wallpaper layout and screenshot preview — 2026-10-28
+
+WebP wallpaper imports are converted to PNG because the installed Qt image loader cannot decode WebP; previously selected WebP paths migrate on appearance status read. Environment-local wallpaper layout now supports Fill, Fit, Stretch and 50–200% zoom in Personalization, with desktop and workspace preview rendering the selected layout. The screenshot preview uses GTK theme icons when an expected SVG is absent, avoiding the observed missing `redo-2.svg` failure after a successful capture save. Source, seed, five homes and pins synchronized; backup chain recorded in CURRENT_HANDOFF.md. Live owner acceptance pending.
+
+# Calendar keyboard contours white — 2026-10-28
+
+Calendar keyboard focus borders now use white across navigation, view, month, event actions, Today, and New Event, matching date cells. The source, independent seed, five Environment homes, and integrity pins were synchronized. Backup: `/var/lib/apx/backups/20261028T155117Z-menu-inertia`. Visual acceptance pending.
+
+# Hytale Rofi icon and terminal launch recovery — 2026-10-27
+
+After the Hytale package upgrade, a headless catalogue check had cached a generic icon for the Hytale Launcher key even though the Flatpak PNG exists. The catalogue now resolves Flatpak exported icons directly and repairs stale cache entries; Hytale's live cache points to the existing PNG used by both Launcher and Client. APX Terminal opened from Rofi now requests the Host-console ticket before Rofi closes instead of through a detached worker, preserving the broker's QuickShell ancestry requirement. The old Hytale QuickShell running during its package replacement could not pass that broker check; its session has since ended. Seed/five homes and pins synchronized, backup `/var/lib/apx/backups/20261027T194437Z-controls-followup`; 42 window-app tests pass. Live Hytale reopening of Terminal and visual icon check remains to be observed.
+
+# Hytale pacman recovery and Discord installed — 2026-10-27
+
+The owner requested completion of the interrupted Hytale upgrade. The stale lock was removed after process checks, the 104 pending updates completed under the machine-transition lock, and the package database now passes `pacman -Dk`. Discord `1:1.0.167-1` is installed in Hytale and its vendor stable application payload was downloaded to Hytale user config without launching a window; Rofi resolves its icon. Existing NVIDIA 610.43.03 package pins remain. The current Hytale session stayed running; future fresh-session graphical compatibility after Hyprland/QuickShell updates has not yet been observed.
+
+# Hytale package transaction requires recovery — 2026-10-27
+
+Hytale has an interrupted `pacman -Syu` transaction from its 19:04 graphical exit, a stale pacman database lock, and mismatched gstreamer/systemd dependencies. Later `pacman -S discord` did not start a package transaction; Discord is available in extra but not installed. No package state was changed during diagnosis. Finish the interrupted Environment-local update before Discord installation; avoid switching away during the transaction. The interruption is a current physical-pilot recovery issue, not an accepted normal package state.
+
+# Terminal icon and shared border alignment — 2026-10-27
+
+APX Terminal now uses the APX Graphite vector terminal-window icon in Rofi and its desktop entry. Shared QuickShell button outlines use physical-pixel-aligned borders at the accepted 110% scale. The code audit found Rofi, Files, Environment and Media using the same outline; their positions can fall at different fractional physical pixels. Installed seed/five homes and pins synchronized, backup `/var/lib/apx/backups/20261027T190444Z-controls-followup`. Hub catalogue resolves the new icon. Owner visual acceptance of hover border sharpness remains open.
+
+# Rofi app presentation — 2026-10-27
+
+The installed Rofi app catalogue shows the running `HytaleClient` window as `Hytale` with the same icon path as Hytale Launcher. APX Terminal uses the theme terminal icon in its desktop entry and window presentation. Deployment backup `/var/lib/apx/backups/20261027T190020Z-controls-followup`. Bar contour code is shared across the cited buttons; owner-perceived sharpness difference remains open pending a comparable visual check.
+
+# Shared contour rendering at 110% — 2026-10-27
+
+Shared selected/hover outlines retain their common one-logical-pixel width and colours but allow fractional pixel antialiasing. MediaIsland no longer clips the contour. Installed source/seed/five homes and integrity pins synchronized; backup `/var/lib/apx/backups/20261027T185629Z-controls-followup`. Specific media hover visual acceptance pending because no player was active for a live capture.
+
+# Workspace outline geometry — 2026-10-27
+
+Workspace number buttons now use a 32×32 logical minimum, making single-digit selected/hover contours circular. Common interactive white selected and grey hover contours continue to come from the shared ButtonOutline; the Wi-Fi card and notification shortcut retain their requested outline exceptions. Installed source/seed/five homes and integrity pins synchronized. Backup `/var/lib/apx/backups/20261027T181515Z-controls-followup`.
+
+# QuickShell 110% default selected — 2026-10-27
+
+The owner selected 110% as the QuickShell default after comparing it with 100%. The Environment shell launcher applies `QT_SCALE_FACTOR=1.1` only to QuickShell in the seed and five installed Environments. Active Hytale QuickShell is ready at 110%. Backup: `/var/lib/apx/backups/20261027T175923Z-controls-followup`.
+
+# QuickShell scale returned to 100% — 2026-10-27
+
+The owner ended the 110% trial. Installed QuickShell runs without a QT_SCALE_FACTOR override and is ready at native 100% size in active Hytale. The launcher v2 lock/child-FD fix remains. Backup: `/var/lib/apx/backups/20261027T175835Z-controls-followup`.
+
+# QuickShell 110% visual trial — 2026-10-27
+
+The installed Environment shell launcher runs QuickShell alone with `QT_SCALE_FACTOR=1.1`, enlarging the bar and menus for owner comparison. The active Hytale QuickShell loaded, passed startup identity readiness, and the menu was visually inspected. Icon sharpness remains an owner judgement. The launcher also prevents its flock FD from leaking into child services and uses a new v2 lock after the old lock was retained by an already running hypridle. Final backup: `/var/lib/apx/backups/20261027T155522Z-controls-followup`.
+
+# Control Centre paired-button optical spacing — 2026-10-27
+
+The installed main dashboard keeps 8 px outer padding and vertical spacing. The two-column session button grid uses a 6 px horizontal gap to balance the rounded buttons visually after owner feedback. Backup: `/var/lib/apx/backups/20261027T150319Z-controls-followup`. Visual acceptance pending.
+
+# Control Centre submenu spacing and visible gaps — 2026-10-27
+
+The installed dashboard now has one enclosing card so its button-to-button spacing and outer padding are both 8 px. Control Centre submenu outer insets and common control/form gaps are 8 px, with rectangular action/card corners aligned to the shared 10 px radius. Narrow deployment backup: `/var/lib/apx/backups/20261027T091644Z-controls-followup`. Visual acceptance pending.
+
+# Control Centre spacing and corners — 2026-10-27
+
+The installed ControlDashboard uses 8 px for card separation, edge insets and gaps between its controls, including session actions and notifications. Shared rectangular menu action buttons use the 10 px menu corner radius. Narrow deployment backup: `/var/lib/apx/backups/20261027T090123Z-controls-followup`. Owner visual acceptance pending.
+
+# Notification shortcut spacing — 2026-10-27
+
+Following owner feedback, the installed notification shortcut now sits 8 px from its enclosing panel border, with only the panel border drawn. Narrow deployment backup: `/var/lib/apx/backups/20261027T085827Z-controls-followup`. Visual acceptance pending.
+
+# Wi-Fi and notifications visual adjustment — 2026-10-27
+
+The installed QuickShell now keeps the Wi-Fi icon contour but suppresses the
+connected Wi-Fi card's hover contour. The notifications shortcut retains its
+original 12 px inset and uses only the enclosing panel border. Source, seed,
+five Environment homes, and integrity pins were synchronized with a narrow
+deployment; owner visual acceptance remains pending. Backup:
+`/var/lib/apx/backups/20261027T085502Z-controls-followup`.
+
+# Environment terminal installs and timezone mount — 2026-10-26
+
+The owner requested a lasting fix for terminal application installs, plus Microsoft Visual Studio Code for notebooks and LaTeX. The official Microsoft build already existed under `/opt/vscode` in active Faculdade and is the `code` found via `/usr/local/bin`. An Arch `code` package installed during the repair was Code - OSS, contrary to the owner's request; it and its newly created OSS profile/extensions were removed. Python, Jupyter and LaTeX Workshop extensions are installed in the official VS Code profile, with its Python interpreter and `.ipynb` editor association configured. A sample notebook executed and a Portuguese LaTeX document compiled to PDF; the official GUI was not relaunched for this check. In the active Faculdade, `pacman -Syu` failed its disk check because graphical nspawn `--timezone=bind` mounted `/usr/share/zoneinfo/Europe/Lisbon` read-only inside the package tree. A second, older fault left 1,378 Faculdade root-tree entries owned by Host root (unmapped inside its user namespace), causing package replacement errors and five duplicate local pacman records during the first successful transaction. These entries were reassigned to the Environment's mapped root; the five packages were reinstalled and now pass `pacman -Qkk`. The same unmapped Host-root ownership was repaired in the four other installed Environment roots. Read-only root snapshots and the five stale database entries are retained under `/var/lib/apx/backups/20261026-vscode-install/`.
+
+The canonical installed graphical launcher and repository source now request `--timezone=symlink`, which synchronizes the Host-selected timezone at each launch without a read-only mount in the package tree. The live Faculdade session still uses the old bind until its next normal entry. Its pacman configuration temporarily disables `CheckSpace` and skips only the bound Lisbon zone file; the launcher restores these exact temporary directives before that next entry. The transaction also upgraded Faculdade `nvidia-utils` past the Host kernel module; it was immediately downgraded to Host version 610.43.03, and the graphical compatibility check passes. All five installed Environments now ignore `nvidia-utils`, `lib32-nvidia-utils`, and `opencl-nvidia` in repository upgrades, and the launcher adds this pin to future graphical Environments before entry. No active session or compositor was restarted for this package work. A disposable nspawn snapshot verified the Host timezone symlink and absence of the read-only zoneinfo mount; source unit tests and syntax checks pass. The new mode has not yet been exercised in a real graphical session. Existing close-first live-only animation test remains pending owner review.
+
 # Close-first live-only experiment active — 2026-10-26
 
 Owner observes remaining expansion under the outgoing window and explicitly selects testing close-before-expand. Installed audit/2026-10-26-window-only-defaults/close-first-test.lua through live eval only; no source/seed/home/pin changes or config reload. Normal tiled close (excluding floating, fullscreen, grouped and last-tile cases) selects a high-mass hold spring for windowsMove. Next event-loop turn starts a 170ms oneshot, exceeding existing 149ms geometry/146ms fade close. Then switches to a critical settle spring (mass1 stiffness1600 damping80), preserving animated spring state; after400ms restores accepted180ms easeOutQuint movement. Normal window.open_early cancels pending close sequence and immediately restores accepted opening reflow; overlapping open/close therefore prioritizes new opening. No polling/daemon/plugins, QuickShell or workspace changes. Timer callbacks self-expire via native Lua timer lifecycle. Hold is visual/subpixel, not a layout-engine removal delay.
@@ -5977,3 +6121,19 @@ Source, independent seed and five homes synchronized; runtime/recovery pins
 updated. Existing live Hyprland files preserved. Seven desktop-seed tests pass.
 Backup: /var/lib/apx/backups/20261023T232703Z-controls-followup.
 Live pointer/visual acceptance pending. No commit/push.
+
+## 2026-10-28 Independent Environment menu opening and outlines
+
+Repository source aligns the Control Centre content entrance with the Calendar
+and Environments opening fade while all three retain their shared 300 ms
+button-origin geometry animation. Exterior menu and Control Centre card outlines
+now render above clipped content so the upper strokes remain visible. This is a
+repository candidate; no live visual confirmation or deployment is recorded.
+
+Owner subsequently identified workspace icons as a remaining clipped outline
+example. The repository candidate expands their clipping viewport from 32 to
+36 px while keeping the buttons in the same visual position, and turns off
+pixel snapping for the shared button outline. No live acceptance is recorded.
+After further owner feedback, the active workspace outline was moved outside
+the clipped viewport as a sibling overlay in repository source. No live
+deployment or visual confirmation is recorded.

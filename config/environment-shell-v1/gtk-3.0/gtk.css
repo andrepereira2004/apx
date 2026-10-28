@@ -34,7 +34,7 @@
 .thunar toolbar button { padding: 2px; min-width: 20px; min-height: 24px; }
 .thunar toolbar image { -gtk-icon-transform: scale(1); }
 
-/* Selected sidebar folders keep the same surface; only the foreground changes. */
+/* Show the hovered place and keep the current place visibly selected. */
 .thunar .sidebar .view:selected,
 .thunar .sidebar .view:selected:focus,
 .thunar .sidebar .view:selected:backdrop,
@@ -45,16 +45,23 @@
 .thunar .sidebar row:selected,
 .thunar .sidebar row:selected:backdrop,
 .thunar .sidebar *:selected {
-    background-color: transparent;
+    background-color: #353a4a;
     background-image: none;
-    color: #d9dcea;
+    color: #ffffff;
     box-shadow: none;
     text-shadow: none;
     outline-style: none;
 }
-.thunar .sidebar .view:hover {
-    background-color: transparent;
+.thunar .sidebar .view:hover,
+.thunar .shortcuts-pane treeview:hover,
+.thunar .sidebar row:hover {
+    background-color: #292d3a;
     background-image: none;
+}
+.thunar .sidebar .view:selected:hover,
+.thunar .shortcuts-pane treeview:selected:hover,
+.thunar .sidebar row:selected:hover {
+    background-color: #353a4a;
 }
 /* The current folder in the breadcrumb bar also has no filled rectangle. */
 .thunar .path-bar button:checked,

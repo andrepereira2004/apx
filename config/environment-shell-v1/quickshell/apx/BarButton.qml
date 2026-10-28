@@ -14,6 +14,9 @@ Rectangle {
     property bool alternateActive: false
     property bool animateActivation: false
     property bool animateDeactivation: false
+    property Item outlineHost: null
+    property bool outlineShown: true
+    property real outlineOpacity: 1
     property color activeSurface: "#da3a4055"
     property color accentColor: "#f0f0fa"
     property color textColor: "#c8ccdc"
@@ -30,6 +33,10 @@ Rectangle {
     radius: 16
     color: visuallyActive ? activeSurface : (grouped ? "transparent" : Appearance.capsuleSurface)
     ButtonOutline {
+        outlineTarget: button
+        outlineHost: button.outlineHost
+        shown: button.outlineShown
+        opacity: button.outlineOpacity
         selected: button.alternateActive
         hovered: button.visuallyActive
         idleWidth: button.inactiveBorderWidth

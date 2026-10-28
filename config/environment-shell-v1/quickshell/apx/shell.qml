@@ -3859,7 +3859,7 @@ ShellRoot {
     }
     Process { id: environmentFilesProcess; command: ["/home/apx/.local/bin/apx-laptop-action-v1", "files"] }
     Process { id: fileShortcutProcess; command: ["/home/apx/.local/bin/apx-laptop-action-v1", "files"] }
-    Process { id: environmentAppsProcess; command: ["/usr/bin/env", "LD_PRELOAD=/home/apx/.local/libexec/apx-rofi-secondary-v1.so", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", "/usr/bin/rofi", "-modi", "apps,files,system", "-show", "apps", "-me-select-entry", "", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary", "-kb-cancel", "Escape,Control+g,Control+bracketleft"] }
+    Process { id: environmentAppsProcess; command: ["/usr/bin/env", "LD_PRELOAD=/home/apx/.local/libexec/apx-rofi-secondary-v1.so", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", "/usr/bin/rofi", "-modi", "apps,files", "-show", "apps", "-me-select-entry", "", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary", "-kb-cancel", "Escape,Control+g,Control+bracketleft"] }
     Process { id: updateUiProcess; command: root.isHub
         ? ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/run/apx/coordinated-update-client-v1.py", "environments-ui"]
         : ["/home/apx/.local/bin/apx-detached-launch", "/usr/bin/kitty", "--title", "APX Atualizações", "/home/apx/.local/bin/apx-environment-update-v1", "--unattended"] }
@@ -4513,6 +4513,7 @@ ShellRoot {
         readonly property bool outlineManaged: true
         border.width: 0
         ButtonOutline {
+            outlineTarget: menuButton
             selected: menuButton.keyboardFocused || menuMouse.activeFocus || menuMouse.keyboardActivationPending || menuButton.selected
             hovered: actionPointer.hovered && menuButton.enabled
             idleWidth: menuButton.outlined ? 1 : 0
@@ -4704,7 +4705,9 @@ ShellRoot {
             Image {
                 anchors.fill: parent
                 source: root.currentWallpaper
-                fillMode: Image.PreserveAspectCrop
+                fillMode: Appearance.wallpaperFit === "fit" ? Image.PreserveAspectFit
+                        : Appearance.wallpaperFit === "stretch" ? Image.Stretch : Image.PreserveAspectCrop
+                scale: Appearance.wallpaperZoom / 100
                 smooth: true
                 mipmap: true
                 asynchronous: false
@@ -4781,6 +4784,7 @@ ShellRoot {
                 spacing: 6
                 BarButton {
                     id: calendarButton
+                    outlineHost: screenBar.contentItem
                     grouped: true
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === calendarButton : null
                     activeSurface: root.controlButtonHover
@@ -4818,6 +4822,7 @@ ShellRoot {
 
             BarButton {
                 id: environmentButton
+                outlineHost: environmentButton.parent
                 inactiveBorderWidth: 0
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === environmentButton : null
                 activeSurface: root.controlButtonHover
@@ -4843,6 +4848,7 @@ ShellRoot {
                 readonly property real fixedWidth: [microphoneButton, appsButton, filesButton, batteryButton, controlCenterButton].filter(function(item) { return item.visible }).reduce(function(total, item) { return total + item.width + rightActions.spacing }, 0)
             MediaIsland {
                 id: mediaIsland
+                outlineHost: mediaIsland.parent
                 hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === mediaIsland : null
                 parent: rightActions.parent
                 grouped: false
@@ -4885,6 +4891,7 @@ ShellRoot {
                     accentColor: root.textMain
                     textColor: root.textMain
                     id: microphoneButton
+                    outlineHost: screenBar.contentItem
                     grouped: true
                     visible: root.microphoneActive
                     label: "Microfone"
@@ -4893,6 +4900,7 @@ ShellRoot {
                 BarButton {
                     grouped: true
                     id: appsButton
+                    outlineHost: screenBar.contentItem
                     visible: !root.isHub
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === appsButton : null
                     activeSurface: root.controlButtonHover
@@ -4909,6 +4917,7 @@ ShellRoot {
                 BarButton {
                     grouped: true
                     id: filesButton
+                    outlineHost: screenBar.contentItem
                     visible: !root.isHub
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === filesButton : null
                     activeSurface: root.controlButtonHover
@@ -4928,6 +4937,7 @@ ShellRoot {
                 BarButton {
                     grouped: true
                     id: batteryButton
+                    outlineHost: screenBar.contentItem
                     scale: (animateActivation || animateDeactivation) ? 0.92 : 1
                     hoverOverride: popup.open ? popupBarPointer.hoveredBarTarget === batteryButton : null
                 activeSurface: root.controlButtonHover
@@ -4973,6 +4983,7 @@ ShellRoot {
                 BarButton {
                     grouped: true
                     id: controlCenterButton
+                    outlineHost: screenBar.contentItem
                     scale: (animateActivation || animateDeactivation) ? 0.92 : 1
                     x: ghostGreeting.width
                     compactSymbol: false
@@ -5348,7 +5359,7 @@ ShellRoot {
             readonly property bool splitControls: root.popupKind === "controls" && root.renderedControlsAllClosed() && !root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.powerConfirmOpen
             color: splitControls ? "transparent" : root.popupPanel
             Behavior on color { enabled: root.popupKind !== "controls"; ColorAnimation { id: panelMaterialFade; duration: 180; easing.type: Easing.OutCubic } }
-            border.width: splitControls ? 0 : 1
+            border.width: 0
             border.color: root.shellBorder
 
             NumberAnimation {
@@ -5360,7 +5371,8 @@ ShellRoot {
             NumberAnimation {
                 id: popupCloseAnimation
                 target: root; property: "islandProgress"; to: 0
-                duration: root.pendingPopupRequest ? 140 : 240; easing.type: Easing.OutCubic
+                duration: root.pendingPopupRequest ? 140 : (root.popupKind === "controls" ? 300 : 240)
+                easing.type: root.popupKind === "controls" && !root.pendingPopupRequest ? Easing.InOutCubic : Easing.OutCubic
                 onFinished: if (root.popupClosing) root.finishClosePopup()
             }
             NumberAnimation {
@@ -5458,7 +5470,7 @@ ShellRoot {
                 // animated outer card clips the reveal without reflowing every frame.
                 width: Math.max(0, popupBackground.targetWidth - popupBackground.contentInset * 2)
                 height: Math.max(0, root.islandOrigin.height + (popupBackground.viewportHeight - root.islandOrigin.height) * root.islandProgress - popupBackground.contentInset - popupBackground.contentBottomInset)
-                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "controls" ? root.controlPageProgress : (root.popupKind === "media" ? 1 : root.islandContentOpacity))
+                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "media" ? 1 : root.islandContentOpacity) * (root.popupKind === "controls" ? root.controlPageProgress : 1)
                 enabled: !root.popupClosing && root.islandProgress > .8
                 contentWidth: width
                 contentHeight: menuContent.implicitHeight
@@ -5535,7 +5547,7 @@ ShellRoot {
                                     color: root.calendarActionIsFocused("previous", "previous") ? root.controlButtonActive : (root.controlButtonSurface)
                                     readonly property bool menuScrollFocused: root.calendarActionIsFocused("previous", "previous")
                                     onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                    border.width: root.calendarActionIsFocused("previous", "previous") ? 1 : 0; border.color: root.cyan
+                                    border.width: root.calendarActionIsFocused("previous", "previous") ? 1 : 0; border.color: "#ffffff"
                                 Text { renderType: Text.QtRendering; font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "‹"; color: root.textMain; font.pixelSize: 22 }
                                 BounceMouseArea { id: previousMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.moveCalendar(-1) }
                             }
@@ -5549,7 +5561,7 @@ ShellRoot {
                                     color: root.calendarActionIsFocused("next", "next") ? root.controlButtonActive : (root.controlButtonSurface)
                                     readonly property bool menuScrollFocused: root.calendarActionIsFocused("next", "next")
                                     onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                    border.width: root.calendarActionIsFocused("next", "next") ? 1 : 0; border.color: root.cyan
+                                    border.width: root.calendarActionIsFocused("next", "next") ? 1 : 0; border.color: "#ffffff"
                                 Text { renderType: Text.QtRendering; font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "›"; color: root.textMain; font.pixelSize: 22 }
                                 BounceMouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.moveCalendar(1) }
                             }
@@ -5567,7 +5579,7 @@ ShellRoot {
                                     readonly property bool menuScrollFocused: root.calendarActionIsFocused("view", modelData.key)
                                     onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
                                     border.width: root.calendarActionIsFocused("view", modelData.key) ? 1 : 0
-                                    border.color: root.calendarActionIsFocused("view", modelData.key) ? root.cyan : root.cyan
+                                    border.color: "#ffffff"
                                     Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: modelData.label; color: root.calendarView === modelData.key ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                     BounceMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.changeCalendarView(modelData.key) }
                                 }
@@ -5656,7 +5668,7 @@ ShellRoot {
                                     readonly property bool menuScrollFocused: root.calendarActionIsFocused("month", index)
                                     onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
                                     border.width: root.calendarActionIsFocused("month", index) ? 1 : 0
-                                    border.color: root.calendarActionIsFocused("month", index) ? root.cyan : root.cyan
+                                    border.color: "#ffffff"
                                     Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: modelData.slice(0, 3); color: parent.currentMonth ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                     BounceMouseArea {
                                         id: monthMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -5731,7 +5743,7 @@ ShellRoot {
                                             color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (root.controlButtonSurface)
                                             readonly property bool menuScrollFocused: root.calendarActionIsFocused("edit", modelData.id)
                                             onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                            border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: root.cyan
+                                            border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: "#ffffff"
                                             Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: "Editar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                             BounceMouseArea { id: timelineEditMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEditEvent(modelData) }
                                         }
@@ -5742,7 +5754,7 @@ ShellRoot {
                                             color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (root.controlButtonSurface)
                                             readonly property bool menuScrollFocused: root.calendarActionIsFocused("delete", modelData.id)
                                             onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                            border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffd3da"
+                                            border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffffff"
                                             Text { renderType: Text.QtRendering; font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 16 }
                                             BounceMouseArea { id: timelineRemoveMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.deleteEvent(modelData.id) }
                                         }
@@ -5761,7 +5773,7 @@ ShellRoot {
                                 color: root.calendarActionIsFocused("today", "today") ? root.controlButtonActive : (root.controlButtonSurface)
                                 readonly property bool menuScrollFocused: root.calendarActionIsFocused("today", "today")
                                 onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                border.width: root.calendarActionIsFocused("today", "today") ? 1 : 0; border.color: root.cyan
+                                border.width: root.calendarActionIsFocused("today", "today") ? 1 : 0; border.color: "#ffffff"
                                 Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: "Hoje"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                 BounceMouseArea { id: todayMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectCalendarDate(root.currentDate) }
                             }
@@ -5770,7 +5782,7 @@ ShellRoot {
                                 color: root.calendarActionIsFocused("new", "new") ? root.controlButtonActive : (root.controlButtonSurface)
                                 readonly property bool menuScrollFocused: root.calendarActionIsFocused("new", "new")
                                 onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                border.width: root.calendarActionIsFocused("new", "new") ? 1 : 0; border.color: root.cyan
+                                border.width: root.calendarActionIsFocused("new", "new") ? 1 : 0; border.color: "#ffffff"
                                 Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: "Novo evento"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                 BounceMouseArea { id: addMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEvent() }
                             }
@@ -5814,7 +5826,7 @@ ShellRoot {
                                     color: root.calendarActionIsFocused("edit", modelData.id) ? root.controlButtonActive : (root.controlButtonSurface)
                                     readonly property bool menuScrollFocused: root.calendarActionIsFocused("edit", modelData.id)
                                     onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                    border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: root.cyan
+                                    border.width: root.calendarActionIsFocused("edit", modelData.id) ? 1 : 0; border.color: "#ffffff"
                                     Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: "Editar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                                     BounceMouseArea { id: editMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.beginEditEvent(modelData) }
                                 }
@@ -5825,7 +5837,7 @@ ShellRoot {
                                     color: root.calendarActionIsFocused("delete", modelData.id) ? "#743541" : (root.controlButtonSurface)
                                     readonly property bool menuScrollFocused: root.calendarActionIsFocused("delete", modelData.id)
                                     onMenuScrollFocusedChanged: if (menuScrollFocused) root.revealKeyboardMenuItem(this)
-                                    border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffd3da"
+                                    border.width: root.calendarActionIsFocused("delete", modelData.id) ? 1 : 0; border.color: "#ffffff"
                                     Text { renderType: Text.QtRendering; font.family: Appearance.fontFamily; anchors.centerIn: parent; text: "×"; color: "#ff91a4"; font.pixelSize: 16 }
                                     BounceMouseArea { id: removeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.deleteEvent(modelData.id) }
                                 }
@@ -7935,6 +7947,32 @@ ShellRoot {
                 }
             }
             } // menuScrollClip
+        }
+        // The frame sits above the masked card so its top edge remains complete.
+        Rectangle {
+            z: 4
+            visible: popup.open && !popupBackground.splitControls
+            x: popupBackground.x; y: popupBackground.y
+            width: popupBackground.width; height: popupBackground.height
+            radius: popupBackground.radius
+            color: "transparent"
+            border.width: 1; border.color: root.shellBorder
+            // The panel starts at its trigger. Keep its frame out of that
+            // origin until the card has visibly moved away from the button.
+            opacity: Math.max(0, Math.min(1, (root.islandProgress - 0.4) / 0.6))
+            antialiasing: true
+        }
+        Rectangle {
+            z: 4
+            visible: popup.open && popupBackground.splitControls && compactDashboard.visible
+            x: popupBackground.x + popupBackground.contentInset + root.controlPageOffset
+            y: popupBackground.y + popupBackground.contentInset - menuFlick.contentY
+            width: compactDashboard.width; height: compactDashboard.topCardHeight
+            radius: popupBackground.radius
+            color: "transparent"
+            border.width: 1; border.color: root.shellBorder
+            opacity: menuFlick.opacity
+            antialiasing: true
         }
     }
 

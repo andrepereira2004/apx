@@ -78,6 +78,8 @@ QtObject {
     readonly property color border: state.border || "#50586d"
     readonly property color barSurface: Qt.rgba(surface.r, surface.g, surface.b, 0.70)
     readonly property string wallpaper: state.wallpaper || ""
+    readonly property string wallpaperFit: state.wallpaper_fit || "crop"
+    readonly property int wallpaperZoom: state.wallpaper_zoom || 100
     readonly property bool busy: writeProcess.running || chooserProcess.running
     property string error: ""
 

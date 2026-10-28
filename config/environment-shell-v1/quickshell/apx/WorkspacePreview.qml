@@ -61,7 +61,9 @@ Rectangle {
             Image {
                 anchors.fill: parent
                 source: preview.wallpaper
-                fillMode: Image.PreserveAspectCrop
+                fillMode: Appearance.wallpaperFit === "fit" ? Image.PreserveAspectFit
+                        : Appearance.wallpaperFit === "stretch" ? Image.Stretch : Image.PreserveAspectCrop
+                scale: Appearance.wallpaperZoom / 100
                 asynchronous: true
             }
             Repeater {

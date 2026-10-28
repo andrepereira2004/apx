@@ -5,6 +5,7 @@ Rectangle {
     id: island
     signal activated()
     property bool grouped: false
+    property Item outlineHost: null
     property bool selected: false
     property var hoverOverride: null
     property bool closingHoverHeld: false
@@ -34,6 +35,10 @@ Rectangle {
     height: 32; radius: 16
     color: visuallyHovered || selected ? "#f2292d3a" : grouped ? "transparent" : Appearance.capsuleSurface
     ButtonOutline {
+        outlineTarget: island
+        outlineHost: island.outlineHost
+        shown: island.visible && island.presence > 0
+        opacity: island.presence
         selected: island.selected
         hovered: island.visuallyHovered
     }

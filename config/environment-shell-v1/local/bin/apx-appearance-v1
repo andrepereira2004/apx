@@ -49,6 +49,11 @@ def local():
         if data.get('style') is not None: result['style'] = validate_style(data['style'])
         path = data.get('wallpaper')
         if isinstance(path, str) and Path(path).is_file() and Path(path).is_absolute(): result['wallpaper'] = path
+        if data.get('wallpaper_fit') in ('crop', 'fit', 'stretch'):
+            result['wallpaper_fit'] = data['wallpaper_fit']
+        zoom = data.get('wallpaper_zoom')
+        if type(zoom) is int and 50 <= zoom <= 200:
+            result['wallpaper_zoom'] = zoom
         return result
     except (OSError, ValueError):
         return {}
@@ -132,6 +137,9 @@ def apply_theme(style, opacity):
 
 def status():
     values = local(); cache = HOME / '.cache/apx/appearance-global.json'
+    if values.get('wallpaper', '').lower().endswith('.webp'):
+        wallpaper(values['wallpaper'])
+        values = local()
     try:
         shared = global_style(); warning = ''
         atomic(cache, json.dumps(shared, sort_keys=True).encode())
@@ -148,7 +156,9 @@ def status():
                 hover=mix('#0a1014', effective['color'], .35),
                 active=mix('#0a1014', effective['color'], .45),
                 border=mix('#0a1014', effective['color'], .55),
-                wallpaper=Path(values['wallpaper']).as_uri() if values.get('wallpaper') else '', warning=warning)
+                wallpaper=Path(values['wallpaper']).as_uri() if values.get('wallpaper') else '',
+                wallpaper_fit=values.get('wallpaper_fit', 'crop'),
+                wallpaper_zoom=values.get('wallpaper_zoom', 100), warning=warning)
 
 
 def wallpaper(path):
@@ -169,7 +179,22 @@ def wallpaper(path):
         return
     data = source.read_bytes()
     if len(data) > 40 * 1024 * 1024: raise ValueError('A imagem é demasiado grande.')
-    target = IMAGES / (hashlib.sha256(data).hexdigest() + source.suffix.lower())
+    digest = hashlib.sha256(data).hexdigest()
+    if source.suffix.lower() == '.webp':
+        # GdkPixbuf can open WebP here, but the installed Qt image loader cannot.
+        # Convert it before QuickShell receives the wallpaper path.
+        IMAGES.mkdir(parents=True, exist_ok=True, mode=0o700)
+        fd, temporary = tempfile.mkstemp(prefix='.wallpaper-', suffix='.png', dir=IMAGES)
+        os.close(fd)
+        try:
+            image = GdkPixbuf.Pixbuf.new_from_file(str(source))
+            image.savev(temporary, 'png', [], [])
+            data = Path(temporary).read_bytes()
+        finally:
+            Path(temporary).unlink(missing_ok=True)
+        target = IMAGES / (digest + '.png')
+    else:
+        target = IMAGES / (digest + source.suffix.lower())
     atomic(target, data)
     values = local(); values['wallpaper'] = str(target); save(values)
 
@@ -208,6 +233,15 @@ def main(args):
         if args[1] == 'default':
             values = local(); values.pop('wallpaper', None); save(values)
         else: wallpaper(args[1])
+    elif len(args) == 2 and args[0] == 'wallpaper-fit':
+        if args[1] not in ('crop', 'fit', 'stretch'):
+            raise ValueError('Enquadramento do wallpaper inválido.')
+        values = local(); values['wallpaper_fit'] = args[1]; save(values)
+    elif len(args) == 2 and args[0] == 'wallpaper-zoom':
+        zoom = int(args[1])
+        if not 50 <= zoom <= 200:
+            raise ValueError('O zoom deve estar entre 50 e 200%.')
+        values = local(); values['wallpaper_zoom'] = zoom; save(values)
     elif args == ['choose-wallpaper']: choose_wallpaper()
     else: raise ValueError('Opção de personalização inválida.')
     print(json.dumps(status()))

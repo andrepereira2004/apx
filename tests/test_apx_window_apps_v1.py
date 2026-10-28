@@ -33,47 +33,40 @@ class WindowApplicationsTests(unittest.TestCase):
                 m.native_page()
             page = json.loads(output.getvalue())
             self.assertEqual({r['info'] for r in page['rows'] if not r['info'].startswith('action:')},
-                             {a['id'] for a in apps if a['id'] != 'xgps'})
+                             {a['id'] for a in apps})
             self.assertTrue(all(r['browse'] and r['search'] for r in page['rows']))
             self.assertFalse(any(r['info'].startswith(('folder:', 'action:folder:')) for r in page['rows']))
             self.assertEqual(page['headers']['prompt'], 'Apps')
 
-    def test_system_and_apps_partition_complete_catalogue_in_browse_and_search(self):
+    def test_apps_contains_complete_catalogue_in_browse_and_search(self):
         m = load_module()
         apps = [dict(id=k, name=k, windows=[], iconPath='/icon') for k in
                 ('new.app', 'kitty', 'mpv', 'org.xfce.mousepad', 'thunar',
                  'thunar-settings', 'thunar-bulk-rename', 'xgps', 'cups',
                  'com.rtosta.zapzap', 'com.rtosta.zapzap.nogpu')]
-        groups = {}
-        for section, prompt in [('apps', 'Apps'), ('system', 'Sistema')]:
-            output = io.StringIO()
-            with patch.dict(m.os.environ, {'APX_ROFI_SECTION': section}, clear=True), \
-                    patch.object(m, 'catalog', return_value=apps), redirect_stdout(output):
-                m.native_page()
-            page = json.loads(output.getvalue())
-            groups[section] = {r['info'] for r in page['rows']}
-            self.assertEqual(page['headers']['prompt'], prompt)
-            self.assertTrue(all(r['browse'] and r['search'] for r in page['rows']))
-        self.assertFalse(groups['apps'] & groups['system'])
-        self.assertEqual(groups['apps'] | groups['system'], {a['id'] for a in apps})
-        self.assertIn('new.app', groups['apps'])
-        self.assertIn('kitty', groups['apps'])
-        self.assertIn('com.rtosta.zapzap.nogpu', groups['system'])
+        output = io.StringIO()
+        with patch.dict(m.os.environ, {'APX_ROFI_SECTION': 'apps'}, clear=True), \
+                patch.object(m, 'catalog', return_value=apps), redirect_stdout(output):
+            m.native_page()
+        page = json.loads(output.getvalue())
+        self.assertEqual(page['headers']['prompt'], 'Apps')
+        self.assertEqual({r['info'] for r in page['rows']}, {a['id'] for a in apps})
+        self.assertTrue(all(r['browse'] and r['search'] for r in page['rows']))
 
-    def test_system_secondary_actions_keep_support_app_selected(self):
+    def test_support_app_secondary_actions_remain_in_apps(self):
         m = load_module()
         apps = [dict(id=k, name=k, windows=[], iconPath='/icon')
                 for k in ('xgps', 'thunar')]
         output = io.StringIO()
-        with patch.dict(m.os.environ, {'APX_ROFI_SECTION': 'system',
+        with patch.dict(m.os.environ, {'APX_ROFI_SECTION': 'apps',
                 'ROFI_RETV': '10', 'ROFI_INFO': 'xgps'}, clear=True), \
                 patch.object(m, 'catalog', return_value=apps), \
                 patch.object(m, 'nvidia_on_demand', return_value=False), redirect_stdout(output):
             m.native_page()
         page = json.loads(output.getvalue())
-        self.assertEqual(page['headers']['prompt'], 'Sistema')
+        self.assertEqual(page['headers']['prompt'], 'Apps')
         self.assertTrue(any(r['info'] == 'action:uninstall:xgps' for r in page['rows']))
-        self.assertFalse(any(r['info'] == 'thunar' for r in page['rows']))
+        self.assertTrue(any(r['info'] == 'thunar' for r in page['rows']))
 
     def test_thunar_helpers_do_not_steal_main_window(self):
         m = load_module()
@@ -397,6 +390,36 @@ class WindowApplicationsTests(unittest.TestCase):
             with patch.object(module, 'ICON_CACHE', cache):
                 module.resolve_icons([app])
             self.assertEqual(app['iconPath'], str(icon))
+
+    def test_flatpak_export_replaces_cached_generic_icon(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            icon = home / '.local/share/flatpak/exports/share/icons/hicolor/48x48/apps/com.example.Game.png'
+            icon.parent.mkdir(parents=True)
+            icon.write_bytes(b'png')
+            generic = home / 'generic.svg'
+            generic.write_text('<svg/>')
+            cache = home / 'icons.json'
+            cache.write_text(json.dumps({'com.example.Game': str(generic)}))
+            app = {'icon': 'com.example.Game'}
+            with patch.object(module.Path, 'home', return_value=home), patch.object(module, 'ICON_CACHE', cache):
+                module.resolve_icons([app])
+            self.assertEqual(app['iconPath'], str(icon))
+            self.assertEqual(json.loads(cache.read_text())['com.example.Game'], str(icon))
+
+    def test_apx_terminal_requests_console_before_rofi_closes(self):
+        module = load_module()
+        app = {'id': 'apx-terminal', 'name': 'APX Terminal', 'windows': []}
+        with patch.object(module, 'catalog', return_value=[app]), \
+             patch.object(module.subprocess, 'run') as run, \
+             patch.object(module, 'start_launch') as detached, \
+             patch.object(module, 'record_use') as record:
+            module.perform('open', 'apx-terminal')
+        run.assert_called_once_with(['/home/apx/.local/bin/apx-host-console-open'],
+                                    check=True, timeout=10)
+        detached.assert_not_called()
+        record.assert_called_once_with('apx-terminal')
 
     def test_terminate_requires_current_window_address(self):
         module = load_module()

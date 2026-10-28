@@ -1005,6 +1005,36 @@ def start_host_seatd(inputs: dict[str, str], graphics: dict[str, str]) -> None:
     raise OfficialHubGraphicalError("Host seatd broker did not become ready")
 
 
+def prepare_environment_pacman_config() -> None:
+    """Pin Host GPU libraries and retire the live timezone workaround."""
+    path = ROOT / "etc/pacman.conf"
+    temporary = b"\n#CheckSpace\nNoExtract = usr/share/zoneinfo/Europe/Lisbon\n"
+    data = path.read_bytes()
+    updated = data
+    if ENVIRONMENT.name == "faculdade" and temporary in updated:
+        updated = updated.replace(temporary, b"\nCheckSpace\n", 1)
+    gpu_pin = b"IgnorePkg = nvidia-utils lib32-nvidia-utils opencl-nvidia\n"
+    if gpu_pin not in updated:
+        hold = b"HoldPkg     = pacman glibc\n"
+        if updated.count(hold) != 1:
+            raise OfficialHubGraphicalError("pacman GPU pin anchor differs")
+        updated = updated.replace(hold, hold + gpu_pin, 1)
+    if updated == data:
+        return
+    metadata = path.lstat()
+    owner = ROOT.stat()
+    if (path.is_symlink() or not stat.S_ISREG(metadata.st_mode)
+            or metadata.st_uid != owner.st_uid or metadata.st_gid != owner.st_gid
+            or data.count(temporary) > 1):
+        raise OfficialHubGraphicalError("temporary pacman configuration differs")
+    descriptor = os.open(path, os.O_WRONLY | os.O_TRUNC | os.O_NOFOLLOW)
+    try:
+        os.write(descriptor, updated)
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
 def start_outer(
     inputs: dict[str, str], audio: dict[str, str], graphics: dict[str, str],
     bindings: dict[str, str], authenticated_handoff: bool = False,
@@ -1042,6 +1072,7 @@ def start_outer(
                 or metadata.st_uid != 0 or metadata.st_gid != 0 \
                 or stat.S_IMODE(metadata.st_mode) != 0o444 or data != b"apx-authenticated-handoff-v1\n":
             raise OfficialHubGraphicalError("authenticated handoff proof differs")
+    prepare_environment_pacman_config()
     run((str(NETWORK), "apply", "--environment", "hub"))
     command = (
         "systemd-run", f"--unit={OUTER_UNIT}", "--collect", "--property=Delegate=yes",
@@ -1055,7 +1086,7 @@ def start_outer(
         "--", "systemd-nspawn", "--quiet",
         "--keep-unit", "--boot", f"--directory={ROOT}", f"--machine={MACHINE}",
         f"--hostname={MACHINE}", "--register=yes", "--settings=no", "--private-network",
-        "--network-veth", "--timezone=bind", "--link-journal=no", "--console=pipe",
+        "--network-veth", "--timezone=symlink", "--link-journal=no", "--console=pipe",
         "--private-users=pick",
         "--private-users-ownership=chown", f"--bind={HOME}:/home:idmap",
         f"--bind-ro={SESSION}:/run/apx/official-hub-session",

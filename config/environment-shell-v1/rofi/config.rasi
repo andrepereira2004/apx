@@ -1,5 +1,5 @@
 configuration {
-    modi: "apps,files:/home/apx/.local/bin/apx-rofi-files-v1,system";
+    modi: "apps,files:/home/apx/.local/bin/apx-rofi-files-v1";
     kb-mode-next: "Tab,Control+Tab";
     kb-mode-previous: "ISO_Left_Tab,Control+ISO_Left_Tab";
     kb-row-tab: "";
@@ -19,7 +19,6 @@ configuration {
     font: "JetBrains Mono 11";
     display-drun: "Apps";
     display-apps: "Apps";
-    display-system: "Sistema";
     sidebar-mode: true;
     display-run: "Executar";
     display-window: "Pesquisar workspaces";
@@ -51,7 +50,7 @@ headerbox {
 }
 header-spacer { expand: true; }
 mode-switcher {
-    width: 376px;
+    width: 248px;
     height: 36px;
     orientation: horizontal;
     spacing: 8px;

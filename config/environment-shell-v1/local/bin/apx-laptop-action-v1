@@ -276,7 +276,7 @@ def main() -> int:
     actions = {
         "files": files,
         "airplane-status": airplane_status,
-        "apps": lambda: (feedback("hotkeyApps") if rofi else feedback("hotkeyFailed"), detached(["/usr/bin/env", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", rofi, "-modi", "apps,files,system", "-show", "apps", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary"]) if rofi else 0)[1],
+        "apps": lambda: (feedback("hotkeyApps") if rofi else feedback("hotkeyFailed"), detached(["/usr/bin/env", "ROFI_PLUGIN_PATH=/home/apx/.local/lib/rofi", rofi, "-modi", "apps,files", "-show", "apps", "-me-accept-entry", "MousePrimary", "-me-accept-custom", "MouseSecondary"]) if rofi else 0)[1],
         "calculator": calculator,
         "display-cycle": display_cycle,
         "display-left": lambda: display_layout("left"),

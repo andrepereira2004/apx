@@ -15,9 +15,15 @@ import subprocess
 import sys
 import tempfile
 import urllib.request
+import tarfile
 
 REPO = Path(__file__).resolve().parents[2]
 MIN_BYTES = 160 * 1024**3
+CODEX_URL = ('https://github.com/openai/codex/releases/download/rust-v0.166.0/'
+             'codex-x86_64-unknown-linux-musl.tar.gz')
+CODEX_SHA256 = 'a0bf572d2f93f056c6712a6da348e96078dc84f3885fd7be67807ef389cb3978'
+RECOVERY_PACKAGES = ('base', 'linux', 'mkinitcpio', 'networkmanager', 'cryptsetup',
+                     'btrfs-progs', 'ntfs-3g', 'systemd-ukify')
 
 
 def run(*args, capture=False, input=None):
@@ -117,13 +123,14 @@ def live_session():
 
 def preflight(disk):
     live_session()
-    for tool in ('pacstrap', 'arch-chroot', 'sfdisk', 'wipefs', 'mkfs.btrfs', 'mkfs.fat', 'mount',
-                 'umount', 'udevadm', 'lsblk', 'swapon', 'genfstab', 'blkid', 'chpasswd', 'loadkeys'):
+    for tool in ('pacstrap', 'arch-chroot', 'sfdisk', 'wipefs', 'mkfs.btrfs', 'mkfs.fat', 'mkfs.ext4', 'mount',
+                 'umount', 'udevadm', 'lsblk', 'swapon', 'genfstab', 'blkid', 'chpasswd', 'loadkeys', 'efibootmgr', 'gpgconf'):
         if not shutil.which(tool): raise ValueError('missing Arch live tool: ' + tool)
     record = disk_identity(disk)
     hashes = installer().verify_sources()
     hardware = hardware_plan()
     uefi = Path('/sys/firmware/efi').is_dir()
+    if not uefi: raise ValueError('APX Recovery requires UEFI firmware boot options')
     if uefi:
         for variable in Path('/sys/firmware/efi/efivars').glob('SecureBoot-*'):
             if variable.read_bytes()[4:5] == b'\x01': raise ValueError('disable Secure Boot for this unsigned experimental installer')
@@ -131,10 +138,10 @@ def preflight(disk):
                 'arch-install-scripts', 'nftables', 'grub', 'efibootmgr', 'dosfstools',
                 'networkmanager', 'iwd', 'curl', *hardware['microcode_packages'], *hardware['graphics_packages']]
     # Check resolvability against the live medium's package databases before formatting.
-    run('pacman', '-Sp', '--print-format', '%n %v', *packages, capture=True)
+    run('pacman', '-Sp', '--print-format', '%n %v', *packages, *RECOVERY_PACKAGES, capture=True)
     plan = {'schema': 1, 'disk': record, 'boot_mode': 'uefi' if uefi else 'bios',
             'hardware': hardware, 'packages': packages, 'source_sha256': hashes,
-            'layout': 'GPT + 1GiB ESP + Btrfs @' if uefi else 'GPT + 2MiB BIOS boot + Btrfs @'}
+            'layout': 'GPT + 1GiB ESP + 2GiB APX Recovery + Btrfs @'}
     digest = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
     plan['confirmation'] = f'INSTALL APX ON {disk} {digest[:12]}'
     return plan
@@ -143,7 +150,30 @@ def preflight(disk):
 def partition_script(uefi):
     return ('label: gpt\nunit: sectors\n\n' +
             ('size=1GiB, type=U\n' if uefi else 'size=2MiB, type=21686148-6449-6E6F-744E-656564454649\n') +
+            'size=2GiB, type=L, name="APX_RECOVERY"\n'
             'type=L\n')
+
+
+def download_codex(directory):
+    archive = directory / 'codex.tar.gz'
+    digest = hashlib.sha256()
+    with urllib.request.urlopen(CODEX_URL, timeout=60) as response, archive.open('wb') as output:
+        while chunk := response.read(1024 * 1024):
+            digest.update(chunk); output.write(chunk)
+    if digest.hexdigest() != CODEX_SHA256:
+        raise ValueError('Codex release checksum mismatch; disk untouched')
+    with tarfile.open(archive, 'r:gz') as package:
+        members = [m for m in package.getmembers() if m.isfile() and
+                   Path(m.name).name == 'codex-x86_64-unknown-linux-musl']
+        if len(members) != 1: raise ValueError('Codex release layout changed; disk untouched')
+        binary = directory / 'codex'
+        with package.extractfile(members[0]) as source, binary.open('wb') as target:
+            shutil.copyfileobj(source, target)
+        binary.chmod(0o755)
+    version = subprocess.run([str(binary), '--version'], capture_output=True, text=True, check=True)
+    if version.stdout.strip() != 'codex-cli 0.166.0':
+        raise ValueError('Codex release version mismatch; disk untouched')
+    return binary
 
 
 def partition_path(disk, number):
@@ -154,6 +184,62 @@ def write(root, name, text, mode=0o644):
     path = root / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text); path.chmod(mode)
+
+
+def install_recovery(esp, partition, codex_binary):
+    run('mkfs.ext4', '-F', '-L', 'APX_RECOVERY', partition)
+    recovery = Path(tempfile.mkdtemp(prefix='apx-recovery-', dir='/mnt'))
+    try:
+        run('mount', partition, str(recovery))
+        try:
+            run('pacstrap', '-K', str(recovery), *RECOVERY_PACKAGES)
+            destination = recovery / 'usr/local/bin/codex'
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(codex_binary, destination); destination.chmod(0o755)
+            uuid = run('blkid', '-s', 'UUID', '-o', 'value', partition, capture=True)
+            write(recovery, 'etc/fstab', f'UUID={uuid} / ext4 rw,relatime 0 1\n')
+            write(recovery, 'etc/hostname', 'apx-recovery\n')
+            write(recovery, 'etc/systemd/system/getty@tty1.service.d/autologin.conf',
+                  '[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear %I $TERM\n')
+            write(recovery, 'root/RECOVERY.txt',
+                  'APX Recovery: connect with nmcli, then run codex login --device-auth '
+                  'on first use. Run codex to start. Unlock the APX disk with cryptsetup.\n', 0o600)
+            run('systemctl', '--root', str(recovery), 'enable', 'NetworkManager', 'getty@tty1.service')
+            run('arch-chroot', str(recovery), 'mkinitcpio', '-P')
+            run('arch-chroot', str(recovery), 'ukify', 'build', '--linux=/boot/vmlinuz-linux',
+                '--initrd=/boot/initramfs-linux.img', '--os-release=@/etc/os-release',
+                f'--cmdline=root=UUID={uuid} rw systemd.unit=multi-user.target',
+                '--output=/boot/APX-Recovery.efi')
+            efi = esp / 'EFI/Recovery/APX-Recovery.efi'
+            efi.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(recovery / 'boot/APX-Recovery.efi', efi)
+            # Keep the 2 GiB root useful for repairs instead of retaining install archives.
+            for path in (recovery / 'var/cache/pacman/pkg').glob('*.pkg.tar.zst*'):
+                if path.is_file(): path.unlink()
+            if shutil.disk_usage(recovery).free < 400 * 1024**2:
+                raise ValueError('APX Recovery has insufficient free space after installation')
+        finally:
+            subprocess.run(['gpgconf', '--homedir', str(recovery/'etc/pacman.d/gnupg'),
+                            '--kill', 'gpg-agent'], check=False)
+            run('umount', str(recovery))
+    finally:
+        recovery.rmdir()
+
+
+def register_firmware_entries(disk):
+    def create(label, path):
+        before = set(re.findall(r'^Boot([0-9A-Fa-f]{4})\*', run('efibootmgr', capture=True), re.M))
+        run('efibootmgr', '-c', '-d', disk, '-p', '1', '-L', label, '-l', path)
+        after = set(re.findall(r'^Boot([0-9A-Fa-f]{4})\*', run('efibootmgr', capture=True), re.M))
+        created = after - before
+        if len(created) != 1: raise ValueError('firmware did not expose the new ' + label + ' entry')
+        return created.pop()
+    apx = create('APX', r'\EFI\BOOT\BOOTX64.EFI')
+    recovery = create('APX Recovery', r'\EFI\Recovery\APX-Recovery.efi')
+    order = re.search(r'^BootOrder: (.+)$', run('efibootmgr', capture=True), re.M)
+    if not order: raise ValueError('firmware boot order unavailable')
+    entries = [item for item in order.group(1).split(',') if item not in (apx, recovery)]
+    run('efibootmgr', '-o', ','.join([apx, *entries, recovery]))
 
 
 def apply(plan):
@@ -167,12 +253,24 @@ def apply(plan):
     if len(password) < 12 or len(password) > 255 or any(c in password for c in '\r\n'):
         raise ValueError('invalid recovery password; disk untouched')
     if password != getpass.getpass('Repeat recovery root password: '): raise ValueError('password mismatch; disk untouched')
+    # Download and verify the recovery CLI before touching the disk.
+    download_dir = Path(tempfile.mkdtemp(prefix='apx-codex-'))
+    try:
+        codex_binary = download_codex(download_dir)
+        _apply_verified(plan, password, codex_binary)
+    finally:
+        for path in download_dir.iterdir(): path.unlink()
+        download_dir.rmdir()
+
+
+def _apply_verified(plan, password, codex_binary):
+    disk = plan['disk']['path']
     # Recheck immediately before the first destructive operation.
     if disk_identity(disk) != plan['disk']: raise ValueError('disk changed; disk untouched')
     # Root may have a private umask; the installed system root must be traversable.
     os.umask(0o022)
     uefi = plan['boot_mode'] == 'uefi'
-    first, system = partition_path(disk, 1), partition_path(disk, 2)
+    first, recovery_partition, system = (partition_path(disk, n) for n in (1, 2, 3))
     run('sfdisk', '--lock', disk, input=partition_script(uefi))
     run('udevadm', 'settle')
     run('mkfs.btrfs', '--label', 'APX', system)
@@ -204,6 +302,7 @@ def apply(plan):
                     '--bootloader-id=APX', '--removable', '--no-nvram')
             else: run('arch-chroot', str(root), 'grub-install', '--target=i386-pc', disk)
             run('arch-chroot', str(root), 'grub-mkconfig', '-o', '/boot/grub/grub.cfg')
+            install_recovery(root/'boot', recovery_partition, codex_binary)
             full = installer()
             for relative in full.source_files():
                 dest = root/'opt/apx-installer'/relative
@@ -238,6 +337,7 @@ WantedBy=multi-user.target
                 run('umount', '--recursive', str(root))
     finally:
         root.rmdir()
+    register_firmware_entries(disk)
     print('Arch installed. Shut down, remove the USB, and boot this disk.\n'
           'APX installation continues on VT1 and asks for your new APX password.\n'
           'Recovery login: root on VT3, using the recovery password chosen above.')

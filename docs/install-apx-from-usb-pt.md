@@ -5,7 +5,7 @@ oficial do Arch Linux x86_64, com acesso à internet, e o pacote de fontes APX
 preparado neste projeto. O instalador é experimental.
 
 Requisitos deste percurso: PC x86_64, um disco vazio de pelo menos 160 GiB,
-arranque UEFI ou BIOS e Secure Boot desativado. Não configura encriptação nem
+arranque UEFI e Secure Boot desativado. Não configura encriptação nem
 instala Windows. Recusa discos com partições ou assinaturas de dados; não apaga
 automaticamente um sistema existente. A seleção de drivers usa os componentes
 detetados, sem uma lista de modelos de computador autorizados.
@@ -14,7 +14,7 @@ Arranca pela pen do Arch e liga à internet. Leva o pacote APX numa unidade de
 dados acessível ou transfere-o para o ambiente de instalação. Como root:
 
 ```sh
-tar -xzf /caminho/APX-instalar-PC-vazio-20261018.tar.gz
+tar -xzf /caminho/apx-graphical-atual.tar.gz
 cd apx-portable
 sha256sum -c SHA256SUMS
 python scripts/portable/install_apx_disk.py --list-disks
@@ -32,6 +32,11 @@ disco. Depois muda explicitamente o teclado da consola para português e pede um
 palavra-passe nova de recuperação para o utilizador técnico `root`.
 
 Instala Arch, Btrfs, o arranque, firmware, microcódigo e os drivers selecionados.
+Cria também uma partição independente de 2 GiB, **APX Recovery**, com Linux
+mínimo e Codex em modo texto. O instalador verifica o ficheiro oficial do Codex
+antes de alterar o disco. Na lista de arranque da BIOS/UEFI, APX aparece primeiro
+e APX Recovery fica disponível para escolha manual; não há menu a cada arranque.
+O acesso à lista pode ser F2 ou outra tecla, consoante o PC.
 No fim, desliga o PC, retira a pen de arranque e arranca pelo disco instalado.
 O APX continua a instalação automaticamente e pede a tua palavra-passe APX nova.
 A consola e a interface usam o mesmo teclado português, incluindo símbolos.

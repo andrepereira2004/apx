@@ -15,6 +15,13 @@ import "GhostLines.js" as GhostLines
 ShellRoot {
     id: root
 
+    Settings {
+        id: environmentErrorSettings
+        location: "file:///home/apx/.config/apx/environment-error-ack.ini"
+        category: "APXEnvironmentErrorAcknowledgements"
+        property string acknowledgedBackendErrorKey: ""
+    }
+
     NotificationToasts { id: notificationToasts }
 
     // One bar per output; a single shared menu/service state follows its trigger.
@@ -244,6 +251,9 @@ ShellRoot {
     property int wallpaperIndex: Math.floor(Date.now() / 900000) % wallpaperSources.length
     property var environmentIdentity: ({ name: "", display_name: "", role: "" })
     property string environmentSwitchError: ""
+    property int environmentErrorAttempt: 0
+    property int environmentAcknowledgedAttempt: -1
+    property string environmentBackendErrorKey: ""
     property bool environmentSwitchPending: false
     property bool startupCover: true
     property bool startupBarRendered: false
@@ -255,6 +265,7 @@ ShellRoot {
     property var environmentCatalog: []
     property var pendingEnvironmentCatalog: null
     property var environmentStorageState: ({ available_bytes: 0, total_bytes: 0, sizes: ({}) })
+    property bool environmentShowSizes: false
     property string selectedEnvironmentName: ""
     property string selectedEnvironmentGeneration: ""
     property bool environmentCreateOpen: false
@@ -684,6 +695,9 @@ ShellRoot {
     }
 
     function menuHeightForCompleteActions(limit) {
+        // Environment rows scroll through the viewport continuously. Fitting the
+        // frame to whole buttons makes them pop in and changes the card height.
+        if (root.popupKind === "environments") return limit
         var topPadding = popupBackground.contentInset
         var bottomPadding = popupBackground.contentBottomInset
         var viewport = Math.max(0, limit - topPadding - bottomPadding)
@@ -747,7 +761,7 @@ ShellRoot {
         readonly property bool fullyVisible: root.menuButtonFits(surface)
         property Binding opacityBinding: Binding {
             target: surface; property: "opacity"; value: 0
-            when: !fullyVisible
+            when: !fullyVisible && root.popupKind !== "environments"
             restoreMode: Binding.RestoreBindingOrValue
         }
         property Binding pointerBinding: Binding {
@@ -2282,10 +2296,8 @@ ShellRoot {
     }
 
     function environmentStorageSummary() {
-        var available = Number(environmentStorageState.available_bytes || 0)
-        var total = Number(environmentStorageState.total_bytes || 0)
-        return total > 0 ? "LIVRE " + environmentStorageLabel(available, false)
-                         + " / " + environmentStorageLabel(total, false) : "A MEDIR…"
+        var total = Number(environmentStorageState.disk_total_bytes || 0)
+        return total > 0 ? "SSD " + environmentStorageLabel(total, false) : "A MEDIR…"
     }
 
     function nativeWindowsExists() {
@@ -2299,10 +2311,23 @@ ShellRoot {
             && String(environmentManagementState.pending_generation || "").length === 36
     }
 
+    function beginEnvironmentErrorAttempt() {
+        // Only an explicit new action can rearm an acknowledged warning.
+        environmentErrorAttempt += 1
+        environmentBackendErrorKey = ""
+        environmentSwitchError = ""
+    }
+
+    function acknowledgeEnvironmentError() {
+        environmentAcknowledgedAttempt = environmentErrorAttempt
+        if (environmentBackendErrorKey.length)
+            environmentErrorSettings.acknowledgedBackendErrorKey = environmentBackendErrorKey
+    }
+
     function recoverNativeWindows(action) {
         if (!nativeWindowsRecoveryAvailable() || environmentActionProcess.running) return
         var mode = action === "discard" ? "native-discard" : "native-retry"
-        environmentSwitchError = ""
+        beginEnvironmentErrorAttempt()
         nativeRecoveryDiscardConfirm = false
         environmentManagementBusy = true
         environmentActionProcess.command = [root.environmentClient, mode,
@@ -2316,7 +2341,7 @@ ShellRoot {
         var generation = String(environmentManagementState.pending_generation || "")
         var confirmation = action + ":" + generation
         if (nativeV3Confirmation !== confirmation) { nativeV3Confirmation = confirmation; return }
-        environmentSwitchError = ""
+        beginEnvironmentErrorAttempt()
         environmentActionProcess.command = [root.environmentClient, "native-" + action + "-v3",
             "--target", String(environmentManagementState.pending_target), "--generation", generation]
         environmentActionProcess.running = true
@@ -2343,7 +2368,7 @@ ShellRoot {
         for (var i = 0; i < environmentCatalog.length; ++i)
             if (environmentCatalog[i].name === selectedEnvironmentName) selectedIndex = i
         if (selectedIndex >= 0) environmentFocusIndex = selectedIndex
-        else if (environmentFocusIndex > environmentCatalog.length + 2) environmentFocusIndex = -1
+        else if (environmentFocusIndex > environmentCatalog.length + 3) environmentFocusIndex = -1
     }
 
     function moveEnvironmentFocus(direction) {
@@ -2358,6 +2383,7 @@ ShellRoot {
             indices.push(rows + 1)
             indices.push(rows + 2)
         }
+        indices.push(rows + 3)
         var position = indices.indexOf(environmentFocusIndex)
         if (position < 0) environmentFocusIndex = indices[direction < 0 ? indices.length - 1 : 0]
         else environmentFocusIndex = indices[Math.max(0, Math.min(indices.length - 1, position + direction))]
@@ -2373,10 +2399,14 @@ ShellRoot {
 
     function moveEnvironmentActionFocus(direction) {
         var rows = environmentCatalog.length
-        if (environmentFocusIndex === rows && direction > 0) environmentFocusIndex = rows + 1
+        if (environmentFocusIndex === rows && direction > 0)
+            environmentFocusIndex = selectedEnvironmentName.length ? rows + 1 : rows + 3
         else if (environmentFocusIndex === rows + 1)
             environmentFocusIndex = direction > 0 ? rows + 2 : rows
         else if (environmentFocusIndex === rows + 2 && direction < 0) environmentFocusIndex = rows + 1
+        else if (environmentFocusIndex === rows + 2 && direction > 0) environmentFocusIndex = rows + 3
+        else if (environmentFocusIndex === rows + 3 && direction < 0)
+            environmentFocusIndex = selectedEnvironmentName.length ? rows + 2 : rows
         environmentDeleteConfirm = false
     }
 
@@ -2392,7 +2422,8 @@ ShellRoot {
         }
         if (environmentFocusIndex === environmentCatalog.length) beginEnvironmentCreate()
         else if (environmentFocusIndex === environmentCatalog.length + 1) beginEnvironmentEdit()
-        else requestEnvironmentDelete()
+        else if (environmentFocusIndex === environmentCatalog.length + 2) requestEnvironmentDelete()
+        else environmentShowSizes = !environmentShowSizes
     }
 
     function deleteFocusedEnvironment() {
@@ -2480,13 +2511,13 @@ ShellRoot {
         var description = environmentEditDescription.trim()
         if (!selectedEnvironmentName.length || !selectedEnvironmentGeneration.length
                 || environmentMetadataBusy || environmentManagementBusy) return
+        beginEnvironmentErrorAttempt()
         if (!title.length) {
             environmentSwitchError = "O título não pode ficar vazio."
             environmentEditFocusIndex = 1
             environmentEditTitleInput.forceActiveFocus()
             return
         }
-        environmentSwitchError = ""
         environmentMetadataBusy = true
         environmentMetadataProcess.command = [root.environmentClient, "edit",
                                               "--target", selectedEnvironmentName,
@@ -2697,7 +2728,7 @@ ShellRoot {
                 || environmentMetadataBusy) return
         var selected = environmentSelection()
         if (!environmentIsOpenable(selected)) return
-        environmentSwitchError = ""
+        beginEnvironmentErrorAttempt()
         environmentSwitchProgress = 8
         environmentSwitchPending = true
         popup.open = false
@@ -2711,7 +2742,7 @@ ShellRoot {
 
     function returnToHub() {
         if (!sessionKindReady || environmentSwitchPending || environmentSwitchProcess.running) return
-        environmentSwitchError = ""
+        beginEnvironmentErrorAttempt()
         environmentSwitchProgress = 8
         environmentSwitchPending = true
         popup.open = false
@@ -2726,6 +2757,7 @@ ShellRoot {
     }
 
     function createEnvironment(rawName, rawDescription) {
+        beginEnvironmentErrorAttempt()
         var visibleName = rawName === undefined ? environmentDraftName : String(rawName)
         var visibleDescription = rawDescription === undefined
             ? environmentDraftDescription : String(rawDescription)
@@ -2742,7 +2774,6 @@ ShellRoot {
             environmentSwitchError = "Escreve um nome para o Environment."
             return
         }
-        environmentSwitchError = ""
         if (environmentSystemKind === "windows-native") {
             if (nativeCreationPreviewProcess.running) return
             if (nativeCreationPreview.can_create === true && nativeCreationPreview.target === name
@@ -2759,6 +2790,16 @@ ShellRoot {
             nativeCreationPreviewProcess.command = [root.environmentClient, "native-plan", "--target", name,
                 "--description", visibleDescription.trim(), "--size-gib", String(environmentNativeWindowsSizeGib)]
             nativeCreationPreviewProcess.running = true
+            return
+        }
+        if (Number(environmentStorageState.total_bytes || 0) <= 0) {
+            environmentSwitchError = "Ainda estamos a medir o espaço. Tenta novamente em instantes."
+            if (!environmentStorageProcess.running) environmentStorageProcess.running = true
+            return
+        }
+        if (Number(environmentStorageState.available_bytes || 0) < 96 * 1073741824) {
+            environmentSwitchError = "Espaço insuficiente para um novo Environment. São necessários 96 GiB livres para proteger o Host; existem "
+                    + environmentStorageLabel(environmentStorageState.available_bytes, true) + "."
             return
         }
         environmentManagementBusy = true
@@ -2789,7 +2830,7 @@ ShellRoot {
         if (!selectedEnvironmentName.length || !selectedEnvironmentGeneration.length || environmentManagementBusy
                 || environmentMetadataBusy
                 ) return
-        environmentSwitchError = ""
+        beginEnvironmentErrorAttempt()
         environmentManagementBusy = true
         var selected = environmentSelection()
         environmentActionProcess.command = [root.environmentClient,
@@ -3809,6 +3850,8 @@ ShellRoot {
                         if (!environmentCatalogProcess.running) environmentCatalogProcess.running = true
                         if (!environmentStorageProcess.running) environmentStorageProcess.running = true
                     } else if (state.phase === "failed") {
+                        root.environmentBackendErrorKey = [state.action || "", state.target || "",
+                            state.updated_at || "", state.message || ""].join("|")
                         root.environmentSwitchError = state.message || "A operação falhou."
                     }
                 } catch (error) {
@@ -6235,9 +6278,21 @@ ShellRoot {
                             anchors.left: parent.left; anchors.leftMargin: 42; anchors.right: activeEnvironmentBadge.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
                             Text { renderType: Text.QtRendering; width: parent.width; text: root.environmentLabel; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal; elide: Text.ElideRight }
                         }
+                        Text {
+                            id: hubEnvironmentSize
+                            visible: !!(root.environmentStorageState.sizes && root.environmentStorageState.sizes.hub)
+                            anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            text: root.environmentStorageLabel(root.environmentStorageState.sizes.hub, true)
+                            opacity: root.environmentShowSizes ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                        }
                         Rectangle {
                             id: activeEnvironmentBadge
-                            anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
+                            anchors.rightMargin: root.environmentShowSizes && hubEnvironmentSize.visible ? hubEnvironmentSize.implicitWidth + 24 : 10
+                            Behavior on anchors.rightMargin { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            anchors.verticalCenter: parent.verticalCenter
                             width: 58; height: 24; radius: 12; color: root.controlButtonActive
                             Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: "Ativo"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
                         }
@@ -6270,7 +6325,13 @@ ShellRoot {
                         Row {
                             width: parent.width; height: 24
                             Text { renderType: Text.QtRendering; width: parent.width * 0.42; anchors.verticalCenter: parent.verticalCenter; text: "Os teus Environments"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
-                            Text { renderType: Text.QtRendering; width: parent.width * 0.58; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight; text: ""; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; elide: Text.ElideLeft }
+                            Text {
+                                renderType: Text.QtRendering; width: parent.width * 0.58
+                                anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight
+                                text: root.environmentStorageSummary(); opacity: root.environmentShowSizes ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; elide: Text.ElideLeft
+                            }
                         }
                         Repeater {
                             model: root.environmentCatalog.length ? root.environmentCatalog : [{ name: "", display_name: "Ainda não tens Environments", state: "empty", generation: "", category: "general" }]
@@ -6286,11 +6347,31 @@ ShellRoot {
                                 border.width: keyboardFocused ? 1 : 0; border.color: root.cyan
                                 LucideIcon { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 18; height: 18; name: root.environmentIcon(modelData) }
                                 Column {
-                                    anchors.left: parent.left; anchors.leftMargin: 42; anchors.right: environmentRowStatus.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                    anchors.left: parent.left; anchors.leftMargin: 42; anchors.right: environmentRowSize.visible ? environmentRowSize.left : environmentRowStatus.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
                                     Text { renderType: Text.QtRendering; width: parent.width; text: String(modelData.display_name || modelData.name); color: modelData.state === "empty" ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal; elide: Text.ElideRight }
 
                                 }
-                                Text { renderType: Text.QtRendering; id: environmentRowStatus; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: root.environmentIsOpenable(modelData) ? "" : (modelData.state === "preparing" ? "A preparar" : (modelData.state === "empty" ? "" : "Indisponível")); color: parent.selected ? root.textMain : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal }
+                                Text {
+                                    renderType: Text.QtRendering; id: environmentRowStatus
+                                    anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                                    text: modelData.state === "preparing" ? "A preparar" : ""
+                                    opacity: root.environmentShowSizes ? 0 : 1
+                                    Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                    color: parent.selected ? root.textMain : root.textDim
+                                    font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal
+                                }
+                                Text {
+                                    id: environmentRowSize
+                                    anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                                    text: root.environmentSizeLabel(modelData)
+                                    width: root.environmentShowSizes ? implicitWidth : 0
+                                    visible: width > 0; clip: true
+                                    opacity: root.environmentShowSizes ? 1 : 0
+                                    Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                    Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                    color: parent.selected ? root.textMain : root.textDim
+                                    font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal
+                                }
                                 BounceMouseArea {
                                     id: environmentChoiceMouse
                                     anchors.fill: parent
@@ -6310,9 +6391,10 @@ ShellRoot {
 
                         Row {
                             width: parent.width; height: Appearance.menuActionHeight; spacing: 6
-                            MenuButton { width: (parent.width - 12) * 0.44; height: Appearance.menuActionHeight; label: "Criar"; keyboardFocused: root.environmentKeyboardFocus && root.environmentFocusIndex === root.environmentCatalog.length; enabled: !root.environmentManagementBusy && !root.environmentMetadataBusy; onActivated: { root.environmentFocusIndex = root.environmentCatalog.length; root.beginEnvironmentCreate() } }
-                            MenuButton { width: (parent.width - 12) * 0.31; height: Appearance.menuActionHeight; label: "Editar"; keyboardFocused: root.environmentKeyboardFocus && root.environmentFocusIndex === root.environmentCatalog.length + 1; enabled: root.selectedEnvironmentName.length > 0 && !root.environmentManagementBusy && !root.environmentMetadataBusy; onActivated: { root.environmentFocusIndex = root.environmentCatalog.length + 1; root.beginEnvironmentEdit() } }
-                            MenuButton { width: (parent.width - 12) * 0.25; height: Appearance.menuActionHeight; label: "Apagar"; keyboardFocused: root.environmentKeyboardFocus && root.environmentFocusIndex === root.environmentCatalog.length + 2; enabled: root.selectedEnvironmentName.length > 0 && !root.environmentManagementBusy && !root.environmentMetadataBusy; onActivated: { root.environmentFocusIndex = root.environmentCatalog.length + 2; root.requestEnvironmentDelete() } }
+                            MenuButton { width: (parent.width - 18) * 0.27; height: Appearance.menuActionHeight; label: "Criar"; keyboardFocused: root.environmentKeyboardFocus && root.environmentFocusIndex === root.environmentCatalog.length; enabled: !root.environmentManagementBusy && !root.environmentMetadataBusy; onActivated: { root.environmentFocusIndex = root.environmentCatalog.length; root.beginEnvironmentCreate() } }
+                            MenuButton { width: (parent.width - 18) * 0.23; height: Appearance.menuActionHeight; label: "Editar"; keyboardFocused: root.environmentKeyboardFocus && root.environmentFocusIndex === root.environmentCatalog.length + 1; enabled: root.selectedEnvironmentName.length > 0 && !root.environmentManagementBusy && !root.environmentMetadataBusy; onActivated: { root.environmentFocusIndex = root.environmentCatalog.length + 1; root.beginEnvironmentEdit() } }
+                            MenuButton { width: (parent.width - 18) * 0.23; height: Appearance.menuActionHeight; label: "Apagar"; keyboardFocused: root.environmentKeyboardFocus && root.environmentFocusIndex === root.environmentCatalog.length + 2; enabled: root.selectedEnvironmentName.length > 0 && !root.environmentManagementBusy && !root.environmentMetadataBusy; onActivated: { root.environmentFocusIndex = root.environmentCatalog.length + 2; root.requestEnvironmentDelete() } }
+                            MenuButton { width: (parent.width - 18) * 0.27; height: Appearance.menuActionHeight; label: "Tamanhos"; selected: root.environmentShowSizes; keyboardFocused: root.environmentKeyboardFocus && root.environmentFocusIndex === root.environmentCatalog.length + 3; onActivated: { root.environmentFocusIndex = root.environmentCatalog.length + 3; root.environmentShowSizes = !root.environmentShowSizes } }
                         }
 
                         Rectangle {
@@ -6623,7 +6705,45 @@ ShellRoot {
                         enabled: root.sessionKindReady && !root.environmentSwitchPending
                         onActivated: root.returnToHub()
                     }
-                    Text { renderType: Text.QtRendering; visible: root.environmentSwitchError.length > 0; width: parent.width; wrapMode: Text.WordWrap; text: root.environmentSwitchError; color: "#ff91a4"; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
+                    Rectangle {
+                        id: environmentWarningCard
+                        property bool showWarning: root.environmentSwitchError.length > 0
+                            && root.environmentAcknowledgedAttempt !== root.environmentErrorAttempt
+                            && (!root.environmentBackendErrorKey.length
+                                || root.environmentBackendErrorKey !== environmentErrorSettings.acknowledgedBackendErrorKey)
+                        visible: height > 0
+                        width: parent.width; height: showWarning ? warningContent.implicitHeight + 24 : 0
+                        opacity: showWarning ? 1 : 0
+                        clip: true
+                        Behavior on height {
+                            enabled: !environmentWarningCard.showWarning
+                            SequentialAnimation {
+                                PauseAnimation { duration: 140 }
+                                NumberAnimation { duration: 170; easing.type: Easing.OutCubic }
+                            }
+                        }
+                        Behavior on opacity { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+                        radius: 12; color: root.controlButtonSurface
+                        border.width: 1; border.color: root.controlButtonOutline
+                        Row {
+                            id: warningContent
+                            anchors.left: parent.left; anchors.right: parent.right
+                            anchors.leftMargin: 12; anchors.rightMargin: 12
+                            anchors.verticalCenter: parent.verticalCenter; spacing: 10
+                            LucideIcon { width: 18; height: 18; name: "circle-alert"; tint: "#ffb2bf" }
+                            Column {
+                                width: parent.width - 62; spacing: 4
+                                Text { renderType: Text.QtRendering; text: root.environmentSwitchError.indexOf("Espaço insuficiente") >= 0 ? "Espaço insuficiente" : "Não foi possível continuar"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.DemiBold }
+                                Text { renderType: Text.QtRendering; width: parent.width; wrapMode: Text.WordWrap; text: root.environmentSwitchError; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            }
+                            Rectangle {
+                                width: 24; height: 24; radius: 6; color: root.controlButtonActive
+                                Accessible.name: "Fechar aviso"
+                                LucideIcon { anchors.centerIn: parent; width: 14; height: 14; name: "x"; tint: root.textDim }
+                                BounceMouseArea { anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.acknowledgeEnvironmentError() }
+                            }
+                        }
+                    }
                 }
 
                     Column {

@@ -161,10 +161,15 @@ def storage_status() -> dict[str, object]:
     filesystem = os.statvfs(ENVIRONMENTS)
     total = filesystem.f_blocks * filesystem.f_frsize
     available = filesystem.f_bavail * filesystem.f_frsize
-    if not 128 * 1024**3 <= total <= 1024**4 or not 0 <= available <= total or len(sizes) > 64:
+    # This physical pilot's APX filesystem is on nvme0n1p2. The parent size
+    # includes Windows and the other partitions excluded from statvfs().
+    disk_total = int(Path('/sys/class/block/nvme0n1/size').read_text().strip()) * 512
+    if not 128 * 1024**3 <= total <= disk_total <= 1024**4 \
+            or not 0 <= available <= total or len(sizes) > 64:
         raise RuntimeError("a capacidade do APX difere")
     return {"schema": 1, "profile": "apx-environment-storage-v1",
-            "available_bytes": available, "total_bytes": total, "sizes": sizes}
+            "available_bytes": available, "total_bytes": total,
+            "disk_total_bytes": disk_total, "sizes": sizes}
 
 
 def main() -> int:

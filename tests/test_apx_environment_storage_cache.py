@@ -47,7 +47,7 @@ class StorageCacheTests(unittest.TestCase):
     def test_ui_read_does_not_execute_btrfs(self):
         m = load()
         with patch.object(m, 'trusted_json', side_effect=FileNotFoundError), patch.object(m, 'cached_measurements', return_value={'work': {'bytes': 200}}), patch.object(m, 'registered_names', return_value={'work'}), patch.object(m, 'checked', side_effect=AssertionError('must not measure')), patch.object(m.os, 'geteuid', return_value=0), patch.object(m.os, 'statvfs') as fs:
-            fs.return_value.f_blocks = 512 * 1024**3
+            fs.return_value.f_blocks = 216 * 1024**3
             fs.return_value.f_frsize = 1
             fs.return_value.f_bavail = 200 * 1024**3
             self.assertEqual(m.storage_status()['sizes'], {'work': 200})

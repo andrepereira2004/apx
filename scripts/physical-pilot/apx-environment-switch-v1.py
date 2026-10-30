@@ -301,11 +301,12 @@ def request_storage_status() -> dict[str, object]:
     value = json.loads(result.stdout)
     sizes = value.get("sizes") if type(value) is dict else None
     if type(value) is not dict or set(value) != {
-        "available_bytes", "profile", "schema", "sizes", "total_bytes",
+        "available_bytes", "disk_total_bytes", "profile", "schema", "sizes", "total_bytes",
     } or value.get("schema") != 1 or value.get("profile") != "apx-environment-storage-v1" \
             or type(value.get("total_bytes")) is not int \
+            or type(value.get("disk_total_bytes")) is not int \
             or type(value.get("available_bytes")) is not int \
-            or not 128 * 1024**3 <= value["total_bytes"] <= 1024**4 \
+            or not 128 * 1024**3 <= value["total_bytes"] <= value["disk_total_bytes"] <= 1024**4 \
             or not 0 <= value["available_bytes"] <= value["total_bytes"] \
             or type(sizes) is not dict or len(sizes) > 64 \
             or any(type(name) is not str or NAME.fullmatch(name) is None

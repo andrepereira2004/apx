@@ -10000,3 +10000,141 @@ side and disables outline pixel snapping. Live visual acceptance remains pending
 The owner specifically reported the active workspace button still cut after
 that candidate. Its selected outline is now rendered as a sibling above the
 labels viewport in repository source; installed files were not changed.
+
+# Task Manager disk view — 2026-10-29
+
+The APX Task Manager now has an “Espaço no disco” option. It requests the
+existing Hub storage report and shows each measured Environment, Linux/system
+and other data, and free space as GiB and percentages of the Linux/APX
+partition. Windows is shown as reserved GiB outside that partition; the Hub
+report does not provide the physical disk denominator needed for a correct
+Windows percentage. The Linux/system remainder is not an exact Linux
+installation measurement. Syntax and five existing Task Manager tests pass.
+Deployed to seed and five Environments with backups
+`20261029T110124Z-controls-followup` and `20261029T110239Z-controls-followup`;
+the deployment recheck reports zero differences. The old Task Manager in the
+active Faculdade session was replaced by a running updated process at 11:03
+WET. The storage client returned data there, but visual acceptance is pending.
+The unrelated local GTK bookmarks modification was left untouched.
+
+# Task Manager integrated disk section — 2026-10-29
+
+The disk view is now a “Disco” section inside Task Manager, alongside
+“Aplicações”, with a refresh button. It reports whether a new Environment
+passes the current 96 GiB Host storage reserve threshold, based on the Hub's
+available-byte reading. The actual creation path checks the reserve again;
+the display is a current estimate, not a reservation. On the latest Hub
+reading, 86.5 GiB was available, so the section should show space unavailable.
+Six Task Manager tests and syntax check pass. Deployed to the five Environment
+homes and seed with backup `20261029T120614Z-controls-followup`; deployment
+recheck found no differences. The active session had changed from Faculdade
+to Hytale; Task Manager was launched in Hytale at 12:11 WET and remains active.
+GTK logged only the existing DesktopAppInfo deprecation warning. Visual
+acceptance of the new section remains pending.
+# Hub storage menu replaces Task Manager disk view — 2026-10-29
+
+Owner changed the destination of the storage view. Task Manager source and
+installed copies were restored to their original application view. The Hub
+Environments menu now shows each Environment's size (Windows included), and
+SSD used space against the physical 512.1 GB disk total at the top. The Host
+storage report gained `disk_total_bytes`; its Linux `total_bytes` remains the
+Btrfs filesystem size. An APX creation attempt below the existing 96 GiB Host
+reserve shows an inline warning before a lifecycle request; other creation
+errors use a styled warning card. The Host still checks the reserve itself.
+Storage runner and switch service were deployed with backup
+`20261029T122238Z-environment-storage-display-v1`; shell and Task Manager
+copies across five Environments and seed were synchronized with backups
+`20261029T122233Z-controls-followup` and
+`20261029T122521Z-controls-followup`. Restarting the switch service replaced
+its socket; the active Hytale session's fallback mount was refreshed, and its
+storage client again returned the new report. Deployment recheck is empty.
+Visual acceptance in the Hub is pending; Hytale was the active Environment.
+
+# Optional storage sizes and dismissible errors — 2026-10-29
+
+Owner requested hidden-by-default storage sizes behind a switch alongside
+Criar/Editar/Apagar. The switch reveals the total SSD size at the top and the
+size of each Environment; the Hub size sits outside its “Ativo” badge. The
+previous used-space summary was removed. Error cards now have a close button,
+and the switch participates in keyboard navigation. Shell source, seed and
+five Environment homes were synchronized with backup
+`20261029T123322Z-controls-followup`; deployment recheck is empty. The current
+Hub QuickShell logged “Configuration Loaded” at 12:33:26 WET. Six targeted
+tests pass. Live visual acceptance of the switch remains pending.
+
+# Hub size alignment and error dismissal follow-up — 2026-10-29
+
+Owner requested the Hub “Ativo” badge before its size label, a less busy
+“Tamanhos” toggle, and error dismissal that survives closing and reopening
+the Environments menu. The badge is now left of the separately aligned size;
+the toggle uses the shared MenuButton style and selected outline. Closing an
+error card records that message as dismissed while retaining the underlying
+state. A new creation attempt clears the dismissal, so a fresh error appears.
+Source, five homes, seed and integrity pins synchronized with backup
+`20261029T123740Z-controls-followup`; deployment recheck is empty. The active
+Hub QuickShell logged “Configuration Loaded” at 12:37:44 WET. Six targeted
+tests pass. Owner visual acceptance remains pending.
+
+# Storage size reveal animation — 2026-10-29
+
+Owner requested a short animation when sizes appear and disappear. The SSD
+total and Hub size now fade over 180 ms; the Hub “Ativo” badge slides as the
+size appears, and Environment size labels fade and expand or retract without
+hiding “A preparar” status. Source, five homes, seed and integrity pins were
+synchronized with backup `20261029T124049Z-controls-followup` and recheck is
+empty. Active Hub QuickShell logged “Configuration Loaded” at 12:40:53 WET;
+six targeted tests pass. Owner visual acceptance remains pending.
+
+# Environment error acknowledgement — 2026-10-29
+
+Owner clarified that dismissing an error must record acknowledgement rather
+than merely hide matching text. The menu now tracks an action-attempt number
+and the last acknowledged attempt. Automatic Hub status refreshes retain the
+acknowledgement; only a new explicit create/edit/delete/open/return or native
+recovery action rearms the warning. Closing/reopening the menu does not.
+Shell source, five homes, seed and integrity pins synchronized with backup
+`20261029T124433Z-controls-followup`; deployment recheck is empty. Active Hub
+QuickShell logged “Configuration Loaded” at 12:44:37 WET and six targeted
+tests pass. The acknowledgement interaction has not been owner-observed yet.
+
+# Persistent error acknowledgement and dismissal animation — 2026-10-29
+
+The Host retains its last failed management status, so a QuickShell reload
+could previously reannounce an acknowledged error. The Hub now stores the
+acknowledged Host failure key in its local settings file, while explicit
+action attempts still rearm new warnings. The close control fades and
+collapses the warning card over 150–190 ms. The first settings attempt emitted
+a Qt warning because no application organization was configured; adding an
+explicit local settings location resolved it. QuickShell loaded without that
+warning at 12:46:45 and again after the animation at 12:47:55 WET. Backups:
+`20261029T124554Z-controls-followup`,
+`20261029T124641Z-controls-followup`, and
+`20261029T124751Z-controls-followup`. Deployment recheck is empty; six targeted
+tests pass. Owner interaction confirmation remains pending.
+
+# Environment menu scroll and warning animation repair — 2026-10-29
+
+Owner reported that warning dismissal looked stuck and buttons appeared oddly
+while scrolling down. The Environment menu had a complete-card height fit and
+an opacity guard that hid buttons until fully visible. Both now exempt this
+menu, so rows pass through the fixed viewport continuously; partially visible
+buttons remain noninteractive until fully visible. Warning dismissal now fades
+for 140 ms before its height collapses over 170 ms, avoiding simultaneous text
+reflow. The first reload logged a `showWarning` scope error in the Behavior;
+an explicit warning-card id fixed it. Active Hub QuickShell loaded at 12:52:14
+WET without a new warning. Backups: `20261029T125154Z-controls-followup` and
+`20261029T125210Z-controls-followup`. Deployment recheck is empty; six targeted
+tests pass. Owner visual acceptance remains pending.
+
+# Windows Pessoal boot refusal repaired — 2026-10-29
+
+Two Hub `native.boot-v3` requests at 12:55 UTC were refused because the native
+release manifest pinned an old digest for the installed switch daemon. The
+installed daemon exactly matches the current repository source. Only that
+digest was refreshed, with the previous manifest backed up at
+`/var/lib/apx/backups/20261029T125903Z-windows-personal-pin`.
+`apx_native_hub_v3.enabled()` is now true, the Windows Pessoal record is ready,
+and the selected native boot runner passed its Host `--validate-only` check.
+The check dynamically identified the EFI entry for the selected Windows; no
+firmware, partition, Windows, or boot state was changed. Owner boot and return
+through the Hub remain unobserved.

@@ -6137,3 +6137,29 @@ pixel snapping for the shared button outline. No live acceptance is recorded.
 After further owner feedback, the active workspace outline was moved outside
 the clipped viewport as a sibling overlay in repository source. No live
 deployment or visual confirmation is recorded.
+# Hub Environment storage summary — 2026-10-29
+
+The owner moved storage information from Task Manager to the Hub's Environments
+menu. The menu now shows each Environment's measured size, including Windows,
+and used space against the total physical SSD size. The protected storage
+report supplies the SSD capacity separately from the Linux/APX filesystem
+capacity. Creating an APX Environment checks the existing 96 GiB Host reserve
+before submitting the request and presents a styled inline warning if space
+is insufficient. Host lifecycle enforcement remains authoritative. The Task
+Manager storage section was removed.
+
+The owner later requested that sizes be hidden until a switch beside the
+Environment actions is enabled. The switch controls Environment sizes and the
+SSD total together. The Hub size is separate from its “Ativo” badge, and
+creation error cards have a close control.
+The Hub's “Ativo” badge sits to the left of its separate size label. The
+“Tamanhos” control uses the same MenuButton style as the other actions.
+Dismissed error cards stay hidden across menu reopenings until a new attempt
+clears the previous error or a different error occurs.
+Error dismissal is now an explicit acknowledgement tied to the current
+Environment action attempt. Background status refreshes cannot rearm it; only
+a new user action attempt can make a later error visible.
+The last acknowledged Host failure is stored in the Hub's local settings,
+keyed by action, target, update time and message, so a QuickShell reload does
+not reannounce that same failure. Dismissing the card animates its fade and
+collapse.

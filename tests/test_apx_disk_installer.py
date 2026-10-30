@@ -41,6 +41,7 @@ class DiskBoundaryTests(unittest.TestCase):
         plan = {'disk':self.record, 'confirmation':'example'}
         with patch.object(disk, 'disk_identity', side_effect=[self.record, {**self.record,'size':1}]), \
              patch('builtins.input', return_value='example'), \
+             patch.object(disk, 'download_codex', return_value=Path('/tmp/codex')), \
              patch.object(disk.getpass, 'getpass', return_value='synthetic test password'), \
              patch.object(disk, 'run') as commands:
             with self.assertRaises(ValueError): disk.apply(plan)
@@ -58,7 +59,24 @@ class DiskBoundaryTests(unittest.TestCase):
         self.assertEqual('/dev/nvme0n1p2',disk.partition_path('/dev/nvme0n1',2))
         self.assertEqual('/dev/sda2',disk.partition_path('/dev/sda',2))
         self.assertIn('type=U',disk.partition_script(True))
+        self.assertIn('size=2GiB, type=L, name="APX_RECOVERY"',disk.partition_script(True))
         self.assertIn('21686148',disk.partition_script(False))
+
+    def test_firmware_keeps_apx_default_and_recovery_last(self):
+        outputs = iter([
+            'BootOrder: 0005\nBoot0005* Linux\n',
+            'BootOrder: 0006,0005\nBoot0005* Linux\nBoot0006* APX\n',
+            'BootOrder: 0006,0005\nBoot0005* Linux\nBoot0006* APX\n',
+            'BootOrder: 0007,0006,0005\nBoot0005* Linux\nBoot0006* APX\nBoot0007* APX Recovery\n',
+            'BootOrder: 0007,0006,0005\nBoot0005* Linux\nBoot0006* APX\nBoot0007* APX Recovery\n',
+        ])
+        calls = []
+        def fake_run(*args, capture=False, input=None):
+            calls.append(args)
+            return next(outputs) if capture else ''
+        with patch.object(disk, 'run', side_effect=fake_run):
+            disk.register_firmware_entries('/dev/vda')
+        self.assertEqual(calls[-1], ('efibootmgr', '-o', '0006,0005,0007'))
 
 
 if __name__ == '__main__': unittest.main()

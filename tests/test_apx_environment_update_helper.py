@@ -22,14 +22,17 @@ class EnvironmentUpdateTests(unittest.TestCase):
         with patch.object(subject.os, 'geteuid', return_value=1000), \
              patch.object(subject.Path, 'read_text', return_value='systemd-nspawn'), \
              patch.object(subject.shutil, 'which', return_value='/usr/bin/flatpak'), \
-             patch.object(subject.subprocess, 'run', return_value=Mock(returncode=1, stdout='', stderr='')), \
+             patch.object(subject.subprocess, 'run', return_value=Mock(returncode=0, stdout='', stderr='')), \
+             patch.object(subject, 'check_desktop_links') as links, \
              patch.object(subject, 'run') as run:
             subject.update()
             self.assertEqual([call.args for call in run.call_args_list], [
+                ('/usr/bin/sudo', '/usr/bin/pacman', '-Sy'),
                 ('/usr/bin/sudo', '/usr/bin/pacman', '-Syu', '--ignore',
-                 'nvidia-utils,lib32-nvidia-utils,opencl-nvidia'),
+                 'nvidia-utils,lib32-nvidia-utils,opencl-nvidia,aquamarine'),
                 ('/usr/bin/flatpak', '--user', 'update'),
                 ('/usr/bin/sudo', '/usr/bin/flatpak', '--system', 'update')])
+            links.assert_called_once()
 
     def test_failed_system_upgrade_stops_before_other_managers(self):
         with patch.object(subject.os, 'geteuid', return_value=1000), \
@@ -38,6 +41,19 @@ class EnvironmentUpdateTests(unittest.TestCase):
             with self.assertRaises(subprocess.CalledProcessError): subject.update()
             self.assertEqual(run.call_count, 1)
 
+    def test_aquamarine_can_update_with_hyprland(self):
+        with patch.object(subject.os, 'geteuid', return_value=1000), \
+             patch.object(subject.Path, 'read_text', return_value='systemd-nspawn'), \
+             patch.object(subject.shutil, 'which', return_value=None), \
+             patch.object(subject, 'check_desktop_links'), \
+             patch.object(subject.subprocess, 'run', side_effect=[
+                 Mock(returncode=0, stdout='hyprland 0.56 -> 0.57\naquamarine 0.14 -> 0.15\n', stderr=''),
+                 Mock(returncode=0, stdout='', stderr='')]), \
+             patch.object(subject, 'run') as run:
+            subject.update()
+            self.assertEqual(run.call_args_list[1].args[-1],
+                             'nvidia-utils,lib32-nvidia-utils,opencl-nvidia')
+
     def test_foreign_packages_use_unprivileged_aur_helper(self):
         with patch.object(subject.os, 'geteuid', return_value=1000), \
              patch.object(subject.Path, 'read_text', return_value='systemd-nspawn'), \
@@ -45,4 +61,4 @@ class EnvironmentUpdateTests(unittest.TestCase):
              patch.object(subject.subprocess, 'run', return_value=Mock(returncode=0, stdout='brave-bin 1.0', stderr='')), \
              patch.object(subject, 'run') as run:
             subject.update()
-            self.assertEqual(run.call_args_list[1].args, ('/usr/bin/paru', '-Sua'))
+            self.assertEqual(run.call_args_list[2].args, ('/usr/bin/paru', '-Sua'))

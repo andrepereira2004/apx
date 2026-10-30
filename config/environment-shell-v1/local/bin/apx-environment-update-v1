@@ -12,6 +12,17 @@ def run(*args, **kwargs):
     return subprocess.run(args, check=True, **kwargs)
 
 
+def check_desktop_links():
+    """Do not report a successful update with a compositor that cannot start."""
+    result = subprocess.run(('/usr/bin/ldd', '/usr/bin/Hyprland'),
+                            capture_output=True, text=True)
+    broken = [line.strip() for line in (result.stdout + result.stderr).splitlines()
+              if 'not found' in line or 'version `' in line and 'not found' in line]
+    if result.returncode or broken:
+        raise RuntimeError('Hyprland ficou sem bibliotecas compatíveis: ' +
+                           '; '.join(broken[:5]))
+
+
 def update(unattended=False):
     # Never turn this desktop entry point into a Host package administrator.
     if os.geteuid() == 0 or Path('/run/systemd/container').read_text().strip() != 'systemd-nspawn':
@@ -22,8 +33,19 @@ def update(unattended=False):
     confirm = ('--noconfirm',) if unattended else ()
     # The Host owns the running NVIDIA kernel module. Updating its userspace
     # libraries independently makes outputs wired to that GPU go black.
+    run('/usr/bin/sudo', '/usr/bin/pacman', '-Sy', *confirm)
+    pending = subprocess.run(('/usr/bin/pacman', '-Qu'), capture_output=True, text=True, check=True)
+    names = {line.split(maxsplit=1)[0] for line in pending.stdout.splitlines() if line.strip()}
+    ignored = ['nvidia-utils', 'lib32-nvidia-utils', 'opencl-nvidia']
+    if 'hyprland' not in names:
+        # A newer Aquamarine ABI can remove the library required by the
+        # installed Hyprland even when pacman accepts the transaction.
+        ignored.append('aquamarine')
+        if 'aquamarine' in names:
+            print('Aquamarine adiada até haver atualização de Hyprland compatível.', flush=True)
     run('/usr/bin/sudo', '/usr/bin/pacman', '-Syu',
-        '--ignore', 'nvidia-utils,lib32-nvidia-utils,opencl-nvidia', *confirm)
+        '--ignore', ','.join(ignored), *confirm)
+    check_desktop_links()
     query = subprocess.run(('/usr/bin/pacman', '-Qm'), capture_output=True, text=True)
     if query.returncode not in (0, 1) or (query.returncode == 1 and query.stderr.strip()):
         raise RuntimeError('Não foi possível consultar os pacotes externos: ' + query.stderr.strip())

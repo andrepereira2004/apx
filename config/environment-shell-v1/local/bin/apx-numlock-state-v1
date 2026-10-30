@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""Remember only Num Lock, using the authenticated shared-preference broker."""
+import fcntl
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+
+CACHE = Path.home() / '.config/hypr/apx-numlock-state'
+CLIENT = '/run/apx/host-services-client-v3.py'
+
+
+def run(args):
+    result = subprocess.run(args, text=True, capture_output=True, timeout=5, check=True)
+    return result.stdout
+
+
+def current():
+    devices = json.loads(run(['/usr/bin/hyprctl', '-j', 'devices']))
+    keyboards = devices.get('keyboards', [])
+    keyboard = next((k for k in keyboards if k.get('main')), None)
+    if keyboard is None or type(keyboard.get('numLock')) is not bool:
+        raise RuntimeError('No authoritative keyboard Num Lock state')
+    return keyboard['numLock']
+
+
+def cache(value):
+    CACHE.parent.mkdir(parents=True, exist_ok=True)
+    fd, name = tempfile.mkstemp(prefix='.numlock-', dir=CACHE.parent)
+    try:
+        with os.fdopen(fd, 'w') as stream:
+            stream.write('true\n' if value else 'false\n')
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, CACHE)
+    finally:
+        Path(name).unlink(missing_ok=True)
+
+
+def restore_value(saved, observed):
+    value = saved.get('numlock')
+    if value is not None and type(value) is not bool:
+        raise ValueError('Invalid saved Num Lock state')
+    return observed if value is None else value
+
+
+def main():
+    if sys.argv[1:] not in (['save'], ['restore']):
+        raise ValueError('Expected save or restore')
+    runtime = Path(os.environ['XDG_RUNTIME_DIR'])
+    with (runtime / 'apx-numlock-state.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        observed = current()
+        if sys.argv[1] == 'save':
+            # Keep the local choice even if the shared broker is unavailable.
+            cache(observed)
+            run([CLIENT, 'keyboard-save', 'on' if observed else 'off'])
+            value = observed
+        else:
+            saved = json.loads(run([CLIENT, 'keyboard-load']))
+            value = restore_value(saved, observed)
+            if saved.get('numlock') is None:
+                run([CLIENT, 'keyboard-save', 'on' if value else 'off'])
+            cache(value)
+        code = 'hl.config({input = {numlock_by_default = %s}})' % ('true' if value else 'false')
+        try:
+            run(['/usr/bin/hyprctl', 'eval', code])
+        except subprocess.CalledProcessError:
+            run(['/usr/bin/hyprctl', 'keyword', 'input:numlock_by_default', 'true' if value else 'false'])
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
+        print('APX Num Lock: ' + str(error), file=sys.stderr)
+        raise SystemExit(1)

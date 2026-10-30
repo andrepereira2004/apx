@@ -1,0 +1,267 @@
+#!/usr/bin/env python3
+"""Environment-local web handoff with a short, actionable notification."""
+import configparser
+import fcntl
+import html
+import json
+import os
+from pathlib import Path
+import shlex
+import subprocess
+import sys
+import time
+from urllib.parse import urlsplit
+
+HOME = Path.home()
+CONFIG = HOME / '.config'
+HANDLER = 'apx-browser-redirect.desktop'
+PREFERENCE = CONFIG / 'apx/browser-redirect.json'
+SOURCES = (HOME / '.local/share/applications', Path('/usr/share/applications'),
+           HOME / '.local/share/flatpak/exports/share/applications',
+           Path('/var/lib/flatpak/exports/share/applications'))
+
+
+def desktop(desktop_id):
+    if Path(desktop_id).name != desktop_id or desktop_id == HANDLER:
+        raise ValueError('Navegador inválido')
+    for source in SOURCES:
+        path = source / desktop_id
+        if path.is_file():
+            parser = configparser.ConfigParser(interpolation=None, strict=False)
+            parser.read(path)
+            return dict(parser['Desktop Entry'])
+    raise ValueError('Navegador não disponível neste Environment')
+
+
+def preferred_browser():
+    try:
+        return json.loads(PREFERENCE.read_text())['desktop']
+    except (OSError, ValueError, KeyError):
+        # Existing HTML preference is retained when HTTP(S) uses our handoff.
+        result = subprocess.run(['/usr/bin/xdg-mime', 'query', 'default', 'text/html'],
+                                capture_output=True, text=True, timeout=3)
+        value = result.stdout.strip()
+        return value if value and value != HANDLER else 'brave-browser.desktop'
+
+
+def set_browser(desktop_id):
+    browser_command(desktop(desktop_id), 'https://example.invalid/')
+    subprocess.run(['/usr/bin/xdg-settings', 'set', 'default-web-browser', desktop_id],
+                   check=True, timeout=10)
+    PREFERENCE.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    temporary = PREFERENCE.with_suffix('.tmp')
+    temporary.write_text(json.dumps({'desktop': desktop_id}))
+    temporary.chmod(0o600)
+    temporary.replace(PREFERENCE)
+    for scheme in ('http', 'https'):
+        subprocess.run(['/usr/bin/xdg-mime', 'default', HANDLER,
+                        'x-scheme-handler/' + scheme], check=True, timeout=3)
+
+
+def windows():
+    try:
+        result = subprocess.run(['/usr/bin/hyprctl', '-j', 'clients'],
+                                capture_output=True, text=True, timeout=2, check=True)
+        return json.loads(result.stdout)
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return []
+
+
+def application_name(klass):
+    klass = klass.casefold()
+    for source in SOURCES:
+        for path in sorted(source.glob('*.desktop')):
+            try:
+                data = desktop(path.name)
+                executable = shlex.split(data.get('exec', ''))
+                aliases = {path.stem.casefold(), data.get('startupwmclass', '').casefold(),
+                           data.get('name', '').casefold()}
+                if executable:
+                    aliases.add(Path(executable[0]).name.casefold())
+                if klass in aliases:
+                    return data.get('name', klass)
+            except (OSError, ValueError, KeyError, configparser.Error):
+                continue
+    return klass or 'Uma aplicação'
+
+
+def request_source(current_windows):
+    # Prefer an actual process ancestor; portal-mediated requests may only
+    # expose the focused application, so never invent an application identity.
+    candidates = set()
+    pid = os.getppid()
+    for _ in range(16):
+        if pid <= 1 or pid in candidates:
+            break
+        candidates.add(pid)
+        try:
+            fields = Path('/proc/' + str(pid) + '/stat').read_text().rsplit(')', 1)[1].split()
+            pid = int(fields[1])
+        except (OSError, ValueError, IndexError):
+            break
+    for window in current_windows:
+        if window.get('pid') in candidates:
+            return application_name(window.get('class', ''))
+    try:
+        result = subprocess.run(['/usr/bin/hyprctl', '-j', 'activewindow'],
+                                capture_output=True, text=True, timeout=2, check=True)
+        return application_name(json.loads(result.stdout).get('class', ''))
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return 'Uma aplicação'
+
+
+def browser_command(data, url):
+    parsed = urlsplit(url)
+    if parsed.scheme not in ('http', 'https') or not parsed.hostname or any(c in url for c in '\r\n\0'):
+        raise ValueError('Endereço web inválido')
+    tokens = shlex.split(data.get('exec', ''))
+    if not tokens:
+        raise ValueError('O navegador não tem um comando de abertura')
+    command = []
+    for token in tokens:
+        if token in ('%u', '%U', '%f', '%F'):
+            continue
+        if token == '%i':
+            if data.get('icon'):
+                command.extend(['--icon', data['icon']])
+        elif token == '%c':
+            command.append(data.get('name', 'Browser'))
+        elif token == '%k':
+            raise ValueError('O navegador usa um comando não suportado')
+        else:
+            command.append(token.replace('%%', '%'))
+    executable = ' '.join(command).casefold()
+    if any(browser in executable for browser in ('brave', 'chromium', 'chrome', 'firefox', 'librewolf')):
+        command.append('--new-window')
+    else:
+        raise ValueError('Este navegador ainda não suporta o encaminhamento com janela identificada')
+    command.append(url)
+    return command
+
+
+def notification_command(source, browser, url):
+    host = urlsplit(url).hostname or ''
+    body = html.escape(source) + ' → ' + html.escape(browser) + '\n' + html.escape(host)
+    return ['/usr/bin/notify-send', '--app-name=APX Browser', '--transient',
+            '--expire-time=5000', '--action=default=Ir para a página',
+            'Continuar no navegador', body]
+
+
+def new_window(before, current, data):
+    known = {w.get('address') for w in before}
+    klass = data.get('startupwmclass', '').casefold()
+    name = data.get('name', '').casefold()
+    candidates = [w for w in current if w.get('address') not in known and w.get('mapped', True)
+                  and (w.get('class', '').casefold() in (klass, name)
+                       or any(browser in w.get('class', '').casefold()
+                              for browser in (name, klass) if browser))]
+    return candidates[0] if len(candidates) == 1 else None
+
+
+def focus_window(address):
+    if not any(w.get('address') == address for w in windows()):
+        return False
+    code = 'hl.dispatch(hl.dsp.focus({window=' + json.dumps('address:' + address) + '}))'
+    result = subprocess.run(['/usr/bin/hyprctl', 'eval', code],
+                            capture_output=True, text=True, timeout=3)
+    return result.returncode == 0 and result.stdout.strip() == 'ok'
+
+
+def waiting_feedback(browser):
+    result = subprocess.run(
+        ['/usr/bin/notify-send', '--print-id', '--transient', '--app-name=APX Browser',
+         '--category=apx-redirect-wait', '--expire-time=120000',
+         'A aguardar a abertura',
+         'O reencaminhamento para ' + html.escape(browser) + ' será efetuado assim que a janela estiver disponível.'],
+        capture_output=True, text=True, timeout=3, check=True)
+    value = result.stdout.strip()
+    return value if value.isdecimal() else None
+
+
+def dismiss_feedback(notification_id):
+    if notification_id:
+        subprocess.run(['/usr/bin/makoctl', 'dismiss', '-n', notification_id, '--no-history'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=3, check=False)
+
+
+def wait_and_redirect(before, data, browser_process):
+    notification_id = None
+    try:
+        notification_id = waiting_feedback(data.get('name', 'Browser'))
+        deadline = time.monotonic() + 120
+        while time.monotonic() < deadline:
+            target = new_window(before, windows(), data)
+            if target and focus_window(target['address']):
+                return True
+            status = browser_process.poll()
+            if status is not None and status != 0:
+                break
+            time.sleep(0.1)
+        # A bounded wait cannot leave a permanent feedback card behind.
+        return False
+    finally:
+        dismiss_feedback(notification_id)
+
+
+def open_url(url):
+    data = desktop(preferred_browser())
+    command = browser_command(data, url)
+    runtime = Path(os.environ.get('XDG_RUNTIME_DIR', str(CONFIG / 'apx')))
+    runtime.mkdir(parents=True, exist_ok=True, mode=0o700)
+    with (runtime / 'apx-browser-redirect.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        before = windows()
+        source = request_source(before)
+        browser_process = subprocess.Popen(command, stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         start_new_session=True)
+        notification = subprocess.Popen(notification_command(source, data.get('name', 'Browser'), url),
+                                        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        target = None
+        clicked = False
+        redirected = False
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            target = new_window(before, windows(), data)
+            if notification.poll() is not None:
+                clicked = notification.communicate()[0].strip() == 'default'
+                if clicked and not target:
+                    redirected = wait_and_redirect(before, data, browser_process)
+                break
+            if target:
+                break
+            time.sleep(0.1)
+    if notification.poll() is None:
+        try:
+            clicked = notification.communicate(timeout=6)[0].strip() == 'default'
+        except subprocess.TimeoutExpired:
+            notification.terminate()
+            notification.communicate()
+    if clicked and target:
+        if not focus_window(target['address']):
+            redirected = wait_and_redirect(before, data, browser_process)
+        else:
+            redirected = True
+    if clicked and not redirected:
+        subprocess.run(['/usr/bin/notify-send', '--expire-time=5000', '--app-name=APX Browser',
+                        'Abertura da aplicação',
+                        'A aplicação não abriu a janela. Tente novamente.'], check=False)
+
+
+def main():
+    if sys.argv[1:] == ['get-browser']:
+        print(preferred_browser())
+    elif len(sys.argv) == 3 and sys.argv[1] == 'set-browser':
+        set_browser(sys.argv[2])
+    else:
+        for url in sys.argv[1:]:
+            open_url(url)
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        subprocess.run(['/usr/bin/notify-send', '--expire-time=5000', '--app-name=APX Browser',
+                        'Navegador', str(error)], check=False)
+        sys.exit(1)

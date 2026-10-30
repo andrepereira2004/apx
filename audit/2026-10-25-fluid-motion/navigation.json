@@ -1,0 +1,14 @@
+[
+  {
+    "page": "openConnectivityControls",
+    "back_pass": true
+  },
+  {
+    "page": "openBrightnessControls",
+    "back_pass": true
+  },
+  {
+    "page": "openMoreControls",
+    "back_pass": true
+  }
+]

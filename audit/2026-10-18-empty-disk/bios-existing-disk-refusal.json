@@ -1,0 +1,6 @@
+{
+  "exit_code": 2,
+  "stdout": "",
+  "stderr": "APX disk installation refused/failed: disk is not empty: partitions or filesystem/partition signatures found\n",
+  "request_id": "0ac6b95c097481f2"
+}

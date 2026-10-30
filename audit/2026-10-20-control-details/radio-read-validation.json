@@ -1,0 +1,15 @@
+{
+  "before": {
+    "wifi": 1792531799039,
+    "bluetooth": 1792531799136,
+    "wifi_powered": true,
+    "bluetooth_powered": true
+  },
+  "after": {
+    "wifi": 1792531800437,
+    "bluetooth": 1792531800143,
+    "wifi_powered": true,
+    "bluetooth_powered": true
+  },
+  "interval_ms": 500
+}

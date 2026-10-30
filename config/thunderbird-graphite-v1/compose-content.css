@@ -1,0 +1,14 @@
+/* Display-only user stylesheet for the native composer. These rules are never
+ * serialized into outgoing messages. Preserve explicitly authored body colors. */
+@-moz-document url("about:blank?compose") {
+  @media not (forced-colors: active) {
+    html { background-color: #101117 !important; }
+    body:not([bgcolor]):not([style*="background"]) {
+      background-color: #101117 !important;
+    }
+    body:not([text]):not([style*="color"]) {
+      color: #d9dcea !important;
+    }
+    body { padding: 16px !important; }
+  }
+}

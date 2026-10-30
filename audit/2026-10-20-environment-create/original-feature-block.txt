@@ -1,0 +1,54 @@
+                            PresetCard { width: (parent.width - 12) / 3; height: parent.height; title: "Básico · base APX"; description: "Desktop APX sem aplicações adicionais."; additions: "Extras · nenhum"; selected: root.environmentDesktopPreset === "basic"; keyboardFocused: root.environmentCreateFocusIndex === 6; onActivated: { root.environmentCreateFocusIndex = 6; root.applyEnvironmentPreset("basic") } }
+                            PresetCard { width: (parent.width - 12) / 3; height: parent.height; title: "Intermédio · dia a dia"; description: "Base APX, Internet, ficheiros e multimédia."; additions: "+ PDF · MPV · impressão"; selected: root.environmentDesktopPreset === "intermediate"; keyboardFocused: root.environmentCreateFocusIndex === 7; onActivated: { root.environmentCreateFocusIndex = 7; root.applyEnvironmentPreset("intermediate") } }
+                            PresetCard { width: (parent.width - 12) / 3; height: parent.height; title: "Completo · trabalho"; description: "Tudo do Intermédio, ArtCraft e programação."; additions: "+ ArtCraft · programação"; selected: root.environmentDesktopPreset === "complete"; keyboardFocused: root.environmentCreateFocusIndex === 8; onActivated: { root.environmentCreateFocusIndex = 8; root.applyEnvironmentPreset("complete") } }
+                        }
+                        Row {
+                            visible: root.environmentSystemKind === "arch"; height: visible ? 20 : 0
+                            width: parent.width
+                            Text { width: parent.width * 0.65; text: "Funcionalidades"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
+                            Text { width: parent.width * 0.35; horizontalAlignment: Text.AlignRight; text: root.selectedEnvironmentModuleKeys().length + "/18  ·  ~" + root.environmentEstimatedMib() + " MiB"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
+                        }
+                        Column {
+                            visible: root.environmentSystemKind === "arch"
+                            width: parent.width; spacing: 5
+                            Repeater {
+                                model: root.environmentModuleGroups
+                                Column {
+                                    id: featureGroup
+                                    required property var modelData
+                                    required property int index
+                                    width: parent ? parent.width : 660; spacing: 4
+                                    Rectangle {
+                                        width: parent.width; height: 34; radius: 7
+                                        property bool keyboardFocused: root.environmentCreateFocusIndex === 9 + index
+                                        color: keyboardFocused ? root.controlButtonActive : (root.controlButtonSurface)
+                                        border.width: keyboardFocused || root.environmentFeatureDrawer === modelData.key ? 1 : 0
+                                        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
+                                        Text { anchors.left: parent.left; anchors.leftMargin: 11; anchors.right: parent.right; anchors.rightMargin: 34; anchors.verticalCenter: parent.verticalCenter; text: modelData.label; color: root.environmentFeatureDrawer === modelData.key ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; elide: Text.ElideRight }
+                                        Text { font.family: Appearance.fontFamily; anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter; text: root.environmentFeatureDrawer === modelData.key ? "▴" : "▾"; color: root.textDim; font.pixelSize: root.menuTitleSize }
+                                        BounceMouseArea { id: featureDrawerMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.environmentCreateFocusIndex = 9 + featureGroup.index; root.environmentFeatureDrawer = root.environmentFeatureDrawer === modelData.key ? "" : modelData.key; root.environmentFeatureInfo = "" } }
+                                    }
+                                    Grid {
+                                        visible: root.environmentFeatureDrawer === modelData.key
+                                        width: parent.width
+                                        columns: 2; columnSpacing: 6; rowSpacing: 4
+                                        Repeater {
+                                            model: modelData.modules
+                                            FeatureCard {
+                                                required property string modelData
+                                                property var moduleInfo: root.environmentModuleInfo(modelData)
+                                                width: (environmentMenu.width - 6) / 2
+                                                label: moduleInfo.label
+                                                detail: moduleInfo.detail
+                                                programs: moduleInfo.programs
+                                                checked: root.environmentSelectedModules[moduleInfo.key] === true
+                                                infoVisible: root.environmentFeatureInfo === moduleInfo.key
+                                                keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateModuleFocusBase + root.environmentModuleIndex(moduleInfo.key)
+                                                onActivated: { root.environmentCreateFocusIndex = root.environmentCreateModuleFocusBase + root.environmentModuleIndex(moduleInfo.key); root.setEnvironmentModule(moduleInfo.key, !checked) }
+                                                onInfoRequested: { root.environmentCreateFocusIndex = root.environmentCreateModuleFocusBase + root.environmentModuleIndex(moduleInfo.key); root.environmentFeatureInfo = infoVisible ? "" : moduleInfo.key }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }

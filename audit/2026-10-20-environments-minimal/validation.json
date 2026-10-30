@@ -1,0 +1,14 @@
+{
+  "tests_run": 30,
+  "passed": 28,
+  "existing_failures": [
+    "test_native_windows_return_is_internal_and_keeps_password_recovery",
+    "test_workload_shell_surfaces_return_failure"
+  ],
+  "native_qml_parse": "PASS",
+  "native_candidate_ui": "PASS",
+  "keyboard_icon_selection": "PASS",
+  "icon_ini_persistence": "PASS",
+  "backup": "/var/lib/apx/backups/20261020T095828Z-environments-minimal",
+  "scope": "Hub presentation preferences; generation-bound per-Environment icons; no lifecycle/backend changes"
+}

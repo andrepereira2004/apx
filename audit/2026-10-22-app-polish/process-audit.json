@@ -1,0 +1,3497 @@
+{
+  "seconds": 8.036140933998468,
+  "processes": [
+    {
+      "pid": 1,
+      "ppid": 0,
+      "name": "systemd",
+      "ticks": 11752,
+      "start": 14,
+      "rss_mib": 16.0,
+      "cpu_percent": 1.49
+    },
+    {
+      "pid": 2,
+      "ppid": 0,
+      "name": "kthreadd",
+      "ticks": 2,
+      "start": 14,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 3,
+      "ppid": 2,
+      "name": "pool_workqueue_release",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 4,
+      "ppid": 2,
+      "name": "kworker/R-rcu_gp",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 5,
+      "ppid": 2,
+      "name": "kworker/R-sync_wq",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6,
+      "ppid": 2,
+      "name": "kworker/R-kvfree_rcu_reclaim",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 7,
+      "ppid": 2,
+      "name": "kworker/R-slub_flushwq",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 8,
+      "ppid": 2,
+      "name": "kworker/R-netns",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 11,
+      "ppid": 2,
+      "name": "kworker/0:0H-kblockd",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 14,
+      "ppid": 2,
+      "name": "kworker/R-mm_percpu_wq",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 15,
+      "ppid": 2,
+      "name": "ksoftirqd/0",
+      "ticks": 63,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 16,
+      "ppid": 2,
+      "name": "rcu_preempt",
+      "ticks": 1628,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 17,
+      "ppid": 2,
+      "name": "rcub/0",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 18,
+      "ppid": 2,
+      "name": "rcu_exp_par_gp_kthread_worker/0",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 19,
+      "ppid": 2,
+      "name": "rcu_exp_gp_kthread_worker",
+      "ticks": 11,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 20,
+      "ppid": 2,
+      "name": "migration/0",
+      "ticks": 248,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 21,
+      "ppid": 2,
+      "name": "kprobe-optimizer",
+      "ticks": 0,
+      "start": 24,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 22,
+      "ppid": 2,
+      "name": "idle_inject/0",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 23,
+      "ppid": 2,
+      "name": "cpuhp/0",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 24,
+      "ppid": 2,
+      "name": "cpuhp/2",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 25,
+      "ppid": 2,
+      "name": "idle_inject/2",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 26,
+      "ppid": 2,
+      "name": "migration/2",
+      "ticks": 116,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 27,
+      "ppid": 2,
+      "name": "ksoftirqd/2",
+      "ticks": 35,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 29,
+      "ppid": 2,
+      "name": "kworker/2:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 30,
+      "ppid": 2,
+      "name": "cpuhp/4",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 31,
+      "ppid": 2,
+      "name": "idle_inject/4",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 32,
+      "ppid": 2,
+      "name": "migration/4",
+      "ticks": 394,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 33,
+      "ppid": 2,
+      "name": "ksoftirqd/4",
+      "ticks": 44,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 35,
+      "ppid": 2,
+      "name": "kworker/4:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 36,
+      "ppid": 2,
+      "name": "cpuhp/6",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 37,
+      "ppid": 2,
+      "name": "idle_inject/6",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 38,
+      "ppid": 2,
+      "name": "migration/6",
+      "ticks": 310,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 39,
+      "ppid": 2,
+      "name": "ksoftirqd/6",
+      "ticks": 32,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 41,
+      "ppid": 2,
+      "name": "kworker/6:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 42,
+      "ppid": 2,
+      "name": "cpuhp/8",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 43,
+      "ppid": 2,
+      "name": "idle_inject/8",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 44,
+      "ppid": 2,
+      "name": "migration/8",
+      "ticks": 154,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 45,
+      "ppid": 2,
+      "name": "ksoftirqd/8",
+      "ticks": 31,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 47,
+      "ppid": 2,
+      "name": "kworker/8:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 48,
+      "ppid": 2,
+      "name": "cpuhp/10",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 49,
+      "ppid": 2,
+      "name": "idle_inject/10",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 50,
+      "ppid": 2,
+      "name": "migration/10",
+      "ticks": 204,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 51,
+      "ppid": 2,
+      "name": "ksoftirqd/10",
+      "ticks": 32,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 53,
+      "ppid": 2,
+      "name": "kworker/10:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 54,
+      "ppid": 2,
+      "name": "cpuhp/1",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 55,
+      "ppid": 2,
+      "name": "idle_inject/1",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 56,
+      "ppid": 2,
+      "name": "migration/1",
+      "ticks": 89,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 57,
+      "ppid": 2,
+      "name": "ksoftirqd/1",
+      "ticks": 45,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 59,
+      "ppid": 2,
+      "name": "kworker/1:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 60,
+      "ppid": 2,
+      "name": "cpuhp/3",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 61,
+      "ppid": 2,
+      "name": "idle_inject/3",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 62,
+      "ppid": 2,
+      "name": "migration/3",
+      "ticks": 17,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 63,
+      "ppid": 2,
+      "name": "ksoftirqd/3",
+      "ticks": 24,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 65,
+      "ppid": 2,
+      "name": "kworker/3:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 66,
+      "ppid": 2,
+      "name": "cpuhp/5",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 67,
+      "ppid": 2,
+      "name": "idle_inject/5",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 68,
+      "ppid": 2,
+      "name": "migration/5",
+      "ticks": 175,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 69,
+      "ppid": 2,
+      "name": "ksoftirqd/5",
+      "ticks": 21,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 71,
+      "ppid": 2,
+      "name": "kworker/5:0H-kblockd",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 72,
+      "ppid": 2,
+      "name": "cpuhp/7",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 73,
+      "ppid": 2,
+      "name": "idle_inject/7",
+      "ticks": 0,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 74,
+      "ppid": 2,
+      "name": "migration/7",
+      "ticks": 129,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 75,
+      "ppid": 2,
+      "name": "ksoftirqd/7",
+      "ticks": 20,
+      "start": 25,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 77,
+      "ppid": 2,
+      "name": "kworker/7:0H-kblockd",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 78,
+      "ppid": 2,
+      "name": "cpuhp/9",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 79,
+      "ppid": 2,
+      "name": "idle_inject/9",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 80,
+      "ppid": 2,
+      "name": "migration/9",
+      "ticks": 18,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 81,
+      "ppid": 2,
+      "name": "ksoftirqd/9",
+      "ticks": 22,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 83,
+      "ppid": 2,
+      "name": "kworker/9:0H-kblockd",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 84,
+      "ppid": 2,
+      "name": "cpuhp/11",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 85,
+      "ppid": 2,
+      "name": "idle_inject/11",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 86,
+      "ppid": 2,
+      "name": "migration/11",
+      "ticks": 55,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 87,
+      "ppid": 2,
+      "name": "ksoftirqd/11",
+      "ticks": 19,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 89,
+      "ppid": 2,
+      "name": "kworker/11:0H-kblockd",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 90,
+      "ppid": 2,
+      "name": "kdevtmpfs",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 91,
+      "ppid": 2,
+      "name": "kworker/R-inet_frag_wq",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 92,
+      "ppid": 2,
+      "name": "rcu_tasks_kthread",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 93,
+      "ppid": 2,
+      "name": "rcu_tasks_rude_kthread",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 94,
+      "ppid": 2,
+      "name": "kauditd",
+      "ticks": 0,
+      "start": 26,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 95,
+      "ppid": 2,
+      "name": "khungtaskd",
+      "ticks": 1,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 97,
+      "ppid": 2,
+      "name": "oom_reaper",
+      "ticks": 0,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 99,
+      "ppid": 2,
+      "name": "kworker/R-writeback",
+      "ticks": 0,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 100,
+      "ppid": 2,
+      "name": "kcompactd0",
+      "ticks": 17,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 101,
+      "ppid": 2,
+      "name": "ksmd",
+      "ticks": 0,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 102,
+      "ppid": 2,
+      "name": "khugepaged",
+      "ticks": 127,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 103,
+      "ppid": 2,
+      "name": "kworker/R-kblockd",
+      "ticks": 0,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 104,
+      "ppid": 2,
+      "name": "kworker/R-blkcg_punt_bio",
+      "ticks": 0,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 105,
+      "ppid": 2,
+      "name": "kworker/R-kintegrityd",
+      "ticks": 0,
+      "start": 27,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 106,
+      "ppid": 2,
+      "name": "irq/9-acpi",
+      "ticks": 0,
+      "start": 31,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 110,
+      "ppid": 2,
+      "name": "kworker/R-tpm_dev_wq",
+      "ticks": 0,
+      "start": 37,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 111,
+      "ppid": 2,
+      "name": "kworker/R-ata_sff",
+      "ticks": 0,
+      "start": 37,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 112,
+      "ppid": 2,
+      "name": "kworker/R-edac-poller",
+      "ticks": 0,
+      "start": 38,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 113,
+      "ppid": 2,
+      "name": "kworker/R-devfreq_wq",
+      "ticks": 0,
+      "start": 38,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 114,
+      "ppid": 2,
+      "name": "watchdogd",
+      "ticks": 0,
+      "start": 38,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 116,
+      "ppid": 2,
+      "name": "kworker/R-quota_events_unbound",
+      "ticks": 0,
+      "start": 38,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 117,
+      "ppid": 2,
+      "name": "irq/25-AMD-Vi0-Evt",
+      "ticks": 0,
+      "start": 51,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 118,
+      "ppid": 2,
+      "name": "irq/26-AMD-Vi0-PPR",
+      "ticks": 0,
+      "start": 51,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 119,
+      "ppid": 2,
+      "name": "irq/27-AMD-Vi0-GA",
+      "ticks": 0,
+      "start": 51,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 121,
+      "ppid": 2,
+      "name": "kswapd0",
+      "ticks": 0,
+      "start": 51,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 123,
+      "ppid": 2,
+      "name": "kworker/R-kthrotld",
+      "ticks": 0,
+      "start": 52,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 125,
+      "ppid": 2,
+      "name": "kworker/R-acpi_thermal_pm",
+      "ticks": 0,
+      "start": 53,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 127,
+      "ppid": 2,
+      "name": "kworker/5:1-events",
+      "ticks": 65,
+      "start": 53,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 128,
+      "ppid": 2,
+      "name": "scsi_eh_0",
+      "ticks": 0,
+      "start": 61,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 129,
+      "ppid": 2,
+      "name": "kworker/R-scsi_tmf_0",
+      "ticks": 0,
+      "start": 61,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 130,
+      "ppid": 2,
+      "name": "scsi_eh_1",
+      "ticks": 0,
+      "start": 63,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 131,
+      "ppid": 2,
+      "name": "kworker/R-scsi_tmf_1",
+      "ticks": 0,
+      "start": 63,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 135,
+      "ppid": 2,
+      "name": "kworker/R-mld",
+      "ticks": 0,
+      "start": 64,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 136,
+      "ppid": 2,
+      "name": "kworker/R-ipv6_addrconf",
+      "ticks": 0,
+      "start": 64,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 137,
+      "ppid": 2,
+      "name": "kworker/R-kstrp",
+      "ticks": 0,
+      "start": 64,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 138,
+      "ppid": 2,
+      "name": "kworker/8:1-events",
+      "ticks": 121,
+      "start": 64,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 143,
+      "ppid": 2,
+      "name": "kworker/R-zswap-shrink",
+      "ticks": 0,
+      "start": 71,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 225,
+      "ppid": 2,
+      "name": "nv_queue",
+      "ticks": 0,
+      "start": 160,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 226,
+      "ppid": 2,
+      "name": "nv_mem_pool_scrubber_queue",
+      "ticks": 16,
+      "start": 160,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 227,
+      "ppid": 2,
+      "name": "nv_mem_pool_scrubber_queue",
+      "ticks": 0,
+      "start": 160,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 228,
+      "ppid": 2,
+      "name": "nv_mem_pool_scrubber_queue",
+      "ticks": 18,
+      "start": 160,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 229,
+      "ppid": 2,
+      "name": "nv_queue",
+      "ticks": 0,
+      "start": 160,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 230,
+      "ppid": 2,
+      "name": "nv_open_q",
+      "ticks": 0,
+      "start": 160,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 246,
+      "ppid": 2,
+      "name": "nvidia-modeset/kthread_q",
+      "ticks": 7,
+      "start": 389,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 247,
+      "ppid": 2,
+      "name": "nvidia-modeset/deferred_close_kthread_q",
+      "ticks": 0,
+      "start": 389,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 248,
+      "ppid": 2,
+      "name": "kworker/R-nvme-wq",
+      "ticks": 0,
+      "start": 389,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 249,
+      "ppid": 2,
+      "name": "kworker/R-nvme-reset-wq",
+      "ticks": 0,
+      "start": 389,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 250,
+      "ppid": 2,
+      "name": "kworker/R-nvme-delete-wq",
+      "ticks": 0,
+      "start": 389,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 251,
+      "ppid": 2,
+      "name": "kworker/R-nvme-auth-wq",
+      "ticks": 0,
+      "start": 389,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 252,
+      "ppid": 2,
+      "name": "kworker/R-amdgpu-reset-dev",
+      "ticks": 0,
+      "start": 390,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 253,
+      "ppid": 2,
+      "name": "kworker/11:1H-kblockd",
+      "ticks": 1,
+      "start": 395,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 254,
+      "ppid": 2,
+      "name": "kworker/R-ttm",
+      "ticks": 0,
+      "start": 395,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 255,
+      "ppid": 2,
+      "name": "UVM global queue",
+      "ticks": 0,
+      "start": 395,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 256,
+      "ppid": 2,
+      "name": "UVM deferred release queue",
+      "ticks": 0,
+      "start": 395,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 257,
+      "ppid": 2,
+      "name": "UVM Tools Event Queue",
+      "ticks": 0,
+      "start": 395,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 262,
+      "ppid": 2,
+      "name": "kworker/R-amdgpu_dm_hpd_rx_offload_wq",
+      "ticks": 0,
+      "start": 408,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 263,
+      "ppid": 2,
+      "name": "kworker/R-dm_vblank_control_workqueue",
+      "ticks": 0,
+      "start": 408,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 264,
+      "ppid": 2,
+      "name": "card1-crtc0",
+      "ticks": 0,
+      "start": 416,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 265,
+      "ppid": 2,
+      "name": "card1-crtc1",
+      "ticks": 0,
+      "start": 416,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 266,
+      "ppid": 2,
+      "name": "card1-crtc2",
+      "ticks": 0,
+      "start": 416,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 267,
+      "ppid": 2,
+      "name": "card1-crtc3",
+      "ticks": 0,
+      "start": 416,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 268,
+      "ppid": 2,
+      "name": "kworker/R-gfx",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 269,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.0.0",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 270,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.1.0",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 271,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.2.0",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 272,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.3.0",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 273,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.0.1",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 274,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.1.1",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 275,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.2.1",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 276,
+      "ppid": 2,
+      "name": "kworker/R-comp_1.3.1",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 277,
+      "ppid": 2,
+      "name": "kworker/R-sdma0",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 278,
+      "ppid": 2,
+      "name": "kworker/R-vcn_dec",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 279,
+      "ppid": 2,
+      "name": "kworker/R-vcn_enc0",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 280,
+      "ppid": 2,
+      "name": "kworker/R-vcn_enc1",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 281,
+      "ppid": 2,
+      "name": "kworker/R-jpeg_dec",
+      "ticks": 0,
+      "start": 417,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 282,
+      "ppid": 2,
+      "name": "irq/75-nvidia",
+      "ticks": 0,
+      "start": 419,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 284,
+      "ppid": 2,
+      "name": "nv_queue",
+      "ticks": 19,
+      "start": 419,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 359,
+      "ppid": 2,
+      "name": "kworker/10:1H-kblockd",
+      "ticks": 2,
+      "start": 1032,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 360,
+      "ppid": 2,
+      "name": "kworker/6:1H-kblockd",
+      "ticks": 4,
+      "start": 1032,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 445,
+      "ppid": 2,
+      "name": "kworker/R-kdmflush/253:0",
+      "ticks": 0,
+      "start": 1126,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 446,
+      "ppid": 2,
+      "name": "kworker/R-kcryptd_io-253:0-1",
+      "ticks": 0,
+      "start": 1126,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 447,
+      "ppid": 2,
+      "name": "kworker/R-kcryptd-253:0-1",
+      "ticks": 0,
+      "start": 1126,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 448,
+      "ppid": 2,
+      "name": "dmcrypt_write/253:0",
+      "ticks": 91,
+      "start": 1126,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 458,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-worker",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 459,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-delalloc",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 460,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-flush_delalloc",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 461,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-cache",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 462,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-fixup",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 463,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-endio",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 464,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-endio-meta",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 465,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-rmw",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 466,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-endio-write",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 467,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-freespace-write",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 468,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-delayed-meta",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 469,
+      "ppid": 2,
+      "name": "kworker/R-btrfs-qgroup-rescan",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 470,
+      "ppid": 2,
+      "name": "btrfs-cleaner",
+      "ticks": 0,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 471,
+      "ppid": 2,
+      "name": "btrfs-transaction",
+      "ticks": 781,
+      "start": 1132,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.37
+    },
+    {
+      "pid": 482,
+      "ppid": 2,
+      "name": "kworker/2:1H-kblockd",
+      "ticks": 2,
+      "start": 1136,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 483,
+      "ppid": 2,
+      "name": "kworker/3:1H-kblockd",
+      "ticks": 1,
+      "start": 1136,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 489,
+      "ppid": 2,
+      "name": "kworker/4:1H-kblockd",
+      "ticks": 3,
+      "start": 1136,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 498,
+      "ppid": 2,
+      "name": "kworker/0:1H-kblockd",
+      "ticks": 3,
+      "start": 1155,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 501,
+      "ppid": 2,
+      "name": "kworker/8:1H-kblockd",
+      "ticks": 2,
+      "start": 1156,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 502,
+      "ppid": 2,
+      "name": "kworker/9:1H-kblockd",
+      "ticks": 1,
+      "start": 1225,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 530,
+      "ppid": 2,
+      "name": "kworker/1:1H-kblockd",
+      "ticks": 1,
+      "start": 1238,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 544,
+      "ppid": 1,
+      "name": "systemd-journal",
+      "ticks": 1229,
+      "start": 1260,
+      "rss_mib": 55.3,
+      "cpu_percent": 0.25
+    },
+    {
+      "pid": 575,
+      "ppid": 1,
+      "name": "systemd-userdbd",
+      "ticks": 4,
+      "start": 1265,
+      "rss_mib": 4.4,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 587,
+      "ppid": 2,
+      "name": "psimon",
+      "ticks": 0,
+      "start": 1360,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 590,
+      "ppid": 1,
+      "name": "systemd-resolve",
+      "ticks": 42,
+      "start": 1364,
+      "rss_mib": 14.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 591,
+      "ppid": 1,
+      "name": "systemd-timesyn",
+      "ticks": 6,
+      "start": 1364,
+      "rss_mib": 6.8,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 597,
+      "ppid": 1,
+      "name": "systemd-udevd",
+      "ticks": 49,
+      "start": 1366,
+      "rss_mib": 12.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 599,
+      "ppid": 2,
+      "name": "psimon",
+      "ticks": 0,
+      "start": 1369,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 647,
+      "ppid": 2,
+      "name": "kworker/7:1H-kblockd",
+      "ticks": 2,
+      "start": 1382,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 650,
+      "ppid": 2,
+      "name": "kworker/5:1H-kblockd",
+      "ticks": 2,
+      "start": 1383,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 652,
+      "ppid": 2,
+      "name": "irq/76-ELAN06FA:00",
+      "ticks": 810,
+      "start": 1386,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.5
+    },
+    {
+      "pid": 657,
+      "ppid": 1,
+      "name": "systemd-oomd",
+      "ticks": 190,
+      "start": 1391,
+      "rss_mib": 5.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 672,
+      "ppid": 2,
+      "name": "kworker/R-cfg80211",
+      "ticks": 0,
+      "start": 1406,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 688,
+      "ppid": 2,
+      "name": "irq/81-rtw89_pci",
+      "ticks": 2413,
+      "start": 1423,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.25
+    },
+    {
+      "pid": 728,
+      "ppid": 1,
+      "name": "dbus-broker-lau",
+      "ticks": 2,
+      "start": 1578,
+      "rss_mib": 3.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 730,
+      "ppid": 728,
+      "name": "dbus-broker",
+      "ticks": 13078,
+      "start": 1582,
+      "rss_mib": 3.6,
+      "cpu_percent": 1.74
+    },
+    {
+      "pid": 732,
+      "ppid": 1,
+      "name": "apx-audio-state-v1.py",
+      "ticks": 10,
+      "start": 1583,
+      "rss_mib": 18.4,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 734,
+      "ppid": 1,
+      "name": "apx-coordinated-update-v1.py",
+      "ticks": 9,
+      "start": 1583,
+      "rss_mib": 23.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 735,
+      "ppid": 1,
+      "name": "apx-environment-hardware-v1.py",
+      "ticks": 3439,
+      "start": 1584,
+      "rss_mib": 22.0,
+      "cpu_percent": 0.5
+    },
+    {
+      "pid": 736,
+      "ppid": 1,
+      "name": "apx-environment-host-console-v1.py",
+      "ticks": 2493,
+      "start": 1584,
+      "rss_mib": 22.3,
+      "cpu_percent": 0.5
+    },
+    {
+      "pid": 738,
+      "ppid": 1,
+      "name": "apx-environment-switch-v1.py",
+      "ticks": 162,
+      "start": 1585,
+      "rss_mib": 25.8,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 739,
+      "ppid": 1,
+      "name": "apx-host-console-v1.py",
+      "ticks": 8,
+      "start": 1585,
+      "rss_mib": 22.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 743,
+      "ppid": 1,
+      "name": "apx-model-store-control-v1.py",
+      "ticks": 7,
+      "start": 1585,
+      "rss_mib": 17.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 745,
+      "ppid": 1,
+      "name": "apx-lab-executor.py",
+      "ticks": 8,
+      "start": 1585,
+      "rss_mib": 24.4,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 746,
+      "ppid": 1,
+      "name": "apx-removable-media-v1.py",
+      "ticks": 72,
+      "start": 1585,
+      "rss_mib": 18.4,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 747,
+      "ppid": 1,
+      "name": "bluetoothd",
+      "ticks": 3990,
+      "start": 1585,
+      "rss_mib": 6.0,
+      "cpu_percent": 0.37
+    },
+    {
+      "pid": 749,
+      "ppid": 1,
+      "name": "smartd",
+      "ticks": 2,
+      "start": 1586,
+      "rss_mib": 5.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 751,
+      "ppid": 1,
+      "name": "systemd-logind",
+      "ticks": 64,
+      "start": 1586,
+      "rss_mib": 6.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 813,
+      "ppid": 746,
+      "name": "udevadm",
+      "ticks": 0,
+      "start": 1597,
+      "rss_mib": 5.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 847,
+      "ppid": 1,
+      "name": "bridge.py",
+      "ticks": 228,
+      "start": 1619,
+      "rss_mib": 23.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 855,
+      "ppid": 1,
+      "name": "iwd",
+      "ticks": 3651,
+      "start": 1620,
+      "rss_mib": 9.7,
+      "cpu_percent": 0.5
+    },
+    {
+      "pid": 869,
+      "ppid": 1,
+      "name": "systemd-network",
+      "ticks": 2513,
+      "start": 1621,
+      "rss_mib": 10.9,
+      "cpu_percent": 0.5
+    },
+    {
+      "pid": 874,
+      "ppid": 1,
+      "name": "apx-system-power-v1.py",
+      "ticks": 54,
+      "start": 1623,
+      "rss_mib": 24.3,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 921,
+      "ppid": 847,
+      "name": "xdg-dbus-proxy",
+      "ticks": 1,
+      "start": 1630,
+      "rss_mib": 7.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 922,
+      "ppid": 1,
+      "name": "apx-host-services-v1.py",
+      "ticks": 6,
+      "start": 1630,
+      "rss_mib": 18.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 923,
+      "ppid": 1,
+      "name": "apx-host-services-v2.py",
+      "ticks": 6033,
+      "start": 1630,
+      "rss_mib": 21.8,
+      "cpu_percent": 0.75
+    },
+    {
+      "pid": 924,
+      "ppid": 1,
+      "name": "apx-host-services-v3.py",
+      "ticks": 11136,
+      "start": 1630,
+      "rss_mib": 29.6,
+      "cpu_percent": 1.37
+    },
+    {
+      "pid": 927,
+      "ppid": 1,
+      "name": "apx-localsend-network-v1.py",
+      "ticks": 239,
+      "start": 1631,
+      "rss_mib": 19.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 929,
+      "ppid": 1,
+      "name": "apx-timezone-v1.py",
+      "ticks": 26,
+      "start": 1632,
+      "rss_mib": 18.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1007,
+      "ppid": 1,
+      "name": "systemd-machine",
+      "ticks": 272,
+      "start": 1674,
+      "rss_mib": 6.1,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 1906,
+      "ppid": 1,
+      "name": "systemd-timedat",
+      "ticks": 810,
+      "start": 2563,
+      "rss_mib": 5.2,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 5876,
+      "ppid": 1,
+      "name": "apx-environment-switch-runner-v1.py",
+      "ticks": 6,
+      "start": 4962,
+      "rss_mib": 19.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6199,
+      "ppid": 5876,
+      "name": "apx-graphical-environment-v1.py",
+      "ticks": 1462,
+      "start": 5112,
+      "rss_mib": 19.2,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 6258,
+      "ppid": 1,
+      "name": "seatd",
+      "ticks": 0,
+      "start": 5153,
+      "rss_mib": 2.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6272,
+      "ppid": 1,
+      "name": "systemd-nspawn",
+      "ticks": 0,
+      "start": 5172,
+      "rss_mib": 7.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6275,
+      "ppid": 2,
+      "name": "psimon",
+      "ticks": 51,
+      "start": 5178,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6278,
+      "ppid": 6272,
+      "name": "systemd",
+      "ticks": 315,
+      "start": 5180,
+      "rss_mib": 14.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6288,
+      "ppid": 2,
+      "name": "psimon",
+      "ticks": 39,
+      "start": 5181,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6336,
+      "ppid": 6278,
+      "name": "systemd-journal",
+      "ticks": 27,
+      "start": 5209,
+      "rss_mib": 17.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6343,
+      "ppid": 6278,
+      "name": "systemd-userdbd",
+      "ticks": 8,
+      "start": 5211,
+      "rss_mib": 4.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6354,
+      "ppid": 2,
+      "name": "psimon",
+      "ticks": 0,
+      "start": 5217,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6358,
+      "ppid": 6278,
+      "name": "systemd-oomd",
+      "ticks": 197,
+      "start": 5220,
+      "rss_mib": 5.7,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 6360,
+      "ppid": 6278,
+      "name": "systemd-resolve",
+      "ticks": 41,
+      "start": 5220,
+      "rss_mib": 15.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6366,
+      "ppid": 6278,
+      "name": "systemd-network",
+      "ticks": 204,
+      "start": 5222,
+      "rss_mib": 9.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6396,
+      "ppid": 6278,
+      "name": "dbus-broker-lau",
+      "ticks": 3,
+      "start": 5319,
+      "rss_mib": 4.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6397,
+      "ppid": 6396,
+      "name": "dbus-broker",
+      "ticks": 476,
+      "start": 5323,
+      "rss_mib": 3.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6399,
+      "ppid": 6278,
+      "name": "systemd-logind",
+      "ticks": 19,
+      "start": 5323,
+      "rss_mib": 6.8,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6425,
+      "ppid": 1,
+      "name": "apx-external-input-bridge-v1.py",
+      "ticks": 786,
+      "start": 5346,
+      "rss_mib": 20.4,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6452,
+      "ppid": 6278,
+      "name": "bash",
+      "ticks": 1,
+      "start": 5376,
+      "rss_mib": 4.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6478,
+      "ppid": 6452,
+      "name": "dbus-daemon",
+      "ticks": 9727,
+      "start": 5381,
+      "rss_mib": 5.4,
+      "cpu_percent": 1.12
+    },
+    {
+      "pid": 6482,
+      "ppid": 6452,
+      "name": "pipewire",
+      "ticks": 10803,
+      "start": 5387,
+      "rss_mib": 22.2,
+      "cpu_percent": 1.87
+    },
+    {
+      "pid": 6483,
+      "ppid": 6452,
+      "name": "wireplumber",
+      "ticks": 26264,
+      "start": 5387,
+      "rss_mib": 15.6,
+      "cpu_percent": 3.24
+    },
+    {
+      "pid": 6484,
+      "ppid": 6452,
+      "name": "pipewire-pulse",
+      "ticks": 2456,
+      "start": 5387,
+      "rss_mib": 19.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 6491,
+      "ppid": 6278,
+      "name": "rtkit-daemon",
+      "ticks": 8,
+      "start": 5388,
+      "rss_mib": 3.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6496,
+      "ppid": 6278,
+      "name": "gvfsd",
+      "ticks": 5,
+      "start": 5390,
+      "rss_mib": 12.3,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6499,
+      "ppid": 6278,
+      "name": "polkitd",
+      "ticks": 667,
+      "start": 5392,
+      "rss_mib": 10.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6500,
+      "ppid": 6452,
+      "name": "audio-state-client-v1.py",
+      "ticks": 9546,
+      "start": 5392,
+      "rss_mib": 25.2,
+      "cpu_percent": 1.12
+    },
+    {
+      "pid": 6501,
+      "ppid": 6452,
+      "name": "start-hyprland",
+      "ticks": 0,
+      "start": 5392,
+      "rss_mib": 4.8,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6533,
+      "ppid": 6501,
+      "name": "Hyprland",
+      "ticks": 20917,
+      "start": 5406,
+      "rss_mib": 195.8,
+      "cpu_percent": 8.71,
+      "pss_mib": 149.6
+    },
+    {
+      "pid": 6587,
+      "ppid": 6278,
+      "name": "dconf-service",
+      "ticks": 1,
+      "start": 5453,
+      "rss_mib": 6.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6598,
+      "ppid": 6533,
+      "name": "apx-shell-v1",
+      "ticks": 1,
+      "start": 5459,
+      "rss_mib": 3.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6666,
+      "ppid": 6533,
+      "name": "Xwayland",
+      "ticks": 9134,
+      "start": 5471,
+      "rss_mib": 77.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6683,
+      "ppid": 6598,
+      "name": "hypridle",
+      "ticks": 7053,
+      "start": 5477,
+      "rss_mib": 6.9,
+      "cpu_percent": 1.0
+    },
+    {
+      "pid": 6720,
+      "ppid": 6598,
+      "name": "xdg-desktop-por",
+      "ticks": 3368,
+      "start": 5500,
+      "rss_mib": 22.3,
+      "cpu_percent": 0.37
+    },
+    {
+      "pid": 6723,
+      "ppid": 6278,
+      "name": "gnome-keyring-d",
+      "ticks": 6060,
+      "start": 5500,
+      "rss_mib": 9.8,
+      "cpu_percent": 0.62
+    },
+    {
+      "pid": 6728,
+      "ppid": 6598,
+      "name": "xdg-desktop-por",
+      "ticks": 29,
+      "start": 5500,
+      "rss_mib": 30.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6732,
+      "ppid": 6598,
+      "name": "mako",
+      "ticks": 160,
+      "start": 5501,
+      "rss_mib": 8.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6735,
+      "ppid": 6598,
+      "name": "hyprpolkitagent",
+      "ticks": 5,
+      "start": 5501,
+      "rss_mib": 36.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6738,
+      "ppid": 6598,
+      "name": "udiskie",
+      "ticks": 28,
+      "start": 5502,
+      "rss_mib": 63.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6741,
+      "ppid": 6598,
+      "name": "apx-removable-bookmark-v1",
+      "ticks": 98,
+      "start": 5502,
+      "rss_mib": 17.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6756,
+      "ppid": 6278,
+      "name": "at-spi-bus-laun",
+      "ticks": 1,
+      "start": 5505,
+      "rss_mib": 7.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6762,
+      "ppid": 6756,
+      "name": "dbus-daemon",
+      "ticks": 8,
+      "start": 5505,
+      "rss_mib": 4.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6764,
+      "ppid": 6278,
+      "name": "at-spi2-registr",
+      "ticks": 9,
+      "start": 5508,
+      "rss_mib": 7.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6765,
+      "ppid": 6598,
+      "name": "quickshell",
+      "ticks": 37515,
+      "start": 5508,
+      "rss_mib": 529.7,
+      "cpu_percent": 1.99,
+      "pss_mib": 447.5
+    },
+    {
+      "pid": 6771,
+      "ppid": 6278,
+      "name": "xdg-desktop-por",
+      "ticks": 12948,
+      "start": 5508,
+      "rss_mib": 18.8,
+      "cpu_percent": 1.49
+    },
+    {
+      "pid": 6777,
+      "ppid": 6278,
+      "name": "xdg-permission-",
+      "ticks": 0,
+      "start": 5509,
+      "rss_mib": 8.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 6799,
+      "ppid": 6278,
+      "name": "udisksd",
+      "ticks": 21,
+      "start": 5516,
+      "rss_mib": 15.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 7470,
+      "ppid": 6278,
+      "name": "gvfsd-metadata",
+      "ticks": 119,
+      "start": 5926,
+      "rss_mib": 6.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 8622,
+      "ppid": 1,
+      "name": "codex",
+      "ticks": 7251,
+      "start": 6531,
+      "rss_mib": 731.4,
+      "cpu_percent": 1.37,
+      "pss_mib": 685.4
+    },
+    {
+      "pid": 8719,
+      "ppid": 1,
+      "name": "codex",
+      "ticks": 31,
+      "start": 6565,
+      "rss_mib": 177.9,
+      "cpu_percent": 0.0,
+      "pss_mib": 135.4
+    },
+    {
+      "pid": 13000,
+      "ppid": 8622,
+      "name": "codex-code-mode",
+      "ticks": 281,
+      "start": 8703,
+      "rss_mib": 48.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 97512,
+      "ppid": 6278,
+      "name": "gvfs-udisks2-vo",
+      "ticks": 5,
+      "start": 58208,
+      "rss_mib": 19.8,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 97520,
+      "ppid": 6278,
+      "name": "gvfs-mtp-volume",
+      "ticks": 2,
+      "start": 58210,
+      "rss_mib": 9.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 97526,
+      "ppid": 6278,
+      "name": "gvfs-gphoto2-vo",
+      "ticks": 2,
+      "start": 58212,
+      "rss_mib": 10.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 112926,
+      "ppid": 6496,
+      "name": "gvfsd-trash",
+      "ticks": 5,
+      "start": 66648,
+      "rss_mib": 15.3,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 236175,
+      "ppid": 2,
+      "name": "kworker/10:0-events",
+      "ticks": 386,
+      "start": 140283,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 248648,
+      "ppid": 2,
+      "name": "kworker/u48:1-kcryptd-253:0-1",
+      "ticks": 850,
+      "start": 147588,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.25
+    },
+    {
+      "pid": 288332,
+      "ppid": 6278,
+      "name": "minecraft-launc",
+      "ticks": 3,
+      "start": 171254,
+      "rss_mib": 25.9,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 288339,
+      "ppid": 288332,
+      "name": "minecraft-launc",
+      "ticks": 9826,
+      "start": 171257,
+      "rss_mib": 515.3,
+      "cpu_percent": 0.25,
+      "pss_mib": null
+    },
+    {
+      "pid": 288754,
+      "ppid": 2,
+      "name": "nvidia-drm/timeline-521",
+      "ticks": 0,
+      "start": 171494,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 288858,
+      "ppid": 288339,
+      "name": "minecraft-launc",
+      "ticks": 7,
+      "start": 171543,
+      "rss_mib": 134.2,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 288859,
+      "ppid": 288339,
+      "name": "minecraft-launc",
+      "ticks": 10,
+      "start": 171543,
+      "rss_mib": 139.1,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 288919,
+      "ppid": 288858,
+      "name": "minecraft-launc",
+      "ticks": 42465,
+      "start": 171560,
+      "rss_mib": 282.5,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 288920,
+      "ppid": 288339,
+      "name": "minecraft-launc",
+      "ticks": 72,
+      "start": 171560,
+      "rss_mib": 175.5,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 288922,
+      "ppid": 288859,
+      "name": "minecraft-launc",
+      "ticks": 3,
+      "start": 171562,
+      "rss_mib": 61.3,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 289068,
+      "ppid": 288859,
+      "name": "minecraft-launc",
+      "ticks": 4,
+      "start": 171618,
+      "rss_mib": 75.4,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 289109,
+      "ppid": 6278,
+      "name": "upowerd",
+      "ticks": 96,
+      "start": 171626,
+      "rss_mib": 13.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 289280,
+      "ppid": 288339,
+      "name": "minecraft-launc",
+      "ticks": 49,
+      "start": 171714,
+      "rss_mib": 162.1,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 304519,
+      "ppid": 1,
+      "name": "fwupd",
+      "ticks": 78,
+      "start": 178748,
+      "rss_mib": 37.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 304536,
+      "ppid": 1,
+      "name": "udisksd",
+      "ticks": 26,
+      "start": 178757,
+      "rss_mib": 17.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 304548,
+      "ppid": 1,
+      "name": "polkitd",
+      "ticks": 7085,
+      "start": 178761,
+      "rss_mib": 10.1,
+      "cpu_percent": 1.24
+    },
+    {
+      "pid": 304552,
+      "ppid": 2,
+      "name": "kworker/u48:11-btrfs-endio",
+      "ticks": 452,
+      "start": 178765,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 316722,
+      "ppid": 6278,
+      "name": "kitty",
+      "ticks": 2489,
+      "start": 185571,
+      "rss_mib": 309.3,
+      "cpu_percent": 0.25,
+      "pss_mib": 222.9
+    },
+    {
+      "pid": 316789,
+      "ppid": 316722,
+      "name": "kitten",
+      "ticks": 20,
+      "start": 185589,
+      "rss_mib": 29.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 316797,
+      "ppid": 316722,
+      "name": "apx-host-consol",
+      "ticks": 0,
+      "start": 185590,
+      "rss_mib": 5.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 316803,
+      "ppid": 316722,
+      "name": "kitten",
+      "ticks": 23,
+      "start": 185591,
+      "rss_mib": 29.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 316809,
+      "ppid": 316797,
+      "name": "host-console-client-v1.py",
+      "ticks": 259,
+      "start": 185591,
+      "rss_mib": 17.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 316827,
+      "ppid": 736,
+      "name": "bash",
+      "ticks": 0,
+      "start": 185596,
+      "rss_mib": 6.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 317548,
+      "ppid": 8622,
+      "name": "node-MainThread",
+      "ticks": 4,
+      "start": 185993,
+      "rss_mib": 72.8,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 317555,
+      "ppid": 8622,
+      "name": "node-MainThread",
+      "ticks": 49,
+      "start": 185994,
+      "rss_mib": 116.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 317582,
+      "ppid": 8622,
+      "name": "node-MainThread",
+      "ticks": 37,
+      "start": 185995,
+      "rss_mib": 105.4,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 379520,
+      "ppid": 2,
+      "name": "kworker/7:1-events",
+      "ticks": 49,
+      "start": 222403,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 384553,
+      "ppid": 2,
+      "name": "kworker/1:0-events",
+      "ticks": 52,
+      "start": 225458,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 428287,
+      "ppid": 2,
+      "name": "kworker/u48:9-btrfs-endio-meta",
+      "ticks": 563,
+      "start": 251847,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 428683,
+      "ppid": 2,
+      "name": "kworker/u48:23-events_unbound",
+      "ticks": 509,
+      "start": 252088,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 428686,
+      "ppid": 2,
+      "name": "kworker/u48:26-btrfs-endio-write",
+      "ticks": 485,
+      "start": 252088,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 428692,
+      "ppid": 2,
+      "name": "kworker/3:1-events",
+      "ticks": 65,
+      "start": 266471,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 428693,
+      "ppid": 2,
+      "name": "kworker/9:1-events",
+      "ticks": 61,
+      "start": 266471,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 428772,
+      "ppid": 2,
+      "name": "nvidia",
+      "ticks": 0,
+      "start": 266571,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 484524,
+      "ppid": 2,
+      "name": "kworker/4:1-events",
+      "ticks": 61,
+      "start": 300413,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 581747,
+      "ppid": 2,
+      "name": "kworker/u48:3-events_unbound",
+      "ticks": 520,
+      "start": 358361,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.5
+    },
+    {
+      "pid": 588958,
+      "ppid": 6765,
+      "name": "apx-desktop-activity-v1",
+      "ticks": 5140,
+      "start": 362802,
+      "rss_mib": 33.5,
+      "cpu_percent": 1.0
+    },
+    {
+      "pid": 589266,
+      "ppid": 6765,
+      "name": "apx-legion-brightness-keys-v1.py",
+      "ticks": 37,
+      "start": 362943,
+      "rss_mib": 15.9,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 809847,
+      "ppid": 2,
+      "name": "kworker/u48:5-btrfs-endio-write",
+      "ticks": 333,
+      "start": 496601,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 860602,
+      "ppid": 6496,
+      "name": "gvfsd-network",
+      "ticks": 1,
+      "start": 526918,
+      "rss_mib": 15.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 873529,
+      "ppid": 2,
+      "name": "kworker/u48:2-btrfs-endio",
+      "ticks": 311,
+      "start": 533260,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 967360,
+      "ppid": 2,
+      "name": "kworker/u48:6-btrfs-endio-write",
+      "ticks": 365,
+      "start": 589848,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1120708,
+      "ppid": 2,
+      "name": "kworker/u48:7-btrfs-endio-meta",
+      "ticks": 205,
+      "start": 682969,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1120710,
+      "ppid": 2,
+      "name": "kworker/u48:10-kcryptd-253:0-1",
+      "ticks": 187,
+      "start": 682969,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 1120711,
+      "ppid": 2,
+      "name": "kworker/u48:12-btrfs-endio",
+      "ticks": 291,
+      "start": 682969,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1132198,
+      "ppid": 2,
+      "name": "kworker/u49:6-ttm",
+      "ticks": 7,
+      "start": 689947,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1132199,
+      "ppid": 2,
+      "name": "kworker/u49:7-rtw89_tx_wq",
+      "ticks": 11,
+      "start": 689947,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1132200,
+      "ppid": 2,
+      "name": "kworker/u49:8-ttm",
+      "ticks": 2,
+      "start": 689947,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1133621,
+      "ppid": 2,
+      "name": "kworker/0:0-events",
+      "ticks": 217,
+      "start": 690728,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.37
+    },
+    {
+      "pid": 1141197,
+      "ppid": 2,
+      "name": "kworker/11:2-events",
+      "ticks": 13,
+      "start": 694656,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1190725,
+      "ppid": 2,
+      "name": "kworker/6:1-events",
+      "ticks": 17,
+      "start": 723461,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 1192113,
+      "ppid": 2,
+      "name": "psimon",
+      "ticks": 7,
+      "start": 724033,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1203945,
+      "ppid": 2,
+      "name": "kworker/7:2-events",
+      "ticks": 0,
+      "start": 730841,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1215923,
+      "ppid": 2,
+      "name": "kworker/u49:0-ttm",
+      "ticks": 8,
+      "start": 737760,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1215925,
+      "ppid": 2,
+      "name": "kworker/u49:2-ttm",
+      "ticks": 4,
+      "start": 737760,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1215926,
+      "ppid": 2,
+      "name": "kworker/u49:3-ttm",
+      "ticks": 4,
+      "start": 737760,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1228014,
+      "ppid": 2,
+      "name": "kworker/u49:5-ttm",
+      "ticks": 2,
+      "start": 744701,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1228017,
+      "ppid": 2,
+      "name": "kworker/u49:11-ttm",
+      "ticks": 1,
+      "start": 744701,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1228019,
+      "ppid": 2,
+      "name": "kworker/u49:13-ttm",
+      "ticks": 3,
+      "start": 744701,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1228020,
+      "ppid": 2,
+      "name": "kworker/u49:14-rtw89_tx_wq",
+      "ticks": 2,
+      "start": 744701,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1232654,
+      "ppid": 316827,
+      "name": "codex",
+      "ticks": 3623,
+      "start": 747395,
+      "rss_mib": 456.5,
+      "cpu_percent": 3.11,
+      "pss_mib": 456.6
+    },
+    {
+      "pid": 1232911,
+      "ppid": 8622,
+      "name": "node-MainThread",
+      "ticks": 38,
+      "start": 747484,
+      "rss_mib": 99.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1232912,
+      "ppid": 8622,
+      "name": "node-MainThread",
+      "ticks": 48,
+      "start": 747485,
+      "rss_mib": 116.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1232927,
+      "ppid": 8622,
+      "name": "node-MainThread",
+      "ticks": 3,
+      "start": 747486,
+      "rss_mib": 72.6,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1247811,
+      "ppid": 2,
+      "name": "kworker/u49:15-ttm",
+      "ticks": 1,
+      "start": 756376,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1269601,
+      "ppid": 2,
+      "name": "kworker/2:1-events",
+      "ticks": 14,
+      "start": 769040,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1291070,
+      "ppid": 2,
+      "name": "kworker/3:2-events",
+      "ticks": 0,
+      "start": 781167,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1294310,
+      "ppid": 2,
+      "name": "kworker/u48:4-events_unbound",
+      "ticks": 29,
+      "start": 783065,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1299644,
+      "ppid": 6278,
+      "name": "cupsd",
+      "ticks": 0,
+      "start": 786184,
+      "rss_mib": 10.2,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1303607,
+      "ppid": 2,
+      "name": "kworker/6:0-cgroup_free",
+      "ticks": 0,
+      "start": 788561,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1312179,
+      "ppid": 2,
+      "name": "kworker/9:2-events",
+      "ticks": 6,
+      "start": 793264,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1317737,
+      "ppid": 2,
+      "name": "kworker/4:2-cgroup_free",
+      "ticks": 0,
+      "start": 796488,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1324753,
+      "ppid": 2,
+      "name": "kworker/11:0-events",
+      "ticks": 0,
+      "start": 800660,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1327597,
+      "ppid": 2,
+      "name": "kworker/8:2-cgroup_free",
+      "ticks": 0,
+      "start": 802329,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1329581,
+      "ppid": 2,
+      "name": "kworker/0:1-events",
+      "ticks": 5,
+      "start": 803504,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1335182,
+      "ppid": 2,
+      "name": "kworker/u48:8+events_unbound",
+      "ticks": 64,
+      "start": 806873,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.62
+    },
+    {
+      "pid": 1339950,
+      "ppid": 2,
+      "name": "kworker/2:2-cgroup_release",
+      "ticks": 0,
+      "start": 809722,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1345608,
+      "ppid": 6533,
+      "name": "sh",
+      "ticks": 0,
+      "start": 813135,
+      "rss_mib": 5.7,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1345609,
+      "ppid": 1345608,
+      "name": "apx-settings",
+      "ticks": 1368,
+      "start": 813135,
+      "rss_mib": 136.8,
+      "cpu_percent": 0.0,
+      "pss_mib": null
+    },
+    {
+      "pid": 1354065,
+      "ppid": 2,
+      "name": "kworker/10:1-cgroup_free",
+      "ticks": 0,
+      "start": 817656,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1366366,
+      "ppid": 2,
+      "name": "kworker/1:2-events",
+      "ticks": 0,
+      "start": 824857,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1368357,
+      "ppid": 2,
+      "name": "kworker/u49:1-ttm",
+      "ticks": 0,
+      "start": 825872,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1368358,
+      "ppid": 2,
+      "name": "kworker/u49:4-ttm",
+      "ticks": 0,
+      "start": 825872,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1368359,
+      "ppid": 2,
+      "name": "kworker/u49:9-ttm",
+      "ticks": 0,
+      "start": 825872,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1368360,
+      "ppid": 2,
+      "name": "kworker/u49:10-ttm",
+      "ticks": 0,
+      "start": 825872,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1368361,
+      "ppid": 2,
+      "name": "kworker/u49:12-ttm",
+      "ticks": 0,
+      "start": 825872,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1370456,
+      "ppid": 2,
+      "name": "kworker/5:0-events",
+      "ticks": 0,
+      "start": 826868,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1375500,
+      "ppid": 6533,
+      "name": "sh",
+      "ticks": 0,
+      "start": 829470,
+      "rss_mib": 5.5,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1375501,
+      "ppid": 1375500,
+      "name": "apx-task-manager",
+      "ticks": 844,
+      "start": 829471,
+      "rss_mib": 78.8,
+      "cpu_percent": 0.37,
+      "pss_mib": 52.3
+    },
+    {
+      "pid": 1383600,
+      "ppid": 2,
+      "name": "kworker/11:1-events",
+      "ticks": 0,
+      "start": 832732,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1383800,
+      "ppid": 2,
+      "name": "kworker/9:0-cgroup_free",
+      "ticks": 0,
+      "start": 832839,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1388389,
+      "ppid": 2,
+      "name": "kworker/8:0-cgroup_free",
+      "ticks": 0,
+      "start": 835573,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1390548,
+      "ppid": 2,
+      "name": "kworker/0:2-events",
+      "ticks": 3,
+      "start": 836770,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1391639,
+      "ppid": 6343,
+      "name": "systemd-userwor",
+      "ticks": 0,
+      "start": 837388,
+      "rss_mib": 5.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1395512,
+      "ppid": 575,
+      "name": "systemd-userwor",
+      "ticks": 0,
+      "start": 839641,
+      "rss_mib": 4.3,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1401073,
+      "ppid": 575,
+      "name": "systemd-userwor",
+      "ticks": 0,
+      "start": 842149,
+      "rss_mib": 4.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1401074,
+      "ppid": 575,
+      "name": "systemd-userwor",
+      "ticks": 0,
+      "start": 842149,
+      "rss_mib": 4.3,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1405373,
+      "ppid": 2,
+      "name": "kworker/4:0-events",
+      "ticks": 1,
+      "start": 844663,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1409945,
+      "ppid": 288339,
+      "name": "java",
+      "ticks": 14749,
+      "start": 847374,
+      "rss_mib": 4185.7,
+      "cpu_percent": 102.16,
+      "pss_mib": null
+    },
+    {
+      "pid": 1410317,
+      "ppid": 2,
+      "name": "kworker/7:0",
+      "ticks": 0,
+      "start": 847586,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1410486,
+      "ppid": 6343,
+      "name": "systemd-userwor",
+      "ticks": 0,
+      "start": 847679,
+      "rss_mib": 5.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1411276,
+      "ppid": 2,
+      "name": "nvidia-drm/timeline-803",
+      "ticks": 5,
+      "start": 848113,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.12
+    },
+    {
+      "pid": 1412592,
+      "ppid": 2,
+      "name": "kworker/u48:0-flush-btrfs-1",
+      "ticks": 27,
+      "start": 848857,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.37
+    },
+    {
+      "pid": 1414889,
+      "ppid": 2,
+      "name": "kworker/u48:13-btrfs-endio-write",
+      "ticks": 16,
+      "start": 849369,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1417740,
+      "ppid": 2,
+      "name": "kworker/6:2-cgroup_free",
+      "ticks": 0,
+      "start": 850760,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1419355,
+      "ppid": 1345609,
+      "name": "python3",
+      "ticks": 4,
+      "start": 851212,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1421017,
+      "ppid": 2,
+      "name": "kworker/0:3",
+      "ticks": 0,
+      "start": 851784,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1422017,
+      "ppid": 2,
+      "name": "kworker/2:0-cgroup_free",
+      "ticks": 0,
+      "start": 852069,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1422243,
+      "ppid": 1345609,
+      "name": "python3",
+      "ticks": 4,
+      "start": 852166,
+      "rss_mib": 0.0,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1424603,
+      "ppid": 6343,
+      "name": "systemd-userwor",
+      "ticks": 0,
+      "start": 853516,
+      "rss_mib": 5.1,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1429302,
+      "ppid": 8622,
+      "name": "bash",
+      "ticks": 0,
+      "start": 856245,
+      "rss_mib": 5.4,
+      "cpu_percent": 0.0
+    },
+    {
+      "pid": 1429309,
+      "ppid": 1429302,
+      "name": "python3",
+      "ticks": 9,
+      "start": 856247,
+      "rss_mib": 14.1,
+      "cpu_percent": 0.5
+    },
+    {
+      "pid": 1430262,
+      "ppid": 2,
+      "name": "kworker/10:2",
+      "ticks": 0,
+      "start": 856811,
+      "rss_mib": 0.0,
+      "cpu_percent": null
+    },
+    {
+      "pid": 1430610,
+      "ppid": 6765,
+      "name": "host-services-ui-v3.py",
+      "ticks": 2,
+      "start": 857036,
+      "rss_mib": 14.3,
+      "cpu_percent": null
+    }
+  ]
+}

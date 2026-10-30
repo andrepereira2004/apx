@@ -1,0 +1,9 @@
+{
+  "changed": [
+    "scripts/physical-pilot/apx-environment-update-batch-v1.py",
+    "scripts/portable/apx-portable-graphical.py",
+    "scripts/portable/apx-portable-services.py",
+    "scripts/portable/install_apx_full.py"
+  ],
+  "sources": 528
+}

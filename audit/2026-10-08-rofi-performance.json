@@ -1,0 +1,15 @@
+{
+  "environment": "hytale",
+  "before_files_seconds": 8.88,
+  "final_files_seconds": 1.092,
+  "rows": 32264,
+  "full_output_sha256": "13f926f2b660c0cfdb2777f7dbc621ed52ebe3ef6f75d97ffe19d3fda089832e",
+  "largest_folder_before_seconds": 0.313,
+  "largest_folder_after_seconds": 0.115,
+  "largest_folder_rows": 973,
+  "final_rofi_visible_seconds": 1.366,
+  "screenshots_used": false,
+  "automated_tests_passed": 17,
+  "owner_physical_keyboard_confirmation": "pending",
+  "asset_sha256": "6ceaccd6988d4bb9d93d71b42e023cae28c82a025c9acef55d3d8d0b5ade1c5a"
+}

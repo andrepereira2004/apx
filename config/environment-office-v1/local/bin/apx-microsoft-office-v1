@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Faculdade pilot: original Microsoft Office with the verified Bottles Soda runner.
+set -euo pipefail
+app=${1:-}
+case "$app" in
+  word) executable=WINWORD.EXE ;;
+  excel) executable=EXCEL.EXE ;;
+  powerpoint) executable=POWERPNT.EXE ;;
+  onenote) executable=ONENOTE.EXE ;;
+  *) printf 'Aplicação Office desconhecida.\n' >&2; exit 2 ;;
+esac
+shift
+prefix="$HOME/.wine4office-offline"
+runner="$HOME/.local/share/wine4office/soda-test/soda-11.0-29-experimental-x86_64/bin"
+wine="$runner/wine"
+[[ -x "$wine" && -f "$prefix/drive_c/Program Files/Microsoft Office/root/Office16/$executable" ]] || exit 1
+export WINEPREFIX="$prefix" WINEARCH=win64
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+export WINEDEBUG=${WINEDEBUG:--all}
+unset WAYLAND_DISPLAY
+locker="$prefix/drive_c/ProgramData/Microsoft/Office/ClickToRunPackageLocker"
+if [[ -f "$locker" && ! -L "$locker" ]]; then chmod 0770 "$locker"; fi
+"$runner/wineserver" -p60
+"$wine" sc start ClickToRunSvc >/dev/null 2>&1 || true
+ready=false
+for attempt in {1..20}; do
+    state=$("$wine" sc query ClickToRunSvc 2>/dev/null || true)
+    if [[ $state =~ STATE[[:space:]]*:[[:space:]]*4[[:space:]]+RUNNING ]]; then ready=true; break; fi
+    sleep 1
+done
+if [[ $ready != true ]]; then printf 'O serviço do Office não arrancou.\n' >&2; exit 1; fi
+arguments=()
+for document in "$@"; do
+    if [[ $document == file://* ]]; then
+        document=$(python3 -c 'import sys,urllib.parse; p=urllib.parse.urlsplit(sys.argv[1]); assert p.netloc in ("","localhost"); print(urllib.parse.unquote(p.path))' "$document")
+    fi
+    if [[ $document == https://* || $document == http://* ]]; then
+        arguments+=("$document")
+    else
+        document=$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).expanduser().absolute())' "$document")
+        arguments+=("$("$runner/winepath" -w "$document")")
+    fi
+done
+# App-V requires the Windows drive identity; the Unix executable path can exit silently.
+exec "$wine" "C:\\Program Files\\Microsoft Office\\root\\Office16\\$executable" "${arguments[@]}"

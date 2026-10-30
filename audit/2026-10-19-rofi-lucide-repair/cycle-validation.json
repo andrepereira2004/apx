@@ -1,0 +1,22 @@
+{
+  "visits": [
+    {
+      "address": "0x5590e21c0e90",
+      "workspace": 2
+    },
+    {
+      "address": "0x5590e21c7180",
+      "workspace": 1
+    },
+    {
+      "address": "0x5590e2a9f7e0",
+      "workspace": 3
+    },
+    {
+      "address": "0x5590e21c0e90",
+      "workspace": 2
+    }
+  ],
+  "wraps": true,
+  "window_set_unchanged": true
+}

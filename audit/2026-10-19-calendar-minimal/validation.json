@@ -1,0 +1,18 @@
+{
+  "month_and_year_navigation": true,
+  "editor_opened": true,
+  "samples": [
+    {
+      "calendar_date": "2026-11-01",
+      "calendar_navigation_running": true,
+      "calendar_page_opacity": 0.2870802962962963,
+      "calendar_page_offset": 7.129197037037037
+    },
+    {
+      "calendar_date": "2026-11-01",
+      "calendar_navigation_running": false,
+      "calendar_page_opacity": 1,
+      "calendar_page_offset": 0
+    }
+  ]
+}

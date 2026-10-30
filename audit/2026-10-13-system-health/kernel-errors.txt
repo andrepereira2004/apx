@@ -1,0 +1,25 @@
+Oct 12 13:03:36 archlinux kernel: virt/tdx: TDX not supported by the host platform
+Oct 12 13:03:36 archlinux kernel: ACPI BIOS Error (bug): Could not resolve symbol [\_SB.PCI0.PB2], AE_NOT_FOUND (20251212/dswload2-162)
+Oct 12 13:03:36 archlinux kernel: ACPI Error: AE_NOT_FOUND, During name lookup/catalog (20251212/psobject-220)
+Oct 12 13:03:36 archlinux kernel: 
+Oct 12 20:51:48 apx-host kernel: usb 1-3: can't set config #1, error -71
+Oct 12 20:53:40 apx-host kernel: usb 1-3: can't set config #1, error -71
+Oct 12 20:57:00 apx-host kernel: usb 1-3: can't set config #1, error -71
+Oct 12 20:59:22 apx-host kernel: usb 1-3: device not accepting address 25, error -71
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 10 on unit 2: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 1 on unit 2: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 5 on unit 2: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_CUR) UVC control 5 on unit 2: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 11 on unit 2: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 2 on unit 1: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 3 on unit 1: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 4 on unit 1: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: Failed to query (GET_INFO) UVC control 20 on unit 1: -71 (exp. 1).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.1: Failed to query (GET_CUR) UVC probe control : -71 (exp. 26).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.1: Failed to initialize the device (-71).
+Oct 12 21:00:45 apx-host kernel: uvcvideo 1-3:1.0: probe with driver uvcvideo failed with error -71
+Oct 13 11:00:23 apx-host kernel: usb 1-3: can't set config #1, error -71
+Oct 13 11:22:33 apx-host kernel: usb 1-3: device not accepting address 44, error -71
+Oct 13 13:54:39 apx-host kernel: Freezing remaining freezable tasks failed after 20.008 seconds (0 tasks refusing to freeze, wq_busy=1):
+
+STDERR:

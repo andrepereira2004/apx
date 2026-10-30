@@ -1,0 +1,34 @@
+<actions>
+  <action>
+    <icon>edit-delete</icon>
+    <name>Desinstalar neste Environment</name>
+    <submenu />
+    <unique-id>1789400000000000-1</unique-id>
+    <command>/home/apx/.local/bin/apx-application-remove-v1 %f</command>
+    <description>Remove apenas a aplicação selecionada deste Environment</description>
+    <range>*.desktop</range>
+    <patterns>*.desktop</patterns>
+    <startup-notify />
+    <directories />
+  </action>
+  <action>
+    <icon>folder</icon>
+    <name>Alterar cor da pasta…</name>
+    <submenu />
+    <unique-id>1791390000000000-1</unique-id>
+    <command>/home/apx/.local/bin/apx-folder-color-v1 set %F</command>
+    <description>Escolher a cor ou repor a cor predefinida</description>
+    <patterns>*</patterns>
+    <directories />
+  </action>
+    <action>
+    <icon>document-properties</icon>
+    <name>Editar etiquetas…</name>
+    <submenu />
+    <unique-id>1791390000000000-3</unique-id>
+    <command>/home/apx/.local/bin/apx-folder-color-v1 tags %F</command>
+    <description>Adicionar ou alterar etiquetas das pastas selecionadas</description>
+    <patterns>*</patterns>
+    <directories />
+  </action>
+  </actions>

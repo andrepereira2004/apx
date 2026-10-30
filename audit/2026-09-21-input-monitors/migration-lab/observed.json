@@ -1,0 +1,63 @@
+{
+   "partitiontable": {
+      "label": "gpt",
+      "id": "E4C57A04-BAC3-458F-AF73-8C2871E044B5",
+      "device": "/dev/loop0",
+      "unit": "sectors",
+      "firstlba": 34,
+      "lastlba": 1000215182,
+      "sectorsize": 512,
+      "partitions": [
+         {
+            "node": "/dev/loop0p1",
+            "start": 2048,
+            "size": 2097152,
+            "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+            "uuid": "106F3F58-BDCF-4D7E-B2DD-7AABA12F9ABD",
+            "name": "APX_EFI"
+         },{
+            "node": "/dev/loop0p2",
+            "start": 2099200,
+            "size": 558729216,
+            "type": "CA7D7CCB-63ED-4C53-861C-1742536059CC",
+            "uuid": "9790735D-C2BE-40F3-88F7-4FA450AAA6E9",
+            "name": "APX_CRYPT"
+         },{
+            "node": "/dev/loop0p3",
+            "start": 560828416,
+            "size": 251658240,
+            "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+            "uuid": "CD03BA35-6F2D-4A6D-ACAA-D4B8DC453D57",
+            "name": "APX_WINDOWS_TARGET"
+         },{
+            "node": "/dev/loop0p4",
+            "start": 981340160,
+            "size": 18874368,
+            "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+            "uuid": "A9794C61-7106-4B3F-94D7-28B6F4DEC1C9",
+            "name": "APX_WINSETUP"
+         },{
+            "node": "/dev/loop0p5",
+            "start": 813568000,
+            "size": 167772160,
+            "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+            "uuid": "7FA7F3BE-FFEF-5A2D-A0FF-3F45C726197A",
+            "name": "APX_WINDOWS_LAB"
+         },{
+            "node": "/dev/loop0p6",
+            "start": 812486656,
+            "size": 1048576,
+            "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+            "uuid": "FEF954E0-2B75-57D5-B2AC-4E3F94F2A071",
+            "name": "APX_NATIVE_EFI"
+         },{
+            "node": "/dev/loop0p7",
+            "start": 813535232,
+            "size": 32768,
+            "type": "E3C9E316-0B5C-4DB8-817D-F92DF00215AE",
+            "uuid": "7558E37B-E3F4-57AB-9F46-6B493F59F5CF",
+            "name": "APX_NATIVE_MSR"
+         }
+      ]
+   }
+}

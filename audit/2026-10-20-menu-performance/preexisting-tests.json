@@ -1,0 +1,11 @@
+{
+  "baseline_tests": 8,
+  "failures": [
+    "test_bounce_mouse_area_is_a_stateless_reusable_primitive (scale_baseline.ControlCenterScaleTests.test_bounce_mouse_area_is_a_stateless_reusable_primitive)",
+    "test_control_center_matches_desktop_scale_without_fractional_resampling (scale_baseline.ControlCenterScaleTests.test_control_center_matches_desktop_scale_without_fractional_resampling)",
+    "test_every_keyboard_popup_animates_its_bar_button (scale_baseline.ControlCenterScaleTests.test_every_keyboard_popup_animates_its_bar_button)",
+    "test_popup_opening_uses_one_explicit_forward_animation (scale_baseline.ControlCenterScaleTests.test_popup_opening_uses_one_explicit_forward_animation)",
+    "test_workload_overview_has_room_for_all_actions (scale_baseline.ControlCenterScaleTests.test_workload_overview_has_room_for_all_actions)"
+  ],
+  "errors": []
+}

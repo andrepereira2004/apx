@@ -1,0 +1,60 @@
+{
+  "frames-before.json": {
+    "openings": 9,
+    "gaps": 283,
+    "median_ms": 8,
+    "max_ms": 37,
+    "over20ms": 9,
+    "distinct_content_widths": [
+      31,
+      29,
+      30,
+      29,
+      31,
+      29,
+      30,
+      30,
+      33
+    ],
+    "distinct_target_heights": [
+      1,
+      1,
+      4,
+      1,
+      1,
+      4,
+      1,
+      1,
+      4
+    ]
+  },
+  "frames.json": {
+    "openings": 9,
+    "gaps": 302,
+    "median_ms": 8.0,
+    "max_ms": 16,
+    "over20ms": 0,
+    "distinct_content_widths": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "distinct_target_heights": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  }
+}

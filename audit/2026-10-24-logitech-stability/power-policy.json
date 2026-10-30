@@ -1,0 +1,10 @@
+[
+  {
+    "path": "/sys/bus/usb/devices/1-2/power/control",
+    "before": "auto",
+    "identity": [
+      "05e3",
+      "0610"
+    ]
+  }
+]

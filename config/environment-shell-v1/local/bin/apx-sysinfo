@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+blue=$'\e[38;2;85;230;255m'; blue_dim=$'\e[38;2;36;104;121m'; italic=$'\e[3m'; reset=$'\e[0m'
+if [[ ! -t 1 || ${TERM:-dumb} == dumb ]]; then blue= blue_dim= italic= reset=; fi
+mapfile -t logo <<'LOGO'
+                  -`
+                 .o+`
+                `ooo/
+               `+oooo:
+              `+oooooo:
+              -+oooooo+:
+            `/:-:++oooo+:
+           `/++++/+++++++:
+          `/++++++++++++++:
+         `/+++ooooooooooooo/`
+        ./ooosssso++osssssso+`
+       .oossssso-````/ossssss+`
+      -osssssso.      :ssssssso.
+     :osssssss/        osssso+++.
+    /ossssssss/        +ssssooo/-
+  `/ossssso+/:-        -:/+osssso+-
+ `+sso+:-`                 `.-/+oso:
+LOGO
+load_info() {
+    cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/apx-sysinfo
+    cache_file=$cache_dir/daily
+    current_boot=$(< /proc/sys/kernel/random/boot_id)
+    now=$(date +%s)
+
+    if [[ -r $cache_file ]]; then
+        cache_time=$(stat -c %Y "$cache_file" 2>/dev/null || printf 0)
+        # The cache file is generated exclusively by this script.
+        source "$cache_file"
+    else
+        cache_time=0
+        cache_boot=
+    fi
+
+    if [[ $cache_boot != "$current_boot" || $((now - cache_time)) -ge 86400 ]]; then
+        collect_info
+        write_cache
+    fi
+
+    display_user=${APX_DISPLAY_USER:-andrepereira}
+    labels=("UTILIZADOR" "SISTEMA" "KERNEL" "UPTIME" "PACOTES" "SHELL" "TERMINAL" "WM" "CPU" "GPU" "MEMÓRIA" "DISCO /" "ECRÃ")
+    host_name=${APX_DISPLAY_HOST:-$(< /etc/hostname)}
+    values=("${display_user}@${host_name}" "Arch Linux" "$kernel" "$uptime_text" "$packages (pacman)" "$shell_version" "Kitty" "Hyprland + Quickshell" "$cpu" "$gpu" "$memory" "$disk" "$resolution")
+}
+
+collect_info() {
+    cpu=$(lscpu 2>/dev/null | awk -F: '/Model name/ {sub(/^[ \t]+/, "", $2); print $2; exit}')
+    gpu=$(lspci 2>/dev/null | awk -F': ' '/VGA compatible controller|3D controller/ {gsub(/ \(rev [^)]+\)$/, "", $2); sub(/^.*Corporation /, "", $2); if (out) out=out " + " $2; else out=$2} END {print out}')
+    memory=$(free -h 2>/dev/null | awk '/^Mem:/ {print $3 " / " $2}')
+    disk=$(df -h / 2>/dev/null | awk 'NR==2 {print $3 " / " $2 " (" $5 ")"}')
+    packages=$(pacman -Qq 2>/dev/null | wc -l)
+    uptime_text=$(uptime -p 2>/dev/null | sed 's/^up //')
+    resolution=$(hyprctl monitors -j 2>/dev/null | jq -r 'map("\(.width)x\(.height) @ \(.refreshRate|round)Hz") | join(" + ")' 2>/dev/null)
+    [[ -n $resolution ]] || resolution="sessão gráfica"
+    kernel=$(uname -r)
+    shell_version="Bash ${BASH_VERSION%%(*}"
+    cache_boot=$current_boot
+}
+
+write_cache() {
+    mkdir -p "$cache_dir"
+    cache_tmp=$cache_file.$$
+    {
+        printf 'cache_boot=%q\n' "$cache_boot"
+        printf 'cpu=%q\n' "$cpu"
+        printf 'gpu=%q\n' "$gpu"
+        printf 'memory=%q\n' "$memory"
+        printf 'disk=%q\n' "$disk"
+        printf 'packages=%q\n' "$packages"
+        printf 'uptime_text=%q\n' "$uptime_text"
+        printf 'resolution=%q\n' "$resolution"
+        printf 'kernel=%q\n' "$kernel"
+        printf 'shell_version=%q\n' "$shell_version"
+    } > "$cache_tmp"
+    chmod 600 "$cache_tmp"
+    mv -f "$cache_tmp" "$cache_file"
+}
+
+if [[ ${1:-} == --refresh-cache ]]; then
+    cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/apx-sysinfo
+    cache_file=$cache_dir/daily
+    current_boot=$(< /proc/sys/kernel/random/boot_id)
+    collect_info
+    write_cache
+    exit
+fi
+printf '\n  %b%s%b\n' "$blue" '╭─ SYSTEM DECK ────────────────────────────────────────────────╮' "$reset"
+columns=${COLUMNS:-$(tput cols 2>/dev/null || printf 80)}
+if (( columns < 0 )); then
+    load_info
+    for i in "${!logo[@]}"; do
+        if (( i < ${#labels[@]} )); then printf '  %b%-40s%b  %b%-10s%b %s\n' "$blue" "${logo[i]}" "$reset" "$blue_dim" "${labels[i]}" "$reset" "${values[i]}"
+        else printf '  %b%s%b\n' "$blue" "${logo[i]}" "$reset"; fi
+    done
+else
+    if [[ -t 1 && ${APX_ANIMATE:-1} != 0 ]]; then
+        # Draw every glyph from its bottom-left point, letter by letter.
+        printf '\e[?25l'
+        trap 'printf "\e[?25h"' EXIT INT TERM
+        final_logo=('       ___    ____  _  __' '      /   |  / __ \| |/ /' '     / /| | / /_/ /|   /' '    / ___ |/ ____//   |' '   /_/  |_/_/    /_/|_|')
+        a_strokes=('4:3' '4:4' '4:5' '3:4' '2:5' '1:6' '0:7' '0:8' '0:9' '1:10' '2:10' '3:10' '4:10' '4:9' '4:8' '2:8' '2:7' '3:8' '3:7' '3:6')
+        p_strokes=('4:11' '4:12' '3:11' '2:12' '1:13' '0:14' '0:15' '0:16' '0:17' '1:18' '2:18' '3:17' '3:16' '3:15' '3:14' '3:13' '2:14' '2:15' '2:16' '1:16' '1:15')
+        x_strokes=('4:17' '4:18' '4:19' '3:18' '2:19' '1:19' '0:20' '1:21' '1:22' '0:23' '0:24' '1:24' '2:23' '3:22' '4:22' '4:21' '4:20')
+        printf '\e[s\n\n\n\n\n'
+        draw_strokes() {
+            local point row col glyph
+            for point; do
+                row=${point%%:*}; col=${point##*:}; glyph=${final_logo[row]:col:1}
+                printf '\e[u'
+                (( row > 0 )) && printf '\e[%dB' "$row"
+                printf '\e[%dC%b%b%s%b' "$((col + 2))" "$blue" "$italic" "$glyph" "$reset"
+                sleep 0.018
+            done
+        }
+        clear_logo() {
+            printf '\e[u'
+            for _ in 1 2 3 4 5; do printf '\r\e[2K\n'; done
+        }
+        clear_logo
+        draw_strokes "${a_strokes[@]}"
+        draw_strokes "${p_strokes[@]}"
+        draw_strokes "${x_strokes[@]}"
+        # Snap to the canonical five-line shape after the final stroke.
+        printf '\e[u'
+        for row in 0 1 2 3 4; do
+            printf '\r\e[2K  %b%b%s%b\n' "$blue" "$italic" "${final_logo[row]}" "$reset"
+        done
+        printf '\e[u\e[5B\n\e[?25h'
+        trap - EXIT INT TERM
+    else
+        printf '  %b%b       ___    ____  _  __%b\n' "$blue" "$italic" "$reset"
+        printf '  %b%b      /   |  / __ \\| |/ /%b\n' "$blue" "$italic" "$reset"
+        printf '  %b%b     / /| | / /_/ /|   /%b\n' "$blue" "$italic" "$reset"
+        printf '  %b%b    / ___ |/ ____//   |%b\n' "$blue" "$italic" "$reset"
+        printf '  %b%b   /_/  |_/_/    /_/|_|%b\n\n' "$blue" "$italic" "$reset"
+    fi
+    # The logo is already visible while these fast live values are collected.
+    load_info
+    info_delay=0
+    [[ -t 1 && ${APX_ANIMATE:-1} != 0 ]] && info_delay=0.025
+    for i in "${!labels[@]}"; do
+        value=${values[i]}
+        # Long hardware names remain readable instead of overflowing a split.
+        if (( ${#value} > columns - 19 )); then
+            value="${value:0:columns-22}..."
+        fi
+        label=${labels[i]}
+        padding=$((10 - ${#label}))
+        (( padding < 0 )) && padding=0
+        printf '  %b%s%b%*s %s\n' "$blue_dim" "$label" "$reset" "$padding" '' "$value"
+        [[ $info_delay != 0 ]] && sleep "$info_delay"
+    done
+fi
+printf '  %b%s%b\n\n' "$blue" '╰────────────────────── BTW, I USE ARCH ───────────────────────╯' "$reset"

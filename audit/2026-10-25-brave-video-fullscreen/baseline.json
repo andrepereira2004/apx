@@ -1,0 +1,158 @@
+{
+  "scope": "local canvas-stream video in isolated native HTML fullscreen; not YouTube/network/codec reproduction",
+  "xwayland": false,
+  "results": [
+    {
+      "events": [
+        {
+          "time": 1093.1000000014901,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 97,
+      "dropped": 3,
+      "cycle": 1,
+      "enter": true,
+      "promise_ms": 22.7,
+      "max_raf_gap_ms": 8.4,
+      "raf_gaps_over_25ms": 0,
+      "samples": 93
+    },
+    {
+      "events": [
+        {
+          "time": 1858.8999999985099,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 143,
+      "dropped": 3,
+      "cycle": 1,
+      "enter": false,
+      "promise_ms": 16.2,
+      "max_raf_gap_ms": 8.8,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    },
+    {
+      "events": [
+        {
+          "time": 2619.5,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 189,
+      "dropped": 3,
+      "cycle": 2,
+      "enter": true,
+      "promise_ms": 7.7,
+      "max_raf_gap_ms": 8.5,
+      "raf_gaps_over_25ms": 0,
+      "samples": 91
+    },
+    {
+      "events": [
+        {
+          "time": 3385.2999999970198,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 235,
+      "dropped": 3,
+      "cycle": 2,
+      "enter": false,
+      "promise_ms": 17.1,
+      "max_raf_gap_ms": 8.8,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    },
+    {
+      "events": [
+        {
+          "time": 4152.5,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 281,
+      "dropped": 3,
+      "cycle": 3,
+      "enter": true,
+      "promise_ms": 7.9,
+      "max_raf_gap_ms": 8.5,
+      "raf_gaps_over_25ms": 0,
+      "samples": 91
+    },
+    {
+      "events": [
+        {
+          "time": 4911.5,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 327,
+      "dropped": 3,
+      "cycle": 3,
+      "enter": false,
+      "promise_ms": 16.4,
+      "max_raf_gap_ms": 8.7,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    },
+    {
+      "events": [
+        {
+          "time": 5678.60000000149,
+          "fullscreen": true,
+          "width": 739,
+          "height": 718
+        }
+      ],
+      "fullscreen": true,
+      "frames": 372,
+      "dropped": 3,
+      "cycle": 4,
+      "enter": true,
+      "promise_ms": 8.1,
+      "max_raf_gap_ms": 8.5,
+      "raf_gaps_over_25ms": 0,
+      "samples": 91
+    },
+    {
+      "events": [
+        {
+          "time": 6446.10000000149,
+          "fullscreen": false,
+          "width": 1536,
+          "height": 727
+        }
+      ],
+      "fullscreen": false,
+      "frames": 419,
+      "dropped": 3,
+      "cycle": 4,
+      "enter": false,
+      "promise_ms": 19.6,
+      "max_raf_gap_ms": 8.7,
+      "raf_gaps_over_25ms": 0,
+      "samples": 92
+    }
+  ]
+}

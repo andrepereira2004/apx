@@ -1,0 +1,20 @@
+// Environment-local only: APX graphical sessions have no logind active seat.
+// The owner already has Environment-local package administration via wheel.
+polkit.addRule(function(action, subject) {
+    var allowed = [
+        "org.freedesktop.Flatpak.app-install",
+        "org.freedesktop.Flatpak.runtime-install",
+        "org.freedesktop.Flatpak.app-update",
+        "org.freedesktop.Flatpak.runtime-update",
+        "org.freedesktop.Flatpak.app-uninstall",
+        "org.freedesktop.Flatpak.runtime-uninstall",
+        "org.freedesktop.Flatpak.modify-repo",
+        "org.freedesktop.Flatpak.update-remote",
+        "org.freedesktop.Flatpak.appstream-update"
+    ];
+    if (subject.user === "apx" && subject.isInGroup("wheel") &&
+        allowed.indexOf(action.id) !== -1) {
+        return polkit.Result.YES;
+    }
+    return polkit.Result.NOT_HANDLED;
+});

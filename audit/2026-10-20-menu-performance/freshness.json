@@ -1,0 +1,946 @@
+{
+  "summary": {
+    "battery": {
+      "samples": 13,
+      "max_query_ms": 105,
+      "max_sample_gap_ms": 564
+    },
+    "volume": {
+      "samples": 13,
+      "max_query_ms": 25,
+      "max_sample_gap_ms": 511
+    },
+    "microphone": {
+      "samples": 13,
+      "max_query_ms": 26,
+      "max_sample_gap_ms": 509
+    },
+    "audio": {
+      "samples": 13,
+      "max_query_ms": 66,
+      "max_sample_gap_ms": 509
+    },
+    "network": {
+      "samples": 14,
+      "max_query_ms": 243,
+      "max_sample_gap_ms": 509
+    },
+    "hardware": {
+      "samples": 13,
+      "max_query_ms": 109,
+      "max_sample_gap_ms": 549
+    }
+  },
+  "samples": [
+    {
+      "microphone": {
+        "sample": 1792535322840,
+        "elapsed": 24
+      },
+      "volume": {
+        "sample": 1792535322841,
+        "elapsed": 25
+      },
+      "hardware": {
+        "sample": 1792535322881,
+        "elapsed": 65
+      },
+      "battery": {
+        "sample": 1792535322872,
+        "elapsed": 56
+      },
+      "audio": {
+        "sample": 1792535322882,
+        "elapsed": 66
+      },
+      "network": {
+        "sample": 1792535322555,
+        "elapsed": 238
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535322840,
+        "elapsed": 24
+      },
+      "volume": {
+        "sample": 1792535322841,
+        "elapsed": 25
+      },
+      "hardware": {
+        "sample": 1792535322881,
+        "elapsed": 65
+      },
+      "battery": {
+        "sample": 1792535322872,
+        "elapsed": 56
+      },
+      "audio": {
+        "sample": 1792535322882,
+        "elapsed": 66
+      },
+      "network": {
+        "sample": 1792535323059,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535322840,
+        "elapsed": 24
+      },
+      "volume": {
+        "sample": 1792535322841,
+        "elapsed": 25
+      },
+      "hardware": {
+        "sample": 1792535322881,
+        "elapsed": 65
+      },
+      "battery": {
+        "sample": 1792535322872,
+        "elapsed": 56
+      },
+      "audio": {
+        "sample": 1792535322882,
+        "elapsed": 66
+      },
+      "network": {
+        "sample": 1792535323059,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535323333,
+        "elapsed": 15
+      },
+      "volume": {
+        "sample": 1792535323334,
+        "elapsed": 16
+      },
+      "hardware": {
+        "sample": 1792535323422,
+        "elapsed": 104
+      },
+      "battery": {
+        "sample": 1792535323419,
+        "elapsed": 101
+      },
+      "audio": {
+        "sample": 1792535323373,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535323059,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535323333,
+        "elapsed": 15
+      },
+      "volume": {
+        "sample": 1792535323334,
+        "elapsed": 16
+      },
+      "hardware": {
+        "sample": 1792535323422,
+        "elapsed": 104
+      },
+      "battery": {
+        "sample": 1792535323419,
+        "elapsed": 101
+      },
+      "audio": {
+        "sample": 1792535323373,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535323552,
+        "elapsed": 234
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535323842,
+        "elapsed": 26
+      },
+      "volume": {
+        "sample": 1792535323836,
+        "elapsed": 20
+      },
+      "hardware": {
+        "sample": 1792535323880,
+        "elapsed": 64
+      },
+      "battery": {
+        "sample": 1792535323868,
+        "elapsed": 52
+      },
+      "audio": {
+        "sample": 1792535323877,
+        "elapsed": 61
+      },
+      "network": {
+        "sample": 1792535323552,
+        "elapsed": 234
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535323842,
+        "elapsed": 26
+      },
+      "volume": {
+        "sample": 1792535323836,
+        "elapsed": 20
+      },
+      "hardware": {
+        "sample": 1792535323880,
+        "elapsed": 64
+      },
+      "battery": {
+        "sample": 1792535323868,
+        "elapsed": 52
+      },
+      "audio": {
+        "sample": 1792535323877,
+        "elapsed": 61
+      },
+      "network": {
+        "sample": 1792535324055,
+        "elapsed": 239
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535323842,
+        "elapsed": 26
+      },
+      "volume": {
+        "sample": 1792535323836,
+        "elapsed": 20
+      },
+      "hardware": {
+        "sample": 1792535323880,
+        "elapsed": 64
+      },
+      "battery": {
+        "sample": 1792535323868,
+        "elapsed": 52
+      },
+      "audio": {
+        "sample": 1792535323877,
+        "elapsed": 61
+      },
+      "network": {
+        "sample": 1792535324055,
+        "elapsed": 239
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535324335,
+        "elapsed": 18
+      },
+      "volume": {
+        "sample": 1792535324334,
+        "elapsed": 17
+      },
+      "hardware": {
+        "sample": 1792535324377,
+        "elapsed": 60
+      },
+      "battery": {
+        "sample": 1792535324360,
+        "elapsed": 43
+      },
+      "audio": {
+        "sample": 1792535324372,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535324055,
+        "elapsed": 239
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535324335,
+        "elapsed": 18
+      },
+      "volume": {
+        "sample": 1792535324334,
+        "elapsed": 17
+      },
+      "hardware": {
+        "sample": 1792535324377,
+        "elapsed": 60
+      },
+      "battery": {
+        "sample": 1792535324360,
+        "elapsed": 43
+      },
+      "audio": {
+        "sample": 1792535324372,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535324556,
+        "elapsed": 239
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535324335,
+        "elapsed": 18
+      },
+      "volume": {
+        "sample": 1792535324334,
+        "elapsed": 17
+      },
+      "hardware": {
+        "sample": 1792535324377,
+        "elapsed": 60
+      },
+      "battery": {
+        "sample": 1792535324360,
+        "elapsed": 43
+      },
+      "audio": {
+        "sample": 1792535324372,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535324556,
+        "elapsed": 239
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535324834,
+        "elapsed": 20
+      },
+      "volume": {
+        "sample": 1792535324832,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535324920,
+        "elapsed": 106
+      },
+      "battery": {
+        "sample": 1792535324917,
+        "elapsed": 103
+      },
+      "audio": {
+        "sample": 1792535324866,
+        "elapsed": 52
+      },
+      "network": {
+        "sample": 1792535324556,
+        "elapsed": 239
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535324834,
+        "elapsed": 20
+      },
+      "volume": {
+        "sample": 1792535324832,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535324920,
+        "elapsed": 106
+      },
+      "battery": {
+        "sample": 1792535324917,
+        "elapsed": 103
+      },
+      "audio": {
+        "sample": 1792535324866,
+        "elapsed": 52
+      },
+      "network": {
+        "sample": 1792535325049,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535325332,
+        "elapsed": 17
+      },
+      "volume": {
+        "sample": 1792535325327,
+        "elapsed": 12
+      },
+      "hardware": {
+        "sample": 1792535324920,
+        "elapsed": 106
+      },
+      "battery": {
+        "sample": 1792535324917,
+        "elapsed": 103
+      },
+      "audio": {
+        "sample": 1792535324866,
+        "elapsed": 52
+      },
+      "network": {
+        "sample": 1792535325049,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535325332,
+        "elapsed": 17
+      },
+      "volume": {
+        "sample": 1792535325327,
+        "elapsed": 12
+      },
+      "hardware": {
+        "sample": 1792535325375,
+        "elapsed": 59
+      },
+      "battery": {
+        "sample": 1792535325357,
+        "elapsed": 41
+      },
+      "audio": {
+        "sample": 1792535325372,
+        "elapsed": 57
+      },
+      "network": {
+        "sample": 1792535325049,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535325332,
+        "elapsed": 17
+      },
+      "volume": {
+        "sample": 1792535325327,
+        "elapsed": 12
+      },
+      "hardware": {
+        "sample": 1792535325375,
+        "elapsed": 59
+      },
+      "battery": {
+        "sample": 1792535325357,
+        "elapsed": 41
+      },
+      "audio": {
+        "sample": 1792535325372,
+        "elapsed": 57
+      },
+      "network": {
+        "sample": 1792535325549,
+        "elapsed": 234
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535325838,
+        "elapsed": 21
+      },
+      "volume": {
+        "sample": 1792535325838,
+        "elapsed": 21
+      },
+      "hardware": {
+        "sample": 1792535325882,
+        "elapsed": 65
+      },
+      "battery": {
+        "sample": 1792535325862,
+        "elapsed": 45
+      },
+      "audio": {
+        "sample": 1792535325881,
+        "elapsed": 64
+      },
+      "network": {
+        "sample": 1792535325549,
+        "elapsed": 234
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535325838,
+        "elapsed": 21
+      },
+      "volume": {
+        "sample": 1792535325838,
+        "elapsed": 21
+      },
+      "hardware": {
+        "sample": 1792535325882,
+        "elapsed": 65
+      },
+      "battery": {
+        "sample": 1792535325862,
+        "elapsed": 45
+      },
+      "audio": {
+        "sample": 1792535325881,
+        "elapsed": 64
+      },
+      "network": {
+        "sample": 1792535326052,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535325838,
+        "elapsed": 21
+      },
+      "volume": {
+        "sample": 1792535325838,
+        "elapsed": 21
+      },
+      "hardware": {
+        "sample": 1792535325882,
+        "elapsed": 65
+      },
+      "battery": {
+        "sample": 1792535325862,
+        "elapsed": 45
+      },
+      "audio": {
+        "sample": 1792535325881,
+        "elapsed": 64
+      },
+      "network": {
+        "sample": 1792535326052,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535326342,
+        "elapsed": 24
+      },
+      "volume": {
+        "sample": 1792535326338,
+        "elapsed": 20
+      },
+      "hardware": {
+        "sample": 1792535326426,
+        "elapsed": 108
+      },
+      "battery": {
+        "sample": 1792535326423,
+        "elapsed": 105
+      },
+      "audio": {
+        "sample": 1792535326372,
+        "elapsed": 54
+      },
+      "network": {
+        "sample": 1792535326052,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535326342,
+        "elapsed": 24
+      },
+      "volume": {
+        "sample": 1792535326338,
+        "elapsed": 20
+      },
+      "hardware": {
+        "sample": 1792535326426,
+        "elapsed": 108
+      },
+      "battery": {
+        "sample": 1792535326423,
+        "elapsed": 105
+      },
+      "audio": {
+        "sample": 1792535326372,
+        "elapsed": 54
+      },
+      "network": {
+        "sample": 1792535326561,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535326342,
+        "elapsed": 24
+      },
+      "volume": {
+        "sample": 1792535326338,
+        "elapsed": 20
+      },
+      "hardware": {
+        "sample": 1792535326426,
+        "elapsed": 108
+      },
+      "battery": {
+        "sample": 1792535326423,
+        "elapsed": 105
+      },
+      "audio": {
+        "sample": 1792535326372,
+        "elapsed": 54
+      },
+      "network": {
+        "sample": 1792535326561,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535326834,
+        "elapsed": 19
+      },
+      "volume": {
+        "sample": 1792535326833,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535326874,
+        "elapsed": 59
+      },
+      "battery": {
+        "sample": 1792535326855,
+        "elapsed": 40
+      },
+      "audio": {
+        "sample": 1792535326870,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535326561,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535326834,
+        "elapsed": 19
+      },
+      "volume": {
+        "sample": 1792535326833,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535326874,
+        "elapsed": 59
+      },
+      "battery": {
+        "sample": 1792535326855,
+        "elapsed": 40
+      },
+      "audio": {
+        "sample": 1792535326870,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535327047,
+        "elapsed": 232
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535327333,
+        "elapsed": 14
+      },
+      "volume": {
+        "sample": 1792535327333,
+        "elapsed": 14
+      },
+      "hardware": {
+        "sample": 1792535326874,
+        "elapsed": 59
+      },
+      "battery": {
+        "sample": 1792535327356,
+        "elapsed": 37
+      },
+      "audio": {
+        "sample": 1792535326870,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535327047,
+        "elapsed": 232
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535327333,
+        "elapsed": 14
+      },
+      "volume": {
+        "sample": 1792535327333,
+        "elapsed": 14
+      },
+      "hardware": {
+        "sample": 1792535327375,
+        "elapsed": 56
+      },
+      "battery": {
+        "sample": 1792535327356,
+        "elapsed": 37
+      },
+      "audio": {
+        "sample": 1792535327376,
+        "elapsed": 57
+      },
+      "network": {
+        "sample": 1792535327047,
+        "elapsed": 232
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535327333,
+        "elapsed": 14
+      },
+      "volume": {
+        "sample": 1792535327333,
+        "elapsed": 14
+      },
+      "hardware": {
+        "sample": 1792535327375,
+        "elapsed": 56
+      },
+      "battery": {
+        "sample": 1792535327356,
+        "elapsed": 37
+      },
+      "audio": {
+        "sample": 1792535327376,
+        "elapsed": 57
+      },
+      "network": {
+        "sample": 1792535327556,
+        "elapsed": 237
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535327836,
+        "elapsed": 21
+      },
+      "volume": {
+        "sample": 1792535327833,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535327375,
+        "elapsed": 56
+      },
+      "battery": {
+        "sample": 1792535327356,
+        "elapsed": 37
+      },
+      "audio": {
+        "sample": 1792535327870,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535327556,
+        "elapsed": 237
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535327836,
+        "elapsed": 21
+      },
+      "volume": {
+        "sample": 1792535327833,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535327924,
+        "elapsed": 109
+      },
+      "battery": {
+        "sample": 1792535327920,
+        "elapsed": 105
+      },
+      "audio": {
+        "sample": 1792535327870,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535328058,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535327836,
+        "elapsed": 21
+      },
+      "volume": {
+        "sample": 1792535327833,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535327924,
+        "elapsed": 109
+      },
+      "battery": {
+        "sample": 1792535327920,
+        "elapsed": 105
+      },
+      "audio": {
+        "sample": 1792535327870,
+        "elapsed": 55
+      },
+      "network": {
+        "sample": 1792535328058,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535328332,
+        "elapsed": 16
+      },
+      "volume": {
+        "sample": 1792535328334,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535328376,
+        "elapsed": 60
+      },
+      "battery": {
+        "sample": 1792535328351,
+        "elapsed": 35
+      },
+      "audio": {
+        "sample": 1792535328377,
+        "elapsed": 61
+      },
+      "network": {
+        "sample": 1792535328058,
+        "elapsed": 243
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535328332,
+        "elapsed": 16
+      },
+      "volume": {
+        "sample": 1792535328334,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535328376,
+        "elapsed": 60
+      },
+      "battery": {
+        "sample": 1792535328351,
+        "elapsed": 35
+      },
+      "audio": {
+        "sample": 1792535328377,
+        "elapsed": 61
+      },
+      "network": {
+        "sample": 1792535328551,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535328332,
+        "elapsed": 16
+      },
+      "volume": {
+        "sample": 1792535328334,
+        "elapsed": 18
+      },
+      "hardware": {
+        "sample": 1792535328376,
+        "elapsed": 60
+      },
+      "battery": {
+        "sample": 1792535328351,
+        "elapsed": 35
+      },
+      "audio": {
+        "sample": 1792535328377,
+        "elapsed": 61
+      },
+      "network": {
+        "sample": 1792535328551,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535328835,
+        "elapsed": 20
+      },
+      "volume": {
+        "sample": 1792535328834,
+        "elapsed": 19
+      },
+      "hardware": {
+        "sample": 1792535328874,
+        "elapsed": 59
+      },
+      "battery": {
+        "sample": 1792535328857,
+        "elapsed": 42
+      },
+      "audio": {
+        "sample": 1792535328874,
+        "elapsed": 59
+      },
+      "network": {
+        "sample": 1792535328551,
+        "elapsed": 235
+      }
+    },
+    {
+      "microphone": {
+        "sample": 1792535328835,
+        "elapsed": 20
+      },
+      "volume": {
+        "sample": 1792535328834,
+        "elapsed": 19
+      },
+      "hardware": {
+        "sample": 1792535328874,
+        "elapsed": 59
+      },
+      "battery": {
+        "sample": 1792535328857,
+        "elapsed": 42
+      },
+      "audio": {
+        "sample": 1792535328874,
+        "elapsed": 59
+      },
+      "network": {
+        "sample": 1792535329052,
+        "elapsed": 237
+      }
+    }
+  ]
+}

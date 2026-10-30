@@ -1,0 +1,22 @@
+[
+  {
+    "action": "openConnectivityControls",
+    "verified_ms": 120
+  },
+  {
+    "action": "openWifiControls",
+    "verified_ms": 120
+  },
+  {
+    "action": "openBluetoothControls",
+    "verified_ms": 116
+  },
+  {
+    "action": "openBrightnessControls",
+    "verified_ms": 131
+  },
+  {
+    "action": "openControls",
+    "verified_ms": 123
+  }
+]

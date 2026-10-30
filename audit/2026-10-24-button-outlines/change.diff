@@ -1,0 +1,195 @@
+--- before/Appearance.qml
++++ after/Appearance.qml
+@@ -5,6 +5,9 @@
+ 
+ QtObject {
+     id: appearance
++    readonly property color buttonSelectedBorder: "#d9dcea"
++    readonly property color buttonHoverBorder: "#69728a"
++    readonly property color buttonIdleBorder: "#304f566c"
+     readonly property string fontFamily: "JetBrains Mono"
+     readonly property int titleSize: 14
+     readonly property int menuTitleInset: 8
+--- before/BarButton.qml
++++ after/BarButton.qml
+@@ -15,11 +15,9 @@
+     property bool animateActivation: false
+     property bool animateDeactivation: false
+     property color activeSurface: "#da3a4055"
+-    property color hoverBorderColor: "#69728a"
+     property color accentColor: "#f0f0fa"
+     property color textColor: "#c8ccdc"
+-    property int activeBorderWidth: 1
+-    property int inactiveBorderWidth: grouped ? 0 : 1
++    property int inactiveBorderWidth: 0
+     property var hoverOverride: null
+     readonly property bool visuallyActive: (hoverOverride === null ? pointer.containsMouse : hoverOverride) || alternateActive
+     signal activated()
+@@ -29,14 +27,10 @@
+     scale: pointer.pressed || animateActivation || animateDeactivation ? 0.96 : 1
+     radius: 16
+     color: visuallyActive ? activeSurface : (grouped ? "transparent" : Appearance.capsuleSurface)
+-    // Inset the contour so fractional output scaling cannot crop its top/bottom.
+-    Rectangle {
+-        anchors.fill: parent; anchors.margins: 1
+-        radius: Math.max(0, button.radius - 1)
+-        antialiasing: true
+-        color: "transparent"
+-        border.width: button.visuallyActive ? button.activeBorderWidth : button.inactiveBorderWidth
+-        border.color: button.visuallyActive ? (button.alternateActive ? button.accentColor : button.hoverBorderColor) : "#304f566c"
++    ButtonOutline {
++        selected: button.alternateActive
++        hovered: button.visuallyActive
++        idleWidth: button.inactiveBorderWidth
+     }
+     Accessible.role: Accessible.Button
+     Accessible.name: accessibleLabel
+--- before/MediaIsland.qml
++++ after/MediaIsland.qml
+@@ -33,12 +33,9 @@
+     Behavior on presence { NumberAnimation { duration: 320; easing.type: Easing.InOutCubic } }
+     height: 32; radius: 16
+     color: visuallyHovered || selected ? "#f2292d3a" : grouped ? "transparent" : Appearance.capsuleSurface
+-    Rectangle {
+-        anchors.fill: parent; anchors.margins: 1
+-        radius: Math.max(0, island.radius - 1)
+-        antialiasing: true; color: "transparent"
+-        border.width: island.visuallyHovered || island.selected ? 1 : 0
+-        border.color: island.selected ? Appearance.iconColor : island.visuallyHovered ? "#69728a" : "#304f566c"
++    ButtonOutline {
++        selected: island.selected
++        hovered: island.visuallyHovered
+     }
+     CameraIndicator {
+         anchors.fill: parent
+--- before/MenuHover.qml
++++ after/MenuHover.qml
+@@ -16,14 +16,20 @@
+         when: feedback.hovered && feedback.hasSurface
+         restoreMode: Binding.RestoreBindingOrValue
+     }
+-    Rectangle {
+-        anchors.fill: parent
+-        anchors.margins: 1
+-        radius: Math.max(0, (feedback.parent.radius || 0) - 1)
+-        color: "transparent"
+-        border.width: 1
+-        border.color: feedback.keyboardFocused ? "#55e6ff" : "#69728a"
+-        visible: (feedback.hovered || feedback.keyboardFocused) && feedback.parent.brightActionHover !== true
+-        antialiasing: true
++    readonly property bool selected: keyboardFocused || parent.keyboardFocused === true || parent.selected === true || parent.checked === true
++    readonly property bool outlineVisible: enabled && (selected || hovered) && parent.outlineManaged !== true
++    // Avoid drawing the old outer border underneath the common inset contour.
++    Binding {
++        target: feedback.parent
++        property: "border.width"
++        value: 0
++        when: feedback.hasSurface && feedback.outlineVisible
++        restoreMode: Binding.RestoreBindingOrValue
++    }
++    ButtonOutline {
++        outlineRadius: Math.max(0, (feedback.parent.radius || 0) - 1)
++        selected: feedback.selected
++        hovered: feedback.hovered
++        visible: feedback.outlineVisible
+     }
+ }
+--- before/ControlTile.qml
++++ after/ControlTile.qml
+@@ -21,8 +21,7 @@
+     radius: Appearance.menuActionRadius
+     opacity: enabled ? 1 : .42
+     color: quiet ? "#1b1d26" : selected ? (Appearance.tintButtons ? Appearance.active : "#353a4a") : (Appearance.tintButtons ? Appearance.surface : "#1b1d26")
+-    border.width: (!quiet && selected) ? 1 : 0
+-    border.color: "#9da8c2"
++    border.width: 0
+     Rectangle {
+         visible: tile.showCaption && !tile.iconActionEnabled
+         objectName: "controlIconCircle"
+--- before/RadioIconButton.qml
++++ after/RadioIconButton.qml
+@@ -16,8 +16,11 @@
+     enabled: !busy
+     readonly property color surroundingColor: parent && parent.color !== undefined ? parent.color : (parent && parent.parent && parent.parent.color !== undefined ? parent.parent.color : Appearance.surface)
+     color: Qt.lighter(surroundingColor, iconHover.hovered && enabled ? 1.95 : 1.6)
+-    border.width: activeFocus || (iconHover.hovered && enabled) ? 2 : 0
+-    border.color: activeFocus ? Appearance.iconColor : "#69728a"
++    border.width: 0
++    ButtonOutline {
++        selected: button.activeFocus || button.powered
++        hovered: iconHover.hovered && button.enabled
++    }
+     MenuHover {
+         parent: button.parent; z: 100
+         enabled: button.cardHoverEnabled && button.enabled && !button.parent.children.some(child => child.keyboardActivationPending !== undefined)
+--- before/shell.qml
++++ after/shell.qml
+@@ -4496,8 +4496,13 @@
+         antialiasing: true
+         HoverHandler { id: actionPointer; blocking: false }
+         color: brightActionHover ? Qt.lighter(actionSurface, 1.6) : keyboardFocused ? root.controlButtonActive : (lighterSurface ? Qt.lighter(root.controlButtonActive, 1.5) : ((accent ? root.controlButtonActive : root.controlButtonSurface)))
+-        border.width: brightActionHover && actionPointer.hovered && enabled ? 2 : (keyboardFocused || outlined ? 1 : 0)
+-        border.color: keyboardFocused ? root.cyan : (brightActionHover && actionPointer.hovered ? "#69728a" : root.controlButtonOutline)
++        readonly property bool outlineManaged: true
++        border.width: 0
++        ButtonOutline {
++            selected: menuButton.keyboardFocused || menuButton.selected
++            hovered: actionPointer.hovered && menuButton.enabled
++            idleWidth: menuButton.outlined ? 1 : 0
++        }
+         Rectangle {
+             visible: menuButton.alignedIcon
+             objectName: "menuIconCircle"
+@@ -4578,8 +4583,7 @@
+         height: 30
+         radius: 6
+         color: keyboardFocused ? root.controlButtonActive : (checked ? root.controlButtonActive : root.controlButtonSurface)
+-        border.width: keyboardFocused || activeFocus ? 1 : 0
+-        border.color: keyboardFocused || activeFocus ? root.cyan : root.cyan
++        border.width: 0
+         Keys.onPressed: function(event) {
+             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                 toggle.activated()
+@@ -4612,8 +4616,7 @@
+         signal activated()
+         radius: Appearance.menuActionRadius
+         color: selected ? root.controlButtonActive : root.controlButtonSurface
+-        border.width: keyboardFocused || selected ? 1 : 0
+-        border.color: keyboardFocused ? root.cyan : root.textDim
++        border.width: 0
+         Accessible.role: interactive ? Accessible.RadioButton : Accessible.StaticText
+         Accessible.name: description.length ? title + ". " + description : title
+         Accessible.checked: selected
+@@ -4643,8 +4646,7 @@
+         height: infoVisible ? 72 : 34
+         radius: 7
+         color: keyboardFocused ? root.controlButtonActive : ((checked ? root.controlButtonActive : root.controlButtonSurface))
+-        border.width: keyboardFocused ? 1 : 0
+-        border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
++        border.width: 0
+         Rectangle {
+             anchors.left: parent.left; anchors.leftMargin: 10; anchors.top: parent.top; anchors.topMargin: 8
+             width: 18; height: 18; radius: 5
+@@ -4771,7 +4773,6 @@
+                     activeSurface: root.controlButtonHover
+                     accentColor: root.textMain
+                     textColor: root.textMain
+-                    activeBorderWidth: 1
+                     label: root.clockText
+                     iconName: "calendar-days"
+                     alternateIconName: "calendar-search"
+@@ -4964,7 +4965,6 @@
+                     activeSurface: root.controlButtonHover
+                     accentColor: root.textMain
+                     textColor: root.textMain
+-                    activeBorderWidth: 1
+                     label: ""
+                     alternateLabel: ""
+                     iconName: "hexagon"
+--- before/qmldir
++++ after/qmldir
+@@ -18,3 +18,4 @@
+ MenuHover 1.0 MenuHover.qml
+ CameraIndicator 1.0 CameraIndicator.qml
+ NotificationInbox 1.0 NotificationInbox.qml
++ButtonOutline 1.0 ButtonOutline.qml

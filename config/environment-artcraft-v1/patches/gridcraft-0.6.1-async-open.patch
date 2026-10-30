@@ -1,0 +1,317 @@
+--- a/apps/gridcraft/Cargo.toml
++++ b/apps/gridcraft/Cargo.toml
+@@ -26,14 +26,11 @@
+ [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+ craft-print = { git = "https://github.com/storytold/craft-libs", rev = "d27646a5f7c8b4fc85d9dd3213b8c88b58e0088d" }
+ rfd = { workspace = true }
++pollster = "1"
+ arboard = { workspace = true }
+ 
+ [target.'cfg(any(target_os = "linux", target_os = "freebsd"))'.dependencies]
+ arboard = { workspace = true, features = ["wayland-data-control"] }
+-
+-[target.'cfg(target_os = "windows")'.dependencies]
+-# Blocks on the start-up DirectX 12 adapter probe (`graphics.rs`); already in the tree via eframe.
+-pollster = "1"
+ 
+ [target.'cfg(target_os = "macos")'.dependencies]
+ muda = { version = "0.21", default-features = false }
+--- a/apps/gridcraft/src/main.rs
++++ b/apps/gridcraft/src/main.rs
+@@ -11,6 +11,7 @@
+ #[cfg(target_os = "macos")]
+ mod apple_events;
+ mod control_server;
++mod file_dialogs;
+ #[cfg(any(target_os = "windows", test))]
+ mod graphics;
+ mod logging;
+@@ -25,21 +26,27 @@
+ use gridcraft_ui_egui::{Services, SheetApp};
+ use serde_json::json;
+ 
+-struct App(SheetApp, #[cfg(target_os = "macos")] Option<native_menu::NativeMenu>, #[cfg(target_os = "macos")] fmv_macos_events::Inbox);
++struct App(
++    SheetApp,
++    file_dialogs::Launcher,
++    #[cfg(target_os = "macos")] Option<native_menu::NativeMenu>,
++    #[cfg(target_os = "macos")] fmv_macos_events::Inbox,
++);
+ 
+ impl eframe::App for App {
+-    fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
++    fn logic(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+         #[cfg(target_os = "macos")]
+         {
+-            if self.1.is_none() && std::env::var_os("GRIDCRAFT_NO_NATIVE_MENU").is_none() {
+-                self.1 = Some(native_menu::NativeMenu::install(ctx));
+-            }
+-            if let Some(m) = &self.1 {
++            if self.2.is_none() && std::env::var_os("GRIDCRAFT_NO_NATIVE_MENU").is_none() {
++                self.2 = Some(native_menu::NativeMenu::install(ctx));
++            }
++            if let Some(m) = &self.2 {
+                 m.poll(&mut self.0, ctx);
+             }
+-            apple_events::poll(&self.2, &mut self.0, ctx);
++            apple_events::poll(&self.3, &mut self.0, ctx);
+         }
+         self.0.logic(ctx);
++        self.1.show(frame);
+         self.0.poll_printing(ctx);
+         if ctx.input(|input| input.viewport().close_requested()) && self.0.printing.busy() {
+             ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
+@@ -54,8 +61,9 @@
+             }
+         }
+     }
+-    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
++    fn ui(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
+         self.0.ui(ui);
++        self.1.show(frame);
+     }
+     fn on_exit(&mut self) {
+         print::finish_pending_jobs();
+@@ -153,17 +161,6 @@
+                 *clipboard = arboard::Clipboard::new().ok();
+             }
+             clipboard.as_mut()?.get().html().ok()
+-        })),
+-        pick_open: Some(Box::new(|| {
+-            rfd::FileDialog::new()
+-                .add_filter("Spreadsheets", &["xlsx", "xlsm", "xls", "xlsb", "ods", "csv", "tsv", "txt", "json"])
+-                .add_filter("Excel Workbook", &["xlsx", "xlsm"])
+-                .add_filter("Excel 97-2003 Workbook (import)", &["xls"])
+-                .add_filter("Excel Binary Workbook (data import)", &["xlsb"])
+-                .add_filter("OpenDocument Spreadsheet (data import)", &["ods"])
+-                .add_filter("CSV", &["csv"])
+-                .pick_file()
+-                .and_then(|p| p.to_str().map(str::to_string))
+         })),
+         pick_picture: Some(Box::new(|| {
+             rfd::FileDialog::new()
+@@ -343,8 +340,11 @@
+                         Err(e) => log::error!("control channel on port {port}: {e}"),
+                     }
+                 }
++                let (open_dialog, launcher) = file_dialogs::hook(&cc.egui_ctx);
++                app.services.pick_open_async = Some(open_dialog);
+                 Ok(Box::new(App(
+                     app,
++                    launcher,
+                     #[cfg(target_os = "macos")]
+                     None,
+                     #[cfg(target_os = "macos")]
+--- a/apps/gridcraft/src/file_dialogs.rs
++++ b/apps/gridcraft/src/file_dialogs.rs
+@@ -0,0 +1,48 @@
++//! Parent native Open dialogs to the window and wait away from the event loop.
++use std::sync::mpsc::{Receiver, Sender, channel};
++
++type Answer = Result<Option<String>, String>;
++type Request = Sender<Answer>;
++pub type Hook = Box<dyn Fn() -> Receiver<Answer>>;
++
++pub struct Launcher {
++    queue: Receiver<Request>,
++    ctx: egui::Context,
++}
++
++pub fn hook(ctx: &egui::Context) -> (Hook, Launcher) {
++    let (tx, queue) = channel();
++    let hook: Hook = Box::new(move || {
++        let (answer, rx) = channel();
++        let _ = tx.send(answer);
++        rx
++    });
++    (hook, Launcher { queue, ctx: ctx.clone() })
++}
++
++impl Launcher {
++    pub fn show(&self, parent: &eframe::Frame) {
++        while let Ok(answer) = self.queue.try_recv() {
++            // Construct on the window thread; poll the portal future on a worker.
++            let picking = rfd::AsyncFileDialog::new()
++                .set_parent(parent)
++                .add_filter("Spreadsheets", &["xlsx", "xlsm", "xls", "xlsb", "ods", "csv", "tsv", "txt", "json"])
++                .add_filter("Excel Workbook", &["xlsx", "xlsm"])
++                .add_filter("Excel 97-2003 Workbook (import)", &["xls"])
++                .add_filter("Excel Binary Workbook (data import)", &["xlsb"])
++                .add_filter("OpenDocument Spreadsheet (data import)", &["ods"])
++                .add_filter("CSV", &["csv"])
++                .pick_file();
++            let failed = answer.clone();
++            let ctx = self.ctx.clone();
++            if let Err(error) = std::thread::Builder::new().name("Open file selector".into()).spawn(move || {
++                let path = pollster::block_on(picking).map(|file| file.path().to_string_lossy().into_owned());
++                let _ = answer.send(Ok(path));
++                ctx.request_repaint();
++            }) {
++                let _ = failed.send(Err(format!("Could not start the file selector: {error}")));
++                self.ctx.request_repaint();
++            }
++        }
++    }
++}
+--- a/crates/ui-egui/src/lib.rs
++++ b/crates/ui-egui/src/lib.rs
+@@ -165,6 +165,8 @@
+     /// Desktop: submit the PDF with the chosen settings on a worker.
+     pub print_native: Option<printing::Submit>,
+     pub pick_open: Option<Box<dyn Fn() -> Option<String>>>,
++    /// Native picker returns immediately; its result is applied on a later UI frame.
++    pub pick_open_async: Option<Box<dyn Fn() -> std::sync::mpsc::Receiver<Result<Option<String>, String>>>>,
+     pub pick_save: Option<Box<dyn Fn(&str) -> Option<String>>>,
+     /// Native picture picker (PNG/JPEG), separate from workbook opening.
+     pub pick_picture: Option<Box<dyn Fn() -> Option<String>>>,
+@@ -215,6 +217,7 @@
+     /// Dismissible info bar under the ribbon (open-time notices).
+     pub notice: Option<Notice>,
+     pub services: Services,
++    pending_open: Option<std::sync::mpsc::Receiver<Result<Option<String>, String>>>,
+     pub printing: printing::State,
+     print_feedback_seen: Option<printing::Feedback>,
+     /// Synthetic input from agents, one batch per frame (drags need several frames).
+@@ -263,6 +266,7 @@
+             toast: None,
+             notice: None,
+             services,
++            pending_open: None,
+             printing: Default::default(),
+             print_feedback_seen: None,
+             synthetic: Default::default(),
+@@ -604,7 +608,12 @@
+         }
+         match name {
+             "open" => {
+-                if let Some(start) = &self.services.open_async {
++                if self.pending_open.is_some() {
++                    return;
++                }
++                if let Some(start) = &self.services.pick_open_async {
++                    self.pending_open = Some(start());
++                } else if let Some(start) = &self.services.open_async {
+                     start();
+                 } else if let Some(pick) = &self.services.pick_open
+                     && let Some(path) = pick()
+@@ -874,6 +883,21 @@
+             self.toast = Some((text, now_ms()));
+         } else {
+             self.alert(text);
++        }
++    }
++
++    /// Completing a native picker must not keep its channel borrowed while opening a file.
++    fn poll_open_dialog(&mut self) {
++        let answer = match self.pending_open.as_ref().map(|rx| rx.try_recv()) {
++            Some(Ok(answer)) => answer,
++            Some(Err(std::sync::mpsc::TryRecvError::Disconnected)) => Err("The file selector closed unexpectedly. Please try Open again.".into()),
++            _ => return,
++        };
++        self.pending_open = None;
++        match answer {
++            Ok(Some(path)) => self.open_path(&path),
++            Ok(None) => {} // Cancellation leaves the current workbook untouched.
++            Err(error) => self.message = Some(("Open".into(), error)),
+         }
+     }
+ 
+@@ -944,6 +968,7 @@
+             ctx.set_zoom_factor(zoom);
+             ctx.request_repaint();
+         }
++        self.poll_open_dialog();
+         control::poll(self, ctx);
+         // Files read asynchronously (web file picker, dropped files).
+         let arrived: Vec<(String, Vec<u8>)> = self
+@@ -974,6 +999,12 @@
+     }
+ 
+     pub fn raw_input_hook(&mut self, raw: &mut egui::RawInput) {
++        if self.pending_open.is_some() {
++            raw.events.clear();
++            raw.dropped_files.clear();
++            self.synthetic.clear();
++            return;
++        }
+         if let Some(mut batch) = self.synthetic.pop_front() {
+             raw.events.append(&mut batch);
+         }
+@@ -981,6 +1012,9 @@
+ 
+     /// Lays out the whole window.
+     pub fn ui(&mut self, ui: &mut egui::Ui) {
++        if self.pending_open.is_some() {
++            ui.disable();
++        }
+         let ctx = ui.ctx().clone();
+         self.poll_printing(&ctx);
+         if !self.fonts_ready || self.fonts_rebind {
+@@ -1146,3 +1180,67 @@
+ pub fn cell(r: u32, c: u32) -> CellRef {
+     CellRef::new(r, c)
+ }
++
++#[cfg(test)]
++#[allow(clippy::unwrap_used)]
++mod async_open_tests {
++    use super::*;
++    use std::sync::mpsc::channel;
++    use std::sync::{Arc, Mutex};
++
++    #[test]
++    fn waiting_and_cancel_do_not_block_or_change_the_workbook() {
++        let mut session = Session::new();
++        session.new_workbook();
++        let uid = session.active().unwrap().uid;
++        let (tx, rx) = channel();
++        let receiver = Arc::new(Mutex::new(Some(rx)));
++        let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
++        let seen = calls.clone();
++        let services = Services {
++            pick_open_async: Some(Box::new(move || {
++                seen.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++                receiver.lock().unwrap().take().unwrap()
++            })),
++            ..Default::default()
++        };
++        let mut app = SheetApp::new(session, services);
++        app.open_dialog("open", json!({}));
++        app.open_dialog("open", json!({}));
++        app.poll_open_dialog();
++        assert!(app.pending_open.is_some());
++        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 1);
++        assert_eq!(app.session.active().unwrap().uid, uid);
++        tx.send(Ok(None)).unwrap();
++        app.poll_open_dialog();
++        assert!(app.pending_open.is_none());
++        assert_eq!(app.session.active().unwrap().uid, uid);
++        assert!(app.message.is_none());
++    }
++
++    #[test]
++    fn a_failed_picker_releases_the_pending_state_and_reports_the_error() {
++        let mut app = SheetApp::new(Session::new(), Services::default());
++        let (tx, rx) = channel();
++        app.pending_open = Some(rx);
++        drop(tx);
++        app.poll_open_dialog();
++        assert!(app.pending_open.is_none());
++        assert!(app.message.is_some());
++    }
++
++    #[test]
++    fn a_selected_missing_file_reports_an_error_without_replacing_the_workbook() {
++        let mut session = Session::new();
++        session.new_workbook();
++        let uid = session.active().unwrap().uid;
++        let mut app = SheetApp::new(session, Services::default());
++        let (tx, rx) = channel();
++        app.pending_open = Some(rx);
++        tx.send(Ok(Some("/nonexistent-apx-picker-test/workbook.xlsx".into()))).unwrap();
++        app.poll_open_dialog();
++        assert!(app.pending_open.is_none());
++        assert_eq!(app.session.active().unwrap().uid, uid);
++        assert!(app.message.is_some());
++    }
++}

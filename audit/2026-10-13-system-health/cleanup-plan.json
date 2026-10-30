@@ -1,0 +1,101 @@
+{
+  "scope": "obsolete application distribution versions only; retain current, latest two and all mapped live versions",
+  "delete": [
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.160.1-x86_64-unknown-linux-musl",
+      "allocated_bytes": 446857216
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.160.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 446787584
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.159.2-x86_64-unknown-linux-musl",
+      "allocated_bytes": 444436480
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.158.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 444231680
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.157.1-x86_64-unknown-linux-musl",
+      "allocated_bytes": 391229440
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.157.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 391266304
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.156.1-x86_64-unknown-linux-musl",
+      "allocated_bytes": 387010560
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.155.1-x86_64-unknown-linux-musl",
+      "allocated_bytes": 370585600
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.154.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 339144704
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.151.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 347004928
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.149.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 323055616
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.148.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 309432320
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.147.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 314814464
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.146.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 366546944
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.144.6-x86_64-unknown-linux-musl",
+      "allocated_bytes": 351539200
+    },
+    {
+      "path": "/root/.codex/packages/standalone/releases/0.144.5-x86_64-unknown-linux-musl",
+      "allocated_bytes": 351522816
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.161.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 450498560
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.160.1-x86_64-unknown-linux-musl",
+      "allocated_bytes": 446857216
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.160.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 446787584
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.159.2-x86_64-unknown-linux-musl",
+      "allocated_bytes": 444436480
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.159.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 444391424
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.158.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 444231680
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.157.1-x86_64-unknown-linux-musl",
+      "allocated_bytes": 391229440
+    },
+    {
+      "path": "/root/.codex/packages/app-server-daemon/releases/0.157.0-x86_64-unknown-linux-musl",
+      "allocated_bytes": 391266304
+    }
+  ]
+}

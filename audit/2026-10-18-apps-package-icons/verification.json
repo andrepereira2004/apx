@@ -1,0 +1,17 @@
+{
+  "states": {
+    "closed": "package",
+    "rofi_running": "package-open"
+  },
+  "active_test_environment": "teste",
+  "visual_screenshots": [
+    "closed.png",
+    "open.png"
+  ],
+  "bar_tests_passed": 3,
+  "portable_tests_passed": 8,
+  "backup": "/var/lib/apx/backups/20261018T174330Z-apps-package-icons",
+  "seed_assets": 187,
+  "current_system_applied": true,
+  "manual_vm_icon_update_requested": false
+}

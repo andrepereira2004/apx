@@ -1,0 +1,1 @@
+rd.luks.name=3ad5fc06-c4eb-4bb2-936b-f75eff3bc1c4=cryptroot root=/dev/mapper/cryptroot rootflags=subvol=@ rw rd.plymouth=0 plymouth.enable=0 apx.native_v3=76a5f5c6-d5ce-45d8-aed4-64b9924d5824

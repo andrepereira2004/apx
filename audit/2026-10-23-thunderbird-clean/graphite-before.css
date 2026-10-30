@@ -1,0 +1,115 @@
+/* APX Graphite — Thunderbird 155. UI only; message bodies retain their fonts.
+ * Keep semantic tag/security colors and native controls. No script injection. */
+@media not (forced-colors: active) {
+  :root {
+    color-scheme: dark !important;
+    --layout-background-0: #101117 !important;
+    --layout-background-1: #151720 !important;
+    --layout-background-2: #1b1d26 !important;
+    --layout-background-3: #242733 !important;
+    --layout-background-4: #353a4a !important;
+    --layout-color-0: #ffffff !important;
+    --layout-color-1: #d9dcea !important;
+    --layout-color-2: #b4bbce !important;
+    --layout-color-3: #a4abc0 !important;
+    --layout-border-0: #292d3a !important;
+    --layout-border-1: #414654 !important;
+    --layout-border-2: #606a80 !important;
+    --sidebar-background-color: #151720 !important;
+    --sidebar-text-color: #d9dcea !important;
+    --sidebar-border-color: #292d3a !important;
+    --sidebar-highlight-background-color: #353a4a !important;
+    --sidebar-highlight-text-color: #ffffff !important;
+    --selected-item-color: #353a4a !important;
+    --selected-item-text-color: #ffffff !important;
+    --treeitem-background-hover: #292d3a !important;
+    --treeitem-background-selected: #353a4a !important;
+    --treeitem-background-active: #353a4a !important;
+    --treeitem-text-active: #ffffff !important;
+    --tree-view-bg: #101117 !important;
+    --tree-view-color: #d9dcea !important;
+    --listbox-focused-selected-bg: #353a4a !important;
+    --listbox-selected-bg: #353a4a !important;
+    --listbox-selected-color: #ffffff !important;
+    --toolbar-bgcolor: #151720 !important;
+    --toolbar-color: #d9dcea !important;
+    --toolbar-field-background-color: #1b1d26 !important;
+    --toolbar-field-color: #d9dcea !important;
+    --toolbar-field-border-color: #414654 !important;
+    --toolbar-field-focus-border-color: #b4bbce !important;
+    --search-bar-background: #1b1d26 !important;
+    --search-bar-color: #d9dcea !important;
+    --search-bar-border-color: #414654 !important;
+    --search-bar-focus-background: #242733 !important;
+    --button-border-radius: 8px !important;
+    --button-background-color: #242733 !important;
+    --button-hover-background-color: #353a4a !important;
+    --button-active-background-color: #414654 !important;
+    --tabs-toolbar-background-color: #101117 !important;
+    --tab-selected-bgcolor: #242733 !important;
+    --tab-selected-textcolor: #ffffff !important;
+    --lwt-text-color: #d9dcea !important;
+    --lwt-accent-color: #151720 !important;
+    --splitter-color: #292d3a !important;
+    --splitter-width: 1px !important;
+    --unified-toolbar-padding: 3px !important;
+    --unified-drag-space: 10px !important;
+    scrollbar-color: #414654 #151720;
+  }
+  :root, #folderPane, #threadPane, #unifiedToolbar, #tabs-toolbar {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 13px !important;
+  }
+  #messengerBody, #folderPane, #threadPane, #threadTree {
+    background-color: var(--layout-background-0) !important;
+    color: var(--layout-color-1) !important;
+  }
+  #folderPane, #folderPaneHeader, #spacesToolbar,
+  #unifiedToolbarContainer, #unifiedToolbar, #threadPaneHeader,
+  #quickFilterBar, #messageHeader, #status-bar {
+    background-color: #151720 !important;
+    color: #d9dcea !important;
+    background-image: none !important;
+  }
+  #folderPane {
+    --folder-pane-icon-size: 16px;
+  }
+  #folderTree .container {
+    border-radius: 6px !important;
+    margin-inline: 5px !important;
+  }
+  #folderTree .name { font-size: 13px !important; }
+  #folderTree .icon { opacity: .9; }
+  #folderPaneHeader, #threadPaneHeader { border-bottom: 1px solid #292d3a !important; }
+  #unifiedToolbarContent .search-bar, #quickFilterBar input {
+    border-radius: 12px !important;
+    border: 1px solid #414654 !important;
+  }
+  #unifiedToolbarContent .search-bar:focus-within {
+    border-color: #b4bbce !important;
+  }
+  .unified-toolbar-button, #spacesToolbar .spaces-toolbar-button,
+  .toolbarbutton-1, .tab-background {
+    border-radius: 8px !important;
+  }
+  #threadTree .card-container {
+    border-radius: 8px !important;
+    margin: 3px 6px !important;
+  }
+  #threadTree .card-layout:not(.selected):hover {
+    background-color: #292d3a !important;
+  }
+  #threadTree .card-layout.selected {
+    background-color: #353a4a !important;
+    color: #ffffff !important;
+  }
+  #threadTree :is(.subject-line, .subject) { font-family: sans-serif !important; }
+  menupopup, panel {
+    --panel-background: #1b1d26 !important;
+    --panel-color: #d9dcea !important;
+    --panel-border-color: #414654 !important;
+    --arrowpanel-background: #1b1d26 !important;
+    --arrowpanel-color: #d9dcea !important;
+    --arrowpanel-border-color: #414654 !important;
+  }
+}

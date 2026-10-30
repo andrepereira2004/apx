@@ -1,0 +1,51 @@
+[
+  {
+    "action": [
+      "media",
+      "play-pause"
+    ],
+    "seconds": 0.194,
+    "status": "Paused",
+    "position": 51.062215
+  },
+  {
+    "action": [
+      "media",
+      "play-pause"
+    ],
+    "seconds": 0.203,
+    "status": "Playing",
+    "position": 51.067657
+  },
+  {
+    "action": [
+      "media",
+      "play-pause"
+    ],
+    "seconds": 0.198,
+    "status": "Paused",
+    "position": 51.259392
+  },
+  {
+    "action": [
+      "seek",
+      "/apx/trial/one",
+      "0",
+      "240"
+    ],
+    "seconds": 0.193,
+    "status": "Paused",
+    "position": 0.0
+  },
+  {
+    "action": [
+      "seek",
+      "/apx/trial/one",
+      "240",
+      "240"
+    ],
+    "seconds": 0.192,
+    "status": "Paused",
+    "position": 240.0
+  }
+]

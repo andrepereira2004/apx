@@ -1,0 +1,14 @@
+The time when unit became active or started is printed after the "@" character.
+The time the unit took to start is printed after the "+" character.
+
+graphical.target @6.254s
+└─multi-user.target @6.254s
+  └─plymouth-quit.service @5.790s +455ms
+    └─systemd-user-sessions.service @5.776s +9ms
+      └─network.target @5.749s
+        └─iwd.service @5.601s +147ms
+          └─network-pre.target @5.596s
+            └─systemd-network-generator.service @1.201s +15ms
+              └─systemd-journald.socket
+                └─system.slice
+                  └─-.slice

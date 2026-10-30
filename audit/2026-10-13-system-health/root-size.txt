@@ -1,0 +1,26 @@
+0	/root/.ssh
+597381120	/root/apx-host-development-mode-v1
+12613779456	/root/.codex
+4096	/root/.local
+12288	/root/.config
+4218880	/root/.cache
+2445312	/root/.qwen
+3649536	/root/codex-recovery-20260822
+331776	/root/apx-audit-backups
+192512	/root/udevfw-hdmi
+131072	/root/kernel
+318541824	/root/usr
+4096	/root/var
+0	/root/dev
+53248	/root/etc
+0	/root/new_root
+0	/root/proc
+0	/root/run
+0	/root/sys
+0	/root/tmp
+65536	/root/__pycache__
+5446041600	/root/apx-teste-de-vm
+5615669248	/root/apx-teste-de-vm-github
+24602787840	/root
+
+STDERR:

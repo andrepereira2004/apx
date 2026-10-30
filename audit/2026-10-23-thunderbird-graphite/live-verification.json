@@ -1,0 +1,18 @@
+{
+  "version": "155.0.1",
+  "clients": [
+    {
+      "class": "org.mozilla.Thunderbird",
+      "pid": 491126,
+      "size": [
+        739,
+        774
+      ],
+      "xwayland": false
+    }
+  ],
+  "workspace": 6,
+  "stylesheet_enabled": true,
+  "css_sha256": "300c78d74182d877a6adb86a2837ada25c5e132917a81e0da4f1a1b020316c59",
+  "backup": "/var/lib/apx/environments/faculdade/home/apx/.config/thunderbird/vjgziepd.default-release/apx-appearance-backup-20261023T134735964007Z"
+}

@@ -1,0 +1,6 @@
+{
+  "scope": "only exact official Arch package filenames resolved from guest sync databases; independent CoW copies, never shared writable Host cache",
+  "requested": 506,
+  "served_artifacts": 704,
+  "loopback_only_in_disposable_builder": true
+}

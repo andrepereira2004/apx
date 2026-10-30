@@ -1,0 +1,11 @@
+[
+  "/usr/share/apx/config-seeds/environment-shell-v1/local/bin/apx-window-apps-v1",
+  "/var/lib/apx/environments/faculdade/home/apx/.local/bin/apx-window-apps-v1",
+  "/var/lib/apx/environments/hub/home/apx/.local/bin/apx-window-apps-v1",
+  "/var/lib/apx/environments/hytale/home/apx/.local/bin/apx-window-apps-v1",
+  "/var/lib/apx/environments/minecraft/home/apx/.local/bin/apx-window-apps-v1",
+  "/var/lib/apx/environments/steam/home/apx/.local/bin/apx-window-apps-v1",
+  "/root/apx-host-development-mode-v1/apx/scripts/virtual-lab/apx-lab-runtime.py",
+  "/usr/lib/apx/apx-lab-runtime.py",
+  "/root/apx-host-development-mode-v1/apx/scripts/physical-pilot/recover-development-quota-v1.sh"
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "page": "openConnectivityControls",
+    "indices": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "return_activated": true
+  },
+  {
+    "page": "openBrightnessControls",
+    "indices": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "return_activated": true
+  },
+  {
+    "page": "openMoreControls",
+    "indices": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "return_activated": true
+  }
+]

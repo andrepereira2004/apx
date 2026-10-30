@@ -1,0 +1,32 @@
+{
+  "width": 739,
+  "layout": "layout-classic",
+  "tabs": 1,
+  "tabsDisplay": "none",
+  "font": "\"Inter\", \"Noto Sans\", sans-serif",
+  "folder": {
+    "x": 0,
+    "y": 0,
+    "width": 234,
+    "height": 703.2000122070312
+  },
+  "threads": {
+    "x": 235,
+    "y": 0,
+    "width": 459.3999938964844,
+    "height": 234.1999969482422
+  },
+  "message": {
+    "x": 243,
+    "y": 243.1999969482422,
+    "width": 443.3999938964844,
+    "height": 452
+  },
+  "rowActionsOpacity": "0",
+  "bodyFont": "",
+  "subject": "Materiais para a proxima aula",
+  "multipleTabs": {
+    "tabs": 2,
+    "display": "flex"
+  }
+}

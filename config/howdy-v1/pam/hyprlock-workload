@@ -1,0 +1,15 @@
+#%PAM-1.0
+# Howdy requests the password while scanning (core.workaround=native).
+# Submitted input is retained in PAM_AUTHTOK for pam_unix; either successful
+# method clears faillock and finishes authentication.
+auth       requisite                   pam_nologin.so
+auth       required                    pam_faillock.so preauth
+auth       [success=2 default=ignore] pam_howdy.so
+auth       [success=1 default=ignore] pam_unix.so
+auth       [default=die]              pam_faillock.so authfail
+auth       required                    pam_faillock.so authsucc
+auth       required                    pam_env.so
+
+account    include                     login
+session    include                     login
+password   include                     login

@@ -1,0 +1,815 @@
+{
+  "results": [
+    {
+      "cycle": 1,
+      "enter": true,
+      "promise_ms": 149.5,
+      "max_raf_gap_ms": 1634.4,
+      "profile_top": [
+        {
+          "function": "(program)",
+          "file": "",
+          "line": -1,
+          "self_ms": 1755.0
+        },
+        {
+          "function": "(idle)",
+          "file": "",
+          "line": -1,
+          "self_ms": 291.6
+        },
+        {
+          "function": "getPlayerSize",
+          "file": "base.js",
+          "line": 8796,
+          "self_ms": 28.4
+        },
+        {
+          "function": "attached",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 17836,
+          "self_ms": 15.3
+        },
+        {
+          "function": "appendChild",
+          "file": "",
+          "line": -1,
+          "self_ms": 14.2
+        },
+        {
+          "function": "pc",
+          "file": "webcomponents-sd.js",
+          "line": 73,
+          "self_ms": 10.9
+        },
+        {
+          "function": "S",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1199,
+          "self_ms": 9.9
+        },
+        {
+          "function": "refit",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 10632,
+          "self_ms": 8.8
+        },
+        {
+          "function": "setAttribute",
+          "file": "",
+          "line": -1,
+          "self_ms": 8.3
+        },
+        {
+          "function": "_.Mf",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 3223,
+          "self_ms": 7.7
+        },
+        {
+          "function": "Q",
+          "file": "",
+          "line": 0,
+          "self_ms": 6.6
+        },
+        {
+          "function": "aT9",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1302,
+          "self_ms": 6.6
+        },
+        {
+          "function": "f0x",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 3575,
+          "self_ms": 6.6
+        },
+        {
+          "function": "_.Y",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1464,
+          "self_ms": 6.5
+        },
+        {
+          "function": "Z0a",
+          "file": "base.js",
+          "line": 5350,
+          "self_ms": 6.5
+        },
+        {
+          "function": "vRb",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1273,
+          "self_ms": 5.5
+        }
+      ],
+      "longFrames": [
+        {
+          "duration": 1642.8999999985099,
+          "blockingDuration": 0,
+          "scripts": []
+        },
+        {
+          "duration": 171.5,
+          "blockingDuration": 86.6,
+          "scripts": [
+            {
+              "duration": 94.20000000298023,
+              "forcedStyleAndLayoutDuration": 21.4,
+              "invoker": "#document.onfullscreenchange",
+              "sourceFunctionName": "setFullscreen",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 28,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            }
+          ]
+        },
+        {
+          "duration": 241.5,
+          "blockingDuration": 158.1,
+          "scripts": [
+            {
+              "duration": 18.5,
+              "forcedStyleAndLayoutDuration": 14.7,
+              "invoker": "DOMWindow.onresize",
+              "sourceFunctionName": "Ia",
+              "sourceFile": "base.js"
+            },
+            {
+              "duration": 162.59999999403954,
+              "forcedStyleAndLayoutDuration": 2.4,
+              "invoker": "MediaQueryList.onchange",
+              "sourceFunctionName": "queryHandler",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 6.899999998509884,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 15.800000004470348,
+              "forcedStyleAndLayoutDuration": 15.2,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            }
+          ]
+        },
+        {
+          "duration": 73.60000000149012,
+          "blockingDuration": 0,
+          "scripts": []
+        }
+      ],
+      "fullscreen": true,
+      "video": {
+        "ready": 4,
+        "paused": true
+      }
+    },
+    {
+      "cycle": 1,
+      "enter": false,
+      "promise_ms": 49.7,
+      "max_raf_gap_ms": 383.3,
+      "profile_top": [
+        {
+          "function": "(program)",
+          "file": "",
+          "line": -1,
+          "self_ms": 499.6
+        },
+        {
+          "function": "getPlayerSize",
+          "file": "base.js",
+          "line": 8796,
+          "self_ms": 59.1
+        },
+        {
+          "function": "attached",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 17836,
+          "self_ms": 50.3
+        },
+        {
+          "function": "mutationCallback",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 16866,
+          "self_ms": 30.8
+        },
+        {
+          "function": "Zd.maybeUpdateFlexibleMenuImpl",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 13751,
+          "self_ms": 16.4
+        },
+        {
+          "function": "(garbage collector)",
+          "file": "",
+          "line": -1,
+          "self_ms": 15.3
+        },
+        {
+          "function": "pc",
+          "file": "webcomponents-sd.js",
+          "line": 73,
+          "self_ms": 12.1
+        },
+        {
+          "function": "calculateBackgroundOpacity",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 28591,
+          "self_ms": 12.0
+        },
+        {
+          "function": "lDT",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1189,
+          "self_ms": 10.9
+        },
+        {
+          "function": "_.Mf",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 3223,
+          "self_ms": 9.8
+        },
+        {
+          "function": "vRb",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1273,
+          "self_ms": 8.2
+        },
+        {
+          "function": "Z0a",
+          "file": "base.js",
+          "line": 5350,
+          "self_ms": 7.7
+        },
+        {
+          "function": "appendChild",
+          "file": "",
+          "line": -1,
+          "self_ms": 6.6
+        },
+        {
+          "function": "ehQ",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 2980,
+          "self_ms": 6.5
+        },
+        {
+          "function": "S",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1199,
+          "self_ms": 6.3
+        },
+        {
+          "function": "_.Y",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1464,
+          "self_ms": 5.5
+        }
+      ],
+      "longFrames": [
+        {
+          "duration": 362,
+          "blockingDuration": 0,
+          "scripts": []
+        },
+        {
+          "duration": 223.10000000149012,
+          "blockingDuration": 140,
+          "scripts": [
+            {
+              "duration": 9.100000001490116,
+              "forcedStyleAndLayoutDuration": 6.3,
+              "invoker": "DOMWindow.onresize",
+              "sourceFunctionName": "Ia",
+              "sourceFile": "base.js"
+            },
+            {
+              "duration": 125.39999999850988,
+              "forcedStyleAndLayoutDuration": 73.7,
+              "invoker": "#document.onfullscreenchange",
+              "sourceFunctionName": "setFullscreen",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 7.399999998509884,
+              "forcedStyleAndLayoutDuration": 6.8,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 8.899999998509884,
+              "forcedStyleAndLayoutDuration": 6.8,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 22.100000001490116,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 5.399999998509884,
+              "forcedStyleAndLayoutDuration": 5.3,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            }
+          ]
+        },
+        {
+          "duration": 84.90000000596046,
+          "blockingDuration": 0,
+          "scripts": []
+        }
+      ],
+      "fullscreen": false,
+      "video": {
+        "ready": 4,
+        "paused": true
+      }
+    },
+    {
+      "cycle": 2,
+      "enter": true,
+      "promise_ms": 135.1,
+      "max_raf_gap_ms": 366,
+      "profile_top": [
+        {
+          "function": "(program)",
+          "file": "",
+          "line": -1,
+          "self_ms": 488.8
+        },
+        {
+          "function": "(idle)",
+          "file": "",
+          "line": -1,
+          "self_ms": 310.0
+        },
+        {
+          "function": "getPlayerSize",
+          "file": "base.js",
+          "line": 8796,
+          "self_ms": 39.4
+        },
+        {
+          "function": "attached",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 17836,
+          "self_ms": 16.3
+        },
+        {
+          "function": "refit",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 10632,
+          "self_ms": 12.1
+        },
+        {
+          "function": "lDT",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1189,
+          "self_ms": 8.7
+        },
+        {
+          "function": "Q",
+          "file": "",
+          "line": 0,
+          "self_ms": 8.7
+        },
+        {
+          "function": "pc",
+          "file": "webcomponents-sd.js",
+          "line": 73,
+          "self_ms": 7.7
+        },
+        {
+          "function": "Z0a",
+          "file": "base.js",
+          "line": 5350,
+          "self_ms": 7.6
+        },
+        {
+          "function": "(garbage collector)",
+          "file": "",
+          "line": -1,
+          "self_ms": 7.1
+        },
+        {
+          "function": "matches",
+          "file": "",
+          "line": -1,
+          "self_ms": 5.5
+        },
+        {
+          "function": "get nextSibling",
+          "file": "webcomponents-sd.js",
+          "line": 59,
+          "self_ms": 5.5
+        },
+        {
+          "function": "getBoundingClientRect",
+          "file": "",
+          "line": -1,
+          "self_ms": 5.5
+        },
+        {
+          "function": "k",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 12331,
+          "self_ms": 5.4
+        },
+        {
+          "function": "iF",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1306,
+          "self_ms": 5.4
+        },
+        {
+          "function": "appendChild",
+          "file": "",
+          "line": -1,
+          "self_ms": 5.4
+        }
+      ],
+      "longFrames": [
+        {
+          "duration": 380.20000000298023,
+          "blockingDuration": 276.4,
+          "scripts": [
+            {
+              "duration": 15.300000004470348,
+              "forcedStyleAndLayoutDuration": 12.2,
+              "invoker": "DOMWindow.onresize",
+              "sourceFunctionName": "Ia",
+              "sourceFile": "base.js"
+            },
+            {
+              "duration": 202.10000000149012,
+              "forcedStyleAndLayoutDuration": 31,
+              "invoker": "MediaQueryList.onchange",
+              "sourceFunctionName": "queryHandler",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 16.700000002980232,
+              "forcedStyleAndLayoutDuration": 16.4,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 53.79999999701977,
+              "forcedStyleAndLayoutDuration": 30.5,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 6,
+              "forcedStyleAndLayoutDuration": 5.5,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 16,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            }
+          ]
+        },
+        {
+          "duration": 380.6000000014901,
+          "blockingDuration": 0,
+          "scripts": []
+        },
+        {
+          "duration": 164.69999999552965,
+          "blockingDuration": 87.4,
+          "scripts": [
+            {
+              "duration": 91.30000000447035,
+              "forcedStyleAndLayoutDuration": 38.3,
+              "invoker": "#document.onfullscreenchange",
+              "sourceFunctionName": "setFullscreen",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 9.799999997019768,
+              "forcedStyleAndLayoutDuration": 9.4,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 6.899999998509884,
+              "forcedStyleAndLayoutDuration": 5,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 18.5,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            }
+          ]
+        },
+        {
+          "duration": 229.19999999552965,
+          "blockingDuration": 144.5,
+          "scripts": [
+            {
+              "duration": 20.099999994039536,
+              "forcedStyleAndLayoutDuration": 16.9,
+              "invoker": "DOMWindow.onresize",
+              "sourceFunctionName": "Ia",
+              "sourceFile": "base.js"
+            },
+            {
+              "duration": 150,
+              "forcedStyleAndLayoutDuration": 2.4,
+              "invoker": "MediaQueryList.onchange",
+              "sourceFunctionName": "queryHandler",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 5.299999997019768,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 14.700000002980232,
+              "forcedStyleAndLayoutDuration": 14.3,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            }
+          ]
+        },
+        {
+          "duration": 66.09999999403954,
+          "blockingDuration": 0,
+          "scripts": []
+        }
+      ],
+      "fullscreen": true,
+      "video": {
+        "ready": 4,
+        "paused": true
+      }
+    },
+    {
+      "cycle": 2,
+      "enter": false,
+      "promise_ms": 43.0,
+      "max_raf_gap_ms": 391,
+      "profile_top": [
+        {
+          "function": "(program)",
+          "file": "",
+          "line": -1,
+          "self_ms": 539.0
+        },
+        {
+          "function": "getPlayerSize",
+          "file": "base.js",
+          "line": 8796,
+          "self_ms": 59.3
+        },
+        {
+          "function": "attached",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 17836,
+          "self_ms": 49.5
+        },
+        {
+          "function": "(idle)",
+          "file": "",
+          "line": -1,
+          "self_ms": 36.6
+        },
+        {
+          "function": "mutationCallback",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 16866,
+          "self_ms": 29.7
+        },
+        {
+          "function": "Zd.maybeUpdateFlexibleMenuImpl",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 13751,
+          "self_ms": 15.4
+        },
+        {
+          "function": "pc",
+          "file": "webcomponents-sd.js",
+          "line": 73,
+          "self_ms": 13.1
+        },
+        {
+          "function": "calculateBackgroundOpacity",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 28591,
+          "self_ms": 11.0
+        },
+        {
+          "function": "ua",
+          "file": "webcomponents-sd.js",
+          "line": 18,
+          "self_ms": 7.7
+        },
+        {
+          "function": "Q",
+          "file": "",
+          "line": 0,
+          "self_ms": 7.7
+        },
+        {
+          "function": "",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 17836,
+          "self_ms": 7.7
+        },
+        {
+          "function": "Z0a",
+          "file": "base.js",
+          "line": 5350,
+          "self_ms": 7.7
+        },
+        {
+          "function": "k",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 12331,
+          "self_ms": 7.7
+        },
+        {
+          "function": "iF",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1306,
+          "self_ms": 6.6
+        },
+        {
+          "function": "lDT",
+          "file": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk",
+          "line": 1189,
+          "self_ms": 6.6
+        },
+        {
+          "function": "(garbage collector)",
+          "file": "",
+          "line": -1,
+          "self_ms": 6.5
+        }
+      ],
+      "longFrames": [
+        {
+          "duration": 398.20000000298023,
+          "blockingDuration": 0,
+          "scripts": []
+        },
+        {
+          "duration": 214.39999999850988,
+          "blockingDuration": 129.3,
+          "scripts": [
+            {
+              "duration": 9.5,
+              "forcedStyleAndLayoutDuration": 7,
+              "invoker": "DOMWindow.onresize",
+              "sourceFunctionName": "Ia",
+              "sourceFile": "base.js"
+            },
+            {
+              "duration": 121.90000000596046,
+              "forcedStyleAndLayoutDuration": 73.2,
+              "invoker": "#document.onfullscreenchange",
+              "sourceFunctionName": "setFullscreen",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 7.100000001490116,
+              "forcedStyleAndLayoutDuration": 6.7,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 8.700000002980232,
+              "forcedStyleAndLayoutDuration": 6.5,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 17.099999994039536,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 5.5,
+              "forcedStyleAndLayoutDuration": 5.3,
+              "invoker": "ResizeObserverCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            }
+          ]
+        },
+        {
+          "duration": 306.29999999701977,
+          "blockingDuration": 201.7,
+          "scripts": [
+            {
+              "duration": 15.199999995529652,
+              "forcedStyleAndLayoutDuration": 12.7,
+              "invoker": "DOMWindow.onresize",
+              "sourceFunctionName": "Ia",
+              "sourceFile": "base.js"
+            },
+            {
+              "duration": 197.29999999701977,
+              "forcedStyleAndLayoutDuration": 30.9,
+              "invoker": "MediaQueryList.onchange",
+              "sourceFunctionName": "queryHandler",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 15.799999997019768,
+              "forcedStyleAndLayoutDuration": 15.6,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 5.799999997019768,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            },
+            {
+              "duration": 6.600000001490116,
+              "forcedStyleAndLayoutDuration": 6.1,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            }
+          ]
+        },
+        {
+          "duration": 74.5,
+          "blockingDuration": 19.2,
+          "scripts": [
+            {
+              "duration": 19.100000001490116,
+              "forcedStyleAndLayoutDuration": 0,
+              "invoker": "TimerHandler:setTimeout",
+              "sourceFunctionName": "",
+              "sourceFile": "m=kevlar_base_module,kevlar_main_module,kevlar_base_sync_mod_chunk"
+            },
+            {
+              "duration": 47,
+              "forcedStyleAndLayoutDuration": 30,
+              "invoker": "FrameRequestCallback",
+              "sourceFunctionName": "",
+              "sourceFile": "web-animations-next-lite.min.js"
+            }
+          ]
+        },
+        {
+          "duration": 57.79999999701977,
+          "blockingDuration": 0,
+          "scripts": []
+        }
+      ],
+      "fullscreen": false,
+      "video": {
+        "ready": 4,
+        "paused": true
+      }
+    }
+  ]
+}

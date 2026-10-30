@@ -1,0 +1,9 @@
+{
+  "relocation": "passed",
+  "rollback": "passed",
+  "linux_payload": "preserved",
+  "windows_payload": "preserved",
+  "physical_disk_modified": false,
+  "rollback_scenario": "after deliberate damage to relocated Windows prefix",
+  "disposable_disk_removed": true
+}

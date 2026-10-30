@@ -1,0 +1,1 @@
+6 Python tests passed; native Qt input 3 passed; wireless/hover 4 passed; candidate parse and smooth regression passed. Live helper status: trackpad available/enabled, external mouse unavailable. No real device toggles submitted. Deployment recheck: 0 pending.

@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "authorization": "owner explicitly requested old/irrelevant data cleanup on 2026-10-18",
+  "free_bytes": 26673717248,
+  "registrations": {
+    "/var/lib/apx/environments/hub/registration.json": "962c5cb254619ab1d30481e15d3ad06927fb3ad2061d342002ab25c3b07fb2ec",
+    "/var/lib/apx/environments/hytale/registration.json": "8fb866dbf3c4ebea3943cdd541af7844770453fb53bfcf0a293a1595a9124709",
+    "/var/lib/apx/environments/steam/registration.json": "521e27d9a793f16defd54a1dda8885ec64559f98ab6a9c811ad2c7afc553ee56",
+    "/var/lib/apx/environments/minecraft/registration.json": "777a8d5fface09332bf2c6ab2f7f7bb829cc1ed27e66d71729eaf3a3139d5b00",
+    "/var/lib/apx/environments/faculdade/registration.json": "e29b62a4eb9bde2446a6e33e65208e24e95e6a0bd801937a56d1e57d10670d62",
+    "/var/lib/apx/native-environments/instances-v3/windows-testes.json": "2478dd11960e4da81a3efba98cc2bc33b8e2625136742727a9376f8fe85f67a5",
+    "/var/lib/apx/native-environments/instances-v3/windows.json": "9bb839928652dbd67b253f284a9755e3b092b447a76473e6f39fa9e83f409eb0",
+    "/var/lib/apx/native-environments/windows.json": "4ded183f043e158490197d6d5dd0ab9e729a96c2efe3a37938c5af49eeb0a5f4"
+  },
+  "partition_table_sha256": "12c727e5fa084f54de5c3da8dd946be846b0a9a7993da0ea64f01e0d160b442a",
+  "files": [
+    {
+      "path": "/var/lib/apx/native-environments/migrations-v3/2770478b-480f-4aea-8910-e3201d5334c5/images/original.ntfs.raw",
+      "size": 162135015424,
+      "allocated_bytes": 72392241152,
+      "inode": 22369
+    },
+    {
+      "path": "/var/lib/apx/native-environments/migrations-v3/2770478b-480f-4aea-8910-e3201d5334c5/images/prepared.ntfs.raw",
+      "size": 128849018880,
+      "allocated_bytes": 72396177408,
+      "inode": 22377
+    },
+    {
+      "path": "/var/lib/apx/native-environments/migrations-v3/2770478b-480f-4aea-8910-e3201d5334c5/boot.wim",
+      "size": 625564906,
+      "allocated_bytes": 625565696,
+      "inode": 22382
+    },
+    {
+      "path": "/var/lib/apx/native-environments/migrations-v3/2770478b-480f-4aea-8910-e3201d5334c5/previous-boot.wim",
+      "size": 623739832,
+      "allocated_bytes": 623742976,
+      "inode": 22480
+    },
+    {
+      "path": "/var/lib/apx/native-environments/migrations-v3/2770478b-480f-4aea-8910-e3201d5334c5/maintenance-relocate/maintenance.efi",
+      "size": 198196144,
+      "allocated_bytes": 198197248,
+      "inode": 22470
+    },
+    {
+      "path": "/var/lib/apx/native-environments/migrations-v3/2770478b-480f-4aea-8910-e3201d5334c5/maintenance-rollback/maintenance.efi",
+      "size": 198194096,
+      "allocated_bytes": 198197248,
+      "inode": 22472
+    },
+    {
+      "path": "/root/apx-teste-de-vm/disk-v5.raw",
+      "size": 171798691840,
+      "allocated_bytes": 4416487424,
+      "inode": 506472
+    },
+    {
+      "path": "/root/apx-teste-de-vm-github/disk.raw",
+      "size": 171798691840,
+      "allocated_bytes": 4586962944,
+      "inode": 550244
+    }
+  ],
+  "directories": [
+    "/root/apx-teste-de-vm/rootfs",
+    "/root/apx-teste-de-vm-github/rootfs"
+  ],
+  "replaced_system_snapshots": [
+    "/.snapshots/local-recovery/system/20261007T065356Z",
+    "/.snapshots/local-recovery/system/20261012T112430Z"
+  ],
+  "preserved": [
+    "Windows partitions/registrations/boot files",
+    "active Environments and homes",
+    "installation ISO templates and package artifacts",
+    "all lab logs",
+    "all Environment recovery snapshots"
+  ]
+}

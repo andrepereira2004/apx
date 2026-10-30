@@ -1,0 +1,3359 @@
+[
+  {
+    "method": "openControls",
+    "samples": [
+      {
+        "time": 1792921442313,
+        "kind": "controls",
+        "progress": 0,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921440824,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921440824,
+            "elapsed": 14
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442315,
+        "kind": "controls",
+        "progress": 0,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921440824,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921440824,
+            "elapsed": 14
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442330,
+        "kind": "controls",
+        "progress": 0.1516183703703704,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442344,
+        "kind": "controls",
+        "progress": 0.29503099999999993,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442360,
+        "kind": "controls",
+        "progress": 0.42129629629629617,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442368,
+        "kind": "controls",
+        "progress": 0.4750930370370371,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442377,
+        "kind": "controls",
+        "progress": 0.5254479999999999,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442385,
+        "kind": "controls",
+        "progress": 0.578125,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442393,
+        "kind": "controls",
+        "progress": 0.6215439629629629,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921440907,
+            "elapsed": 97
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921440895,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442402,
+        "kind": "controls",
+        "progress": 0.6618767037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921440912,
+            "elapsed": 102
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442410,
+        "kind": "controls",
+        "progress": 0.7037037037037036,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442418,
+        "kind": "controls",
+        "progress": 0.737856,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442426,
+        "kind": "controls",
+        "progress": 0.7692776296296296,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442436,
+        "kind": "controls",
+        "progress": 0.8275013703703704,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442444,
+        "kind": "controls",
+        "progress": 0.851123,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442452,
+        "kind": "controls",
+        "progress": 0.875,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442460,
+        "kind": "controls",
+        "progress": 0.8939522962962962,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442469,
+        "kind": "controls",
+        "progress": 0.910885037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442477,
+        "kind": "controls",
+        "progress": 0.9276620370370371,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442485,
+        "kind": "controls",
+        "progress": 0.940681,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442493,
+        "kind": "controls",
+        "progress": 0.952035962962963,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442502,
+        "kind": "controls",
+        "progress": 0.9618407037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442510,
+        "kind": "controls",
+        "progress": 0.9711597037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442518,
+        "kind": "controls",
+        "progress": 0.978048,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442527,
+        "kind": "controls",
+        "progress": 0.9837416296296296,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442535,
+        "kind": "controls",
+        "progress": 0.9888606296296296,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442543,
+        "kind": "controls",
+        "progress": 0.9923933703703703,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921441048,
+            "elapsed": 238
+          }
+        }
+      },
+      {
+        "time": 1792921442552,
+        "kind": "controls",
+        "progress": 0.9950869999999999,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921442551,
+            "elapsed": 247
+          }
+        }
+      },
+      {
+        "time": 1792921442560,
+        "kind": "controls",
+        "progress": 0.997256,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921442551,
+            "elapsed": 247
+          }
+        }
+      },
+      {
+        "time": 1792921442568,
+        "kind": "controls",
+        "progress": 0.9985442962962963,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921442551,
+            "elapsed": 247
+          }
+        }
+      },
+      {
+        "time": 1792921442576,
+        "kind": "controls",
+        "progress": 0.999349037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921442551,
+            "elapsed": 247
+          }
+        }
+      },
+      {
+        "time": 1792921442585,
+        "kind": "controls",
+        "progress": 0.9998180370370371,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921442551,
+            "elapsed": 247
+          }
+        }
+      },
+      {
+        "time": 1792921442594,
+        "kind": "controls",
+        "progress": 0.999973,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921442551,
+            "elapsed": 247
+          }
+        }
+      },
+      {
+        "time": 1792921442602,
+        "kind": "controls",
+        "progress": 0.999999962962963,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442318,
+            "elapsed": 14
+          },
+          "volume": {
+            "sample": 1792921442315,
+            "elapsed": 11
+          },
+          "battery": {
+            "sample": 1792921442399,
+            "elapsed": 95
+          },
+          "hardware": {
+            "sample": 1792921442402,
+            "elapsed": 98
+          },
+          "audio": {
+            "sample": 1792921442394,
+            "elapsed": 90
+          },
+          "network": {
+            "sample": 1792921442551,
+            "elapsed": 247
+          }
+        }
+      }
+    ],
+    "median_ms": 8,
+    "max_ms": 16,
+    "gaps_over_17ms": 0
+  },
+  {
+    "method": "openCalendar",
+    "samples": [
+      {
+        "time": 1792921443541,
+        "kind": "calendar",
+        "progress": 0,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921442813,
+            "elapsed": 15
+          },
+          "volume": {
+            "sample": 1792921442814,
+            "elapsed": 16
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443543,
+        "kind": "calendar",
+        "progress": 0,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443555,
+        "kind": "calendar",
+        "progress": 0.19564300000000012,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443570,
+        "kind": "calendar",
+        "progress": 0.33389896296296306,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443586,
+        "kind": "calendar",
+        "progress": 0.4486319999999999,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443594,
+        "kind": "calendar",
+        "progress": 0.5069609999999999,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443603,
+        "kind": "calendar",
+        "progress": 0.5552226296296296,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443611,
+        "kind": "calendar",
+        "progress": 0.6002273703703703,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921442883,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443619,
+        "kind": "calendar",
+        "progress": 0.6471063703703703,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443628,
+        "kind": "calendar",
+        "progress": 0.6855680000000001,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921442835,
+            "elapsed": 37
+          },
+          "hardware": {
+            "sample": 1792921442850,
+            "elapsed": 52
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443636,
+        "kind": "calendar",
+        "progress": 0.7211282962962964,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443644,
+        "kind": "calendar",
+        "progress": 0.7578072962962963,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443653,
+        "kind": "calendar",
+        "progress": 0.787580037037037,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443661,
+        "kind": "calendar",
+        "progress": 0.814807,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443669,
+        "kind": "calendar",
+        "progress": 0.842536,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443677,
+        "kind": "calendar",
+        "progress": 0.8647309629629629,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443687,
+        "kind": "calendar",
+        "progress": 0.9047647037037037,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443695,
+        "kind": "calendar",
+        "progress": 0.920493,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443703,
+        "kind": "calendar",
+        "progress": 0.9343866296296296,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443711,
+        "kind": "calendar",
+        "progress": 0.9479656296296296,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443719,
+        "kind": "calendar",
+        "progress": 0.9583383703703704,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443727,
+        "kind": "calendar",
+        "progress": 0.967232,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443736,
+        "kind": "calendar",
+        "progress": 0.9747602962962963,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443744,
+        "kind": "calendar",
+        "progress": 0.9817392962962963,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443752,
+        "kind": "calendar",
+        "progress": 0.9867440370370371,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443761,
+        "kind": "calendar",
+        "progress": 0.990739,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443769,
+        "kind": "calendar",
+        "progress": 0.9941679999999999,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443033,
+            "elapsed": 235
+          }
+        }
+      },
+      {
+        "time": 1792921443777,
+        "kind": "calendar",
+        "progress": 0.9963949629629629,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443772,
+            "elapsed": 234
+          }
+        }
+      },
+      {
+        "time": 1792921443786,
+        "kind": "calendar",
+        "progress": 0.9979677037037037,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443772,
+            "elapsed": 234
+          }
+        }
+      },
+      {
+        "time": 1792921443794,
+        "kind": "calendar",
+        "progress": 0.9990967037037037,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443772,
+            "elapsed": 234
+          }
+        }
+      },
+      {
+        "time": 1792921443803,
+        "kind": "calendar",
+        "progress": 0.999657,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443772,
+            "elapsed": 234
+          }
+        }
+      },
+      {
+        "time": 1792921443811,
+        "kind": "calendar",
+        "progress": 0.9999186296296296,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443772,
+            "elapsed": 234
+          }
+        }
+      },
+      {
+        "time": 1792921443819,
+        "kind": "calendar",
+        "progress": 0.9999976296296297,
+        "contentWidth": 420,
+        "targetHeight": 413,
+        "reads": {
+          "microphone": {
+            "sample": 1792921443542,
+            "elapsed": 3
+          },
+          "volume": {
+            "sample": 1792921443542,
+            "elapsed": 4
+          },
+          "battery": {
+            "sample": 1792921443633,
+            "elapsed": 94
+          },
+          "hardware": {
+            "sample": 1792921443635,
+            "elapsed": 96
+          },
+          "audio": {
+            "sample": 1792921443619,
+            "elapsed": 80
+          },
+          "network": {
+            "sample": 1792921443772,
+            "elapsed": 234
+          }
+        }
+      }
+    ],
+    "median_ms": 8.0,
+    "max_ms": 16,
+    "gaps_over_17ms": 0
+  },
+  {
+    "method": "openControls",
+    "samples": [
+      {
+        "time": 1792921444778,
+        "kind": "controls",
+        "progress": 0,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444042,
+            "elapsed": 12
+          },
+          "volume": {
+            "sample": 1792921444042,
+            "elapsed": 12
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444780,
+        "kind": "controls",
+        "progress": 0,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444042,
+            "elapsed": 12
+          },
+          "volume": {
+            "sample": 1792921444042,
+            "elapsed": 12
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444789,
+        "kind": "controls",
+        "progress": 0.07788562962962953,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444812,
+        "kind": "controls",
+        "progress": 0.29503099999999993,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444820,
+        "kind": "controls",
+        "progress": 0.3565192962962964,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444829,
+        "kind": "controls",
+        "progress": 0.42129629629629617,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444837,
+        "kind": "controls",
+        "progress": 0.4750930370370371,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444845,
+        "kind": "controls",
+        "progress": 0.5254479999999999,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444855,
+        "kind": "controls",
+        "progress": 0.6215439629629629,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444108,
+            "elapsed": 78
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444863,
+        "kind": "controls",
+        "progress": 0.6618767037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444059,
+            "elapsed": 29
+          },
+          "hardware": {
+            "sample": 1792921444081,
+            "elapsed": 51
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444871,
+        "kind": "controls",
+        "progress": 0.7037037037037036,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444880,
+        "kind": "controls",
+        "progress": 0.737856,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444888,
+        "kind": "controls",
+        "progress": 0.7692776296296296,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444899,
+        "kind": "controls",
+        "progress": 0.8015046296296298,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444903,
+        "kind": "controls",
+        "progress": 0.8275013703703704,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444912,
+        "kind": "controls",
+        "progress": 0.851123,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444920,
+        "kind": "controls",
+        "progress": 0.875,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444929,
+        "kind": "controls",
+        "progress": 0.8939522962962962,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444937,
+        "kind": "controls",
+        "progress": 0.910885037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444945,
+        "kind": "controls",
+        "progress": 0.9276620370370371,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444954,
+        "kind": "controls",
+        "progress": 0.940681,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444962,
+        "kind": "controls",
+        "progress": 0.952035962962963,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444970,
+        "kind": "controls",
+        "progress": 0.9618407037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444979,
+        "kind": "controls",
+        "progress": 0.9711597037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444987,
+        "kind": "controls",
+        "progress": 0.978048,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921444996,
+        "kind": "controls",
+        "progress": 0.9837416296296296,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921445004,
+        "kind": "controls",
+        "progress": 0.9888606296296296,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921445012,
+        "kind": "controls",
+        "progress": 0.9923933703703703,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921444255,
+            "elapsed": 225
+          }
+        }
+      },
+      {
+        "time": 1792921445021,
+        "kind": "controls",
+        "progress": 0.9950869999999999,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921445016,
+            "elapsed": 242
+          }
+        }
+      },
+      {
+        "time": 1792921445029,
+        "kind": "controls",
+        "progress": 0.997256,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921445016,
+            "elapsed": 242
+          }
+        }
+      },
+      {
+        "time": 1792921445037,
+        "kind": "controls",
+        "progress": 0.9985442962962963,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921445016,
+            "elapsed": 242
+          }
+        }
+      },
+      {
+        "time": 1792921445045,
+        "kind": "controls",
+        "progress": 0.999349037037037,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921445016,
+            "elapsed": 242
+          }
+        }
+      },
+      {
+        "time": 1792921445054,
+        "kind": "controls",
+        "progress": 0.9998180370370371,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921445016,
+            "elapsed": 242
+          }
+        }
+      },
+      {
+        "time": 1792921445063,
+        "kind": "controls",
+        "progress": 0.999999962962963,
+        "contentWidth": 340,
+        "targetHeight": 434,
+        "reads": {
+          "microphone": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "volume": {
+            "sample": 1792921444780,
+            "elapsed": 6
+          },
+          "battery": {
+            "sample": 1792921444866,
+            "elapsed": 92
+          },
+          "hardware": {
+            "sample": 1792921444868,
+            "elapsed": 94
+          },
+          "audio": {
+            "sample": 1792921444859,
+            "elapsed": 85
+          },
+          "network": {
+            "sample": 1792921445016,
+            "elapsed": 242
+          }
+        }
+      }
+    ],
+    "median_ms": 8,
+    "max_ms": 23,
+    "gaps_over_17ms": 1
+  }
+]

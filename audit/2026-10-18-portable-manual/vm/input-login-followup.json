@@ -1,0 +1,12 @@
+{
+  "keyboard_password_login_passed": true,
+  "synthetic_password_logged": false,
+  "udev_view": "selected char devices and parent input records, with matching tags, bound read-only",
+  "additional_issue": "logind automatic getty on VT2 stopped the conflicting graphical master",
+  "fix": "reserve only VT2 by masking getty@tty2 and autovt@tty2; VT1 recovery retained",
+  "stability_check_started_at_monotonic": 2374.951694736,
+  "pointer_before": "-640, 400",
+  "pointer_after": "-421, 341",
+  "pointer_movement_passed": true,
+  "stable_elapsed_seconds": 124.73160326200014
+}

@@ -1,0 +1,24 @@
+{
+  "network_service_installed": true,
+  "network_peer": "192.168.1.100",
+  "peer_alias": "Tomate Fixe",
+  "single_peer_tcp_port": 53317,
+  "phone_seen_from_host": true,
+  "phone_currently_not_listening": true,
+  "faculdade_to_phone_validated": false,
+  "file_transfer_validated": false,
+  "faculdade_mtls_info_validated": true,
+  "networkmanager_warning_nonblocking": true,
+  "favorite_saved_in_faculdade": true,
+  "creation_toggle_installed": true,
+  "creation_toggle_default": false,
+  "new_environment_creation_physically_tested": false,
+  "unit_tests": 29,
+  "revocation_physically_tested": true,
+  "full_environment_roundtrip_tested": false,
+  "backups": [
+    "/var/lib/apx/backups/20261015-localsend-network",
+    "/var/lib/apx/backups/20261015T083722Z-localsend-creation"
+  ],
+  "other_observed_failure": "archlinux-keyring-wkd-sync.service failed on 2026-10-13; no signing policy changed"
+}

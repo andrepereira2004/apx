@@ -1,0 +1,26 @@
+[Icon Theme]
+Name=APX Graphite
+Comment=Original folders with Lucide sidebar symbols
+Inherits=Adwaita,AdwaitaLegacy,hicolor
+Directories=scalable/places,scalable/devices,scalable/actions
+
+[scalable/places]
+Size=48
+MinSize=16
+MaxSize=256
+Type=Scalable
+Context=Places
+
+[scalable/devices]
+Size=48
+MinSize=16
+MaxSize=256
+Type=Scalable
+Context=Devices
+
+[scalable/actions]
+Size=48
+MinSize=16
+MaxSize=256
+Type=Scalable
+Context=Actions

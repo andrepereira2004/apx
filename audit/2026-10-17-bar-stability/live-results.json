@@ -1,0 +1,1402 @@
+{
+  "greeting": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 554,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 340,
+    "visual_height": 554,
+    "visual_x": 932,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 0,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:12",
+      "JetBrains Mono:14"
+    ],
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 220,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "ghost_visible": true,
+    "ghost_message": "Ol\u00e1, Andr\u00e9!",
+    "ghost_width": 95.0625,
+    "workspaces_expanded": false,
+    "workspace_width": 30,
+    "media_summary_width": 204,
+    "media_summary_x": 8,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "apps": {
+        "x": 955.9375,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "files": {
+        "x": 1002.9375,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "battery": {
+        "x": 1049.9375,
+        "y": 7,
+        "width": 72,
+        "height": 32
+      },
+      "media": {
+        "x": 695,
+        "y": 7,
+        "width": 220,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 12,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "controls_same_icon_closes": true,
+  "calendar_same_icon_closes": true,
+  "battery_same_icon_closes": true,
+  "media_same_icon_closes": true,
+  "media_keeps_right_buttons_fixed": true,
+  "media_frames": [
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 0.737856,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": true,
+      "popup_opacity": 1,
+      "content_opacity": 0.902664,
+      "visual_width": 308.54272,
+      "visual_height": 303.531008,
+      "visual_x": 869.8718719999999,
+      "fullscreen": false,
+      "panel_y": 49.795648,
+      "content_y": 10.584016,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 84.23449600000001,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 33,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 84.23449600000001,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 0,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 0.9970552962962963,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": true,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 339.6466355555556,
+      "visual_height": 398.91634903703704,
+      "visual_x": 931.3021052222223,
+      "fullscreen": false,
+      "panel_y": 64.82920718518518,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36.54182548148148,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36.54182548148148,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    },
+    {
+      "kind": "media",
+      "visible": true,
+      "screen": "eDP-1",
+      "bars": [
+        "eDP-1"
+      ],
+      "width": 340,
+      "height": 400,
+      "island_progress": 1,
+      "island_closing": false,
+      "animation_pending": false,
+      "animation_running": false,
+      "popup_opacity": 1,
+      "content_opacity": 1,
+      "visual_width": 340,
+      "visual_height": 400,
+      "visual_x": 932,
+      "fullscreen": false,
+      "panel_y": 65,
+      "content_y": 10,
+      "content_font": "JetBrains Mono",
+      "body_size": 12,
+      "title_size": 14,
+      "visible_fonts": [
+        "JetBrains Mono:11",
+        "JetBrains Mono:12",
+        "JetBrains Mono:14"
+      ],
+      "displayed_controls": {
+        "controlsBrightnessOpen": false,
+        "controlsConnectivityOpen": false,
+        "controlsWifiOpen": false,
+        "controlsBluetoothOpen": false,
+        "controlsAudioOpen": false,
+        "controlsMicrophoneOpen": false,
+        "controlsMoreOpen": false,
+        "controlsAppearanceOpen": false,
+        "controlsActivityKind": "",
+        "shortcutsOpen": false,
+        "powerConfirmOpen": false
+      },
+      "page_transition": false,
+      "pending_kind": "",
+      "media_width": 36,
+      "media_selected": true,
+      "osd_fallback": false,
+      "launcher_running": false,
+      "ghost_visible": false,
+      "ghost_message": "Ol\u00e1, Andr\u00e9!",
+      "ghost_width": 0,
+      "workspaces_expanded": false,
+      "workspace_width": 30,
+      "media_summary_width": 17,
+      "media_summary_x": 9,
+      "bar_targets": {
+        "calendar": {
+          "x": 10,
+          "y": 7,
+          "width": 189,
+          "height": 32
+        },
+        "controls": {
+          "x": 1229,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "apps": {
+          "x": 1057,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "files": {
+          "x": 1104,
+          "y": 7,
+          "width": 41,
+          "height": 32
+        },
+        "battery": {
+          "x": 1151,
+          "y": 7,
+          "width": 72,
+          "height": 32
+        },
+        "media": {
+          "x": 695,
+          "y": 7,
+          "width": 36,
+          "height": 32
+        }
+      },
+      "files_active": false,
+      "osd_visible": false,
+      "island_transient": false,
+      "keyboard_items": 5,
+      "keyboard_index": -1,
+      "calendar_focus_kind": "",
+      "calendar_focus_key": "",
+      "calendar_selected_date": "",
+      "environment_selected_name": "",
+      "environment_focus_index": -1,
+      "environment_error": "",
+      "environment_form_name": "",
+      "environment_description_length": 0
+    }
+  ],
+  "workspaces_True": 110,
+  "workspaces_False": 30,
+  "configerrors": ""
+}

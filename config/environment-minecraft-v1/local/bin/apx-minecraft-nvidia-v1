@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# The graphical session publishes the firmware-backed GPU policy. In Hybrid,
+# ask NVIDIA PRIME to render the launcher and its child game process.
+case ${APX_GPU_POLICY:-} in
+  hybrid)
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export __VK_LAYER_NV_optimus=NVIDIA_only
+    ;;
+  nvidia)
+    # The dedicated profile already uses NVIDIA as the display/render GPU.
+    ;;
+  *)
+    printf 'Modo de gráficos APX indisponível; abra o Minecraft pela sessão gráfica.\n' >&2
+    exit 2
+    ;;
+esac
+
+exec /usr/bin/minecraft-launcher.sh "$@"

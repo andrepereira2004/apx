@@ -1,0 +1,12 @@
+{
+  "reload": {
+    "code": 0,
+    "stdout": "ok\n",
+    "stderr": ""
+  },
+  "configerrors": {
+    "code": 0,
+    "stdout": "\n\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "event": "player-added",
+    "seconds": 0.144
+  },
+  {
+    "event": "state-change",
+    "seconds": 0.143
+  },
+  {
+    "event": "state-change",
+    "seconds": 0.144
+  },
+  {
+    "event": "player-removed",
+    "seconds": 0.03
+  }
+]

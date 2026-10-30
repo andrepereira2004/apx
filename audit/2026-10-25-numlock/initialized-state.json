@@ -1,0 +1,11 @@
+{
+  "numlock": false,
+  "created": [
+    "/var/lib/apx/appearance-v1/keyboard.json",
+    "/var/lib/apx/environments/hub/home/apx/.config/hypr/apx-numlock-state",
+    "/var/lib/apx/environments/hytale/home/apx/.config/hypr/apx-numlock-state",
+    "/var/lib/apx/environments/steam/home/apx/.config/hypr/apx-numlock-state",
+    "/var/lib/apx/environments/minecraft/home/apx/.config/hypr/apx-numlock-state",
+    "/var/lib/apx/environments/faculdade/home/apx/.config/hypr/apx-numlock-state"
+  ]
+}

@@ -1,0 +1,273 @@
+{
+  "kind": "controls",
+  "visible": true,
+  "screen": "eDP-1",
+  "render_scale": 1.25,
+  "render_texture_scale": 2,
+  "render_texture_width": 680,
+  "render_texture_height": 868,
+  "bars": [
+    "eDP-1"
+  ],
+  "width": 340,
+  "height": 434,
+  "island_progress": 1,
+  "island_closing": false,
+  "animation_pending": false,
+  "animation_running": false,
+  "popup_opacity": 1,
+  "content_opacity": 1,
+  "visual_width": 340,
+  "visual_height": 434,
+  "visual_x": 1188,
+  "fullscreen": false,
+  "camera_active": false,
+  "unread_messages": 1,
+  "menu_title_inset": 8,
+  "panel_y": 64.8,
+  "content_y": 0,
+  "content_font": "JetBrains Mono",
+  "body_size": 12,
+  "title_size": 14,
+  "visible_fonts": [
+    "JetBrains Mono:12",
+    "JetBrains Mono:14"
+  ],
+  "airplane_radio_samples": {
+    "wifi": 1792880524186,
+    "bluetooth": 0,
+    "wifi_powered": true,
+    "bluetooth_powered": false
+  },
+  "dynamic_reads": {
+    "microphone": {
+      "sample": 1792880524205,
+      "elapsed": 22
+    },
+    "volume": {
+      "sample": 1792880524204,
+      "elapsed": 21
+    },
+    "battery": {
+      "sample": 1792880524301,
+      "elapsed": 118
+    },
+    "hardware": {
+      "sample": 1792880524306,
+      "elapsed": 123
+    },
+    "audio": {
+      "sample": 1792880524291,
+      "elapsed": 108
+    },
+    "network": {
+      "sample": 1792880524550,
+      "elapsed": 367
+    }
+  },
+  "displayed_controls": {
+    "controlsBrightnessOpen": false,
+    "controlsConnectivityOpen": false,
+    "controlsWifiOpen": false,
+    "controlsBluetoothOpen": false,
+    "controlsAudioOpen": false,
+    "controlsMicrophoneOpen": false,
+    "controlsMoreOpen": false,
+    "controlsAppearanceOpen": false,
+    "controlsActivityKind": "",
+    "shortcutsOpen": false,
+    "powerConfirmOpen": false
+  },
+  "wifi_powered": true,
+  "wifi_connected": true,
+  "bluetooth_powered": true,
+  "page_transition": false,
+  "page_progress": 1,
+  "page_blend": 1,
+  "page_motion": 1,
+  "menu_content_enabled": true,
+  "transition_input_blocked": false,
+  "control_tiles": [
+    {
+      "caption": "Liga\u00e7\u00f5es",
+      "enabled": true,
+      "opacity": 1
+    },
+    {
+      "caption": "Som e Brilho",
+      "enabled": true,
+      "opacity": 1
+    },
+    {
+      "caption": "Mais op\u00e7\u00f5es",
+      "enabled": true,
+      "opacity": 1
+    },
+    {
+      "caption": "Bloquear",
+      "enabled": true,
+      "opacity": 1
+    },
+    {
+      "caption": "Atualizar",
+      "enabled": true,
+      "opacity": 1
+    },
+    {
+      "caption": "Reiniciar",
+      "enabled": true,
+      "opacity": 1
+    },
+    {
+      "caption": "Desligar",
+      "enabled": true,
+      "opacity": 1
+    },
+    {
+      "caption": "1 mensagem por ler",
+      "enabled": true,
+      "opacity": 1
+    }
+  ],
+  "material_animating": false,
+  "panel_color": "#00000000",
+  "target_height": 434,
+  "settled_height": 434,
+  "outgoing_page_opacity": 0,
+  "outgoing_page_visible": false,
+  "outgoing_page_x": -28,
+  "pending_kind": "",
+  "media_width": 0,
+  "media_selected": false,
+  "osd_fallback": false,
+  "launcher_running": false,
+  "ghost_visible": true,
+  "ghost_message": "Ol\u00e1, Andr\u00e9!",
+  "ghost_width": 101.0625,
+  "workspaces_expanded": true,
+  "workspace_width": 81,
+  "media_summary_width": 17,
+  "media_summary_x": -9,
+  "bar_targets": {
+    "calendar": {
+      "x": 16,
+      "y": 7,
+      "width": 189,
+      "height": 32
+    },
+    "controls": {
+      "x": 1479,
+      "y": 7,
+      "width": 41,
+      "height": 32
+    },
+    "apps": {
+      "x": 1205.9375,
+      "y": 7,
+      "width": 41,
+      "height": 32
+    },
+    "files": {
+      "x": 1252.9375,
+      "y": 7,
+      "width": 41,
+      "height": 32
+    },
+    "battery": {
+      "x": 1299.9375,
+      "y": 7,
+      "width": 72,
+      "height": 32
+    },
+    "media": {
+      "x": 767.5,
+      "y": 7,
+      "width": 0,
+      "height": 32
+    }
+  },
+  "files_active": false,
+  "osd_visible": false,
+  "island_transient": false,
+  "keyboard_items": 8,
+  "keyboard_index": -1,
+  "calendar_view": "month",
+  "calendar_date": "2026-10-24",
+  "calendar_editor": false,
+  "calendar_navigation_running": false,
+  "calendar_page_opacity": 1,
+  "calendar_page_offset": 0,
+  "calendar_focus_kind": "",
+  "calendar_focus_key": "",
+  "calendar_selected_date": "",
+  "environment_selected_name": "",
+  "environment_focus_index": -1,
+  "environment_create_focus_index": -1,
+  "environment_edit_focus_index": -1,
+  "menu_viewport_cards": [
+    {
+      "y": 46,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    },
+    {
+      "y": 102.00000000000001,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    },
+    {
+      "y": 158,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    },
+    {
+      "y": 236,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    },
+    {
+      "y": 236,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    },
+    {
+      "y": 292,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    },
+    {
+      "y": 292,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    },
+    {
+      "y": 372,
+      "height": 50,
+      "opacity": 1,
+      "fully_visible": true,
+      "pointer_buttons": 1
+    }
+  ],
+  "menu_scroll_y": 0,
+  "menu_viewport_height": 434,
+  "menu_content_height": 434,
+  "menu_keyboard_navigation": false,
+  "environment_keyboard_focus": false,
+  "environment_error": "",
+  "environment_form_name": "",
+  "environment_description_length": 0
+}

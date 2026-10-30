@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-12",
+  "version": "0.6.1",
+  "archive_sha256": "61163b62d9faf814b864e1b255d15dc310a71a72ca03d8791fa8024420162745",
+  "environment": "faculdade",
+  "native_wayland": true,
+  "gui_observed": "readable ribbon/grid in screenshot",
+  "xlsx_test": {
+    "inputs": [
+      12,
+      30
+    ],
+    "sum": 42,
+    "roundtrip_differences": 0
+  },
+  "office_retired": "~/.local/share/apx-retired-office-20261012",
+  "documents_preserved": true,
+  "ods_default_changed": false
+}

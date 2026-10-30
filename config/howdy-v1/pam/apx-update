@@ -1,0 +1,9 @@
+#%PAM-1.0
+# Password first; empty Enter falls through to the enrolled face.
+auth required pam_faillock.so preauth
+auth [success=2 default=ignore] pam_unix.so
+auth [success=1 default=ignore] pam_howdy.so
+auth [default=die] pam_faillock.so authfail
+auth required pam_faillock.so authsucc
+account include system-auth
+session include system-auth

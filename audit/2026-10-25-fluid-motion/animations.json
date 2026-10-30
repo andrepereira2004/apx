@@ -1,0 +1,349 @@
+[
+  [
+    {
+      "name": "specialWorkspaceOut",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "workspacesIn",
+      "overridden": true,
+      "bezier": "apxWorkspaceGlide",
+      "enabled": true,
+      "speed": 4.2,
+      "style": "slide"
+    },
+    {
+      "name": "layersIn",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 3.0,
+      "style": "fade"
+    },
+    {
+      "name": "fadeDpms",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "windowsMove",
+      "overridden": true,
+      "bezier": "apxFluid",
+      "enabled": true,
+      "speed": 2.8,
+      "style": ""
+    },
+    {
+      "name": "fadeGlow",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "zoomFactor",
+      "overridden": true,
+      "bezier": "quick",
+      "enabled": true,
+      "speed": 7.0,
+      "style": ""
+    },
+    {
+      "name": "shadowangle",
+      "overridden": true,
+      "bezier": "default",
+      "enabled": false,
+      "speed": 1.0,
+      "style": ""
+    },
+    {
+      "name": "specialWorkspace",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "glowangle",
+      "overridden": true,
+      "bezier": "default",
+      "enabled": false,
+      "speed": 1.0,
+      "style": ""
+    },
+    {
+      "name": "fadeSwitch",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "borderangle",
+      "overridden": true,
+      "bezier": "default",
+      "enabled": false,
+      "speed": 1.0,
+      "style": ""
+    },
+    {
+      "name": "fadeOut",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 1.8,
+      "style": ""
+    },
+    {
+      "name": "fade",
+      "overridden": true,
+      "bezier": "quick",
+      "enabled": true,
+      "speed": 3.03,
+      "style": ""
+    },
+    {
+      "name": "border",
+      "overridden": true,
+      "bezier": "easeOutQuint",
+      "enabled": true,
+      "speed": 5.39,
+      "style": ""
+    },
+    {
+      "name": "specialWorkspaceIn",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "workspaces",
+      "overridden": true,
+      "bezier": "apxWorkspaceGlide",
+      "enabled": true,
+      "speed": 4.2,
+      "style": "slide"
+    },
+    {
+      "name": "global",
+      "overridden": true,
+      "bezier": "default",
+      "enabled": true,
+      "speed": 10.0,
+      "style": ""
+    },
+    {
+      "name": "__internal_fadeCTM",
+      "overridden": true,
+      "bezier": "linear",
+      "enabled": true,
+      "speed": 5.0,
+      "style": ""
+    },
+    {
+      "name": "workspacesOut",
+      "overridden": true,
+      "bezier": "apxWorkspaceGlide",
+      "enabled": true,
+      "speed": 4.2,
+      "style": "slide"
+    },
+    {
+      "name": "layersOut",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 2.2,
+      "style": "fade"
+    },
+    {
+      "name": "windowsIn",
+      "overridden": true,
+      "bezier": "apxFluid",
+      "enabled": true,
+      "speed": 3.2,
+      "style": "popin 96%"
+    },
+    {
+      "name": "windowsOut",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 1.8,
+      "style": "popin 96%"
+    },
+    {
+      "name": "layers",
+      "overridden": true,
+      "bezier": "easeOutQuint",
+      "enabled": true,
+      "speed": 3.81,
+      "style": ""
+    },
+    {
+      "name": "fadeIn",
+      "overridden": true,
+      "bezier": "apxFluid",
+      "enabled": true,
+      "speed": 3.2,
+      "style": ""
+    },
+    {
+      "name": "fadePopups",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "fadeShadow",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "fadeLayers",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "windows",
+      "overridden": true,
+      "bezier": "apxFluid",
+      "enabled": true,
+      "speed": 3.2,
+      "style": ""
+    },
+    {
+      "name": "fadeLayersIn",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 2.0,
+      "style": ""
+    },
+    {
+      "name": "fadeLayersOut",
+      "overridden": true,
+      "bezier": "apxMenuOutCubic",
+      "enabled": true,
+      "speed": 1.8,
+      "style": ""
+    },
+    {
+      "name": "fadeDim",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "fadePopupsIn",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "monitorAdded",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    },
+    {
+      "name": "fadePopupsOut",
+      "overridden": false,
+      "bezier": "",
+      "enabled": true,
+      "speed": 0.0,
+      "style": ""
+    }
+  ],
+  [
+    {
+      "name": "apxMenuOutCubic",
+      "X0": 0.22,
+      "Y0": 0.61,
+      "X1": 0.35,
+      "Y1": 1.0
+    },
+    {
+      "name": "quick",
+      "X0": 0.15,
+      "Y0": 0.0,
+      "X1": 0.1,
+      "Y1": 1.0
+    },
+    {
+      "name": "apxWorkspaceGlide",
+      "X0": 0.22,
+      "Y0": 1.0,
+      "X1": 0.36,
+      "Y1": 1.0
+    },
+    {
+      "name": "almostLinear",
+      "X0": 0.5,
+      "Y0": 0.5,
+      "X1": 0.75,
+      "Y1": 1.0
+    },
+    {
+      "name": "apxFluid",
+      "X0": 0.2,
+      "Y0": 0.8,
+      "X1": 0.2,
+      "Y1": 1.0
+    },
+    {
+      "name": "easeInOutCubic",
+      "X0": 0.65,
+      "Y0": 0.05,
+      "X1": 0.36,
+      "Y1": 1.0
+    },
+    {
+      "name": "easeOutQuint",
+      "X0": 0.23,
+      "Y0": 1.0,
+      "X1": 0.32,
+      "Y1": 1.0
+    },
+    {
+      "name": "linear",
+      "X0": 0.0,
+      "Y0": 0.0,
+      "X1": 1.0,
+      "Y1": 1.0
+    },
+    {
+      "name": "default",
+      "X0": 0.0,
+      "Y0": 0.75,
+      "X1": 0.15,
+      "Y1": 1.0
+    }
+  ]
+]

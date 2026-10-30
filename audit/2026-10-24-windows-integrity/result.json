@@ -1,0 +1,11 @@
+{
+  "backup": "/var/lib/apx/backups/20261023T232552Z-windows-integrity",
+  "updated": [
+    "/usr/lib/apx/apx-environment-switch-client-v1.py",
+    "/usr/lib/apx/apx-environment-switch-v1.py",
+    "/usr/lib/apx/apx_environment_switch_contract.py"
+  ],
+  "integrity_enabled": true,
+  "windows_personal_boot_validation": "passed",
+  "reboot_requested": false
+}

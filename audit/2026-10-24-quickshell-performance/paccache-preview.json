@@ -1,0 +1,7 @@
+{
+  "hub": "\n==> finished dry run: 58 candidates (disk space saved: 208.13 MiB)\n",
+  "hytale": "==> no candidate packages found for pruning\n",
+  "steam": "\n==> finished dry run: 13 candidates (disk space saved: 32.64 MiB)\n",
+  "minecraft": "==> no candidate packages found for pruning\n",
+  "faculdade": "\n==> finished dry run: 32 candidates (disk space saved: 143.18 MiB)\n"
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "",
+  "visible": false,
+  "screen": "HEADLESS-1",
+  "bars": [
+    "HEADLESS-1"
+  ],
+  "width": 300,
+  "height": 440,
+  "animation_pending": false,
+  "animation_running": false,
+  "popup_opacity": 0.001,
+  "keyboard_items": 0,
+  "keyboard_index": -1,
+  "calendar_focus_kind": "",
+  "calendar_focus_key": "",
+  "calendar_selected_date": "",
+  "environment_selected_name": "",
+  "environment_focus_index": -1,
+  "environment_error": "N\u00e3o foi poss\u00edvel ler o progresso.",
+  "environment_form_name": "windows-2",
+  "environment_description_length": 0
+}

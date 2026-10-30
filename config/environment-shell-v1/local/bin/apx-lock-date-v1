@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""Portuguese lock date, independent of installed locale packages."""
+from datetime import datetime
+import sys
+now = datetime.now()
+if "--greeting" in sys.argv[1:]:
+    greeting = "Bom dia" if 6 <= now.hour < 12 else "Boa tarde" if 12 <= now.hour < 19 else "Boa noite"
+    print(f"{greeting}, André")
+    raise SystemExit(0)
+week = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
+months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+print(f"{week[now.weekday()]} | {now.day} {months[now.month-1]} {now.year}")

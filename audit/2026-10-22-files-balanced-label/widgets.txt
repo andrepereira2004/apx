@@ -1,0 +1,131 @@
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+[LOG] Initializing xdph...
+[LOG] XDG_CURRENT_DESKTOP set to Hyprland
+[LOG] Gathering exported interfaces
+[LOG]  | Got interface: wl_seat (ver 9)
+[LOG]  | Got interface: wl_data_device_manager (ver 3)
+[LOG]  | Got interface: wl_compositor (ver 6)
+[LOG]  | Got interface: wl_subcompositor (ver 1)
+[LOG]  | Got interface: wl_shm (ver 2)
+[LOG]  | Got interface: wp_viewporter (ver 1)
+[LOG]  | Got interface: wp_tearing_control_manager_v1 (ver 1)
+[LOG]  | Got interface: wp_fractional_scale_manager_v1 (ver 1)
+[LOG]  | Got interface: zxdg_output_manager_v1 (ver 3)
+[LOG]  | Got interface: wp_cursor_shape_manager_v1 (ver 2)
+[LOG]  | Got interface: zwp_idle_inhibit_manager_v1 (ver 1)
+[LOG]  | Got interface: zwp_relative_pointer_manager_v1 (ver 1)
+[LOG]  | Got interface: zxdg_decoration_manager_v1 (ver 2)
+[LOG]  | Got interface: wp_alpha_modifier_v1 (ver 1)
+[LOG]  | Got interface: zwlr_gamma_control_manager_v1 (ver 1)
+[LOG]  | Got interface: ext_foreign_toplevel_list_v1 (ver 1)
+[LOG]  | Got interface: zwp_pointer_gestures_v1 (ver 3)
+[LOG]  | Got interface: zwlr_foreign_toplevel_manager_v1 (ver 3)
+[LOG] [toplevel] (activate) locks: 1
+[LOG]  | Got interface: zwp_keyboard_shortcuts_inhibit_manager_v1 (ver 1)
+[LOG]  | Got interface: zwp_text_input_manager_v1 (ver 1)
+[LOG]  | Got interface: zwp_text_input_manager_v3 (ver 1)
+[LOG]  | Got interface: zwp_pointer_constraints_v1 (ver 1)
+[LOG]  | Got interface: zwlr_output_power_manager_v1 (ver 1)
+[LOG]  | Got interface: xdg_activation_v1 (ver 1)
+[LOG]  | Got interface: ext_idle_notifier_v1 (ver 2)
+[LOG]  | Got interface: hyprland_lock_notifier_v1 (ver 1)
+[LOG]  | Got interface: ext_session_lock_manager_v1 (ver 1)
+[LOG]  | Got interface: zwp_input_method_manager_v2 (ver 1)
+[LOG]  | Got interface: zwp_virtual_keyboard_manager_v1 (ver 1)
+[LOG]  | Got interface: zwlr_virtual_pointer_manager_v1 (ver 2)
+[LOG]  | Got interface: zwlr_output_manager_v1 (ver 4)
+[LOG]  | Got interface: org_kde_kwin_server_decoration_manager (ver 1)
+[LOG]  | Got interface: hyprland_focus_grab_manager_v1 (ver 1)
+[LOG]  | Got interface: zwp_tablet_manager_v2 (ver 1)
+[LOG]  | Got interface: zwlr_layer_shell_v1 (ver 5)
+[LOG]  | Got interface: wp_presentation (ver 2)
+[LOG]  | Got interface: xdg_wm_base (ver 7)
+[LOG]  | Got interface: zwlr_data_control_manager_v1 (ver 2)
+[LOG]  | Got interface: zwp_primary_selection_device_manager_v1 (ver 1)
+[LOG]  | Got interface: xwayland_shell_v1 (ver 1)
+[LOG]  | Got interface: hyprland_toplevel_mapping_manager_v1 (ver 1)
+[LOG] [toplevel mapping] registered manager
+[LOG]  | Got interface: hyprland_global_shortcuts_manager_v1 (ver 1)
+[LOG] [globalshortcuts] registered
+[LOG]  | Got interface: xdg_wm_dialog_v1 (ver 1)
+[LOG]  | Got interface: wp_single_pixel_buffer_manager_v1 (ver 1)
+[LOG]  | Got interface: wp_security_context_manager_v1 (ver 1)
+[LOG]  | Got interface: hyprland_ctm_control_manager_v1 (ver 2)
+[LOG]  | Got interface: hyprland_input_capture_manager_v1 (ver 1)
+[LOG] [input-capture] initializing input capture portal
+[LOG] [input-capture] init successful
+[LOG]  | Got interface: hyprland_surface_manager_v1 (ver 2)
+[LOG]  | Got interface: wp_content_type_manager_v1 (ver 1)
+[LOG]  | Got interface: xdg_toplevel_tag_manager_v1 (ver 1)
+[LOG]  | Got interface: xdg_system_bell_v1 (ver 1)
+[LOG]  | Got interface: vicinae_hotkey_manager_v1 (ver 1)
+[LOG]  | Got interface: ext_workspace_manager_v1 (ver 1)
+[LOG]  | Got interface: ext_data_control_manager_v1 (ver 1)
+[LOG]  | Got interface: wp_pointer_warp_v1 (ver 1)
+[LOG]  | Got interface: wp_fifo_manager_v1 (ver 1)
+[LOG]  | Got interface: zxdg_exporter_v2 (ver 1)
+[LOG]  | Got interface: zxdg_importer_v2 (ver 1)
+[LOG]  | Got interface: ext_background_effect_manager_v1 (ver 1)
+[LOG]  | Got interface: wp_commit_timing_manager_v1 (ver 1)
+[LOG]  | Got interface: zwlr_screencopy_manager_v1 (ver 3)
+[LOG] [pipewire] connected
+[LOG] [screencopy] init successful
+[LOG]  | Got interface: hyprland_toplevel_export_manager_v1 (ver 2)
+[LOG]  | Got interface: ext_output_image_capture_source_manager_v1 (ver 1)
+[LOG]  | Got interface: ext_foreign_toplevel_image_captureWIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal 611x63
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.toggle 27x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.toggle image:dir-ltr 16x43 icon=open-menu-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button 27x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button image:insensitive:dir-ltr 16x43 icon=go-previous-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button 27x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button image:insensitive:dir-ltr 16x43 icon=go-next-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 27x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 16x43 icon=go-up-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 27x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 16x43 icon=go-home-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1 icon=tab-new-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1 icon=window-new-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.toggle 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.toggle image:dir-ltr 1x1 icon=view-dual-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button image:insensitive:dir-ltr 1x1 icon=edit-undo-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:insensitive:dir-ltr button:insensitive:dir-ltr.flat.image-button image:insensitive:dir-ltr 1x1 icon=edit-redo-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1 icon=zoom-out-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1 icon=zoom-in-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1 icon=zoom-original-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr:checked.flat.image-button.radio 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr:checked.flat.image-button.radio image:dir-ltr 1x1 icon=view-grid-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.radio 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.radio image:dir-ltr 1x1 icon=view-list-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.radio 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.radio image:dir-ltr 1x1 icon=view-compact-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolitem:dir-ltr button:dir-ltr.toggle.popup 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolitem:dir-ltr button:dir-ltr.toggle.popup box:dir-ltr.horizontal image:dir-ltr[1/2] 1x1 icon=view-grid-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolitem:dir-ltr widget:dir-ltr 427x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolitem:dir-ltr widget:dir-ltr box:dir-ltr.horizontal 427x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolitem:dir-ltr widget:dir-ltr box:dir-ltr.horizontal entry:dir-ltr[1/1] 427x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1 icon=view-refresh-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.toggle 27x50
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button.toggle image:dir-ltr 16x43 icon=system-search-symbolic size=2 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal toolbar:dir-ltr.horizontal toolbutton:dir-ltr button:dir-ltr.flat.image-button image:dir-ltr 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal 611x567
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal box:dir-ltr.vertical image:dir-ltr 1x1 icon=image-missing size=4 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal 402x567
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal grid:dir-ltr.horizontal infobar:dir-ltr.info.horizontal revealer:dir-ltr[1/1] box:dir-ltr.horizontal buttonbox:dir-ltr[2/2].horizontal button:dir-ltr[1/2].text-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal grid:dir-ltr.horizontal infobar:dir-ltr.info.horizontal revealer:dir-ltr[1/1] box:dir-ltr.horizontal buttonbox:dir-ltr[2/2].horizontal button:insensitive:dir-ltr[2/2].text-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal grid:dir-ltr.horizontal infobar:dir-ltr.info.horizontal revealer:dir-ltr[1/1] box:dir-ltr.horizontal button:dir-ltr.flat.close 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal grid:dir-ltr.horizontal infobar:dir-ltr.info.horizontal revealer:dir-ltr[1/1] box:dir-ltr.horizontal button:dir-ltr.flat.close image:dir-ltr 1x1 icon=window-close-symbolic size=4 pixel=-1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal grid:dir-ltr.horizontal button:dir-ltr.text-button 1x1
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal grid:dir-ltr.horizontal paned:dir-ltr.horizontal 402x567
+WIDGET window:dir-ltr.thunar.background.tiled.tiled-top.tiled-right.tiled-bottom.tiled-left.maximized grid:dir-ltr.horizontal paned:dir-ltr.horizontal paned:dir-ltr.horizontal scrolledwindow:dir-ltr.frame.preview-pane viewport:dir-ltr.frame box:dir-ltr.vertical image:dir-ltr[1/2] 1x1 icon=image-missing size=4 pixel=-1
+

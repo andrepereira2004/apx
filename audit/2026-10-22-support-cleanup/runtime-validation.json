@@ -1,0 +1,38 @@
+{
+  "ffmpeg": {
+    "status": 0,
+    "output": ""
+  },
+  "video-library": {
+    "status": 0,
+    "output": ""
+  },
+  "database": {
+    "status": 0,
+    "output": "No database errors have been found!\n"
+  },
+  "apps": [
+    "Brave",
+    "Minecraft Launcher",
+    "APX Terminal",
+    "Discord",
+    "Minecraft Java",
+    "Mousepad",
+    "kitty",
+    "mpv Media Player",
+    "Ristretto Image Viewer",
+    "Thunar File Manager"
+  ],
+  "system": [
+    "Definições APX",
+    "Renomear vários ficheiros",
+    "File Roller",
+    "Administração de impressão (CUPS)",
+    "Configurar impressoras",
+    "Rofi",
+    "Task Manager",
+    "Preferências do gestor de ficheiros",
+    "Volume Control"
+  ],
+  "complete_partition": true
+}

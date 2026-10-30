@@ -1,0 +1,454 @@
+/* APX Graphite — Thunderbird 155. UI only; message bodies retain their fonts.
+ * Keep semantic tag/security colors and native controls. No script injection. */
+@media not (forced-colors: active) {
+  :root {
+    color-scheme: dark !important;
+    --layout-background-0: #101117 !important;
+    --layout-background-1: #151720 !important;
+    --layout-background-2: #1b1d26 !important;
+    --layout-background-3: #242733 !important;
+    --layout-background-4: #353a4a !important;
+    --layout-color-0: #ffffff !important;
+    --layout-color-1: #d9dcea !important;
+    --layout-color-2: #b4bbce !important;
+    --layout-color-3: #a4abc0 !important;
+    --layout-border-0: #292d3a !important;
+    --layout-border-1: #414654 !important;
+    --layout-border-2: #606a80 !important;
+    --sidebar-background-color: #151720 !important;
+    --sidebar-text-color: #d9dcea !important;
+    --sidebar-border-color: #292d3a !important;
+    --sidebar-highlight-background-color: #353a4a !important;
+    --sidebar-highlight-text-color: #ffffff !important;
+    --selected-item-color: #353a4a !important;
+    --selected-item-text-color: #ffffff !important;
+    --treeitem-background-hover: #292d3a !important;
+    --treeitem-background-selected: #353a4a !important;
+    --treeitem-background-active: #353a4a !important;
+    --treeitem-text-active: #ffffff !important;
+    --tree-view-bg: #101117 !important;
+    --tree-view-color: #d9dcea !important;
+    --listbox-focused-selected-bg: #353a4a !important;
+    --listbox-selected-bg: #353a4a !important;
+    --listbox-selected-color: #ffffff !important;
+    --toolbar-bgcolor: #151720 !important;
+    --toolbar-color: #d9dcea !important;
+    --toolbar-field-background-color: #1b1d26 !important;
+    --toolbar-field-color: #d9dcea !important;
+    --toolbar-field-border-color: #414654 !important;
+    --toolbar-field-focus-border-color: #b4bbce !important;
+    --search-bar-background: #1b1d26 !important;
+    --search-bar-color: #d9dcea !important;
+    --search-bar-border-color: #414654 !important;
+    --search-bar-focus-background: #242733 !important;
+    --button-border-radius: 8px !important;
+    --button-background-color: #242733 !important;
+    --button-hover-background-color: #353a4a !important;
+    --button-active-background-color: #414654 !important;
+    --tabs-toolbar-background-color: #101117 !important;
+    --tab-selected-bgcolor: #242733 !important;
+    --tab-selected-textcolor: #ffffff !important;
+    --lwt-text-color: #d9dcea !important;
+    --lwt-accent-color: #151720 !important;
+    --splitter-color: #292d3a !important;
+    --splitter-width: 1px !important;
+    --unified-toolbar-padding: 3px !important;
+    --unified-drag-space: 10px !important;
+    scrollbar-color: #414654 #151720;
+  }
+  :root, #folderPane, #threadPane, #unifiedToolbar, #tabs-toolbar {
+    font-family: "Inter", "Noto Sans", sans-serif !important;
+    font-size: 13px !important;
+  }
+  #messengerBody, #folderPane, #threadPane, #threadTree {
+    background-color: var(--layout-background-0) !important;
+    color: var(--layout-color-1) !important;
+  }
+  #folderPane, #folderPaneHeader, #spacesToolbar,
+  #unifiedToolbarContainer, #unifiedToolbar, #threadPaneHeaderBar,
+  #quickFilterBar, #messageHeader, #status-bar {
+    background-color: #151720 !important;
+    color: #d9dcea !important;
+    background-image: none !important;
+  }
+  #folderPane {
+    --folder-pane-icon-size: 16px;
+  }
+  #folderTree .container {
+    border-radius: 6px !important;
+    margin-inline: 5px !important;
+  }
+  #folderTree .name { font-size: 13px !important; }
+  #folderTree .icon { opacity: .9; }
+  #folderPaneHeader, #threadPaneHeaderBar { border-bottom: 1px solid #292d3a !important; }
+  #unifiedToolbarContent .search-bar, #quickFilterBar input {
+    border-radius: 12px !important;
+    border: 1px solid #414654 !important;
+  }
+  #unifiedToolbarContent .search-bar:focus-within {
+    border-color: #b4bbce !important;
+  }
+  .unified-toolbar-button, #spacesToolbar .spaces-toolbar-button,
+  .toolbarbutton-1, .tab-background {
+    border-radius: 8px !important;
+  }
+  #threadTree .card-container {
+    border-radius: 8px !important;
+    margin: 3px 6px !important;
+  }
+  #threadTree .card-layout:not(.selected):hover {
+    background-color: #292d3a !important;
+  }
+  #threadTree .card-layout.selected {
+    background-color: #353a4a !important;
+    color: #ffffff !important;
+  }
+  #threadTree :is(.subject-line, .subject) { font-family: sans-serif !important; }
+  menupopup, panel {
+    --panel-background: #1b1d26 !important;
+    --panel-color: #d9dcea !important;
+    --panel-border-color: #414654 !important;
+    --arrowpanel-background: #1b1d26 !important;
+    --arrowpanel-color: #d9dcea !important;
+    --arrowpanel-border-color: #414654 !important;
+  }
+}
+
+/* Clean mail workspace: Outlook-inspired hierarchy with native Thunderbird actions.
+ * Keep tabs when multiple documents are open and keyboard focus on row actions. */
+@media not (forced-colors: active) {
+  :root {
+    --unified-toolbar-padding: 5px !important;
+    --unified-drag-space: 12px !important;
+    --tree-card-content-inline: 10px !important;
+    --card-container-padding-block: 0px !important;
+    --tree-pane-background: #101117 !important;
+    --tree-card-background: #101117 !important;
+    --tree-card-border: transparent !important;
+    --tree-card-border-hover: transparent !important;
+    --tree-card-border-selected: transparent !important;
+    --tree-card-border-selected-unfocused: transparent !important;
+    --tree-card-border-focus: #9aabd0 !important;
+    --tree-card-background-current: #1b1d26 !important;
+    --tree-card-background-selected: #292f40 !important;
+    --tree-card-background-selected-current: #292f40 !important;
+    --tree-card-background-current-unfocused: #1b1d26 !important;
+    --tree-card-background-selected-unfocused: #252b39 !important;
+    --tree-card-background-selected-current-unfocused: #252b39 !important;
+  }
+  /* The native strip is useful for multiple tabs, redundant for just one. */
+  #tabs-toolbar:has(#tabmail-arrowscrollbox > .tabmail-tab:only-of-type) {
+    display: none !important;
+  }
+  #unifiedToolbarContainer {
+    min-height: 46px !important;
+    border-bottom: 1px solid #292d3a !important;
+  }
+  #unifiedToolbarContent .search-bar {
+    max-inline-size: 640px !important;
+    border-color: transparent !important;
+    background: #242733 !important;
+    border-radius: 8px !important;
+  }
+  #unifiedToolbarContent .search-bar:focus-within {
+    border-color: #9aabd0 !important;
+  }
+  #spacesToolbar {
+    padding-inline: 5px !important;
+    border-inline-end: 0 !important;
+  }
+  #spacesToolbar .spaces-toolbar-button {
+    width: 32px !important;
+    height: 32px !important;
+    margin-block: 5px !important;
+  }
+  #folderPane {
+    background-color: #151720 !important;
+  }
+  #folderPaneHeaderBar {
+    padding: 12px 8px 8px !important;
+    gap: 5px !important;
+  }
+  #folderPaneWriteMessage {
+    border-radius: 8px !important;
+    min-height: 32px !important;
+    background-color: #d9dcea !important;
+    color: #151720 !important;
+    font-weight: 600 !important;
+    border: 0 !important;
+  }
+  #folderPaneWriteMessage:disabled { opacity: .45 !important; }
+  #folderTree .container {
+    min-height: 30px !important;
+    margin-inline: 8px !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+  }
+  #folderTree .name { font-size: 13px !important; }
+  #folderTree li[data-server-type] > .container {
+    font-weight: 600 !important;
+  }
+  #threadPaneHeaderBar {
+    min-height: 48px !important;
+    padding-inline: 14px !important;
+    background-color: #101117 !important;
+  }
+  #threadPaneFolderName {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+  }
+  #threadPaneFolderCount {
+    font-size: 11px !important;
+    color: #a4abc0 !important;
+    font-weight: 400 !important;
+  }
+  #threadTree .card-layout > td { padding: 0 8px !important; }
+  #threadTree .card-container {
+    margin: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #242733 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  #threadTree .card-layout { background-color: transparent !important; }
+  #threadTree .card-layout.selected .card-container {
+    background-color: var(--tree-card-background-selected) !important;
+    box-shadow: inset 3px 0 #9aabd0 !important;
+  }
+  #threadTree .sender {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #d9dcea !important;
+  }
+  #threadTree [data-properties~="unread"] .sender {
+    font-weight: 700 !important;
+    color: #ffffff !important;
+  }
+  #threadTree .subject {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    font-weight: 400 !important;
+  }
+  #threadTree .date {
+    font-size: 11px !important;
+    color: #a4abc0 !important;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Avoid a permanent row of tools on every message. Still keyboard accessible. */
+  #threadTree .card-layout:not(:hover, :focus-within, .current)
+    :is(.tree-button-more, .tree-button-spam, .tree-button-flag) {
+    opacity: 0 !important;
+  }
+  #messagePane {
+    border: 1px solid #292d3a !important;
+    border-radius: 10px !important;
+    margin: 8px !important;
+  }
+  #messageHeader {
+    padding: 16px !important;
+    border-bottom: 1px solid #292d3a !important;
+  }
+  #status-bar {
+    min-height: 18px !important;
+    font-size: 11px !important;
+    border-top: 1px solid #242733 !important;
+  }
+  @media (max-width: 850px) {
+    body:not(.layout-vertical) #folderPane { min-inline-size: 154px !important; }
+    #threadPaneHeaderBar { padding-inline: 10px !important; }
+  }
+}
+
+@media not (forced-colors: active) {
+  body:has(#spacesToolbar), body:has(> #folderPane) {
+    background-color: #101117 !important;
+  }
+  #quick-filter-bar {
+    background: #151720 !important;
+    border-bottom: 1px solid #292d3a !important;
+  }
+  #messagePaneSplitter, #folderPaneSplitter {
+    background-color: #292d3a !important;
+    border-color: #292d3a !important;
+  }
+}
+@media not (forced-colors: active) {
+  .message-header-view-button {
+    border-color: transparent !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 5px 7px !important;
+  }
+  .message-header-view-button:hover {
+    background: #292d3a !important;
+  }
+  #expandedsubjectBox {
+    font-size: 19px !important;
+    font-weight: 600 !important;
+    margin-block: 10px !important;
+  }
+}
+
+@media not (forced-colors: active) and (min-width: 851px) {
+  body:not(.layout-vertical) #folderPane { min-inline-size: 172px !important; }
+}
+@media not (forced-colors: active) {
+  /* Persistent message states stay visible even when secondary tools fade out. */
+  #threadTree .card-layout[data-properties~="flagged"] .tree-button-flag,
+  #threadTree .card-layout[data-properties~="junk"] .tree-button-spam {
+    opacity: 1 !important;
+  }
+}
+
+/* Compose chrome only. Recipient validation, autocomplete and editor commands
+ * stay native; no account settings or message HTML are rewritten. */
+@-moz-document url("chrome://messenger/content/messengercompose/messengercompose.xhtml") {
+  @media not (forced-colors: active) {
+    :root, body, #composeContentBox, #messageArea {
+      background-color: #101117 !important;
+      color: #d9dcea !important;
+      font-family: "Inter", "Noto Sans", sans-serif !important;
+    }
+    #compose-toolbox, #compose-toolbar-menubar2, #composeToolbar2 {
+      background-color: #151720 !important;
+      color: #d9dcea !important;
+      background-image: none !important;
+    }
+    #compose-toolbar-menubar2 {
+      padding-inline: 12px !important;
+      min-height: 24px !important;
+      font-size: 12px !important;
+      border-bottom: 1px solid #242733 !important;
+    }
+    #composeToolbar2 {
+      padding: 8px 16px !important;
+      min-height: 46px !important;
+      gap: 5px !important;
+      border-bottom: 1px solid #292d3a !important;
+    }
+    #composeToolbar2 .toolbarbutton-1 {
+      background: transparent !important;
+      color: #d9dcea !important;
+      border: 1px solid transparent !important;
+      border-radius: 7px !important;
+      padding: 6px 9px !important;
+      box-shadow: none !important;
+    }
+    #composeToolbar2 .toolbarbutton-1:hover:not([disabled="true"]) {
+      background-color: #292d3a !important;
+    }
+    #composeToolbar2 .toolbarbutton-1[disabled="true"] { opacity: .45 !important; }
+    #composeToolbar2 .toolbarbutton-1:not(#button-send, #button-attach, #button-save) .toolbarbutton-text {
+      display: none !important;
+    }
+    #composeToolbar2 #button-send {
+      background: #292d3a !important;
+      color: #d9dcea !important;
+      border: 1px solid #414654 !important;
+      border-radius: 6px !important;
+      font-weight: 500 !important;
+      font-size: 13px !important;
+      min-height: 30px !important;
+      padding: 5px 10px !important;
+    }
+    #composeToolbar2 #button-send .toolbarbutton-icon {
+      width: 16px !important;
+      height: 16px !important;
+      margin-inline-end: 6px !important;
+    }
+    #composeToolbar2 #button-send:hover:not([disabled="true"]) {
+      background: #353a4a !important;
+      border-color: #606a80 !important;
+    }
+    #composeToolbar2 #button-send:active:not([disabled="true"]) {
+      background: #242733 !important;
+    }
+    #composeToolbar2 toolbarseparator {
+      border-color: #414654 !important;
+      margin-inline: 4px !important;
+    }
+    #MsgHeadersToolbar {
+      padding: 10px 16px 12px !important;
+      background: #101117 !important;
+      color: #d9dcea !important;
+      border: 0 !important;
+    }
+    #MsgHeadersToolbar .aw-firstColBox {
+      min-width: 20px !important;
+      width: 20px !important;
+    }
+    #MsgHeadersToolbar :is(#identityLabel-box, .address-label-container, #subjectLabel-box) {
+      min-width: 60px !important;
+      width: 60px !important;
+      padding-inline-end: 10px !important;
+      color: #a4abc0 !important;
+      font-size: 13px !important;
+    }
+    #MsgHeadersToolbar :is(#msgIdentity, .address-container, #msgSubject) {
+      background: #151720 !important;
+      color: #d9dcea !important;
+      border: 1px solid transparent !important;
+      border-bottom-color: #292d3a !important;
+      border-radius: 5px !important;
+      min-height: 34px !important;
+      box-shadow: none !important;
+    }
+    #MsgHeadersToolbar .address-container:focus-within,
+    #MsgHeadersToolbar #msgSubject:focus {
+      border-bottom-color: #9aabd0 !important;
+      box-shadow: 0 1px #9aabd0 !important;
+    }
+    #MsgHeadersToolbar .address-input {
+      color: #d9dcea !important;
+      background: transparent !important;
+      font-size: 13px !important;
+    }
+    #MsgHeadersToolbar #msgSubject {
+      padding-inline: 10px !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+    }
+    #MsgHeadersToolbar .address-pill { border-radius: 6px !important; }
+    #FormatToolbox, #FormatToolbar {
+      background: #101117 !important;
+      color: #b4bbce !important;
+      border: 0 !important;
+    }
+    #FormatToolbox {
+      padding: 4px 14px 8px !important;
+      border-bottom: 1px solid #292d3a !important;
+    }
+    #FormatToolbar .toolbarbutton-1, #FormatToolbar toolbarbutton {
+      border-color: transparent !important;
+      border-radius: 5px !important;
+    }
+    #FormatToolbar menulist {
+      font-size: 12px !important;
+      background: #151720 !important;
+      border-color: #292d3a !important;
+      border-radius: 5px !important;
+    }
+    #messageEditor {
+      background: #101117 !important;
+      border: 0 !important;
+    }
+    #status-bar { background: #101117 !important; }
+  }
+}
+@-moz-document url("chrome://messenger/content/messengercompose/messengercompose.xhtml") {
+  @media not (forced-colors: active) {
+    #composeToolbar2 {
+      box-sizing: border-box !important;
+      min-height: 40px !important;
+      padding: 6px 12px !important;
+    }
+    #composeToolbar2 .toolbarbutton-1 {
+      appearance: none !important;
+    }
+    #composeToolbar2 .toolbarbutton-1:focus-visible {
+      outline: 2px solid #9aabd0 !important;
+      outline-offset: 2px !important;
+    }
+  }
+}

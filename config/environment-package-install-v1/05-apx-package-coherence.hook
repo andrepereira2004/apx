@@ -1,0 +1,12 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Verificar a compatibilidade das atualizações deste Environment
+When = PreTransaction
+Exec = /usr/bin/python /usr/lib/apx/apx-package-coherence-v1.py
+NeedsTargets
+AbortOnFail

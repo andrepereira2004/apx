@@ -1,0 +1,41 @@
+{
+  "settings": {
+    "height": 47,
+    "minimum": 47,
+    "padding": [
+      6,
+      6
+    ],
+    "border": [
+      0,
+      1
+    ],
+    "font": "JetBrains Mono 9.75"
+  },
+  "tasks": {
+    "height": 47,
+    "minimum": 47,
+    "padding": [
+      6,
+      6
+    ],
+    "border": [
+      0,
+      1
+    ],
+    "font": "JetBrains Mono 9.75"
+  },
+  "files": {
+    "height": 47,
+    "minimum": 47,
+    "padding": [
+      6,
+      6
+    ],
+    "border": [
+      0,
+      1
+    ],
+    "font": "JetBrains Mono 10"
+  }
+}

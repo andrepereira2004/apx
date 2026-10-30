@@ -1,0 +1,27 @@
+{
+  "baseline": {
+    "transitions": 8,
+    "median_max_raf_gap_ms": 8.6,
+    "worst_raf_gap_ms": 8.8
+  },
+  "decoded-video": {
+    "transitions": 8,
+    "median_max_raf_gap_ms": 8.7,
+    "worst_raf_gap_ms": 16.7
+  },
+  "youtube": {
+    "transitions": 8,
+    "median_max_raf_gap_ms": 262.6,
+    "worst_raf_gap_ms": 417.6
+  },
+  "youtube-ambient-abab": {
+    "transitions": 16,
+    "median_max_raf_gap_ms": 225.85,
+    "worst_raf_gap_ms": 333.7
+  },
+  "youtube-contain-abab": {
+    "transitions": 16,
+    "median_max_raf_gap_ms": 266.75,
+    "worst_raf_gap_ms": 400.3
+  }
+}

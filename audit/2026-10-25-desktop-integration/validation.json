@@ -1,0 +1,22 @@
+{
+  "activation_defaults": {
+    "tests": 4,
+    "failures": 0
+  },
+  "shell_syntax": "pass",
+  "work_defaults": {
+    "tests": 14,
+    "failures": [
+      "test_bar_uses_floating_pills_with_inset_edges (work_defaults.WorkDefaultsTests.test_bar_uses_floating_pills_with_inset_edges)",
+      "test_compact_controls_keep_accessible_actions_and_local_files (work_defaults.WorkDefaultsTests.test_compact_controls_keep_accessible_actions_and_local_files)"
+    ],
+    "errors": []
+  },
+  "limitation": "The two work-default failures concern pre-existing shell/dashboard content; neither file was changed in this step. Live chooser/focus behavior remains untested.",
+  "desktop_seed": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0
+  },
+  "candidate_status": "withdrawn: owner requires Thunar default; candidate tests removed; earlier results are historical"
+}

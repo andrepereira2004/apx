@@ -1,0 +1,52 @@
+{
+  "local/bin/apx-desktop-activity-v1": {
+    "source_sha256": "60eb0a58e9b79c2d1548b5ada40d8c7161f03ea24d40905558e034cc3c437b68",
+    "live_sha256": "60eb0a58e9b79c2d1548b5ada40d8c7161f03ea24d40905558e034cc3c437b68",
+    "match": true
+  },
+  "local/bin/apx-legion-brightness-keys-v1.py": {
+    "source_sha256": "a2954759100308229643ccf4277b9dd37ec4154e73fae6e3d1712318d3fe8a7e",
+    "live_sha256": "a2954759100308229643ccf4277b9dd37ec4154e73fae6e3d1712318d3fe8a7e",
+    "match": true
+  },
+  "local/bin/apx-screenshot-v1": {
+    "source_sha256": "97062f22336b957f2855b670778f2a793f57cdf1cdffcc8a26f92380d4719825",
+    "live_sha256": "97062f22336b957f2855b670778f2a793f57cdf1cdffcc8a26f92380d4719825",
+    "match": true
+  },
+  "quickshell/apx/DesktopActivity.qml": {
+    "source_sha256": "248d6d6c2b6b8412611e6d2740d38320e19b11bf10ee647fcd231af1a0fc30f1",
+    "live_sha256": "248d6d6c2b6b8412611e6d2740d38320e19b11bf10ee647fcd231af1a0fc30f1",
+    "match": true
+  },
+  "quickshell/apx/NotificationGroups.js": {
+    "source_sha256": "397aa6f036d8168bddab3b9ab99abeff2637e9b8efa48ca7c1900c7c1a157fb3",
+    "live_sha256": "397aa6f036d8168bddab3b9ab99abeff2637e9b8efa48ca7c1900c7c1a157fb3",
+    "match": true
+  },
+  "quickshell/apx/NotificationInbox.qml": {
+    "source_sha256": "2c72f770204f22b05667de22cf0d44afe7d61596d2c4e15c7b8e2258de8d950e",
+    "live_sha256": "2c72f770204f22b05667de22cf0d44afe7d61596d2c4e15c7b8e2258de8d950e",
+    "match": true
+  },
+  "quickshell/apx/NotificationToasts.qml": {
+    "source_sha256": "ca35602ee6b2893bc3e7cb3db7552216008842b89f9667fc6eb0b40d3d92d48b",
+    "live_sha256": "ca35602ee6b2893bc3e7cb3db7552216008842b89f9667fc6eb0b40d3d92d48b",
+    "match": true
+  },
+  "quickshell/apx/qmldir": {
+    "source_sha256": "f93dbe39b2f9bfd8f55b0af998d661df2aa762f76ffd5bf45bccddfb601160a1",
+    "live_sha256": "f93dbe39b2f9bfd8f55b0af998d661df2aa762f76ffd5bf45bccddfb601160a1",
+    "match": true
+  },
+  "quickshell/apx/shell.qml": {
+    "source_sha256": "538e0970c6121a92b6abeada05b07b02416c39bf408c0ff33cbaa85d0492dc17",
+    "live_sha256": "538e0970c6121a92b6abeada05b07b02416c39bf408c0ff33cbaa85d0492dc17",
+    "match": true
+  },
+  "mako/config": {
+    "source_sha256": "fa298ec362d2cdae65da8f13859925429061c10d2db30db15038bbcfcd36bb1e",
+    "live_sha256": "fa298ec362d2cdae65da8f13859925429061c10d2db30db15038bbcfcd36bb1e",
+    "match": true
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "future_seed_copy": true,
+  "future_assets": 67,
+  "homes": {
+    "hub": {
+      "quickshell/apx/shell.qml": true,
+      "popup_focus_grab": true,
+      "hypr/hyprland.lua": true,
+      "window_bindings": true,
+      "local/bin/apx-laptop-action-v1": true,
+      "hypr/apx-monitors.lua": true
+    },
+    "hytale": {
+      "quickshell/apx/shell.qml": true,
+      "popup_focus_grab": true,
+      "hypr/hyprland.lua": true,
+      "window_bindings": true,
+      "local/bin/apx-laptop-action-v1": true,
+      "hypr/apx-monitors.lua": true
+    },
+    "steam": {
+      "quickshell/apx/shell.qml": true,
+      "popup_focus_grab": true,
+      "hypr/hyprland.lua": true,
+      "window_bindings": true,
+      "local/bin/apx-laptop-action-v1": true,
+      "hypr/apx-monitors.lua": true
+    },
+    "minecraft": {
+      "quickshell/apx/shell.qml": true,
+      "popup_focus_grab": true,
+      "hypr/hyprland.lua": true,
+      "window_bindings": true,
+      "local/bin/apx-laptop-action-v1": true,
+      "hypr/apx-monitors.lua": true
+    },
+    "faculdade": {
+      "quickshell/apx/shell.qml": true,
+      "popup_focus_grab": true,
+      "hypr/hyprland.lua": true,
+      "window_bindings": true,
+      "local/bin/apx-laptop-action-v1": true,
+      "hypr/apx-monitors.lua": true
+    }
+  }
+}

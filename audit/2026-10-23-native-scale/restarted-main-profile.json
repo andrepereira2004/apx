@@ -1,0 +1,21 @@
+{
+  "old_host_pid": 342310,
+  "clients": [
+    {
+      "class": "chatgpt",
+      "pid": 276922,
+      "xwayland": false,
+      "size": [
+        739,
+        774
+      ]
+    }
+  ],
+  "monitors": [
+    {
+      "width": 1920,
+      "height": 1080,
+      "scale": 1.25
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "catalog": 20,
+  "opt_in": true,
+  "in_group": true,
+  "presets": {
+    "basic": 2,
+    "intermediate": 17,
+    "complete": 19
+  }
+}

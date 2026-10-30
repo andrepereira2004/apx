@@ -1,0 +1,240 @@
+--- audit/2026-10-28-menu-motion-redesign/before/hytale-shell-seed.qml	2026-10-28 15:07:32.361406152 +0000
++++ /tmp/apx-hytale-shell-candidate.qml	2026-10-28 15:08:40.931563003 +0000
+@@ -5290,7 +5290,7 @@
+             // Scrolling uses a stable viewport; only its visible frame fits to whole cards.
+             // Feeding the fitted frame back into Flickable would repeatedly shrink it.
+             property real viewportHeight: viewportTargetHeight
+-            Behavior on viewportHeight { enabled: root.popupKind !== "controls" && root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
++            Behavior on viewportHeight { enabled: root.popupKind !== "controls" && root.popupKind !== "battery" && root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+             readonly property real targetHeight: root.menuHeightForCompleteActions(viewportHeight)
+             readonly property real settledHeight: targetHeight
+             property real settledX: Math.max(Appearance.desktopEdgeInset, Math.min(root.popupLeftMargin, popup.width - targetWidth - Appearance.desktopEdgeInset))
+@@ -5491,6 +5491,7 @@
+                     id: menuContent
+                     width: parent.width
+                     spacing: root.popupKind === "controls" ? 8 : 5
++                    readonly property bool animationActive: popup.open && root.popupKind === "controls" && root.islandProgress > .99 && !root.popupClosing
+ 
+                     Column {
+                         id: calendarMenu
+@@ -6579,33 +6580,36 @@
+                     Text { renderType: Text.QtRendering; visible: root.environmentSwitchError.length > 0; width: parent.width; wrapMode: Text.WordWrap; text: root.environmentSwitchError; color: "#ff91a4"; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal }
+                 }
+ 
+-                    Column {
++                    AnimatedMenuPage {
+                     width: parent.width
+                     spacing: 5
+-                    visible: root.popupKind === "controls" && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsMoreOpen
++                    shown: root.popupKind === "controls" && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsMoreOpen
+ 
+ 
+ 
+-                    ControlDashboard {
+-                        id: compactDashboard
+-                        displayScale: popupBackground.renderScale
+-                        topCornerRadius: popupBackground.radius
++                    AnimatedMenuPage {
+                         width: parent.width
+-                        visible: root.renderedControlsAllClosed() && !root.renderedControls.powerConfirmOpen
+-                        controller: root
++                        shown: root.renderedControlsAllClosed() && !root.renderedControls.powerConfirmOpen
++                        ControlDashboard {
++                            id: compactDashboard
++                            displayScale: popupBackground.renderScale
++                            topCornerRadius: popupBackground.radius
++                            width: parent.width
++                            controller: root
++                        }
+                     }
+-                    Column {
++                    AnimatedMenuPage {
+                         width: parent.width; spacing: 8
+-                        visible: root.renderedControls.controlsConnectivityOpen
++                        shown: root.renderedControls.controlsConnectivityOpen
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("connectivity") }
+                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Ligações"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
+                         ControlTile { width: parent.width; height: Appearance.menuActionHeight; showCaption: true; iconName: root.wifiDisplayPowered() ? "wifi" : "wifi-off"; caption: "Wi-Fi"; quiet: true; selected: root.wifiDisplayPowered(); iconActionEnabled: true; iconActionAvailable: !wifiPowerProcess.running; iconActionLabel: root.wifiDisplayPowered() ? "Desativar Wi-Fi" : "Ativar Wi-Fi"; onIconActivated: root.toggleWifiPower(); onActivated: root.openControlSection("wifi") }
+                         ControlTile { width: parent.width; height: Appearance.menuActionHeight; showCaption: true; iconName: root.bluetoothDisplayPowered() ? "bluetooth" : "bluetooth-off"; caption: "Bluetooth"; quiet: true; selected: root.bluetoothDisplayPowered(); iconActionEnabled: true; iconActionAvailable: !bluetoothPowerProcess.running && !root.bluetoothPowerPhase.length; iconActionLabel: root.bluetoothDisplayPowered() ? "Desativar Bluetooth" : "Ativar Bluetooth"; onIconActivated: root.toggleBluetoothPower(); onActivated: root.openControlSection("bluetooth") }
+                         ControlTile { width: parent.width; height: Appearance.menuActionHeight; showCaption: true; iconName: "plane"; caption: "Modo de avião"; quiet: true; selected: root.airplaneMode; iconActionEnabled: true; iconActionAvailable: !DesktopActivity.busy; iconActionLabel: root.airplaneMode ? "Desativar modo de avião" : "Ativar modo de avião"; onIconActivated: DesktopActivity.action(["airplane", root.airplaneMode ? "off" : "on"]); onActivated: root.openActivitySection("airplane") }
+                     }
+-                    Column {
++                    AnimatedMenuPage {
+                         width: parent.width; spacing: 8
+-                        visible: root.renderedControls.controlsActivityKind === "airplane"
++                        shown: root.renderedControls.controlsActivityKind === "airplane"
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar às ligações"; onActivated: root.openControlSection("connectivity") }
+                         Rectangle {
+                             width: parent.width; height: 72; radius: Appearance.menuActionRadius
+@@ -6667,9 +6671,9 @@
+                             color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                         }
+                     }
+-                    Column {
++                    AnimatedMenuPage {
+                         width: parent.width; spacing: 8
+-                        visible: root.renderedControls.controlsActivityKind === "keyboard"
++                        shown: root.renderedControls.controlsActivityKind === "keyboard"
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar ao som e brilho"; onActivated: root.openControlSection("brightness") }
+                         Rectangle {
+                             width: parent.width; height: 72; radius: Appearance.menuActionRadius
+@@ -6719,16 +6723,22 @@
+                         }
+                         Text { renderType: Text.QtRendering; visible: root.hardwareControlError.length > 0; width: parent.width; text: root.hardwareControlError; wrapMode: Text.WordWrap; color: "#ff91a4"; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                     }
+-                    ActivityPanel {
++                    AnimatedMenuPage {
++                        id: activityMenuPage
+                         width: parent.width
+-                        visible: root.renderedControls.controlsActivityKind.length > 0 && ["airplane", "keyboard", "trackpad"].indexOf(root.renderedControls.controlsActivityKind) < 0
+-                        kind: root.renderedControls.controlsActivityKind
+-                        onBack: { root.controlsActivityKind = ""; menuFlick.contentY = 0 }
++                        shown: root.renderedControls.controlsActivityKind.length > 0 && ["airplane", "keyboard", "trackpad"].indexOf(root.renderedControls.controlsActivityKind) < 0
++                        property string displayedKind: ""
++                        onShownChanged: if (shown) displayedKind = root.renderedControls.controlsActivityKind
++                        ActivityPanel {
++                            width: parent.width
++                            kind: activityMenuPage.displayedKind
++                            onBack: { root.controlsActivityKind = ""; menuFlick.contentY = 0 }
++                        }
+                     }
+ 
+-                    Column {
++                    AnimatedMenuPage {
+                         width: parent.width; spacing: 8
+-                        visible: root.renderedControls.controlsWifiOpen
++                        shown: root.renderedControls.controlsWifiOpen
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: root.wifiPasswordVisible ? "Escolher outra rede" : "Voltar às ligações"; enabled: !wifiCredentialProcess.running && !hostActionProcess.running; onActivated: { if (root.wifiPasswordVisible) root.cancelWifiPassword(); else root.openControlSection("wifi") } }
+                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Wi-Fi"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
+                         Rectangle {
+@@ -7009,8 +7019,8 @@
+                         }
+                     }
+ 
+-                    Column {
+-                        visible: root.renderedControls.controlsBluetoothOpen
++                    AnimatedMenuPage {
++                        shown: root.renderedControls.controlsBluetoothOpen
+                         width: parent.width; spacing: 8
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: root.bluetoothRemoveAddress.length ? "Voltar aos dispositivos" : "Voltar às ligações"; enabled: !bluetoothRemoveProcess.running; onActivated: { if (root.bluetoothRemoveAddress.length) { root.bluetoothRemoveAddress = ""; root.bluetoothRemoveName = "" } else root.openControlSection("bluetooth") } }
+                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Bluetooth"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
+@@ -7173,9 +7183,9 @@
+                         width: parent.width; text: root.hardwareControlError; color: "#ff91a4"
+                         wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
+                     }
+-                    Column {
++                    AnimatedMenuPage {
+                         width: parent.width; spacing: 8
+-                        visible: root.renderedControls.controlsBrightnessOpen
++                        shown: root.renderedControls.controlsBrightnessOpen
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("brightness") }
+                         Rectangle {
+                             id: combinedVolumeCard
+@@ -7268,14 +7278,14 @@
+                         ControlTile { width: parent.width; height: Appearance.menuActionHeight; quiet: true; showCaption: true; iconName: root.microphoneMuted ? "mic-off" : "mic"; caption: "Microfone"; selected: !root.microphoneMuted; iconActionEnabled: true; iconActionAvailable: !localActionProcess.running; iconActionLabel: root.microphoneMuted ? "Reativar microfone" : "Silenciar microfone"; onIconActivated: root.toggleMicrophoneMute(); onActivated: root.openControlSection("microphone") }
+                         ControlTile { width: parent.width; height: Appearance.menuActionHeight; quiet: true; showCaption: true; iconName: "keyboard"; caption: "Iluminação do teclado"; selected: root.keyboardBrightness > 0; iconActionEnabled: true; iconActionAvailable: !keyboardBrightnessProcess.running; iconActionLabel: "Alterar iluminação do teclado"; onIconActivated: root.cycleKeyboardBrightness(); onActivated: root.openActivitySection("keyboard") }
+                     }
+-                    Column {
+-                        visible: root.renderedControls.controlsAudioOpen
++                    AnimatedMenuPage {
++                        shown: root.renderedControls.controlsAudioOpen
+                         width: parent.width; spacing: 8
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("audio") }
+                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Som"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
+                     }
+-                    Column {
+-                        width: parent.width; spacing: 8; visible: root.renderedControls.controlsAudioOpen
++                    AnimatedMenuPage {
++                        width: parent.width; spacing: 8; shown: root.renderedControls.controlsAudioOpen
+ 
+                         Rectangle {
+                             width: parent.width; height: 80; radius: Appearance.menuActionRadius
+@@ -7331,14 +7341,14 @@
+ 
+                     }
+ 
+-                    Column {
+-                        visible: root.renderedControls.controlsMicrophoneOpen
++                    AnimatedMenuPage {
++                        shown: root.renderedControls.controlsMicrophoneOpen
+                         width: parent.width; spacing: 8
+                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("microphone") }
+                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Microfone"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
+                     }
+-                    Column {
+-                        width: parent.width; spacing: 8; visible: root.renderedControls.controlsMicrophoneOpen
++                    AnimatedMenuPage {
++                        width: parent.width; spacing: 8; shown: root.renderedControls.controlsMicrophoneOpen
+                         Rectangle {
+                             width: parent.width; height: 80; radius: Appearance.menuActionRadius
+                             color: root.controlButtonSurface; border.width: 0; border.color: root.controlButtonOutline
+@@ -7418,9 +7428,9 @@
+ 
+                 }
+ 
+-                Column {
++                AnimatedMenuPage {
+                     width: parent.width; spacing: 8
+-                    visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsAppearanceOpen && root.renderedControls.controlsActivityKind !== "trackpad"
++                    shown: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsAppearanceOpen && root.renderedControls.controlsActivityKind !== "trackpad"
+                     MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: { root.controlsMoreOpen = false; menuFlick.contentY = 0 } }
+                     MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "paintbrush"; label: "Personalização"; onActivated: { Appearance.refresh(); personalizationPanel.section = ""; root.controlsAppearanceOpen = true; menuFlick.contentY = 0 } }
+                     Column {
+@@ -7483,10 +7493,10 @@
+                     MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "list"; label: "Lista de atalhos"; onActivated: { root.shortcutsOpen = true; menuFlick.contentY = 0 } }
+                 }
+ 
+-                Column {
++                AnimatedMenuPage {
+                     id: trackpadSettingsPage
+                     width: parent.width; spacing: 8
+-                    visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && root.renderedControls.controlsActivityKind === "trackpad" && !root.renderedControls.controlsAppearanceOpen && !root.renderedControls.shortcutsOpen
++                    shown: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && root.renderedControls.controlsActivityKind === "trackpad" && !root.renderedControls.controlsAppearanceOpen && !root.renderedControls.shortcutsOpen
+                     MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar às opções"; onActivated: { root.controlsActivityKind = ""; menuFlick.contentY = 0 } }
+                     Rectangle {
+                         id: trackpadSensitivityCard
+@@ -7614,19 +7624,22 @@
+                     Text { renderType: Text.QtRendering; visible: root.trackpadGesturesError.length > 0; width: parent.width; text: root.trackpadGesturesError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                 }
+ 
+-                PersonalizationPanel {
+-                    id: personalizationPanel
++                AnimatedMenuPage {
+                     width: parent.width
+-                    visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && root.renderedControls.controlsAppearanceOpen && !root.renderedControls.shortcutsOpen
+-                    wallpapers: root.wallpaperSources
+-                    onBack: { root.controlsAppearanceOpen = false; menuFlick.contentY = 0 }
+-                    onNavigation: menuFlick.contentY = 0
+-                    onChooseImage: { root.closePopup(); Appearance.chooseWallpaper() }
++                    shown: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && root.renderedControls.controlsAppearanceOpen && !root.renderedControls.shortcutsOpen
++                    PersonalizationPanel {
++                        id: personalizationPanel
++                        width: parent.width
++                        wallpapers: root.wallpaperSources
++                        onBack: { root.controlsAppearanceOpen = false; menuFlick.contentY = 0 }
++                        onNavigation: menuFlick.contentY = 0
++                        onChooseImage: { root.closePopup(); Appearance.chooseWallpaper() }
++                    }
+                 }
+ 
+-                Column {
++                AnimatedMenuPage {
+                     width: parent.width; spacing: 7
+-                    visible: root.popupKind === "controls" && root.renderedControls.shortcutsOpen
++                    shown: root.popupKind === "controls" && root.renderedControls.shortcutsOpen
+                     MenuButton {
+                         outlined: true; iconName: "chevron-left"; label: "Voltar às opções"
+                         onActivated: { root.shortcutsOpen = false; menuFlick.contentY = 0 }
+@@ -7798,7 +7811,11 @@
+                     }
+                     Column {
+                         width: parent.width; spacing: 12
+-                        visible: root.batteryDetailsOpen || root.hardwareConfirmOpen
++                        height: root.batteryDetailsOpen || root.hardwareConfirmOpen ? implicitHeight : 0
++                        visible: height > 0; clip: true
++                        opacity: root.batteryDetailsOpen || root.hardwareConfirmOpen ? 1 : 0
++                        Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
++                        Behavior on opacity { NumberAnimation { duration: 190; easing.type: Easing.OutCubic } }
+                         Row {
+                             width: parent.width; spacing: 8
+                             Repeater {

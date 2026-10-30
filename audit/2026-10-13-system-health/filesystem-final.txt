@@ -1,0 +1,25 @@
+Overall:
+    Device size:		 216.41GiB
+    Device allocated:		 205.07GiB
+    Device unallocated:		  11.34GiB
+    Device missing:		     0.00B
+    Device slack:		     0.00B
+    Used:			 185.46GiB
+    Free (estimated):		  29.61GiB	(min: 23.94GiB)
+    Free (statfs, df):		  29.61GiB
+    Data ratio:			      1.00
+    Metadata ratio:		      2.00
+    Global reserve:		 326.31MiB	(used: 0.00B)
+    Multiple profiles:		        no
+
+Data,single: Size:199.01GiB, Used:180.74GiB (90.82%)
+   /dev/mapper/cryptroot	 199.01GiB
+
+Metadata,DUP: Size:3.00GiB, Used:2.36GiB (78.63%)
+   /dev/mapper/cryptroot	   6.00GiB
+
+System,DUP: Size:32.00MiB, Used:48.00KiB (0.15%)
+   /dev/mapper/cryptroot	  64.00MiB
+
+Unallocated:
+   /dev/mapper/cryptroot	  11.34GiB

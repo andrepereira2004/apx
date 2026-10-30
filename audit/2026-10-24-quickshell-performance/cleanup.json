@@ -1,0 +1,26 @@
+{
+  "packages": {
+    "hub": "\n==> finished: 58 packages removed (disk space saved: 208.13 MiB)\n",
+    "hytale": "==> no candidate packages found for pruning\n",
+    "steam": "\n==> finished: 13 packages removed (disk space saved: 32.64 MiB)\n",
+    "minecraft": "==> no candidate packages found for pruning\n",
+    "faculdade": "\n==> finished: 32 packages removed (disk space saved: 143.18 MiB)\n"
+  },
+  "directories": [
+    {
+      "path": "/var/lib/apx/environments/faculdade/home/apx/.cache/apx-gridcraft-build/target",
+      "allocated_bytes_du": 2707755008
+    },
+    {
+      "path": "/var/lib/apx/environments/faculdade/home/apx/.cache/BraveSoftware/Brave-Browser/Default/Cache",
+      "allocated_bytes_du": 1256448000
+    },
+    {
+      "path": "/var/lib/apx/environments/faculdade/home/apx/.cache/BraveSoftware/Brave-Browser/Default/Code Cache",
+      "allocated_bytes_du": 360017920
+    }
+  ],
+  "free_before": 102171078656,
+  "free_after": 102720274432,
+  "physical_free_delta": 549195776
+}

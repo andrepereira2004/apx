@@ -1,0 +1,179 @@
+{
+  "initial": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 554,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 340,
+    "visual_height": 554,
+    "visual_x": 932,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 0,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:12",
+      "JetBrains Mono:14"
+    ],
+    "displayed_controls": {
+      "controlsBrightnessOpen": false,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 0,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "ghost_visible": true,
+    "ghost_message": "Ol\u00e1, Andr\u00e9!",
+    "ghost_width": 332,
+    "media_summary_width": 17,
+    "media_summary_x": -9,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "media": {
+        "x": 719,
+        "y": 7,
+        "width": 0,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 12,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "three_second_expiry": true,
+  "close_hides_greeting": true,
+  "brightness": {
+    "kind": "controls",
+    "visible": true,
+    "screen": "eDP-1",
+    "bars": [
+      "eDP-1"
+    ],
+    "width": 340,
+    "height": 239,
+    "island_progress": 1,
+    "island_closing": false,
+    "animation_pending": false,
+    "animation_running": false,
+    "popup_opacity": 1,
+    "content_opacity": 1,
+    "visual_width": 340,
+    "visual_height": 239,
+    "visual_x": 932,
+    "fullscreen": false,
+    "panel_y": 65,
+    "content_y": 10,
+    "content_font": "JetBrains Mono",
+    "body_size": 12,
+    "title_size": 14,
+    "visible_fonts": [
+      "JetBrains Mono:11",
+      "JetBrains Mono:12",
+      "JetBrains Mono:14"
+    ],
+    "displayed_controls": {
+      "controlsBrightnessOpen": true,
+      "controlsConnectivityOpen": false,
+      "controlsWifiOpen": false,
+      "controlsBluetoothOpen": false,
+      "controlsAudioOpen": false,
+      "controlsMicrophoneOpen": false,
+      "controlsMoreOpen": false,
+      "controlsAppearanceOpen": false,
+      "controlsActivityKind": "",
+      "shortcutsOpen": false,
+      "powerConfirmOpen": false
+    },
+    "page_transition": false,
+    "pending_kind": "",
+    "media_width": 0,
+    "media_selected": false,
+    "osd_fallback": false,
+    "launcher_running": false,
+    "ghost_visible": true,
+    "ghost_message": "Ol\u00e1, Andr\u00e9!",
+    "ghost_width": 332,
+    "media_summary_width": 17,
+    "media_summary_x": -9,
+    "bar_targets": {
+      "calendar": {
+        "x": 10,
+        "y": 7,
+        "width": 189,
+        "height": 32
+      },
+      "controls": {
+        "x": 1229,
+        "y": 7,
+        "width": 41,
+        "height": 32
+      },
+      "media": {
+        "x": 719,
+        "y": 7,
+        "width": 0,
+        "height": 32
+      }
+    },
+    "files_active": false,
+    "osd_visible": false,
+    "island_transient": false,
+    "keyboard_items": 3,
+    "keyboard_index": -1,
+    "calendar_focus_kind": "",
+    "calendar_focus_key": "",
+    "calendar_selected_date": "",
+    "environment_selected_name": "",
+    "environment_focus_index": -1,
+    "environment_error": "",
+    "environment_form_name": "",
+    "environment_description_length": 0
+  },
+  "audio_navigation": true,
+  "configerrors": ""
+}

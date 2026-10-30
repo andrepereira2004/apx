@@ -1,0 +1,14 @@
+{
+  "id": "apx-close-message@apx.local",
+  "version": "1.0.0",
+  "active": true,
+  "buttonPresent": true,
+  "permissions": {
+    "permissions": [
+      "accountsRead",
+      "messagesRead"
+    ],
+    "origins": [],
+    "data_collection": []
+  }
+}

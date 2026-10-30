@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "started_utc": "2026-10-22T10:12:32Z",
+  "session": "efb50993780079460b0cbed1363e2166a2de1d9f_1792663951_599147517",
+  "note": "IPC timing measures event-loop responsiveness, not actual cursor FPS or per-device acceleration.",
+  "samples": [
+    {
+      "elapsed_s": 0.162,
+      "monitors_ipc_ms": 156.0,
+      "devices_ipc_ms": 6.39,
+      "outputs": [
+        {
+          "name": "eDP-1",
+          "refresh_hz": 120.213,
+          "hardware_cursor": false
+        }
+      ],
+      "pointers": [
+        {
+          "name": "logitech-g305-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-mouse",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-touchpad",
+          "scroll_factor": 0.55
+        }
+      ],
+      "cpu_pressure": "some avg10=0.89 avg60=1.17 avg300=0.84 total=13720057\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "elapsed_s": 0.263,
+      "monitors_ipc_ms": 6.43,
+      "devices_ipc_ms": 6.52,
+      "outputs": [
+        {
+          "name": "eDP-1",
+          "refresh_hz": 120.213,
+          "hardware_cursor": false
+        }
+      ],
+      "pointers": [
+        {
+          "name": "logitech-g305-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-mouse",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-touchpad",
+          "scroll_factor": 0.55
+        }
+      ],
+      "cpu_pressure": "some avg10=0.89 avg60=1.17 avg300=0.84 total=13720651\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "elapsed_s": 0.515,
+      "monitors_ipc_ms": 7.66,
+      "devices_ipc_ms": 6.77,
+      "outputs": [
+        {
+          "name": "eDP-1",
+          "refresh_hz": 120.213,
+          "hardware_cursor": false
+        }
+      ],
+      "pointers": [
+        {
+          "name": "logitech-g305-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-mouse",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-touchpad",
+          "scroll_factor": 0.55
+        }
+      ],
+      "cpu_pressure": "some avg10=0.89 avg60=1.17 avg300=0.84 total=13721639\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "elapsed_s": 1.013,
+      "monitors_ipc_ms": 6.97,
+      "devices_ipc_ms": 6.02,
+      "outputs": [
+        {
+          "name": "eDP-1",
+          "refresh_hz": 120.213,
+          "hardware_cursor": false
+        }
+      ],
+      "pointers": [
+        {
+          "name": "logitech-g305-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-mouse",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-touchpad",
+          "scroll_factor": 0.55
+        }
+      ],
+      "cpu_pressure": "some avg10=0.89 avg60=1.17 avg300=0.84 total=13726364\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "elapsed_s": 2.014,
+      "monitors_ipc_ms": 7.37,
+      "devices_ipc_ms": 6.63,
+      "outputs": [
+        {
+          "name": "eDP-1",
+          "refresh_hz": 120.213,
+          "hardware_cursor": false
+        }
+      ],
+      "pointers": [
+        {
+          "name": "logitech-g305-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-mouse",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-touchpad",
+          "scroll_factor": 0.55
+        }
+      ],
+      "cpu_pressure": "some avg10=0.72 avg60=1.13 avg300=0.84 total=13727245\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "elapsed_s": 4.015,
+      "monitors_ipc_ms": 7.86,
+      "devices_ipc_ms": 6.51,
+      "outputs": [
+        {
+          "name": "eDP-1",
+          "refresh_hz": 120.213,
+          "hardware_cursor": false
+        }
+      ],
+      "pointers": [
+        {
+          "name": "logitech-g305-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-mouse",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-touchpad",
+          "scroll_factor": 0.55
+        }
+      ],
+      "cpu_pressure": "some avg10=0.96 avg60=1.16 avg300=0.85 total=13774648\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "elapsed_s": 8.015,
+      "monitors_ipc_ms": 8.3,
+      "devices_ipc_ms": 6.74,
+      "outputs": [
+        {
+          "name": "eDP-1",
+          "refresh_hz": 120.213,
+          "hardware_cursor": false
+        }
+      ],
+      "pointers": [
+        {
+          "name": "logitech-g305-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "ite-tech.-inc.-ite-device(8910)-keyboard-1",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-mouse",
+          "scroll_factor": -1.0
+        },
+        {
+          "name": "elan06fa:00-04f3:31dd-touchpad",
+          "scroll_factor": 0.55
+        }
+      ],
+      "cpu_pressure": "some avg10=0.82 avg60=1.12 avg300=0.84 total=13826690\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    }
+  ]
+}

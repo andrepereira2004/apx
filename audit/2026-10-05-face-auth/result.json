@@ -1,0 +1,59 @@
+{
+  "targets": {
+    "faculdade": {
+      "state": "running",
+      "generation": "e9b08983-4740-4b85-8580-862c4a1d4c54",
+      "packages": [
+        "howdy-apx 3.0.0beta.r592.d3ab993-3.apxface1",
+        "python-dlib 20.0.1-2.1.apxface1",
+        "python-opencv 5.0.0-9"
+      ],
+      "model_mode": "0o640",
+      "pam_password_fallback": true
+    },
+    "hytale": {
+      "state": "stopped",
+      "generation": "97014bb7-aa82-41fd-aaff-2833e2e41033",
+      "packages": [
+        "howdy-apx 3.0.0beta.r592.d3ab993-3.apxface1",
+        "python-dlib 20.0.1-2.1.apxface1",
+        "python-opencv 5.0.0-9"
+      ],
+      "model_mode": "0o640",
+      "pam_password_fallback": true
+    },
+    "minecraft": {
+      "state": "stopped",
+      "generation": "a79db3e2-4870-4b5f-9367-822adbc18c8b",
+      "packages": [
+        "howdy-apx 3.0.0beta.r592.d3ab993-3.apxface1",
+        "python-dlib 20.0.1-2.1.apxface1",
+        "python-opencv 5.0.0-9"
+      ],
+      "model_mode": "0o640",
+      "pam_password_fallback": true
+    },
+    "steam": {
+      "state": "stopped",
+      "generation": "72f90ce8-3119-4bdd-8368-7ee431b9f13c",
+      "packages": [
+        "howdy-apx 3.0.0beta.r592.d3ab993-3.apxface1",
+        "python-dlib 20.0.1-2.1.apxface1",
+        "python-opencv 5.0.0-9"
+      ],
+      "model_mode": "0o640",
+      "pam_password_fallback": true
+    }
+  },
+  "future_identity": "opt-in Host artifact; independently copied",
+  "recognition_test": {
+    "target": "faculdade",
+    "exit": 11,
+    "result": "camera/read/model initialized; face search timed out; physical unlock not confirmed"
+  },
+  "tests": 70,
+  "camera_capture": "one real frame as apx; passed; no image saved",
+  "native_pam": "loads as apx",
+  "physical_unlock": "pending owner observation",
+  "future_hook": "installed and source function match; no fresh graphical creation"
+}

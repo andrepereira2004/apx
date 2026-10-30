@@ -1,0 +1,8 @@
+{
+  "name": "teste",
+  "display_name": "Teste",
+  "desktop_preset": "intermediate",
+  "purpose": "owner-requested disposable full portable APX VM rehearsal",
+  "cleanup": "stop/remove only test-owned units, VM files and Teste using generation-bound APX destroy; preserve source and evidence",
+  "initial_free_bytes": 115031511040
+}

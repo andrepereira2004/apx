@@ -1,0 +1,23 @@
+{
+  "scope": "local-source candidate; VM acceptance is recorded separately",
+  "unit_tests": {
+    "test_apx_portable*py": 14,
+    "test_apx_environment_update_batch.py": 12,
+    "test_apx_rebuild_readiness.py": 6,
+    "test_apx_host_services*contract.py": 15,
+    "test_apx_host_services*physical.py": 11,
+    "test_apx_host_services_peer.py": 6
+  },
+  "unit_tests_passed": 64,
+  "python_ast_files_checked": 19,
+  "bash_syntax": [
+    "install-apx-full.sh",
+    "apx-portable-session.sh"
+  ],
+  "bundle": {
+    "files_sha256_verified": 529,
+    "test_vm_agent_and_auth_fixture_excluded": true,
+    "temporary_archive_removed": true
+  },
+  "populated_host_check_refuses_without_mutation": true
+}

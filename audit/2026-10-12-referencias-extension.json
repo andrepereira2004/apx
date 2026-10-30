@@ -1,0 +1,11 @@
+{
+  "change": "extension-only rename",
+  "environment": "faculdade",
+  "old": "Documents/Iniciação à Investigação/Referencias",
+  "new": "Documents/Iniciação à Investigação/Referencias.ods",
+  "mime": "application/vnd.oasis.opendocument.spreadsheet",
+  "sha256": "266730367a60afa71599d1528f5505d8301157de83487f4fbb856685683ae933",
+  "content_unchanged": true,
+  "opened_or_converted": false,
+  "ods_limitation": "GridCraft imports cached values instead of formulas"
+}

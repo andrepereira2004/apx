@@ -1,0 +1,1 @@
+24px arrows, left alignment and back/forward history verified

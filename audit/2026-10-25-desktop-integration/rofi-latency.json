@@ -1,0 +1,11 @@
+{
+  "mapped_ms": [
+    42.6,
+    45.1,
+    43.9,
+    42.9
+  ],
+  "median_ms": 43.4,
+  "scope": "real Apps mode process to layer registration; includes polling overhead; not first rendered frame or animation complete",
+  "remaining": false
+}

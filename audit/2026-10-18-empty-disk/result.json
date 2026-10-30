@@ -1,0 +1,19 @@
+{
+  "status": "experimental-empty-PC-installer-rehearsal-passed",
+  "unit_tests": 60,
+  "uefi_functional_checks_after_runtime_timeout_fix": 15,
+  "uefi_cold_boot_hub_stability_seconds": 125.05055686799999,
+  "final_source_bios_fresh_install_functional_checks": 15,
+  "final_source_bios_normal_reboot_unicode_login": true,
+  "product_source_files": 534,
+  "source_manifest_sha256": "aadab75b68eb25af29b7ebbcd88fd252daa34943f09afb692cb1138088bcd8e1",
+  "driver_selection_physical_probe": "read-only AMD/NVIDIA selection passed; no physical driver installation",
+  "extra_lab_cleaned": true,
+  "owner_manual_teste_vm_retained": true,
+  "bundle_verified_files": 538,
+  "bundle_in_teste": "~/APX-Instalacao-20261018",
+  "host_free_bytes": 106338086912,
+  "failed_host_units": "",
+  "full_physical_feature_parity_verified": false,
+  "committed_or_pushed": false
+}

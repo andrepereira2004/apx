@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "seat": "seat0",
+  "graphics": {
+    "card": "/dev/dri/card0",
+    "render": "/dev/dri/renderD128",
+    "connected": [
+      "Virtual-1"
+    ],
+    "boot_vga": true,
+    "driver": "virtio-pci",
+    "device_path": "/sys/devices/pci0000:00/0000:00:03.0"
+  },
+  "inputs": [
+    "/dev/input/event1",
+    "/dev/input/event3",
+    "/dev/input/event4"
+  ],
+  "audio": [
+    "/dev/snd/seq",
+    "/dev/snd/timer"
+  ],
+  "wifi_interface": null,
+  "nodes": [
+    {
+      "node": "/dev/dri/card0",
+      "kind": "drm",
+      "major": 226,
+      "minor": 0
+    },
+    {
+      "node": "/dev/dri/renderD128",
+      "kind": "drm",
+      "major": 226,
+      "minor": 128
+    },
+    {
+      "node": "/dev/input/event1",
+      "kind": "input",
+      "major": 13,
+      "minor": 65
+    },
+    {
+      "node": "/dev/input/event3",
+      "kind": "input",
+      "major": 13,
+      "minor": 67
+    },
+    {
+      "node": "/dev/input/event4",
+      "kind": "input",
+      "major": 13,
+      "minor": 68
+    },
+    {
+      "node": "/dev/snd/seq",
+      "kind": "audio",
+      "major": 116,
+      "minor": 1
+    },
+    {
+      "node": "/dev/snd/timer",
+      "kind": "audio",
+      "major": 116,
+      "minor": 33
+    },
+    {
+      "node": "/dev/tty2",
+      "kind": "tty",
+      "major": 4,
+      "minor": 2
+    }
+  ]
+}

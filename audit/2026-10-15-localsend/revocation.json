@@ -1,0 +1,6 @@
+{
+  "service_stop_clears_permissions": true,
+  "stale_dnat_receive_guard_retained": true,
+  "restart_restores_single_peer_rules": true,
+  "pinned_artifact_resolves": true
+}

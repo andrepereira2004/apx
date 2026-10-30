@@ -1,0 +1,12 @@
+[
+  {
+    "target": "/usr/lib/apx/apx-lab-runtime.py",
+    "before": "afa1007be948f64eaf4c05286bd2328f152b6063e1a3052087a9c985502582e9",
+    "after": "dde8eaf7d3aa2d2f2ca5e2f6a338bbf1aafbffeee1c4e4b0dd783250a809437e"
+  },
+  {
+    "target": "/usr/local/sbin/apx-local-snapshots",
+    "before": "febaabaac8411fadfca9d8dba10c8e0d8142223be463d1d416bf703db15a81a4",
+    "after": "ba8bfe70317207117c23abf3117cedc42d5ffe8ff9eb075b3f72ff7447d35ec7"
+  }
+]

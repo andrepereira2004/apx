@@ -1,0 +1,22 @@
+{
+  "installed": [
+    "localsend-bin 1.18.2-4",
+    "libayatana-appindicator 0.6.0-2",
+    "libayatana-indicator 0.9.5-1",
+    "ayatana-ido 0.10.4-1"
+  ],
+  "scope": "Faculdade only",
+  "manifest": {
+    "schema": 1,
+    "package": "localsend-bin",
+    "filename": "localsend-bin-1.18.2-4-x86_64.pkg.tar.zst",
+    "sha256": "b7c71d19d7cb80084f815a8f5a942d77e52570d5a60874201e0a260438e80762",
+    "upstream_archive_sha256": "287690a9a8eb6da9c83cc97b3e3030ac67daf32a7331fcf307d0939300658d16",
+    "upstream_url": "https://github.com/localsend/localsend/releases/download/v1.18.2/LocalSend-1.18.2-linux-x86-64.tar.gz"
+  },
+  "backup": "/var/lib/apx/backups/20261013-localsend",
+  "network_exception": false,
+  "leader_at_install": 1002442,
+  "package_directory_modes_normalized": true,
+  "libraries_resolved": true
+}

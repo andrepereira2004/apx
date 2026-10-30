@@ -1,0 +1,167 @@
+/* The same Graphite palette, typography and control shapes as Rofi/QuickShell. */
+window, .background { background-color: #101117; color: #d9dcea; font-family: "JetBrains Mono"; font-size: 13px; }
+headerbar, toolbar, menubar { background-image: none; background-color: #101117; color: #d9dcea; border: 0; border-bottom: 1px solid #343947; box-shadow: none; }
+headerbar { padding: 10px 14px; min-height: 36px; }
+headerbar .title { font-size: 14px; font-weight: 600; }
+headerbar .subtitle { font-size: 11px; color: #a4abc0; }
+stacksidebar, stacksidebar list { background: transparent; border: 0; }
+stacksidebar { border-right: 1px solid #343947; padding: 10px 0; }
+stacksidebar row { color: #a4abc0; padding: 12px; border: 1px solid transparent; border-radius: 14px; margin: 3px 10px; }
+stacksidebar row:hover { background-color: #292d3a; color: #d9dcea; }
+stacksidebar row:selected { background-color: #353a4a; border-color: #69728a; color: #ffffff; }
+.page { background: transparent; }
+.title { color: #d9dcea; font-size: 21px; font-weight: 600; }
+.subtitle, .secondary { color: #a4abc0; }
+.card { background: #1b1d26; border: 1px solid #343947; border-radius: 14px; padding: 16px; }
+.card-title { color: #ffffff; font-size: 14px; font-weight: 600; }
+button, combobox button { background-image: none; background-color: #1b1d26; color: #d9dcea; border: 1px solid #414654; border-radius: 14px; padding: 8px 12px; box-shadow: none; text-shadow: none; }
+button:hover, button:checked, button.suggested-action { background-color: #353a4a; color: #ffffff; border-color: #69728a; }
+button:active { background-color: #41475b; }
+button:disabled { color: #6d7487; border-color: #343947; }
+entry, spinbutton { background: #1b1d26; color: #d9dcea; border: 1px solid #414654; border-radius: 14px; padding: 8px 10px; box-shadow: none; }
+entry:focus, spinbutton:focus { border-color: #9da8c2; }
+spinbutton button { padding: 4px 8px; border: 0; }
+entry selection, textview selection { background: #454d64; color: #ffffff; }
+separator { background: #343947; min-height: 1px; }
+menu, popover { background: #101117; color: #d9dcea; border: 1px solid #343947; border-radius: 14px; padding: 8px; }
+menuitem, modelbutton { padding: 9px 12px; border-radius: 10px; }
+menuitem:hover, modelbutton:hover { background: #353a4a; color: #ffffff; }
+treeview.view { background: #101117; color: #d9dcea; border: 0; }
+treeview.view:selected { background: #353a4a; color: #ffffff; }
+treeview.view:hover { background: #292d3a; }
+treeview.view header button { border-radius: 0; background: #1b1d26; border-width: 0 0 1px 0; padding: 10px; }
+treeview.view cell { padding: 7px 8px; }
+scrolledwindow { border: 0; }
+scrollbar { background: transparent; border: 0; }
+scrollbar slider { background: #50586d; min-width: 5px; min-height: 24px; border-radius: 8px; }
+progressbar trough, scale trough { background: #101117; border: 1px solid #414654; border-radius: 8px; min-height: 6px; }
+progressbar progress, scale highlight { background: #9da8c2; border: 0; border-radius: 8px; }
+checkbutton check, radiobutton radio { background: #101117; border: 1px solid #69728a; color: #ffffff; }
+checkbutton check:checked, radiobutton radio:checked { background: #454d64; }
+switch { background: #1b1d26; border: 1px solid #414654; border-radius: 16px; }
+switch:checked { background: #454d64; }
+switch slider { background: #d9dcea; border-radius: 14px; }
+infobar { background: #1b1d26; color: #d9dcea; }
+
+/* Readable app surfaces over the desktop, without fading text or controls. */
+window.apx-graphite-app { background-color: rgba(16, 17, 23, 0.95); }
+window.apx-graphite-app headerbar { background-color: rgba(16, 17, 23, 0.95); }
+
+.settings-navigation { background: transparent; border-right: 1px solid #343947; padding: 8px; }
+.settings-navigation row { border: 0; border-radius: 12px; margin: 2px 0; color: #a4abc0; }
+.settings-navigation row:selected { background: #353a4a; color: #ffffff; }
+.settings-navigation row:hover { background: #292d3a; }
+.settings-navigation row:selected:hover { background: #353a4a; }
+.nav-heading { font-size: 10px; color: #7f889f; }
+
+.overview-grid flowboxchild { padding: 0; border: 0; background: transparent; }
+
+/* Settings use the Control Centre's body size throughout their inner pages. */
+.apx-settings-app { font-size: 12px; }
+.apx-settings-app .title { font-size: 18px; }
+.apx-settings-app .subtitle { font-size: 12px; }
+.apx-settings-app .card { padding: 14px; }
+.apx-settings-app .card-title { font-size: 13px; }
+.apx-settings-app button { min-height: 22px; padding: 7px 12px; }
+.apx-settings-app .settings-navigation row { margin: 1px 0; }
+
+/* Settings navigation follows Files typography and 16px vector icons. */
+.apx-settings-app .settings-navigation { font-family: "JetBrains Mono"; font-size: 10pt; padding: 0; }
+.apx-settings-app .settings-navigation row { margin: 0; border-radius: 0; }
+.apx-settings-app .settings-navigation row:selected,
+.apx-settings-app .settings-navigation row:selected:hover { background: transparent; color: #ffffff; }
+.apx-settings-app .settings-navigation row:hover { background: transparent; }
+
+/* Common APX application chrome; page headings keep their own hierarchy. */
+window.apx-graphite-app headerbar {
+    font-family: "JetBrains Mono";
+    font-size: 13px;
+    padding: 10px 14px;
+    min-height: 36px;
+}
+window.apx-graphite-app headerbar .title {
+    font-family: "JetBrains Mono";
+    font-size: 14px;
+    font-weight: 600;
+}
+window.apx-graphite-app headerbar .subtitle {
+    font-family: "JetBrains Mono";
+    font-size: 11px;
+    font-weight: 400;
+    color: #a4abc0;
+}
+window.apx-graphite-app headerbar button {
+    min-height: 22px;
+    padding: 7px 12px;
+    border-radius: 14px;
+}
+
+/* Settings follow the native Files surface and navigation rhythm. */
+window.apx-settings-app { background-color: rgba(16, 17, 23, 0.80); }
+window.apx-graphite-app.apx-settings-app headerbar { background-color: rgba(16, 17, 23, 0.95); }
+.apx-settings-app .settings-navigation { color: #ffffff; }
+.apx-settings-app .settings-navigation row { color: #d9dcea; }
+.apx-settings-app .settings-navigation image { color: #ffffff; -gtk-icon-shadow: none; }
+.apx-settings-app .nav-heading { font-size: 13px; font-weight: 600; color: #ffffff; }
+.apx-settings-app .settings-toolbar { background-color: rgba(16, 17, 23, 0.95); border-bottom: 1px solid #343947; }
+.apx-settings-app .settings-toolbar button {
+    background: transparent; border-color: transparent;
+    padding: 4px 6px; min-width: 20px; min-height: 24px;
+}
+.apx-settings-app .settings-toolbar button:hover { background: #353a4a; }
+.apx-settings-app .settings-toolbar entry { min-height: 24px; padding: 8px 10px; border-radius: 14px; }
+.apx-settings-app .card { background: rgba(27, 29, 38, 0.82); }
+.apx-settings-app scale trough { min-height: 5px; border-radius: 6px; }
+.apx-settings-app scale slider { background: #d9dcea; border: 0; min-width: 14px; min-height: 14px; border-radius: 9px; box-shadow: none; }
+.apx-settings-app scale highlight { background: #d9dcea; }
+
+/* Final owner preference: subtle Task Manager glass, calmer Settings surface. */
+window.apx-graphite-app { background-color: rgba(16, 17, 23, 0.90); }
+window.apx-graphite-app.apx-settings-app { background-color: rgba(16, 17, 23, 0.80); }
+window.apx-graphite-app headerbar { background: transparent; padding: 6px 10px; min-height: 32px; }
+window.apx-graphite-app headerbar button {
+    background: transparent; border: 1px solid transparent;
+    border-radius: 8px; min-width: 24px; min-height: 24px; padding: 4px 6px;
+    box-shadow: none;
+}
+window.apx-graphite-app headerbar button:hover { background-color: #353a4a; border-color: transparent; }
+window.apx-graphite-app headerbar button:active { background-color: #41475b; }
+window.apx-graphite-app headerbar button.close:hover { background-color: #713c44; color: #ffffff; }
+
+window.apx-task-manager-app { background-color: rgba(16, 17, 23, 0.80); }
+window.apx-graphite-app.apx-task-manager-app headerbar { background-color: rgba(16, 17, 23, 0.95); }
+.apx-task-manager-app .card { background-color: rgba(27, 29, 38, 0.82); }
+.apx-task-manager-app treeview.view { background-color: rgba(16, 17, 23, 0.80); }
+.apx-task-manager-app treeview.view:selected { background-color: #353a4a; }
+.apx-task-manager-app treeview.view:hover { background-color: #292d3a; }
+
+/* Match Files' text explicitly: the page's 12px rule must not reach labels. */
+.apx-settings-app .settings-navigation label {
+    font-family: "JetBrains Mono"; font-size: 10pt; font-weight: 400;
+}
+.apx-settings-app .settings-navigation row { padding: 0; }
+.apx-settings-app .settings-navigation .nav-heading {
+    font-family: "JetBrains Mono"; font-size: 10pt; font-weight: 600;
+}
+.apx-settings-app .settings-navigation image { opacity: 1; }
+
+/* Separate persistent selection from pointer feedback; headings stay neutral. */
+.apx-settings-app .settings-navigation row.navigation-item {
+    border-radius: 6px;
+    transition: background-color 120ms ease-out;
+}
+.apx-settings-app .settings-navigation row.navigation-item:hover {
+    background-color: #292d3a;
+    color: #ffffff;
+}
+.apx-settings-app .settings-navigation row.navigation-item:selected {
+    background-color: #353a4a;
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px #ffffff;
+}
+.apx-settings-app .settings-navigation row.navigation-item:selected:hover {
+    background-color: #41475b;
+}
+
+/* Text actions must not enlarge the shared 47px title bar. */
+window.apx-graphite-app headerbar button { margin-top: 0; margin-bottom: 0; }

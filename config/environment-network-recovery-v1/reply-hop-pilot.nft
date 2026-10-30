@@ -1,0 +1,10 @@
+# Experimental APX pilot: preserve one internal routing hop for TTL=1 replies.
+# After reverse NAT, select the actual APX destination route, on any uplink.
+# This changes no firewall verdict and leaves ordinary TTL values untouched.
+destroy table ip apx_reply_hop_v1
+table ip apx_reply_hop_v1 {
+ chain prerouting {
+  type filter hook prerouting priority dstnat + 10; policy accept;
+  ct direction reply ct status snat fib daddr oifname "ve-apx-*" ip ttl 1 counter ip ttl set 2 comment "APX NAT replies: preserve internal hop on any uplink"
+ }
+}

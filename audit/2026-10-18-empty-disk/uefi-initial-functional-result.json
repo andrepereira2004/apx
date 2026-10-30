@@ -1,0 +1,9 @@
+{
+  "state": "running",
+  "checks": [
+    "current-quickshell-and-hyprland-ready",
+    "authenticated-hub-service-identity",
+    "all-current-shell-source-digests-match",
+    "hub-creates-independent-intermediate-workload"
+  ]
+}

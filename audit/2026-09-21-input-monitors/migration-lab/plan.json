@@ -1,0 +1,150 @@
+{
+  "schema": 3,
+  "profile": "apx-native-migration-plan-v3",
+  "executable": false,
+  "disk_serial": "APX-MIGRATION-LAB",
+  "disk_id": "E4C57A04-BAC3-458F-AF73-8C2871E044B5",
+  "before": {
+    "label": "gpt",
+    "id": "E4C57A04-BAC3-458F-AF73-8C2871E044B5",
+    "device": "/dev/nvme0n1",
+    "unit": "sectors",
+    "firstlba": 34,
+    "lastlba": 1000215182,
+    "sectorsize": 512,
+    "partitions": [
+      {
+        "node": "/dev/nvme0n1p1",
+        "start": 2048,
+        "size": 2097152,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "106F3F58-BDCF-4D7E-B2DD-7AABA12F9ABD",
+        "name": "APX_EFI"
+      },
+      {
+        "node": "/dev/nvme0n1p2",
+        "start": 2099200,
+        "size": 662571008,
+        "type": "CA7D7CCB-63ED-4C53-861C-1742536059CC",
+        "uuid": "9790735D-C2BE-40F3-88F7-4FA450AAA6E9",
+        "name": "APX_CRYPT"
+      },
+      {
+        "node": "/dev/nvme0n1p3",
+        "start": 664670208,
+        "size": 316669952,
+        "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+        "uuid": "CD03BA35-6F2D-4A6D-ACAA-D4B8DC453D57",
+        "name": "APX_WINDOWS_TARGET"
+      },
+      {
+        "node": "/dev/nvme0n1p4",
+        "start": 981340160,
+        "size": 18874368,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "A9794C61-7106-4B3F-94D7-28B6F4DEC1C9",
+        "name": "APX_WINSETUP"
+      }
+    ]
+  },
+  "after": {
+    "label": "gpt",
+    "id": "E4C57A04-BAC3-458F-AF73-8C2871E044B5",
+    "device": "/dev/nvme0n1",
+    "unit": "sectors",
+    "firstlba": 34,
+    "lastlba": 1000215182,
+    "sectorsize": 512,
+    "partitions": [
+      {
+        "node": "/dev/nvme0n1p1",
+        "start": 2048,
+        "size": 2097152,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "106F3F58-BDCF-4D7E-B2DD-7AABA12F9ABD",
+        "name": "APX_EFI"
+      },
+      {
+        "node": "/dev/nvme0n1p2",
+        "start": 2099200,
+        "size": 558729216,
+        "type": "CA7D7CCB-63ED-4C53-861C-1742536059CC",
+        "uuid": "9790735D-C2BE-40F3-88F7-4FA450AAA6E9",
+        "name": "APX_CRYPT"
+      },
+      {
+        "node": "/dev/nvme0n1p3",
+        "start": 560828416,
+        "size": 251658240,
+        "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+        "uuid": "CD03BA35-6F2D-4A6D-ACAA-D4B8DC453D57",
+        "name": "APX_WINDOWS_TARGET"
+      },
+      {
+        "node": "/dev/nvme0n1p4",
+        "start": 981340160,
+        "size": 18874368,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "A9794C61-7106-4B3F-94D7-28B6F4DEC1C9",
+        "name": "APX_WINSETUP"
+      },
+      {
+        "node": "/dev/nvme0n1p5",
+        "start": 813568000,
+        "size": 167772160,
+        "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+        "uuid": "7fa7f3be-ffef-5a2d-a0ff-3f45c726197a",
+        "name": "APX_WINDOWS_LAB"
+      },
+      {
+        "node": "/dev/nvme0n1p6",
+        "start": 812486656,
+        "size": 1048576,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "fef954e0-2b75-57d5-b2ac-4e3f94f2a071",
+        "name": "APX_NATIVE_EFI"
+      },
+      {
+        "node": "/dev/nvme0n1p7",
+        "start": 813535232,
+        "size": 32768,
+        "type": "e3c9e316-0b5c-4db8-817d-f92df00215ae",
+        "uuid": "7558e37b-e3f4-57ab-9f46-6b493f59f5cf",
+        "name": "APX_NATIVE_MSR"
+      }
+    ]
+  },
+  "before_sha256": "ecd8cd60826ca10129908863b21a398861cd1c58b89e72d48074a370e2d0752b",
+  "existing": {
+    "name": "windows",
+    "generation": "2bf42c1e-439f-46fa-9e61-93186118a332",
+    "size_gib": 120
+  },
+  "new": {
+    "name": "windows-lab",
+    "generation": "76a5f5c6-d5ce-45d8-aed4-64b9924d5824",
+    "size_gib": 80,
+    "partuuid": "7fa7f3be-ffef-5a2d-a0ff-3f45c726197a",
+    "esp_partuuid": "fef954e0-2b75-57d5-b2ac-4e3f94f2a071",
+    "msr_partuuid": "7558e37b-e3f4-57ab-9f46-6b493f59f5cf",
+    "efi_path": "/EFI/Microsoft/Boot/bootmgfw.efi"
+  },
+  "apx_payload_bytes": 286052581376,
+  "backup_budget_bytes": 269407318016,
+  "measurements": {
+    "ntfs_min_bytes": 96898674688,
+    "apx_used_bytes": 90092433408,
+    "luks_header_bytes": 16777216
+  },
+  "preserved_in_place": [
+    "106F3F58-BDCF-4D7E-B2DD-7AABA12F9ABD",
+    "A9794C61-7106-4B3F-94D7-28B6F4DEC1C9"
+  ],
+  "remaining_gates": [
+    "offline-executor-and-rollback-tested",
+    "verified-Windows-backup-and-restore",
+    "per-instance-EFI-and-BCD-verified",
+    "owner-disk-write-approval"
+  ],
+  "plan_sha256": "c2b7c85461250c83210e4c3b3fb4c40ba00880e5a0f02dfc8db81300f1912d8e"
+}

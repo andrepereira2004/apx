@@ -1,0 +1,20 @@
+{
+  "clients": [
+    {
+      "class": "org.mozilla.Thunderbird",
+      "pid": 545404,
+      "size": [
+        1496,
+        778
+      ],
+      "workspace": {
+        "id": 5,
+        "name": "5"
+      },
+      "xwayland": false
+    }
+  ],
+  "profile_css_matches": true,
+  "css_sha256": "7e87e2de0d9996b4627f10763f7ff0e9fe6e8f9566bf616b090792291dd5a5bb",
+  "preview_removed": true
+}

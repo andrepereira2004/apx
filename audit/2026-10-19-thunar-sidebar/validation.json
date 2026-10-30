@@ -1,0 +1,25 @@
+{
+  "icons": {
+    "folder-normal": "/home/apx/.local/share/icons/APX-Graphite/scalable/places/folder.svg",
+    "folder-sidebar": "/home/apx/.local/share/icons/APX-Graphite/scalable/places/folder-symbolic.svg",
+    "folder-download-normal": "/home/apx/.local/share/icons/APX-Graphite/scalable/places/folder-download.svg",
+    "folder-download-sidebar": "/home/apx/.local/share/icons/APX-Graphite/scalable/places/folder-download-symbolic.svg",
+    "user-home-normal": "/usr/share/icons/Adwaita/scalable/places/user-home.svg",
+    "user-home-sidebar": "/home/apx/.local/share/icons/APX-Graphite/scalable/places/user-home-symbolic.svg",
+    "user-trash-normal": "/usr/share/icons/Adwaita/scalable/places/user-trash.svg",
+    "user-trash-sidebar": "/home/apx/.local/share/icons/APX-Graphite/scalable/places/user-trash-symbolic.svg",
+    "drive-harddisk-normal": "/usr/share/icons/Adwaita/scalable/devices/drive-harddisk.svg",
+    "drive-harddisk-sidebar": "/home/apx/.local/share/icons/APX-Graphite/scalable/devices/drive-harddisk-symbolic.svg",
+    "document-open-recent-normal": "/usr/share/icons/AdwaitaLegacy/32x32/legacy/document-open-recent.png",
+    "document-open-recent-sidebar": "/home/apx/.local/share/icons/APX-Graphite/scalable/places/document-open-recent-symbolic.svg"
+  },
+  "internal_volume_names_absent": true,
+  "seed_inventory_and_hashes": true,
+  "original_folder_artwork": "15 original SVGs byte-identical; colored/tagged renderer restored",
+  "scope": "sidebar Lucide only; original file/folder and toolbar icons retained",
+  "tests": {
+    "launcher": 35,
+    "folder_colors": 6,
+    "work_defaults": 14
+  }
+}

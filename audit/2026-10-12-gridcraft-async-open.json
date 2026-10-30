@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-12",
+  "environment": "faculdade",
+  "package": {
+    "schema": 1,
+    "package": "gridcraft",
+    "filename": "gridcraft-0.6.1-2-x86_64.pkg.tar.zst",
+    "sha256": "1458ebc2cbf8673e50b4bc3f796f14fcc47aedb213faffb059798b143740189b",
+    "upstream_archive_sha256": "61163b62d9faf814b864e1b255d15dc310a71a72ca03d8791fa8024420162745",
+    "upstream_url": "https://github.com/storytold/gridcraft/releases/download/v0.6.1/gridcraft-0.6.1-linux-x86_64.tar.gz",
+    "apx_patch": "async-open-v1",
+    "source_archive_sha256": "8c3997854e19d385aa00082e3f8de091ed4f65127be0b195cb826b3cb3083380",
+    "patch_sha256": "7559cf4ed75d14e768d5f59709d65ce68c4cf7bf11e8b45f825817c4fd8c8be5",
+    "binary_sha256": "b099c64a7e44810f35ed750758007c28b56235e6dcf4a8bf20c5be33b2c3df68",
+    "native_wayland": true
+  },
+  "gui_validation": {
+    "held_picker_seconds": 20,
+    "responsive_queries": 20,
+    "maximum_response_ms": 1.81,
+    "native_wayland": true,
+    "no_not_responding_dialog": true,
+    "cancel_preserves_workbook": true,
+    "open_from_native_selector": true,
+    "values": [
+      [
+        12.0
+      ],
+      [
+        30.0
+      ],
+      [
+        42.0
+      ]
+    ],
+    "saved": true
+  },
+  "regression_tests": {
+    "passed": 3,
+    "failed": 0
+  },
+  "feature_tests_passed": 8,
+  "compositor_anr_detection_disabled": false,
+  "documents_modified": false,
+  "installed_binary_matches_tested_candidate": true,
+  "creation_artifact_resolver_verified": true,
+  "scope": "Native Open only; Save/Export/picture pickers unchanged",
+  "installed_window_verified": {
+    "title": "Book1",
+    "native_wayland": true,
+    "visual": "sharp ribbon and worksheet",
+    "left_open_for_owner": true
+  }
+}

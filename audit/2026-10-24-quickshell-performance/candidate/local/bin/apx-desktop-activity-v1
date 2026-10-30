@@ -1,0 +1,259 @@
+#!/usr/bin/env python3
+"""Read local MPRIS/Mako activity; run explicit media and radio actions."""
+import json
+import re
+import subprocess
+import sys
+import time
+import math
+import os
+import fcntl
+import tempfile
+from pathlib import Path
+from contextlib import contextmanager
+
+
+def bus():
+    import gi
+    from gi.repository import Gio
+    return Gio.bus_get_sync(Gio.BusType.SESSION, None)
+
+
+def call(connection, destination, path, interface, method, params=None):
+    from gi.repository import Gio
+    return connection.call_sync(destination, path, interface, method, params, None,
+                                Gio.DBusCallFlags.NONE, 1000, None).unpack()
+
+
+def players():
+    result=[]
+    try:
+        from gi.repository import GLib
+        connection=bus()
+        names=call(connection,'org.freedesktop.DBus','/org/freedesktop/DBus','org.freedesktop.DBus','ListNames')[0]
+        for name in names:
+            if not name.startswith('org.mpris.MediaPlayer2.'):continue
+            try:
+                props=call(connection,name,'/org/mpris/MediaPlayer2','org.freedesktop.DBus.Properties','GetAll',GLib.Variant('(s)',('org.mpris.MediaPlayer2.Player',)))[0]
+                metadata=props.get('Metadata',{});url=str(metadata.get('xesam:url',''))
+                title=str(metadata.get('xesam:title',''))[:300] or name.split('org.mpris.MediaPlayer2.',1)[1]
+                artist=metadata.get('xesam:artist',[])
+                if isinstance(artist,list):artist=', '.join(str(v) for v in artist)
+                video=bool(re.search(r'(youtube|youtu\.be|vimeo|\.(mp4|mkv|webm|avi)(\?|$))',url,re.I))
+                result.append(dict(name=name,title=title,artist=str(artist)[:300],status=props.get('PlaybackStatus','Stopped'),
+                                   kind='video' if video else 'music',
+                                   position=max(0, int(props.get('Position',0))) / 1000000,
+                                   length=max(0, int(metadata.get('mpris:length',0))) / 1000000,
+                                   rate=float(props.get('Rate',1)), sampled_at=time.time()*1000,
+                                   track_id=str(metadata.get('mpris:trackid','')),
+                                   art_url=str(metadata.get('mpris:artUrl','')) if str(metadata.get('mpris:artUrl','')).startswith('file:///') else '',
+                                   can_seek=bool(props.get('CanSeek',False)),can_control=bool(props.get('CanControl',False)),
+                                   can_next=bool(props.get('CanGoNext',False)),can_previous=bool(props.get('CanGoPrevious',False))))
+            except Exception:continue
+    except Exception:pass
+    return sorted(result,key=lambda item:item['status']!='Playing')
+
+
+def watch_media():
+    """Push local MPRIS changes; periodic sampling only reconciles position."""
+    from gi.repository import Gio, GLib
+    connection=bus()
+    loop=GLib.MainLoop()
+    pending=0
+    def publish():
+        nonlocal pending
+        pending=0
+        print(json.dumps(dict(players=players()),ensure_ascii=False),flush=True)
+        return False
+    def schedule(*unused):
+        nonlocal pending
+        if not pending:pending=GLib.timeout_add(25,publish)
+    def owner_changed(connection,sender,path,interface,signal,parameters):
+        if parameters.unpack()[0].startswith('org.mpris.MediaPlayer2.'):schedule()
+    subscriptions=[
+        connection.signal_subscribe(None,'org.freedesktop.DBus.Properties','PropertiesChanged','/org/mpris/MediaPlayer2','org.mpris.MediaPlayer2.Player',Gio.DBusSignalFlags.NONE,schedule),
+        connection.signal_subscribe(None,'org.mpris.MediaPlayer2.Player','Seeked','/org/mpris/MediaPlayer2',None,Gio.DBusSignalFlags.NONE,schedule),
+        connection.signal_subscribe('org.freedesktop.DBus','org.freedesktop.DBus','NameOwnerChanged','/org/freedesktop/DBus',None,Gio.DBusSignalFlags.NONE,owner_changed),
+    ]
+    # MPRIS signals handle controls immediately; only reconcile position periodically.
+    GLib.timeout_add(5000,lambda:(schedule(),True)[1])
+    publish()
+    try:loop.run()
+    finally:
+        for subscription in subscriptions:connection.signal_unsubscribe(subscription)
+
+
+NOTIFICATION_STORE = Path.home() / '.local/state/apx/notifications-v1.json'
+
+
+def notification_owner():
+    from gi.repository import GLib
+    try:
+        connection = bus()
+        bus_id = call(connection, 'org.freedesktop.DBus', '/org/freedesktop/DBus',
+                      'org.freedesktop.DBus', 'GetId')[0]
+        owner = call(connection, 'org.freedesktop.DBus', '/org/freedesktop/DBus',
+                     'org.freedesktop.DBus', 'GetNameOwner',
+                     GLib.Variant('(s)', ('org.freedesktop.Notifications',)))[0]
+        return bus_id + ':' + owner
+    except Exception:
+        return ''
+
+
+@contextmanager
+def notification_store():
+    path = NOTIFICATION_STORE
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    lock_path = path.with_suffix('.lock')
+    if path.is_symlink() or lock_path.is_symlink():
+        raise ValueError('Histórico de notificações inválido.')
+    fd = os.open(lock_path, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, 'r+') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            data = json.loads(path.read_text())
+            if not isinstance(data.get('records'), list) or type(data.get('next_id')) is not int:
+                raise ValueError('Invalid history')
+        except (OSError, ValueError, TypeError, AttributeError):
+            data = dict(next_id=1, records=[])
+        before = json.dumps(data, sort_keys=True, ensure_ascii=False)
+        yield data
+        encoded = json.dumps(data, sort_keys=True, ensure_ascii=False)
+        if encoded != before:
+            fd, temporary = tempfile.mkstemp(prefix='.notifications-', dir=path.parent)
+            try:
+                with os.fdopen(fd, 'w') as stream:
+                    stream.write(encoded + '\n')
+                os.replace(temporary, path)
+            finally:
+                Path(temporary).unlink(missing_ok=True)
+
+
+def notifications():
+    owner = notification_owner()
+    current = []; seen = set()
+    if owner:
+        for action in ('list', 'history'):
+            response = subprocess.run(['/usr/bin/makoctl', action, '-j'], capture_output=True, text=True, timeout=3)
+            if response.returncode: continue
+            try: data = json.loads(response.stdout or '[]')
+            except ValueError: continue
+            if isinstance(data, dict): data = data.get('data', [])
+            if not isinstance(data, list): continue
+            for item in data:
+                if not isinstance(item, dict) or type(item.get('id')) is not int or item['id'] in seen: continue
+                if item.get('app_name', item.get('app-name')) == 'APX Browser': continue
+                seen.add(item['id'])
+                hints = item.get('hints') if isinstance(item.get('hints'), dict) else {}
+                thread = next((str(hints[k])[:300] for k in
+                               ('x-apx-thread-id', 'x-dunst-stack-tag', 'x-canonical-private-synchronous')
+                               if isinstance(hints.get(k), str) and hints[k]), '')
+                current.append(dict(mako_id=item['id'], owner=owner, thread_key=thread,
+                                    app=str(item.get('app_name', item.get('app-name', '')) or 'Aplicação')[:120],
+                                    title=str(item.get('summary', ''))[:300], body=str(item.get('body', ''))[:2000],
+                                    active=action == 'list', can_open=action == 'list' and 'default' in (item.get('actions') or {})))
+    with notification_store() as store:
+        by_key = {(r['owner'], r['mako_id']): r for r in store['records']}
+        for record in store['records']:
+            record['active'] = False; record['can_open'] = False
+        for note in sorted(current, key=lambda n: n['mako_id']):
+            key = (note['owner'], note['mako_id'])
+            record = by_key.get(key)
+            if record is None:
+                record = dict(id=store['next_id'], read=False)
+                store['next_id'] += 1
+                store['records'].append(record)
+            record.update(note)
+        store['records'] = sorted(store['records'], key=lambda n: n['id'], reverse=True)[:200]
+        notes = [dict(n) for n in store['records'] if not n.get('read', False)]
+    return notes, len(notes)
+
+
+def mark_notifications_read(ids):
+    with notification_store() as store:
+        for record in store['records']:
+            if record['id'] in ids: record['read'] = True
+
+
+def notification_action(action, raw_id=None):
+    if action not in ('read', 'read-all', 'read-group', 'open'):
+        raise ValueError('Ação de notificação inválida.')
+    notes, _ = notifications()
+    if action == 'read-all':
+        # Snapshot IDs: notifications arriving during this action stay unread.
+        targets = notes
+    elif action == 'read-group':
+        try: ids = json.loads(raw_id or '')
+        except ValueError: raise ValueError('Grupo de mensagens inválido.')
+        if not isinstance(ids, list) or not 1 <= len(ids) <= 200 or any(type(n) is not int or not 0 < n < 10**10 for n in ids):
+            raise ValueError('Grupo de mensagens inválido.')
+        targets = [n for n in notes if n['id'] in set(ids)]
+    else:
+        if not raw_id or not re.fullmatch(r'[0-9]{1,10}', raw_id):
+            raise ValueError('Notificação inválida.')
+        targets = [n for n in notes if n['id'] == int(raw_id)]
+        if not targets:
+            raise ValueError('Esta notificação já não está disponível.')
+    for note in targets:
+        if action == 'open' and not note.get('can_open'):
+            raise ValueError('Esta aplicação não disponibiliza uma ação para abrir.')
+        if note['active']:
+            if note.get('owner') and notification_owner() != note['owner']:
+                raise RuntimeError('O serviço de notificações mudou; tenta novamente.')
+            command = ['/usr/bin/makoctl', 'invoke' if action == 'open' else 'dismiss',
+                       '-n', str(note.get('mako_id', note['id']))]
+            if action == 'open': command.append('default')
+            result = subprocess.run(command, capture_output=True, text=True, timeout=3)
+            if result.returncode:
+                raise RuntimeError('Não foi possível abrir a notificação.' if action == 'open' else 'Não foi possível marcar a notificação como lida.')
+        mark_notifications_read({note['id']})
+
+
+def status():
+    notes,count=notifications()
+    return dict(players=players(),notifications=notes,active_notifications=count)
+
+
+def main(args):
+    if args==['watch-media']:
+        watch_media();return
+    if args==['get']:pass
+    elif args==['get-notifications']:
+        notes,count=notifications()
+        print(json.dumps(dict(notifications=notes,active_notifications=count),ensure_ascii=False));return
+    elif args==['get-media']:
+        print(json.dumps(dict(players=players()),ensure_ascii=False));return
+    elif len(args) in (2,3) and args[0]=='notification':
+        if (args[1] == 'read-all') != (len(args) == 2): raise ValueError('Ação de notificação inválida.')
+        notification_action(args[1], args[2] if len(args) == 3 else None)
+        notes,count=notifications()
+        print(json.dumps(dict(notifications=notes,active_notifications=count),ensure_ascii=False));return
+    elif len(args)==3 and args[0]=='media':
+        name,action=args[1:]
+        if not re.fullmatch(r'org\.mpris\.MediaPlayer2\.[A-Za-z0-9_.-]{1,200}',name):raise ValueError('Reprodutor inválido.')
+        methods={'play-pause':'PlayPause','play':'Play','pause':'Pause','next':'Next','previous':'Previous'}
+        if action not in methods:raise ValueError('Ação de reprodução inválida.')
+        call(bus(),name,'/org/mpris/MediaPlayer2','org.mpris.MediaPlayer2.Player',methods[action])
+    elif len(args)==5 and args[0]=='seek':
+        from gi.repository import GLib
+        name,track,raw_position,raw_length=args[1:]
+        if not re.fullmatch(r'org\.mpris\.MediaPlayer2\.[A-Za-z0-9_.-]{1,200}',name):raise ValueError('Reprodutor inválido.')
+        if not re.fullmatch(r'/[A-Za-z0-9_/]+',track) or track.endswith('/NoTrack'):raise ValueError('Faixa inválida.')
+        position=float(raw_position);length=float(raw_length)
+        if not math.isfinite(position) or not math.isfinite(length) or length<=0 or not 0<=position<=length:raise ValueError('Posição inválida.')
+        connection=bus()
+        props=call(connection,name,'/org/mpris/MediaPlayer2','org.freedesktop.DBus.Properties','GetAll',GLib.Variant('(s)',('org.mpris.MediaPlayer2.Player',)))[0]
+        metadata=props.get('Metadata',{})
+        actual_length=max(0,int(metadata.get('mpris:length',0)))/1000000
+        if str(metadata.get('mpris:trackid',''))!=track or not props.get('CanSeek',False) or actual_length<=0:raise ValueError('A faixa mudou ou não permite avançar.')
+        call(connection,name,'/org/mpris/MediaPlayer2','org.mpris.MediaPlayer2.Player','SetPosition',GLib.Variant('(ox)',(track,int(min(position,actual_length)*1000000))))
+    elif len(args)==2 and args[0]=='airplane' and args[1] in ('on','off'):
+        result=subprocess.run(['/run/apx/host-services-client-v3.py','radio-airplane',args[1]],capture_output=True,text=True,timeout=10)
+        if result.returncode:raise RuntimeError((result.stderr or 'Não foi possível alterar o modo de avião.').strip())
+    else:raise ValueError('Ação de atividade inválida.')
+    print(json.dumps(status() if args==['get'] or args[:1]==['airplane'] else dict(players=players()),ensure_ascii=False))
+
+
+if __name__=='__main__':
+    try:main(sys.argv[1:])
+    except Exception as error:print(str(error),file=sys.stderr);sys.exit(1)

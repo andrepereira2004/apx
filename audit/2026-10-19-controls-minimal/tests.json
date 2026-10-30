@@ -1,0 +1,22 @@
+{
+  "test_apx_wifi_form_navigation.py": {
+    "run": 3,
+    "failures": [],
+    "errors": []
+  },
+  "test_apx_appearance_opacity.py": {
+    "run": 3,
+    "failures": [],
+    "errors": []
+  },
+  "test_apx_appearance.py": {
+    "run": 7,
+    "failures": [
+      "test_apx_appearance.AppearanceTests.test_global_default_local_override_and_return_to_inheritance",
+      "test_apx_appearance.AppearanceTests.test_offline_global_cache_and_local_style_survive"
+    ],
+    "errors": [
+      "test_apx_appearance.AppearanceTests.test_theme_overrides_preserve_user_css_and_restore_cleanly"
+    ]
+  }
+}

@@ -1,0 +1,1568 @@
+[
+  {
+    "action": "toggleCalendar",
+    "frames": 32,
+    "median_ms": 9,
+    "max_ms": 24,
+    "gaps_over_20ms": 1,
+    "samples": [
+      {
+        "time": 1792535231199,
+        "kind": "calendar",
+        "progress": 0
+      },
+      {
+        "time": 1792535231217,
+        "kind": "calendar",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535231227,
+        "kind": "calendar",
+        "progress": 0.22974537037037046
+      },
+      {
+        "time": 1792535231237,
+        "kind": "calendar",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535231247,
+        "kind": "calendar",
+        "progress": 0.36394400000000005
+      },
+      {
+        "time": 1792535231254,
+        "kind": "calendar",
+        "progress": 0.42129629629629617
+      },
+      {
+        "time": 1792535231264,
+        "kind": "calendar",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535231272,
+        "kind": "calendar",
+        "progress": 0.5315060370370371
+      },
+      {
+        "time": 1792535231280,
+        "kind": "calendar",
+        "progress": 0.578125
+      },
+      {
+        "time": 1792535231295,
+        "kind": "calendar",
+        "progress": 0.666706962962963
+      },
+      {
+        "time": 1792535231303,
+        "kind": "calendar",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535231310,
+        "kind": "calendar",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535231320,
+        "kind": "calendar",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535231320,
+        "kind": "calendar",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535231335,
+        "kind": "calendar",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535231341,
+        "kind": "calendar",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535231349,
+        "kind": "calendar",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535231357,
+        "kind": "calendar",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535231366,
+        "kind": "calendar",
+        "progress": 0.9128652962962963
+      },
+      {
+        "time": 1792535231384,
+        "kind": "calendar",
+        "progress": 0.9276620370370371
+      },
+      {
+        "time": 1792535231395,
+        "kind": "calendar",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535231419,
+        "kind": "calendar",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535231430,
+        "kind": "calendar",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535231439,
+        "kind": "calendar",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535231450,
+        "kind": "calendar",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535231458,
+        "kind": "calendar",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535231473,
+        "kind": "calendar",
+        "progress": 0.9953703703703703
+      },
+      {
+        "time": 1792535231487,
+        "kind": "calendar",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535231489,
+        "kind": "calendar",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535231496,
+        "kind": "calendar",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535231504,
+        "kind": "calendar",
+        "progress": 0.9998180370370371
+      },
+      {
+        "time": 1792535231512,
+        "kind": "calendar",
+        "progress": 0.999981037037037
+      }
+    ]
+  },
+  {
+    "action": "toggleBattery",
+    "frames": 34,
+    "median_ms": 8,
+    "max_ms": 21,
+    "gaps_over_20ms": 1,
+    "samples": [
+      {
+        "time": 1792535232281,
+        "kind": "battery",
+        "progress": 0
+      },
+      {
+        "time": 1792535232299,
+        "kind": "battery",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535232314,
+        "kind": "battery",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535232329,
+        "kind": "battery",
+        "progress": 0.36394400000000005
+      },
+      {
+        "time": 1792535232335,
+        "kind": "battery",
+        "progress": 0.42129629629629617
+      },
+      {
+        "time": 1792535232342,
+        "kind": "battery",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535232345,
+        "kind": "battery",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535232359,
+        "kind": "battery",
+        "progress": 0.578125
+      },
+      {
+        "time": 1792535232367,
+        "kind": "battery",
+        "progress": 0.626752
+      },
+      {
+        "time": 1792535232378,
+        "kind": "battery",
+        "progress": 0.666706962962963
+      },
+      {
+        "time": 1792535232384,
+        "kind": "battery",
+        "progress": 0.666706962962963
+      },
+      {
+        "time": 1792535232405,
+        "kind": "battery",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535232417,
+        "kind": "battery",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535232432,
+        "kind": "battery",
+        "progress": 0.8015046296296298
+      },
+      {
+        "time": 1792535232437,
+        "kind": "battery",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535232446,
+        "kind": "battery",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535232455,
+        "kind": "battery",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535232458,
+        "kind": "battery",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535232468,
+        "kind": "battery",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535232476,
+        "kind": "battery",
+        "progress": 0.9128652962962963
+      },
+      {
+        "time": 1792535232485,
+        "kind": "battery",
+        "progress": 0.9276620370370371
+      },
+      {
+        "time": 1792535232494,
+        "kind": "battery",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535232501,
+        "kind": "battery",
+        "progress": 0.953344
+      },
+      {
+        "time": 1792535232508,
+        "kind": "battery",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535232515,
+        "kind": "battery",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535232522,
+        "kind": "battery",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535232531,
+        "kind": "battery",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535232538,
+        "kind": "battery",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535232546,
+        "kind": "battery",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535232554,
+        "kind": "battery",
+        "progress": 0.9953703703703703
+      },
+      {
+        "time": 1792535232562,
+        "kind": "battery",
+        "progress": 0.997256
+      },
+      {
+        "time": 1792535232570,
+        "kind": "battery",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535232578,
+        "kind": "battery",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535232591,
+        "kind": "battery",
+        "progress": 0.999981037037037
+      }
+    ]
+  },
+  {
+    "action": "toggleControls",
+    "frames": 32,
+    "median_ms": 8,
+    "max_ms": 27,
+    "gaps_over_20ms": 2,
+    "samples": [
+      {
+        "time": 1792535233368,
+        "kind": "controls",
+        "progress": 0
+      },
+      {
+        "time": 1792535233370,
+        "kind": "controls",
+        "progress": 0
+      },
+      {
+        "time": 1792535233397,
+        "kind": "controls",
+        "progress": 0.16941600000000012
+      },
+      {
+        "time": 1792535233407,
+        "kind": "controls",
+        "progress": 0.23811762962962957
+      },
+      {
+        "time": 1792535233419,
+        "kind": "controls",
+        "progress": 0.31075462962962974
+      },
+      {
+        "time": 1792535233434,
+        "kind": "controls",
+        "progress": 0.3713113703703703
+      },
+      {
+        "time": 1792535233435,
+        "kind": "controls",
+        "progress": 0.3713113703703703
+      },
+      {
+        "time": 1792535233458,
+        "kind": "controls",
+        "progress": 0.5375122962962964
+      },
+      {
+        "time": 1792535233464,
+        "kind": "controls",
+        "progress": 0.5837250370370373
+      },
+      {
+        "time": 1792535233473,
+        "kind": "controls",
+        "progress": 0.631912037037037
+      },
+      {
+        "time": 1792535233487,
+        "kind": "controls",
+        "progress": 0.7081259629629629
+      },
+      {
+        "time": 1792535233496,
+        "kind": "controls",
+        "progress": 0.7459629629629629
+      },
+      {
+        "time": 1792535233504,
+        "kind": "controls",
+        "progress": 0.7767197037037037
+      },
+      {
+        "time": 1792535233518,
+        "kind": "controls",
+        "progress": 0.8048879999999999
+      },
+      {
+        "time": 1792535233523,
+        "kind": "controls",
+        "progress": 0.833625
+      },
+      {
+        "time": 1792535233534,
+        "kind": "controls",
+        "progress": 0.8774833703703704
+      },
+      {
+        "time": 1792535233543,
+        "kind": "controls",
+        "progress": 0.8983703703703704
+      },
+      {
+        "time": 1792535233551,
+        "kind": "controls",
+        "progress": 0.9148160000000001
+      },
+      {
+        "time": 1792535233565,
+        "kind": "controls",
+        "progress": 0.9436712962962963
+      },
+      {
+        "time": 1792535233574,
+        "kind": "controls",
+        "progress": 0.954628037037037
+      },
+      {
+        "time": 1792535233582,
+        "kind": "controls",
+        "progress": 0.964063
+      },
+      {
+        "time": 1792535233590,
+        "kind": "controls",
+        "progress": 0.9720899629629629
+      },
+      {
+        "time": 1792535233598,
+        "kind": "controls",
+        "progress": 0.979578962962963
+      },
+      {
+        "time": 1792535233606,
+        "kind": "controls",
+        "progress": 0.9849917037037037
+      },
+      {
+        "time": 1792535233615,
+        "kind": "controls",
+        "progress": 0.989352
+      },
+      {
+        "time": 1792535233623,
+        "kind": "controls",
+        "progress": 0.993141
+      },
+      {
+        "time": 1792535233631,
+        "kind": "controls",
+        "progress": 0.9956426296296297
+      },
+      {
+        "time": 1792535233639,
+        "kind": "controls",
+        "progress": 0.9974473703703703
+      },
+      {
+        "time": 1792535233650,
+        "kind": "controls",
+        "progress": 0.9987863703703703
+      },
+      {
+        "time": 1792535233657,
+        "kind": "controls",
+        "progress": 0.999488
+      },
+      {
+        "time": 1792535233664,
+        "kind": "controls",
+        "progress": 0.9998482962962963
+      },
+      {
+        "time": 1792535233671,
+        "kind": "controls",
+        "progress": 0.9999872962962963
+      }
+    ]
+  },
+  {
+    "action": "toggleCalendar",
+    "frames": 33,
+    "median_ms": 8.0,
+    "max_ms": 21,
+    "gaps_over_20ms": 1,
+    "samples": [
+      {
+        "time": 1792535234494,
+        "kind": "calendar",
+        "progress": 0
+      },
+      {
+        "time": 1792535234515,
+        "kind": "calendar",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535234524,
+        "kind": "calendar",
+        "progress": 0.22974537037037046
+      },
+      {
+        "time": 1792535234532,
+        "kind": "calendar",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535234546,
+        "kind": "calendar",
+        "progress": 0.42129629629629617
+      },
+      {
+        "time": 1792535234556,
+        "kind": "calendar",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535234564,
+        "kind": "calendar",
+        "progress": 0.5315060370370371
+      },
+      {
+        "time": 1792535234569,
+        "kind": "calendar",
+        "progress": 0.578125
+      },
+      {
+        "time": 1792535234576,
+        "kind": "calendar",
+        "progress": 0.626752
+      },
+      {
+        "time": 1792535234589,
+        "kind": "calendar",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535234592,
+        "kind": "calendar",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535234599,
+        "kind": "calendar",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535234615,
+        "kind": "calendar",
+        "progress": 0.8015046296296298
+      },
+      {
+        "time": 1792535234624,
+        "kind": "calendar",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535234631,
+        "kind": "calendar",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535234634,
+        "kind": "calendar",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535234647,
+        "kind": "calendar",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535234647,
+        "kind": "calendar",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535234655,
+        "kind": "calendar",
+        "progress": 0.9128652962962963
+      },
+      {
+        "time": 1792535234663,
+        "kind": "calendar",
+        "progress": 0.9276620370370371
+      },
+      {
+        "time": 1792535234672,
+        "kind": "calendar",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535234684,
+        "kind": "calendar",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535234692,
+        "kind": "calendar",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535234701,
+        "kind": "calendar",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535234709,
+        "kind": "calendar",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535234717,
+        "kind": "calendar",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535234726,
+        "kind": "calendar",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535234734,
+        "kind": "calendar",
+        "progress": 0.9953703703703703
+      },
+      {
+        "time": 1792535234743,
+        "kind": "calendar",
+        "progress": 0.997256
+      },
+      {
+        "time": 1792535234750,
+        "kind": "calendar",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535234758,
+        "kind": "calendar",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535234768,
+        "kind": "calendar",
+        "progress": 0.9998180370370371
+      },
+      {
+        "time": 1792535234774,
+        "kind": "calendar",
+        "progress": 0.999981037037037
+      }
+    ]
+  },
+  {
+    "action": "toggleBattery",
+    "frames": 34,
+    "median_ms": 8,
+    "max_ms": 23,
+    "gaps_over_20ms": 1,
+    "samples": [
+      {
+        "time": 1792535235577,
+        "kind": "battery",
+        "progress": 0
+      },
+      {
+        "time": 1792535235600,
+        "kind": "battery",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535235610,
+        "kind": "battery",
+        "progress": 0.22974537037037046
+      },
+      {
+        "time": 1792535235620,
+        "kind": "battery",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535235629,
+        "kind": "battery",
+        "progress": 0.36394400000000005
+      },
+      {
+        "time": 1792535235637,
+        "kind": "battery",
+        "progress": 0.42129629629629617
+      },
+      {
+        "time": 1792535235644,
+        "kind": "battery",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535235653,
+        "kind": "battery",
+        "progress": 0.5315060370370371
+      },
+      {
+        "time": 1792535235661,
+        "kind": "battery",
+        "progress": 0.578125
+      },
+      {
+        "time": 1792535235668,
+        "kind": "battery",
+        "progress": 0.626752
+      },
+      {
+        "time": 1792535235682,
+        "kind": "battery",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535235684,
+        "kind": "battery",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535235698,
+        "kind": "battery",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535235700,
+        "kind": "battery",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535235714,
+        "kind": "battery",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535235716,
+        "kind": "battery",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535235724,
+        "kind": "battery",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535235732,
+        "kind": "battery",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535235740,
+        "kind": "battery",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535235748,
+        "kind": "battery",
+        "progress": 0.9128652962962963
+      },
+      {
+        "time": 1792535235756,
+        "kind": "battery",
+        "progress": 0.9276620370370371
+      },
+      {
+        "time": 1792535235765,
+        "kind": "battery",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535235772,
+        "kind": "battery",
+        "progress": 0.953344
+      },
+      {
+        "time": 1792535235781,
+        "kind": "battery",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535235790,
+        "kind": "battery",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535235798,
+        "kind": "battery",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535235806,
+        "kind": "battery",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535235814,
+        "kind": "battery",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535235823,
+        "kind": "battery",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535235835,
+        "kind": "battery",
+        "progress": 0.997256
+      },
+      {
+        "time": 1792535235843,
+        "kind": "battery",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535235852,
+        "kind": "battery",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535235859,
+        "kind": "battery",
+        "progress": 0.9998180370370371
+      },
+      {
+        "time": 1792535235868,
+        "kind": "battery",
+        "progress": 0.999981037037037
+      }
+    ]
+  },
+  {
+    "action": "toggleControls",
+    "frames": 30,
+    "median_ms": 9,
+    "max_ms": 27,
+    "gaps_over_20ms": 2,
+    "samples": [
+      {
+        "time": 1792535236661,
+        "kind": "controls",
+        "progress": 0
+      },
+      {
+        "time": 1792535236682,
+        "kind": "controls",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535236694,
+        "kind": "controls",
+        "progress": 0.22974537037037046
+      },
+      {
+        "time": 1792535236700,
+        "kind": "controls",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535236710,
+        "kind": "controls",
+        "progress": 0.36394400000000005
+      },
+      {
+        "time": 1792535236726,
+        "kind": "controls",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535236735,
+        "kind": "controls",
+        "progress": 0.5315060370370371
+      },
+      {
+        "time": 1792535236752,
+        "kind": "controls",
+        "progress": 0.626752
+      },
+      {
+        "time": 1792535236760,
+        "kind": "controls",
+        "progress": 0.666706962962963
+      },
+      {
+        "time": 1792535236768,
+        "kind": "controls",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535236776,
+        "kind": "controls",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535236784,
+        "kind": "controls",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535236801,
+        "kind": "controls",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535236805,
+        "kind": "controls",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535236816,
+        "kind": "controls",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535236821,
+        "kind": "controls",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535236833,
+        "kind": "controls",
+        "progress": 0.9128652962962963
+      },
+      {
+        "time": 1792535236837,
+        "kind": "controls",
+        "progress": 0.9276620370370371
+      },
+      {
+        "time": 1792535236846,
+        "kind": "controls",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535236854,
+        "kind": "controls",
+        "progress": 0.953344
+      },
+      {
+        "time": 1792535236862,
+        "kind": "controls",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535236871,
+        "kind": "controls",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535236883,
+        "kind": "controls",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535236900,
+        "kind": "controls",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535236927,
+        "kind": "controls",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535236936,
+        "kind": "controls",
+        "progress": 0.9953703703703703
+      },
+      {
+        "time": 1792535236942,
+        "kind": "controls",
+        "progress": 0.997256
+      },
+      {
+        "time": 1792535236952,
+        "kind": "controls",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535236960,
+        "kind": "controls",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535236973,
+        "kind": "controls",
+        "progress": 0.999981037037037
+      }
+    ]
+  },
+  {
+    "action": "toggleCalendar",
+    "frames": 34,
+    "median_ms": 8,
+    "max_ms": 22,
+    "gaps_over_20ms": 1,
+    "samples": [
+      {
+        "time": 1792535237738,
+        "kind": "calendar",
+        "progress": 0
+      },
+      {
+        "time": 1792535237758,
+        "kind": "calendar",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535237768,
+        "kind": "calendar",
+        "progress": 0.22974537037037046
+      },
+      {
+        "time": 1792535237776,
+        "kind": "calendar",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535237786,
+        "kind": "calendar",
+        "progress": 0.36394400000000005
+      },
+      {
+        "time": 1792535237791,
+        "kind": "calendar",
+        "progress": 0.42129629629629617
+      },
+      {
+        "time": 1792535237800,
+        "kind": "calendar",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535237805,
+        "kind": "calendar",
+        "progress": 0.5315060370370371
+      },
+      {
+        "time": 1792535237812,
+        "kind": "calendar",
+        "progress": 0.578125
+      },
+      {
+        "time": 1792535237820,
+        "kind": "calendar",
+        "progress": 0.626752
+      },
+      {
+        "time": 1792535237834,
+        "kind": "calendar",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535237841,
+        "kind": "calendar",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535237844,
+        "kind": "calendar",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535237851,
+        "kind": "calendar",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535237873,
+        "kind": "calendar",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535237881,
+        "kind": "calendar",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535237895,
+        "kind": "calendar",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535237913,
+        "kind": "calendar",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535237924,
+        "kind": "calendar",
+        "progress": 0.9128652962962963
+      },
+      {
+        "time": 1792535237924,
+        "kind": "calendar",
+        "progress": 0.9128652962962963
+      },
+      {
+        "time": 1792535237941,
+        "kind": "calendar",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535237949,
+        "kind": "calendar",
+        "progress": 0.953344
+      },
+      {
+        "time": 1792535237960,
+        "kind": "calendar",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535237968,
+        "kind": "calendar",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535237975,
+        "kind": "calendar",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535237984,
+        "kind": "calendar",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535237991,
+        "kind": "calendar",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535238000,
+        "kind": "calendar",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535238001,
+        "kind": "calendar",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535238009,
+        "kind": "calendar",
+        "progress": 0.9953703703703703
+      },
+      {
+        "time": 1792535238017,
+        "kind": "calendar",
+        "progress": 0.997256
+      },
+      {
+        "time": 1792535238025,
+        "kind": "calendar",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535238033,
+        "kind": "calendar",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535238045,
+        "kind": "calendar",
+        "progress": 0.999981037037037
+      }
+    ]
+  },
+  {
+    "action": "toggleBattery",
+    "frames": 35,
+    "median_ms": 8.0,
+    "max_ms": 21,
+    "gaps_over_20ms": 1,
+    "samples": [
+      {
+        "time": 1792535238821,
+        "kind": "battery",
+        "progress": 0
+      },
+      {
+        "time": 1792535238837,
+        "kind": "battery",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535238857,
+        "kind": "battery",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535238868,
+        "kind": "battery",
+        "progress": 0.36394400000000005
+      },
+      {
+        "time": 1792535238874,
+        "kind": "battery",
+        "progress": 0.42129629629629617
+      },
+      {
+        "time": 1792535238895,
+        "kind": "battery",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535238908,
+        "kind": "battery",
+        "progress": 0.5315060370370371
+      },
+      {
+        "time": 1792535238921,
+        "kind": "battery",
+        "progress": 0.578125
+      },
+      {
+        "time": 1792535238934,
+        "kind": "battery",
+        "progress": 0.626752
+      },
+      {
+        "time": 1792535238943,
+        "kind": "battery",
+        "progress": 0.666706962962963
+      },
+      {
+        "time": 1792535238952,
+        "kind": "battery",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535238961,
+        "kind": "battery",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535238969,
+        "kind": "battery",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535238979,
+        "kind": "battery",
+        "progress": 0.8015046296296298
+      },
+      {
+        "time": 1792535238986,
+        "kind": "battery",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535238994,
+        "kind": "battery",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535239000,
+        "kind": "battery",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535239003,
+        "kind": "battery",
+        "progress": 0.875
+      },
+      {
+        "time": 1792535239011,
+        "kind": "battery",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535239021,
+        "kind": "battery",
+        "progress": 0.9276620370370371
+      },
+      {
+        "time": 1792535239029,
+        "kind": "battery",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535239036,
+        "kind": "battery",
+        "progress": 0.953344
+      },
+      {
+        "time": 1792535239045,
+        "kind": "battery",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535239053,
+        "kind": "battery",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535239061,
+        "kind": "battery",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535239069,
+        "kind": "battery",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535239077,
+        "kind": "battery",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535239086,
+        "kind": "battery",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535239093,
+        "kind": "battery",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535239101,
+        "kind": "battery",
+        "progress": 0.9953703703703703
+      },
+      {
+        "time": 1792535239109,
+        "kind": "battery",
+        "progress": 0.997256
+      },
+      {
+        "time": 1792535239117,
+        "kind": "battery",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535239126,
+        "kind": "battery",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535239135,
+        "kind": "battery",
+        "progress": 0.9998180370370371
+      },
+      {
+        "time": 1792535239142,
+        "kind": "battery",
+        "progress": 0.999981037037037
+      }
+    ]
+  },
+  {
+    "action": "toggleControls",
+    "frames": 33,
+    "median_ms": 8.0,
+    "max_ms": 16,
+    "gaps_over_20ms": 0,
+    "samples": [
+      {
+        "time": 1792535239931,
+        "kind": "controls",
+        "progress": 0
+      },
+      {
+        "time": 1792535239935,
+        "kind": "controls",
+        "progress": 0
+      },
+      {
+        "time": 1792535239950,
+        "kind": "controls",
+        "progress": 0.16054862962962957
+      },
+      {
+        "time": 1792535239958,
+        "kind": "controls",
+        "progress": 0.22974537037037046
+      },
+      {
+        "time": 1792535239968,
+        "kind": "controls",
+        "progress": 0.3029223703703703
+      },
+      {
+        "time": 1792535239981,
+        "kind": "controls",
+        "progress": 0.36394400000000005
+      },
+      {
+        "time": 1792535239987,
+        "kind": "controls",
+        "progress": 0.42129629629629617
+      },
+      {
+        "time": 1792535239996,
+        "kind": "controls",
+        "progress": 0.4815732962962962
+      },
+      {
+        "time": 1792535240004,
+        "kind": "controls",
+        "progress": 0.5315060370370371
+      },
+      {
+        "time": 1792535240020,
+        "kind": "controls",
+        "progress": 0.626752
+      },
+      {
+        "time": 1792535240029,
+        "kind": "controls",
+        "progress": 0.666706962962963
+      },
+      {
+        "time": 1792535240033,
+        "kind": "controls",
+        "progress": 0.7037037037037036
+      },
+      {
+        "time": 1792535240044,
+        "kind": "controls",
+        "progress": 0.7419307037037036
+      },
+      {
+        "time": 1792535240049,
+        "kind": "controls",
+        "progress": 0.773019
+      },
+      {
+        "time": 1792535240065,
+        "kind": "controls",
+        "progress": 0.8305816296296297
+      },
+      {
+        "time": 1792535240070,
+        "kind": "controls",
+        "progress": 0.8539143703703704
+      },
+      {
+        "time": 1792535240083,
+        "kind": "controls",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535240086,
+        "kind": "controls",
+        "progress": 0.896177
+      },
+      {
+        "time": 1792535240099,
+        "kind": "controls",
+        "progress": 0.9276620370370371
+      },
+      {
+        "time": 1792535240107,
+        "kind": "controls",
+        "progress": 0.942189037037037
+      },
+      {
+        "time": 1792535240115,
+        "kind": "controls",
+        "progress": 0.953344
+      },
+      {
+        "time": 1792535240124,
+        "kind": "controls",
+        "progress": 0.9629629629629629
+      },
+      {
+        "time": 1792535240132,
+        "kind": "controls",
+        "progress": 0.9711597037037037
+      },
+      {
+        "time": 1792535240140,
+        "kind": "controls",
+        "progress": 0.9788227037037037
+      },
+      {
+        "time": 1792535240149,
+        "kind": "controls",
+        "progress": 0.984375
+      },
+      {
+        "time": 1792535240157,
+        "kind": "controls",
+        "progress": 0.9888606296296296
+      },
+      {
+        "time": 1792535240165,
+        "kind": "controls",
+        "progress": 0.9927736296296297
+      },
+      {
+        "time": 1792535240173,
+        "kind": "controls",
+        "progress": 0.9953703703703703
+      },
+      {
+        "time": 1792535240181,
+        "kind": "controls",
+        "progress": 0.997256
+      },
+      {
+        "time": 1792535240190,
+        "kind": "controls",
+        "progress": 0.998669
+      },
+      {
+        "time": 1792535240198,
+        "kind": "controls",
+        "progress": 0.9994212962962963
+      },
+      {
+        "time": 1792535240207,
+        "kind": "controls",
+        "progress": 0.9998180370370371
+      },
+      {
+        "time": 1792535240214,
+        "kind": "controls",
+        "progress": 0.999981037037037
+      }
+    ]
+  }
+]

@@ -1,0 +1,117 @@
+{
+  "id": 988576,
+  "authors": [
+    {
+      "id": 14251101,
+      "name": "Janusz-Bli\u017aniak",
+      "url": "https://addons.thunderbird.net/en-US/thunderbird/user/Janusz-Bli%C5%BAniak/",
+      "username": "Janusz-Bli\u017aniak",
+      "picture_url": null
+    }
+  ],
+  "average_daily_users": 226,
+  "categories": {
+    "thunderbird": [
+      "appearance",
+      "folders-and-filters"
+    ]
+  },
+  "contributions_url": "",
+  "created": "2023-10-21T16:51:50Z",
+  "current_version": {
+    "id": 2501991,
+    "compatibility": {
+      "thunderbird": {
+        "max": "*",
+        "min": "148.0"
+      }
+    },
+    "edit_url": "https://addons.thunderbird.net/en-US/developers/addon/last-selected-message/versions/2501991",
+    "files": [
+      {
+        "id": 1045150,
+        "created": "2026-03-08T10:48:14Z",
+        "hash": "sha256:0759062ab2ee450849cbdb1b94075ccfcd79c8eb97f31195e51266d0b48e37a3",
+        "is_restart_required": false,
+        "is_webextension": true,
+        "is_mozilla_signed_extension": false,
+        "platform": "all",
+        "size": 9843,
+        "status": "public",
+        "url": "https://addons.thunderbird.net/thunderbird/downloads/file/1045150/ostatnio_zaznaczona_wiadomosc-2.1-tb.xpi?src=",
+        "permissions": [
+          "storage",
+          "messagesRead",
+          "accountsRead"
+        ]
+      }
+    ],
+    "is_strict_compatibility_enabled": false,
+    "license": {
+      "id": 3338,
+      "name": {
+        "en-US": "Mozilla Public License, version 2.0"
+      },
+      "url": "http://www.mozilla.org/MPL/2.0/"
+    },
+    "release_notes": {
+      "en-US": "Fixed add-on functionality when the message panel is hidden.",
+      "pl": ""
+    },
+    "reviewed": null,
+    "url": "https://addons.thunderbird.net/en-US/thunderbird/addon/last-selected-message/versions/2.1",
+    "version": "2.1"
+  },
+  "default_locale": "en-US",
+  "description": null,
+  "developer_comments": null,
+  "edit_url": "https://addons.thunderbird.net/en-US/developers/addon/last-selected-message/edit",
+  "guid": "{ECFD45DC-CEE2-4784-BEEC-A33713B2288D}",
+  "has_eula": false,
+  "has_privacy_policy": false,
+  "homepage": null,
+  "icon_url": "https://addons.thunderbird.net/user-media/addon_icons/988/988576-64.png?modified=4caee524",
+  "icons": {
+    "32": "https://addons.thunderbird.net/user-media/addon_icons/988/988576-32.png?modified=4caee524",
+    "64": "https://addons.thunderbird.net/user-media/addon_icons/988/988576-64.png?modified=4caee524"
+  },
+  "is_disabled": false,
+  "is_experimental": false,
+  "is_featured": false,
+  "is_source_public": true,
+  "last_updated": "2026-03-09T14:34:05Z",
+  "name": {
+    "en-US": "Last selected message",
+    "de": "Zuletzt ausgew\u00e4hlte nachricht",
+    "pl": "Ostatnio zaznaczona wiadomo\u015b\u0107",
+    "es": "\u00daltimo mensaje seleccionado"
+  },
+  "previews": [],
+  "public_stats": false,
+  "ratings": {
+    "bayesian_average": 2.53921,
+    "count": 8,
+    "average": 3.125,
+    "text_count": 8
+  },
+  "ratings_url": "https://addons.thunderbird.net/en-US/thunderbird/addon/last-selected-message/reviews/",
+  "requires_payment": false,
+  "requires_sensitive_data_access": true,
+  "review_url": "https://addons.thunderbird.net/en-US/reviewers/review/988576",
+  "slug": "last-selected-message",
+  "status": "public",
+  "summary": {
+    "en-US": "The add-on remembers the last selected message in visited folders. After restarting Thunderbird, when we enter the previously visited folder, this message will be displayed, just like in Microsoft Outlook.",
+    "de": "Das Add-on merkt sich zwischen programmneustarts die zuletzt ausgew\u00e4hlte nachricht in jedem ordner.",
+    "pl": "Dodatek pami\u0119ta ostatni\u0105 zaznaczon\u0105 wiadomo\u015b\u0107 w ka\u017cdym folderze pomi\u0119dzy restartami programu.",
+    "es": "El complemento recuerda el \u00faltimo mensaje seleccionado en cada carpeta entre reinicios del programa."
+  },
+  "support_email": null,
+  "support_url": null,
+  "tags": [
+    "firefox57"
+  ],
+  "type": "extension",
+  "url": "https://addons.thunderbird.net/en-US/thunderbird/addon/last-selected-message/",
+  "weekly_downloads": 0
+}

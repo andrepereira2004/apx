@@ -1,0 +1,5 @@
+{
+  "returncode": 7,
+  "response": "",
+  "stderr": "curl: (7) Failed to connect to 192.168.1.100:53317 after 92 ms: Could not connect to server\n"
+}

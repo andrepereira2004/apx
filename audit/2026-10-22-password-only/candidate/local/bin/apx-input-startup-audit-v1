@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""One short, read-only compositor responsiveness sample per graphical session.
+
+No input events, cursor coordinates, passwords or camera data are collected.
+"""
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+
+def command(*args):
+    started = time.monotonic()
+    try:
+        result = subprocess.run(['/usr/bin/hyprctl', '-j', *args], capture_output=True, text=True, timeout=1.0)
+        payload = json.loads(result.stdout) if result.returncode == 0 else None
+        return payload, round((time.monotonic() - started) * 1000, 2)
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return None, round((time.monotonic() - started) * 1000, 2)
+
+
+def main():
+    runtime = Path(os.environ['XDG_RUNTIME_DIR'])
+    signature = os.environ.get('HYPRLAND_INSTANCE_SIGNATURE', '')
+    if not signature or '/' in signature:
+        return
+    marker = runtime / ('apx-input-startup-audit-' + signature)
+    try:
+        fd = os.open(marker, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    except FileExistsError:
+        return
+    os.close(fd)
+    folder = Path.home() / '.cache/apx-input-startup'
+    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+    path = folder / 'latest.json'
+    temporary = folder / ('sample-%d.tmp' % os.getpid())
+    report = {'schema': 1, 'started_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+              'session': signature, 'note': 'IPC timing measures event-loop responsiveness, not actual cursor FPS or per-device acceleration.', 'samples': []}
+    origin = time.monotonic()
+    try:
+        for target in (0, .25, .5, 1, 2, 4, 8):
+            time.sleep(max(0, target - (time.monotonic() - origin)))
+            displays, display_ms = command('monitors')
+            devices, device_ms = command('devices')
+            report['samples'].append({
+                'elapsed_s': round(time.monotonic() - origin, 3),
+                'monitors_ipc_ms': display_ms, 'devices_ipc_ms': device_ms,
+                'outputs': [{'name': d.get('name'), 'refresh_hz': d.get('refreshRate'), 'hardware_cursor': d.get('hardwareCursorsInUse')} for d in displays or []],
+                'pointers': [{'name': d.get('name'), 'scroll_factor': d.get('scrollFactor')} for d in (devices or {}).get('mice', [])],
+                'cpu_pressure': Path('/proc/pressure/cpu').read_text().strip() if Path('/proc/pressure/cpu').exists() else '',
+            })
+            temporary.write_text(json.dumps(report, indent=2) + '\n')
+            temporary.chmod(0o600)
+            os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+if __name__ == '__main__':
+    main()

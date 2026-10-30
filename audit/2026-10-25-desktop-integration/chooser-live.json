@@ -1,0 +1,135 @@
+{
+  "scope": "GTK3 native chooser in active session; not Brave/Thunderbird validation",
+  "cases": [
+    {
+      "action": "open",
+      "before": {
+        "parent_geometry": {
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "floating": false
+        },
+        "portal_dialogs": [],
+        "parent_focused": true,
+        "portal_focused": false
+      },
+      "during": {
+        "parent_geometry": {
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "floating": false
+        },
+        "portal_dialogs": [
+          {
+            "size": [
+              1198,
+              708
+            ],
+            "floating": true,
+            "xwayland": false
+          }
+        ],
+        "parent_focused": false,
+        "portal_focused": true
+      },
+      "after": {
+        "parent_geometry": {
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "floating": false
+        },
+        "portal_dialogs": [],
+        "parent_focused": true,
+        "portal_focused": false
+      },
+      "parent_geometry_stable": true
+    },
+    {
+      "action": "save",
+      "before": {
+        "parent_geometry": {
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "floating": false
+        },
+        "portal_dialogs": [],
+        "parent_focused": true,
+        "portal_focused": false
+      },
+      "during": {
+        "parent_geometry": {
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "floating": false
+        },
+        "portal_dialogs": [
+          {
+            "size": [
+              1198,
+              708
+            ],
+            "floating": true,
+            "xwayland": false
+          }
+        ],
+        "parent_focused": false,
+        "portal_focused": true
+      },
+      "after": {
+        "parent_geometry": {
+          "at": [
+            22,
+            68
+          ],
+          "size": [
+            739,
+            774
+          ],
+          "floating": false
+        },
+        "portal_dialogs": [],
+        "parent_focused": true,
+        "portal_focused": false
+      },
+      "parent_geometry_stable": true
+    }
+  ],
+  "portal_services": [
+    "org.freedesktop.portal.Desktop",
+    "org.freedesktop.impl.portal.desktop.hyprland",
+    "org.freedesktop.impl.portal.desktop.gtk",
+    "org.freedesktop.impl.portal.PermissionStore"
+  ],
+  "directory_default": "thunar.desktop",
+  "directory_empty_after": true
+}

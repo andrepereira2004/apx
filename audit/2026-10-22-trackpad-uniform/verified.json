@@ -1,0 +1,27 @@
+[
+  {
+    "environment": "faculdade",
+    "cursor_ui": 35,
+    "profile": "adaptive"
+  },
+  {
+    "environment": "hub",
+    "cursor_ui": 35,
+    "profile": "adaptive"
+  },
+  {
+    "environment": "hytale",
+    "cursor_ui": 35,
+    "profile": "adaptive"
+  },
+  {
+    "environment": "minecraft",
+    "cursor_ui": 35,
+    "profile": "adaptive"
+  },
+  {
+    "environment": "steam",
+    "cursor_ui": 35,
+    "profile": "adaptive"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "work_defaults": 14,
+  "media_progress": 8,
+  "bar_icons": 3,
+  "environment_desktop_defaults": 5,
+  "native_presence": 14,
+  "native_transient": 8,
+  "hyprland_candidate": "config ok",
+  "qml_candidate": "PARSE_PASS",
+  "live": "LIVE_PASS",
+  "rofi": "see rofi-motion.json"
+}

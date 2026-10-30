@@ -1,0 +1,20 @@
+[
+  {
+    "menu": "central",
+    "kind": "controls",
+    "visible": true,
+    "height": 400
+  },
+  {
+    "menu": "wifi",
+    "kind": "controls",
+    "visible": true,
+    "height": 400
+  },
+  {
+    "menu": "calendar",
+    "kind": "calendar",
+    "visible": true,
+    "height": 400
+  }
+]

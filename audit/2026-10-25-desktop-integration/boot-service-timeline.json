@@ -1,0 +1,706 @@
+[
+  {
+    "seconds": 1.503,
+    "message": "Starting Create System Files and Directories..."
+  },
+  {
+    "seconds": 1.57,
+    "message": "Finished Create System Files and Directories."
+  },
+  {
+    "seconds": 1.815,
+    "message": "Finished Coldplug All udev Devices."
+  },
+  {
+    "seconds": 1.817,
+    "message": "Starting Show Plymouth Boot Screen..."
+  },
+  {
+    "seconds": 1.933,
+    "message": "Starting Virtual Console Setup..."
+  },
+  {
+    "seconds": 1.948,
+    "message": "Finished Virtual Console Setup."
+  },
+  {
+    "seconds": 3.157,
+    "message": "Started Show Plymouth Boot Screen."
+  },
+  {
+    "seconds": 3.158,
+    "message": "Started Forward Password Requests to Plymouth Directory Watch."
+  },
+  {
+    "seconds": 3.158,
+    "message": "Reached target Path Units."
+  },
+  {
+    "seconds": 3.159,
+    "message": "Starting Early Battery Level Check..."
+  },
+  {
+    "seconds": 3.446,
+    "message": "Finished Early Battery Level Check."
+  },
+  {
+    "seconds": 3.448,
+    "message": "Started Display Boot-Time Emergency Messages In Full Screen."
+  },
+  {
+    "seconds": 5.378,
+    "message": "Starting Cryptography Setup for cryptroot..."
+  },
+  {
+    "seconds": 5.424,
+    "message": "Started Forward Password Requests to Plymouth."
+  },
+  {
+    "seconds": 7.756,
+    "message": "Finished Load Kernel Modules."
+  },
+  {
+    "seconds": 12.791,
+    "message": "Finished Cryptography Setup for cryptroot."
+  },
+  {
+    "seconds": 12.792,
+    "message": "Reached target Local Encrypted Volumes."
+  },
+  {
+    "seconds": 12.792,
+    "message": "Reached target Initrd Root Device."
+  },
+  {
+    "seconds": 12.792,
+    "message": "Reached target System Initialization."
+  },
+  {
+    "seconds": 12.792,
+    "message": "Reached target Basic System."
+  },
+  {
+    "seconds": 12.793,
+    "message": "Starting File System Check on /dev/mapper/cryptroot..."
+  },
+  {
+    "seconds": 12.822,
+    "message": "Finished File System Check on /dev/mapper/cryptroot."
+  },
+  {
+    "seconds": 12.857,
+    "message": "Reached target Initrd Root File System."
+  },
+  {
+    "seconds": 12.858,
+    "message": "Starting Mountpoints Configured in the Real Root..."
+  },
+  {
+    "seconds": 12.875,
+    "message": "Finished Mountpoints Configured in the Real Root."
+  },
+  {
+    "seconds": 12.876,
+    "message": "Reached target Initrd File Systems."
+  },
+  {
+    "seconds": 12.876,
+    "message": "Reached target Initrd Default Target."
+  },
+  {
+    "seconds": 12.877,
+    "message": "Starting Cleaning Up and Shutting Down Daemons..."
+  },
+  {
+    "seconds": 12.902,
+    "message": "Starting Plymouth switch root service..."
+  },
+  {
+    "seconds": 12.925,
+    "message": "Finished Cleaning Up and Shutting Down Daemons."
+  },
+  {
+    "seconds": 12.929,
+    "message": "Starting Cleanup udev Database..."
+  },
+  {
+    "seconds": 12.954,
+    "message": "Finished Cleanup udev Database."
+  },
+  {
+    "seconds": 12.958,
+    "message": "Finished Plymouth switch root service."
+  },
+  {
+    "seconds": 12.964,
+    "message": "Reached target Switch Root."
+  },
+  {
+    "seconds": 12.965,
+    "message": "Starting Switch Root..."
+  },
+  {
+    "seconds": 14.531,
+    "message": "Finished TPM PCR Machine ID Measurement."
+  },
+  {
+    "seconds": 14.535,
+    "message": "Finished Load Kernel Modules."
+  },
+  {
+    "seconds": 14.537,
+    "message": "Starting Apply Kernel Variables..."
+  },
+  {
+    "seconds": 14.558,
+    "message": "Starting User Database Manager..."
+  },
+  {
+    "seconds": 14.559,
+    "message": "Finished Remount Root and Kernel File Systems."
+  },
+  {
+    "seconds": 14.561,
+    "message": "Starting Load/Save OS Random Seed..."
+  },
+  {
+    "seconds": 14.566,
+    "message": "Finished Apply Kernel Variables."
+  },
+  {
+    "seconds": 14.584,
+    "message": "Finished Load/Save OS Random Seed."
+  },
+  {
+    "seconds": 14.959,
+    "message": "Finished Coldplug All udev Devices."
+  },
+  {
+    "seconds": 15.481,
+    "message": "Started User Database Manager."
+  },
+  {
+    "seconds": 15.503,
+    "message": "Finished Create Static Device Nodes in /dev gracefully."
+  },
+  {
+    "seconds": 15.507,
+    "message": "Starting Journal Log Access Socket..."
+  },
+  {
+    "seconds": 15.519,
+    "message": "Starting Network Name Resolution..."
+  },
+  {
+    "seconds": 15.522,
+    "message": "Starting Network Time Synchronization..."
+  },
+  {
+    "seconds": 15.523,
+    "message": "Starting Create Static Device Nodes in /dev..."
+  },
+  {
+    "seconds": 15.553,
+    "message": "Finished Create Static Device Nodes in /dev."
+  },
+  {
+    "seconds": 15.554,
+    "message": "Reached target Preparation for Local File Systems."
+  },
+  {
+    "seconds": 15.556,
+    "message": "Starting Rule-based Manager for Device Events and Files..."
+  },
+  {
+    "seconds": 15.572,
+    "message": "Started Network Time Synchronization."
+  },
+  {
+    "seconds": 15.572,
+    "message": "Reached target System Time Set."
+  },
+  {
+    "seconds": 15.59,
+    "message": "Started Network Name Resolution."
+  },
+  {
+    "seconds": 15.591,
+    "message": "Reached target Host and Network Name Lookups."
+  },
+  {
+    "seconds": 15.618,
+    "message": "Started Rule-based Manager for Device Events and Files."
+  },
+  {
+    "seconds": 15.759,
+    "message": "Starting Create swap on /dev/zram0..."
+  },
+  {
+    "seconds": 15.799,
+    "message": "Finished Create swap on /dev/zram0."
+  },
+  {
+    "seconds": 15.922,
+    "message": "Reached target Swaps."
+  },
+  {
+    "seconds": 15.923,
+    "message": "Starting Load/Save Screen Backlight Brightness of backlight:amdgpu_bl1..."
+  },
+  {
+    "seconds": 15.924,
+    "message": "Starting File System Check on /dev/disk/by-uuid/6AED-3812..."
+  },
+  {
+    "seconds": 15.927,
+    "message": "Starting Userspace Out-Of-Memory (OOM) Killer..."
+  },
+  {
+    "seconds": 15.968,
+    "message": "Finished Load/Save Screen Backlight Brightness of backlight:amdgpu_bl1."
+  },
+  {
+    "seconds": 15.998,
+    "message": "Started Userspace Out-Of-Memory (OOM) Killer."
+  },
+  {
+    "seconds": 16.0,
+    "message": "Reached target Slice Units."
+  },
+  {
+    "seconds": 16.005,
+    "message": "Finished File System Check on /dev/disk/by-uuid/6AED-3812."
+  },
+  {
+    "seconds": 16.059,
+    "message": "Starting Load/Save Screen Backlight Brightness of leds:platform::kbd_backlight..."
+  },
+  {
+    "seconds": 16.06,
+    "message": "Starting Virtual Console Setup..."
+  },
+  {
+    "seconds": 16.063,
+    "message": "Starting Load/Save RF Kill Switch Status..."
+  },
+  {
+    "seconds": 16.092,
+    "message": "Finished Virtual Console Setup."
+  },
+  {
+    "seconds": 16.093,
+    "message": "Finished Load/Save Screen Backlight Brightness of leds:platform::kbd_backlight."
+  },
+  {
+    "seconds": 16.331,
+    "message": "Reached target Sound Card."
+  },
+  {
+    "seconds": 16.41,
+    "message": "Started Load/Save RF Kill Switch Status."
+  },
+  {
+    "seconds": 16.463,
+    "message": "Reached target Trusted Platform Module."
+  },
+  {
+    "seconds": 16.464,
+    "message": "Starting Flush Journal to Persistent Storage..."
+  },
+  {
+    "seconds": 16.471,
+    "message": "Reached target Local File Systems."
+  },
+  {
+    "seconds": 16.475,
+    "message": "Starting Tell Plymouth To Write Out Runtime Data..."
+  },
+  {
+    "seconds": 16.476,
+    "message": "Starting Update Boot Loader Random Seed..."
+  },
+  {
+    "seconds": 16.477,
+    "message": "Starting Load JSON user/group Records from Credentials..."
+  },
+  {
+    "seconds": 16.598,
+    "message": "Finished Load JSON user/group Records from Credentials."
+  },
+  {
+    "seconds": 16.599,
+    "message": "Finished Tell Plymouth To Write Out Runtime Data."
+  },
+  {
+    "seconds": 16.599,
+    "message": "Finished Early TPM SRK Setup."
+  },
+  {
+    "seconds": 16.599,
+    "message": "Reached target Local Encrypted Volumes."
+  },
+  {
+    "seconds": 16.599,
+    "message": "Starting TPM NvPCR Product ID Measurement..."
+  },
+  {
+    "seconds": 16.6,
+    "message": "Starting TPM SRK Setup..."
+  },
+  {
+    "seconds": 16.6,
+    "message": "Finished Update Boot Loader Random Seed."
+  },
+  {
+    "seconds": 16.601,
+    "message": "Finished TPM NvPCR Product ID Measurement."
+  },
+  {
+    "seconds": 16.601,
+    "message": "Finished Flush Journal to Persistent Storage."
+  },
+  {
+    "seconds": 16.602,
+    "message": "Starting Create System Files and Directories..."
+  },
+  {
+    "seconds": 16.678,
+    "message": "Finished Create System Files and Directories."
+  },
+  {
+    "seconds": 16.681,
+    "message": "Starting Record System Boot/Shutdown in UTMP..."
+  },
+  {
+    "seconds": 16.7,
+    "message": "Finished Record System Boot/Shutdown in UTMP."
+  },
+  {
+    "seconds": 18.268,
+    "message": "Finished TPM SRK Setup."
+  },
+  {
+    "seconds": 18.269,
+    "message": "Reached target System Initialization."
+  },
+  {
+    "seconds": 18.269,
+    "message": "Started Check Environment change generations for stored sizes."
+  },
+  {
+    "seconds": 18.27,
+    "message": "Started Weekly local recovery snapshots."
+  },
+  {
+    "seconds": 18.27,
+    "message": "Started Check Logitech G305 at boot and after resume or reconnect."
+  },
+  {
+    "seconds": 18.27,
+    "message": "Started Check APX virtual network failure state."
+  },
+  {
+    "seconds": 18.27,
+    "message": "Started Refresh existing PGP keys of archlinux-keyring regularly."
+  },
+  {
+    "seconds": 18.27,
+    "message": "Started Monthly Btrfs scrub on /."
+  },
+  {
+    "seconds": 18.271,
+    "message": "Started Discard unused filesystem blocks once a week."
+  },
+  {
+    "seconds": 18.271,
+    "message": "Started Refresh fwupd metadata regularly."
+  },
+  {
+    "seconds": 18.271,
+    "message": "Started Daily verification of password and group files."
+  },
+  {
+    "seconds": 18.271,
+    "message": "Started Daily Cleanup of Temporary Directories."
+  },
+  {
+    "seconds": 18.271,
+    "message": "Reached target Timer Units."
+  },
+  {
+    "seconds": 18.276,
+    "message": "Reached target Socket Units."
+  },
+  {
+    "seconds": 18.279,
+    "message": "Starting D-Bus System Message Bus..."
+  },
+  {
+    "seconds": 18.28,
+    "message": "Starting TPM PCR Barrier (Initialization)..."
+  },
+  {
+    "seconds": 18.317,
+    "message": "Started D-Bus System Message Bus."
+  },
+  {
+    "seconds": 18.33,
+    "message": "Finished TPM PCR Barrier (Initialization)."
+  },
+  {
+    "seconds": 18.332,
+    "message": "Reached target Basic System."
+  },
+  {
+    "seconds": 18.334,
+    "message": "Started APX active-Environment audio state handoff v1."
+  },
+  {
+    "seconds": 18.335,
+    "message": "Starting Hide Host console before graphical APX boot..."
+  },
+  {
+    "seconds": 18.337,
+    "message": "Started APX coordinated update authority v1."
+  },
+  {
+    "seconds": 18.353,
+    "message": "Started APX active Environment display, keyboard and energy controls."
+  },
+  {
+    "seconds": 18.355,
+    "message": "Started APX active-Environment direct Host console broker v1."
+  },
+  {
+    "seconds": 18.358,
+    "message": "Starting APX stored Environment sizes..."
+  },
+  {
+    "seconds": 18.36,
+    "message": "Started APX bounded Environment switch service v1."
+  },
+  {
+    "seconds": 18.362,
+    "message": "Started APX exact-Hub direct Host console broker v1."
+  },
+  {
+    "seconds": 18.363,
+    "message": "Starting APX Logitech G305 receiver recovery..."
+  },
+  {
+    "seconds": 18.365,
+    "message": "Started APX retained manual VM storage reserve guard."
+  },
+  {
+    "seconds": 18.366,
+    "message": "Started APX authenticated Hub controller for the external model store."
+  },
+  {
+    "seconds": 18.369,
+    "message": "Started APX physical pilot typed executor."
+  },
+  {
+    "seconds": 18.372,
+    "message": "Started APX owner-approved removable PEN bridge."
+  },
+  {
+    "seconds": 18.372,
+    "message": "Starting Bluetooth service..."
+  },
+  {
+    "seconds": 18.374,
+    "message": "Starting Netfilter Tables..."
+  },
+  {
+    "seconds": 18.376,
+    "message": "Starting Self Monitoring and Reporting Technology (SMART) Daemon..."
+  },
+  {
+    "seconds": 18.384,
+    "message": "Starting User Login Management..."
+  },
+  {
+    "seconds": 18.387,
+    "message": "Starting TPM PCR Barrier (User)..."
+  },
+  {
+    "seconds": 18.86,
+    "message": "Started Self Monitoring and Reporting Technology (SMART) Daemon."
+  },
+  {
+    "seconds": 18.861,
+    "message": "Finished APX stored Environment sizes."
+  },
+  {
+    "seconds": 18.863,
+    "message": "Finished APX Logitech G305 receiver recovery."
+  },
+  {
+    "seconds": 18.865,
+    "message": "Finished Netfilter Tables."
+  },
+  {
+    "seconds": 18.866,
+    "message": "Finished TPM PCR Barrier (User)."
+  },
+  {
+    "seconds": 18.875,
+    "message": "Finished Hide Host console before graphical APX boot."
+  },
+  {
+    "seconds": 18.877,
+    "message": "Started Bluetooth service."
+  },
+  {
+    "seconds": 18.878,
+    "message": "Reached target Bluetooth Support."
+  },
+  {
+    "seconds": 18.878,
+    "message": "Reached target Login Prompts."
+  },
+  {
+    "seconds": 18.878,
+    "message": "Reached target Preparation for Network."
+  },
+  {
+    "seconds": 18.88,
+    "message": "Started Filtered Bluetooth access for APX browser passkeys."
+  },
+  {
+    "seconds": 18.883,
+    "message": "Starting Wireless service..."
+  },
+  {
+    "seconds": 18.894,
+    "message": "Starting Hostname Service..."
+  },
+  {
+    "seconds": 18.897,
+    "message": "Starting Network Management..."
+  },
+  {
+    "seconds": 18.898,
+    "message": "Started User Login Management."
+  },
+  {
+    "seconds": 18.9,
+    "message": "Starting APX authenticated Host system-power authority v1..."
+  },
+  {
+    "seconds": 18.927,
+    "message": "Started APX authenticated Host system-power authority v1."
+  },
+  {
+    "seconds": 18.964,
+    "message": "Started Hostname Service."
+  },
+  {
+    "seconds": 18.973,
+    "message": "Started Network Management."
+  },
+  {
+    "seconds": 18.975,
+    "message": "Starting Enable Persistent Storage in systemd-networkd..."
+  },
+  {
+    "seconds": 19.031,
+    "message": "Started Wireless service."
+  },
+  {
+    "seconds": 19.031,
+    "message": "Reached target Network."
+  },
+  {
+    "seconds": 19.033,
+    "message": "Started APX read-only Host desktop-essential status v1."
+  },
+  {
+    "seconds": 19.034,
+    "message": "Started APX Host desktop context-menu services v2."
+  },
+  {
+    "seconds": 19.036,
+    "message": "Started APX Host shared services v3."
+  },
+  {
+    "seconds": 19.053,
+    "message": "Started APX single-peer LocalSend network opt-in."
+  },
+  {
+    "seconds": 19.056,
+    "message": "Started APX Host automatic timezone from trusted Wi-Fi mapping."
+  },
+  {
+    "seconds": 19.057,
+    "message": "Starting Permit User Sessions..."
+  },
+  {
+    "seconds": 19.067,
+    "message": "Finished Permit User Sessions."
+  },
+  {
+    "seconds": 19.069,
+    "message": "Started APX direct boot into the official graphical Hub."
+  },
+  {
+    "seconds": 19.071,
+    "message": "Starting Hold until boot process finishes up..."
+  },
+  {
+    "seconds": 19.072,
+    "message": "Starting Terminate Plymouth Boot Screen..."
+  },
+  {
+    "seconds": 19.526,
+    "message": "Finished Enable Persistent Storage in systemd-networkd."
+  },
+  {
+    "seconds": 19.527,
+    "message": "Finished Hold until boot process finishes up."
+  },
+  {
+    "seconds": 19.527,
+    "message": "Finished Terminate Plymouth Boot Screen."
+  },
+  {
+    "seconds": 19.536,
+    "message": "Reached target Multi-User System."
+  },
+  {
+    "seconds": 19.536,
+    "message": "Reached target Graphical Interface."
+  },
+  {
+    "seconds": 19.536,
+    "message": "Startup finished in 10.270s (firmware) + 2.476s (loader) + 985ms (kernel) + 12.295s (initrd) + 6.255s (userspace) = 32.282s."
+  },
+  {
+    "seconds": 19.553,
+    "message": "Starting Virtual Machine and Container Registration Service..."
+  },
+  {
+    "seconds": 19.58,
+    "message": "Started Virtual Machine and Container Registration Service."
+  },
+  {
+    "seconds": 19.83,
+    "message": "Starting APX Host graphical Environment waiting surface..."
+  },
+  {
+    "seconds": 20.103,
+    "message": "Started APX Host graphical Environment waiting surface."
+  },
+  {
+    "seconds": 20.159,
+    "message": "Started [systemd-run] /usr/bin/seatd -u root -l info."
+  },
+  {
+    "seconds": 20.235,
+    "message": "Started [systemd-run] /var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py --watchdog."
+  },
+  {
+    "seconds": 22.125,
+    "message": "Started [systemd-run] /usr/bin/python3 /usr/lib/apx/apx-external-input-bridge-v1.py --leader 1063 --outer-unit apx-official-hub-graphical-6f63f9a9.service --seatd-unit apx-official-hub-seatd.service."
+  }
+]

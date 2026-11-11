@@ -1,3 +1,15 @@
+# Control Centre text keeps full shade while closing — installed, 2026-11-11
+
+The owner requested no text-tone fade on collapse. During Control Centre
+closing, the scrolling content now stays at full opacity and disappears by
+the panel's geometric clip. Opening still uses Calendar's progressive content
+reveal; page-transition opacity behavior is unchanged. Installed in seed and
+five homes with runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T224105Z-control-close-constant-text`.
+SHA-256: `978b30f06f08642452f579325329526a4bb909c6099a809f7879bfc5bc5dde0e`.
+The hot reload crashed into its reporter; the shell supervisor was restarted.
+A stable second live IPC test reached full open progress and closed normally.
+
 # Control Centre items reveal with Calendar — installed, 2026-11-11
 
 The owner reversed the previous full-opacity gate: compact Control Centre items

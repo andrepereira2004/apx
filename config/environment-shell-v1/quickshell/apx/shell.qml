@@ -5745,7 +5745,7 @@ ShellRoot {
                 // animated outer card clips the reveal without reflowing every frame.
                 width: Math.max(0, popupBackground.targetWidth - popupBackground.contentInset * 2)
                 height: Math.max(0, root.islandOrigin.height + (popupBackground.viewportHeight - root.islandOrigin.height) * root.islandProgress - popupBackground.contentInset - popupBackground.contentBottomInset)
-                opacity: root.popupContentReveal(root.islandProgress) * (root.popupKind === "media" ? 1 : root.islandContentOpacity) * (root.popupKind === "controls" ? Math.max(.35, root.controlPageProgress) : (root.popupKind === "battery" ? Math.max(.35, root.batteryPageProgress) : 1))
+                opacity: (root.popupKind === "controls" && root.popupClosing ? 1 : root.popupContentReveal(root.islandProgress)) * (root.popupKind === "media" ? 1 : root.islandContentOpacity) * (root.popupKind === "controls" ? Math.max(.35, root.controlPageProgress) : (root.popupKind === "battery" ? Math.max(.35, root.batteryPageProgress) : 1))
                 enabled: !root.popupClosing && root.islandProgress > .8
                 contentWidth: width
                 contentHeight: menuContent.implicitHeight

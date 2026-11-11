@@ -1,3 +1,16 @@
+# Control Centre items reveal with Calendar — installed, 2026-11-11
+
+The owner reversed the previous full-opacity gate: compact Control Centre items
+should appear as the panel starts expanding, like Calendar. Removed only the
+0.9-progress visibility gate. The shared `popupContentReveal` curve again
+controls both menus; fixed item positions, geometry, status deferral and page
+transitions remain. Installed in seed and five homes, updated the runtime
+digest. Backup: `/var/lib/apx/backups/20261111T223928Z-control-calendar-early-content`.
+Shell SHA-256: `1a48033f81b7f79130de48dbc3e96151a57d28008e276b49943324f876bb6311`.
+The hot reload crashed into its reporter; the shell supervisor was restarted.
+After recovery, a stable live IPC test opened Control Centre to 340 px and
+closed it normally.
+
 # Compact Control Centre text waits for full opacity — installed, 2026-11-11
 
 The owner reported that letters still changed shade as the compact Control

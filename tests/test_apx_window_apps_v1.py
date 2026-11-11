@@ -189,6 +189,24 @@ class WindowApplicationsTests(unittest.TestCase):
         self.assertEqual(apps[0]['windows'][0]['pid'], 123)
         self.assertEqual(apps[0]['icon'], 'example-icon')
 
+    def test_portal_file_chooser_uses_thunar_name_and_icon(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory)
+            (source / 'thunar.desktop').write_text(
+                '[Desktop Entry]\nType=Application\nName=Thunar File Manager\n'
+                'Icon=org.xfce.Thunar\nExec=thunar\n')
+            windows = [{'class': 'xdg-desktop-portal-gtk', 'address': '0xchooser',
+                        'title': 'Open File', 'pid': 123}]
+            with patch.object(module, 'SOURCES', (source,)), \
+                 patch.object(module, 'resolve_icons'), \
+                 patch.object(module.subprocess, 'check_output', return_value=json.dumps(windows).encode()):
+                apps = module.catalog()
+        self.assertEqual(len(apps), 1)
+        self.assertEqual(apps[0]['name'], 'Thunar File Manager')
+        self.assertEqual(apps[0]['icon'], 'org.xfce.Thunar')
+        self.assertEqual(apps[0]['windows'][0]['address'], '0xchooser')
+
     def test_user_desktop_overrides_vendor_and_hidden_masks_it(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as directory:

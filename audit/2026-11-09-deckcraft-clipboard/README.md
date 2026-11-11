@@ -1,0 +1,7 @@
+# DeckCraft image clipboard, drag and managed updates — 2026-11-09
+
+The old 0.5.0 process rejected valid `image/png` clipboard data. Upstream [PR #1658](https://github.com/storytold/deckcraft/pull/1658) fixes image copy/paste in v0.16.0. The official archive SHA-256 is `eed572b2f62395d0f5cfe246a728189651e95e4ecdf4c3e0ad87b77a3831e086`, matching its published checksum.
+
+The owner saved `/home/apx/Downloads/Hydraulic Systems by Slidesgo.pptx` before upgrade. It was backed up under `/var/lib/apx/backups/20261109T194000Z-deckcraft-owner-save/`; APX did not edit the presentation. Faculdade now runs package `deckcraft 0.16.0-4`, built from the official binary. The active window is XWayland (`xwayland=true`), which supports file drag and drop. APX enables native X11 pixels and the wrapper sets winit scale factor 1.25 for sharp UI on the owner display. The package supplies a wrapper and pinned version file so DeckCraft recognizes that APX manages its updates; it no longer attempts to write `/usr/bin/.deckcraft.update` as an ordinary user. The verified package SHA-256 is `eaf66156fecd15c326cdbfc446b779bd68f2cd4bf156cf96fc29e1911c3a56df` and the host Office artifact manifest points to it for future Environments. The previous artifacts remain for rollback.
+
+Interactive image paste and file drag into the new window still require owner acceptance. The owner presentation was not used as test material. Backups: `/var/lib/apx/backups/20261109T191900Z-deckcraft-clipboard/` and `/var/lib/apx/backups/20261109T194600Z-deckcraft-managed-update/`.

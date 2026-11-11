@@ -15,6 +15,13 @@ def notify(message):
     subprocess.run(["notify-send", "-a", "APX", "Captura de ecrã", message], check=False)
 
 
+def copy_image(source):
+    with source.open("rb") as stream:
+        subprocess.Popen(["wl-copy", "--foreground", "--sensitive", "--type", "image/png"],
+                         stdin=stream, stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL, start_new_session=True)
+
+
 def save_as(source):
     import gi
     gi.require_version("Gtk", "3.0")
@@ -441,11 +448,7 @@ def expand(source):
                     if save_as(rendered):
                         break
                 else:
-                    with rendered.open("rb") as stream:
-                        subprocess.Popen(["wl-copy", "--foreground", "--paste-once",
-                                          "--sensitive", "--type", "image/png"],
-                                         stdin=stream, stdout=subprocess.DEVNULL,
-                                         stderr=subprocess.DEVNULL, start_new_session=True)
+                    copy_image(rendered)
                     break
             except OSError as error:
                 notify("Não foi possível concluir: " + str(error))
@@ -493,6 +496,7 @@ def main():
             saved.unlink(missing_ok=True)
             raise
         logging.info("Saved screenshot: %s (%s bytes)", saved, saved.stat().st_size)
+        copy_image(saved)
         subprocess.Popen(["quickshell", "-c", "apx", "ipc", "call", "host", "hotkeyScreenshot"],
                          stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                          stderr=subprocess.DEVNULL, start_new_session=True)

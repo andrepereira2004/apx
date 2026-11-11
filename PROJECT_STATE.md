@@ -1,3 +1,416 @@
+# Microphone Up returns to Back in one press — installed, 2026-11-11
+
+The owner reported needing about three Up presses from a selected Microphone
+control to reach Back. The Microphone page now sends Up from its card, icon or
+slider to the Back button's actual keyboard-focus item. Enter slider editing
+continues to use Up for percentage changes. Installed in the independent seed
+and five registered homes with Host runtime digest updated. Active Hytale
+QuickShell logged `Configuration Loaded`. Backup:
+`/var/lib/apx/backups/20261111T185742Z-keyboard-controls`. Owner key
+acceptance remains pending.
+
+# Microphone input slider color — installed, 2026-11-11
+
+The owner reported that the selected Microphone input slider still appeared
+blue rather than white. Its focus border was already white; the blue came
+from the track fill used during keyboard editing. The microphone slider now
+keeps the normal white or muted track colors while editing, with the white
+focus border indicating selection. Installed in the independent seed and five
+registered homes, with Host runtime digest updated. Active Hytale QuickShell
+logged `Configuration Loaded`. Backup:
+`/var/lib/apx/backups/20261111T185606Z-keyboard-controls`. Owner visual
+acceptance remains pending.
+
+# Brightness Enter change reverted — 2026-11-11
+
+After requesting first-Enter brightness editing, the owner said the earlier
+behavior was already correct. The just-added keyboard Enter handler on the
+combined Brightness card was removed. The current `shell.qml` digest matches
+the pre-change file saved in
+`/var/lib/apx/backups/20261111T185415Z-keyboard-controls`.
+The prior version was restored in the independent seed and all five registered
+homes, with Host runtime digest updated. Active Hytale QuickShell logged
+`Configuration Loaded`. Restoration backup:
+`/var/lib/apx/backups/20261111T185443Z-keyboard-controls`.
+
+# Sound menu Up navigation centralized — installed, 2026-11-11
+
+The owner clarified that Up from a category icon worked, but Up from a selected
+card required multiple presses. In an owner-guided live check, Up from the
+Notifications card (focus index 7) landed on Back (index 0) rather than the
+Music/Video card (index 4). Up on the Sound page is now routed centrally by
+the focused item group, with slider editing still handling Up as a percentage
+change. Installed in the independent seed and five registered homes; Host
+runtime digests updated. A transient hot-reload attempt saw an old QML binding
+against the new component and failed to load. Retouching the final shell after
+all files were present produced `Configuration Loaded` at 18:50:28 UTC. Backup:
+`/var/lib/apx/backups/20261111T185004Z-keyboard-controls`. Owner key
+acceptance of the final Up path remains pending.
+
+# Sound menu Up navigation mirrors Down — installed, 2026-11-11
+
+The owner requested the reverse of the confirmed Down behavior. Up from a
+Sound card, icon or slider now selects the previous card: Notifications to
+Music/Video, Music/Video to general Sound, and general Sound to Back. The
+Back target is the button's actual keyboard-focus item. While a slider is in
+Enter editing, Up retains its volume adjustment behavior. Installed in the
+independent seed and five registered homes, with Host runtime digests updated.
+Active Hytale QuickShell logged `Configuration Loaded`; owner physical key
+acceptance remains pending. Backup:
+`/var/lib/apx/backups/20261111T184536Z-keyboard-controls`.
+
+# Sound category controls completed — 2026-11-11
+
+The owner chose Down from a selected icon to select the next card, and Enter
+on Music/Video or Notifications icons to mute or restore that category. The
+three Sound cards now each have card, icon and slider focus; category icons
+set their category volume to zero and restore its last positive level. Live
+owner-guided focus observation confirmed the Music/Video icon at index 5 and
+Down selecting the Notifications card at index 7. Category mute audio output
+has not been physically confirmed. Temporary focus diagnostics were removed.
+The final version is installed in the independent seed and five registered
+homes with Host runtime digests updated. Active Hytale QuickShell logged
+`Configuration Loaded`. Backups:
+`/var/lib/apx/backups/20261111T183933Z-keyboard-controls` (behavior) and
+`/var/lib/apx/backups/20261111T184324Z-keyboard-controls` (diagnostic removal).
+
+# Sound category card keyboard navigation and mute — installed, 2026-11-11
+
+The owner requested the first Sound card's keyboard model on Music/Video and
+Notifications. Each category now has a focusable card, a separately focusable
+icon and its existing slider. Left selects the icon; Right selects the slider;
+Down from a focused icon goes to the next card. Enter on a category icon sets
+that category to zero or restores its last positive level. The existing
+audio-category helper handles the volume change; no global sound mute is
+altered. Installed in the independent seed and five registered homes, with
+Host runtime digests updated. Active Hytale QuickShell logged
+`Configuration Loaded`. Backup:
+`/var/lib/apx/backups/20261111T183933Z-keyboard-controls`. Owner keyboard and
+sound acceptance remains pending.
+
+# Sound detail card keyboard navigation — installed and observed, 2026-11-11
+
+The owner reported that Down selected the Sound icon immediately and Left/Right
+could not select and deselect it. The separate Sound page now has a focusable
+volume card before its icon and slider. Down from the back button selects the
+card; Left selects the icon; Right selects the slider. The Microphone detail
+card uses the same structure. Installed in the independent seed and all five
+registered homes, with Host runtime digest updated. In an owner-guided live
+keyboard check, the Sound page focus indices moved 0 (back), 1 (card), 2
+(icon), 3 (slider) on Down, Left, Right. Active Hytale QuickShell logged
+`Configuration Loaded`. Backup:
+`/var/lib/apx/backups/20261111T183456Z-keyboard-controls`.
+
+# Sound menu focus border color — installed, 2026-11-11
+
+The owner found that returning down to the first Sound button showed a blue
+border. `MenuSlider` defaults to cyan and draws its own focus outline over
+the card. The Sound, Music/Video, Notifications and Microphone detail sliders
+now use the same white selected border as their cards. Installed in the
+independent seed and all five registered homes with the Host runtime digest
+updated. Active Hytale QuickShell logged `Configuration Loaded`; visual owner
+acceptance remains pending. Backup:
+`/var/lib/apx/backups/20261111T183214Z-keyboard-controls`.
+
+# Sound card double Enter verified — 2026-11-11
+
+The owner found that the large Sound card still opened its detail page on the
+first Enter. Its keyboard Enter now focuses the combined volume slider and
+starts editing, while pointer click and Space retain the card action. A second
+Enter on that slider opens the Sound page. Brightness keeps its existing
+second-Enter exit from editing and has no submenu. Installed in the
+independent seed and all five registered homes, with Host runtime digest
+updated. Live owner-guided observation confirmed first Enter stayed on Sound
+and Brightness with the slider editing, and second Enter opened Sound. Temporary
+focus diagnostics were then removed and the active Hytale QuickShell logged
+`Configuration Loaded` after the final reload. Backups:
+`/var/lib/apx/backups/20261111T182928Z-keyboard-controls` (behavior) and
+`/var/lib/apx/backups/20261111T183025Z-keyboard-controls` (diagnostic removal).
+
+# Second Enter on Sound slider — installed, 2026-11-11
+
+The owner requested that pressing Enter twice on the same Sound control open
+its menu. On the combined Sound slider, first Enter still starts keyboard
+volume editing; second Enter now opens the separate Sound page. The owner
+clarified that Brightness has no submenu, so its second Enter keeps the
+existing behavior of ending editing. Installed in the independent seed and
+five registered homes; Host runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T182655Z-keyboard-controls`.
+
+During hot reload, QuickShell crashed once in Qt `QWindow::setScreen`, then
+restarted automatically and logged `Configuration Loaded`. A subsequent IPC
+`popupStatus` call succeeded. This confirms the shell is running, but the
+owner's double-Enter interaction remains to be checked.
+
+# Sound detail keyboard selection — installed, 2026-11-11
+
+The owner clarified that the earlier two-press issue was on the large Sound
+card within Sound and Brightness. A live focus check showed the first Left from
+the card selected its slider (index 3), while the icon was index 2. The card
+now routes Left directly to its icon; the Brightness card uses the same rule.
+The owner reported this now appears to work and asked for the same visual and
+keyboard behavior on the separate Sound page. Its general Sound, Music/Video
+and Notifications cards now show the selected white border and active surface
+when keyboard-focused. Category preview runs only during pointer dragging;
+arrow adjustments continue through the Enter editing path. The Microphone
+detail card received the same selected border. Installed in the independent
+seed and all five registered homes with Host runtime digest updated. Active
+Hytale QuickShell logged `Configuration Loaded`. Backups:
+`/var/lib/apx/backups/20261111T180654Z-keyboard-controls` for the large-card
+navigation fix and `/var/lib/apx/backups/20261111T182409Z-keyboard-controls`
+for the detail-page cards. Owner acceptance of the detail page remains pending.
+
+# Keyboard focus diagnostic installed — 2026-11-11
+
+After owner observation that the first Left keeps the percentage unchanged but
+does not select the icon, a read-only focus report was added to the existing
+QuickShell IPC `popupStatus`. The active Hytale shell loaded it. Seven files
+were installed in the independent seed and five homes with Host runtime pin
+updated; backup `/var/lib/apx/backups/20261111T175949Z-keyboard-controls`.
+The reported menu was closed when checked. Awaiting a live owner reproduction
+with the Sound menu left open to identify the active focus item. No keyboard
+behavior change was made in this diagnostic pass.
+
+# First Left key during sound page transition — installed, 2026-11-11
+
+The owner clarified that the two-press problem occurs only on first entering
+the Sound page, while later visits need one Left. The generic menu handler
+previously consumed arrows during the page animation, and transition completion
+then reset focus. Left is now retained during that animation and selects the
+page's sound, brightness or microphone icon when the page finishes. The
+slider-to-icon path also retains Left during a transition. Installed in the
+independent seed and all five registered homes, with Host runtime digest
+updated. The active Hytale QuickShell logged `Configuration Loaded`. Backup:
+`/var/lib/apx/backups/20261111T175742Z-keyboard-controls`. Owner physical
+key acceptance remains pending.
+
+# First Left key from an unfocused control page — installed, 2026-11-11
+
+A live IPC check after opening Sound and Brightness showed zero focused menu
+items and keyboard navigation false. In that state, the first Left key used
+generic menu entry rather than selecting the requested icon. The control page
+now sends the first Left directly to the Sound, detailed Sound or Microphone
+icon as applicable, before normal spatial navigation. Installed in the
+independent seed and all five registered homes; the Host runtime digest was
+updated. The active Hytale QuickShell logged `Configuration Loaded`. Backup:
+`/var/lib/apx/backups/20261111T175437Z-keyboard-controls`. Owner key
+acceptance remains pending.
+
+# First Left key highlights icon immediately — installed, 2026-11-11
+
+The owner found the icon needed two Left presses to appear selected. Direct
+slider-to-icon focus did not set `menuKeyboardNavigation`, so the first press
+moved focus without showing its keyboard outline. The direct path now enables
+keyboard navigation before focusing the icon. Installed in the independent
+seed and all five registered homes; the Host runtime digest was updated.
+Active Hytale QuickShell logged `Configuration Loaded` after reload. Backup:
+`/var/lib/apx/backups/20261111T175049Z-keyboard-controls`. Owner keyboard
+acceptance remains pending.
+
+# Arrow key volume correction — installed, 2026-11-11
+
+The owner observed that Left/Right still changed the Sound percentage outside
+Enter editing. The control sliders' `onMoved` handlers could still save a
+keyboard-generated move. Sound and brightness preview now runs only while the
+pointer presses the slider; explicit Enter editing continues through
+`onKeyboardValueChanged`. The corrected shell was installed in the independent
+seed and all five registered homes, with the Host runtime digest updated.
+Seven installed files match the source, and active Hytale QuickShell logged
+`Configuration Loaded`. Backup:
+`/var/lib/apx/backups/20261111T174639Z-keyboard-controls`. Physical key
+behavior awaits owner retest.
+
+# Keyboard control installed in all Environments — 2026-11-11
+
+With owner authorization, the repository candidate for Sound, Brightness and
+Microphone keyboard navigation was installed in the independent seed and five
+registered homes. The Host runtime digest map was updated. All 13 installed
+files match the source, and the active Hytale QuickShell logged a successful
+configuration reload. Backup:
+`/var/lib/apx/backups/20261111T174343Z-keyboard-controls`. Physical keyboard
+behavior still needs owner acceptance.
+
+# Keyboard control candidate — 2026-11-11
+
+The owner asked for Left and Right to select the sound, brightness and
+microphone icons while percentages change only after entering slider editing.
+The current QuickShell source and its existing working-tree diff were saved in
+`audit/2026-11-11-keyboard-controls-before/`. Repository changes implement
+horizontal icon/slider focus and require Enter for arrow adjustment. This is
+installed on the physical pilot; the installation record above supersedes
+the earlier repository-only state. Owner keyboard acceptance remains pending.
+
+# Keyboard focus on Sound and Brightness cards — installed pilot, 2026-11-11
+
+The owner reported that removing the black card border also removed keyboard
+selection feedback. A live Tab test reproduced a second issue: focus left the
+menu after the back button. The back button and both large card/icon actions
+now route keyboard navigation through the menu. The Sound slider explicitly
+moves Tab focus to Brightness. Both cards use the same active background and
+white border as the other selected menu buttons; their normal state remains
+borderless. The active Faculdade QuickShell loaded the change. Real Tab input
+stayed inside the menu for seven steps and live captures showed white borders
+and selected backgrounds on Sound and Brightness. Eleven focused tests passed.
+Installed in five homes, independent seed and Host runtime. Final backup:
+`/var/lib/apx/backups/20261111T145653Z-volume-notifications`. Earlier backup
+`/var/lib/apx/backups/20261111T145322Z-volume-notifications` records the first
+keyboard-navigation correction.
+
+# Sound and brightness card borders — installed pilot, 2026-11-11
+
+The owner reported a black edge around the large Sound and Brightness cards on
+the Sound and Brightness page. A live before capture showed a thin dark border
+on both cards. Their Rectangle borders now have width zero; hover no longer
+adds an outline, and the brightness icon matches the borderless sound icon.
+Installed in the seed and five registered Environment homes with the Host
+runtime pin updated. The active Faculdade QuickShell loaded the configuration;
+a live after capture showed the black card borders gone. Eleven focused tests
+passed. Backup: `/var/lib/apx/backups/20261111T130106Z-volume-notifications`.
+
+# Live category slider preview — 2026-11-11
+
+The owner reported that the music/video and notification percentages stayed
+fixed while dragging their sliders. Both sliders now update their displayed
+value on pointer movement and save on release. The periodic PipeWire read does
+not overwrite a value while either slider is pressed. Installed in the seed,
+five registered homes and Host runtime pins. Faculdade QuickShell loaded the
+change; all installed seed digests match. Eleven focused tests passed. An
+interactive pointer drag has not been observed. Backup:
+`/var/lib/apx/backups/20261111T120004Z-volume-notifications`.
+
+# Volume categories and notification mute — installed pilot, 2026-11-10
+
+The owner requested icons for music/video and notifications and more space
+between the icon circles and the edges of the large sound/microphone cards.
+The cards now use the common menu icon inset and label inset. Existing Lucide
+music and bell icons were added; the microphone action ring and its back-button
+idle contour were removed to match the sound page. Installed in the seed and
+five registered homes, with the Host runtime pin updated. Faculdade QuickShell
+loaded the change. Live menu captures showed all four audio card icons aligned
+and no tight edge placement; the owner has not yet confirmed interactively.
+Backup: `/var/lib/apx/backups/20261110T232713Z-volume-notifications`.
+
+The owner authorized installation on the disposable physical pilot. Fixed
+Lenovo 82JU identity, APX marker, active Faculdade generation and Btrfs free
+space were checked. The independent seed and five registered Environment homes
+now contain the volume and notification controls. The Host runtime digest map
+matches all 303 installed seed assets. Faculdade QuickShell loaded the final
+configuration and IPC opened both the volume and notification pages. A live
+capture showed three sliders (general output, music/video, notifications) and
+no persistent ring around the volume button. The notification page displayed
+its app groups and unread count. The audio helper returned stored levels; the
+notification helper returned 86 unread records and zero mute rules. No mute was
+applied to a real conversation during validation. The owner still needs to
+confirm appearance and sound behavior interactively.
+
+A first installation failed to load an inline QML selector and was fully
+rolled back. A second installation briefly attempted to load while its QML
+files were being replaced, then loaded correctly. The final selector uses a
+separate registered QML component and an existing icon; no final load errors
+were observed. Backups: `/var/lib/apx/backups/20261110T230513Z-volume-notifications`
+(rolled back), `/var/lib/apx/backups/20261110T230644Z-volume-notifications`,
+`/var/lib/apx/backups/20261110T230713Z-volume-notifications`, and
+`/var/lib/apx/backups/20261110T230835Z-volume-notifications`.
+
+PipeWire separates notification sounds only when applications mark their output
+stream with a notification role; sounds mixed into a media stream remain shared.
+Conversation or sender precision depends on notification identifiers or stable
+titles supplied by the application. Source runtime still has a separate dirty
+Hyprland digest mismatch. The installed runtime intentionally retains the
+installed Environment update helper and has zero seed digest mismatches.
+
+# Notification alignment with application corner — 2026-11-10
+
+The owner clarified that notification cards should align with the top-right
+corner of application windows. A live screenshot showed the previous card at
+physical y=153 while the application began at y=87: the notification layer
+already begins below the 46 px bar, so adding `Appearance.menuTop` doubled the
+vertical offset. The stack now uses the 20 px desktop inset within its window,
+and its right edge also uses the 20 px inset. A second live screenshot showed
+the card and application both starting at physical y=87 with matching right
+edges. Installed in seed and five Environment homes; runtime digest updated.
+Backup: `/var/lib/apx/backups/20261110T182106Z-notification-window-offset`.
+
+# Screenshot clipboard and notification position — 2026-11-10
+
+Print Screen now copies the saved PNG to the clipboard immediately. The preview's
+Copy action also keeps the PNG available across multiple paste requests. The
+animated notification stack uses the Control Centre's shared top coordinate.
+The seed and all five registered Environment homes have matching assets and
+runtime digests. The active Faculdade shell was prompted to reload. Clipboard
+pasting into ZapZap and visual position still need owner confirmation.
+Backup: `/var/lib/apx/backups/20261110T181838Z-screenshot-clipboard-position`.
+
+# Share picker window list regression fixed — 2026-11-09
+
+The owner reported that the Window tab became empty. The active picker had
+`XDPH_WINDOW_SHARING_LIST=` and `HYPRLAND_INSTANCE_SIGNATURE=0` after the new
+D-Bus activation path started XDPH without the compositor instance identifier.
+`apx-desktop-activation-v1` now exports that identifier to the Environment
+D-Bus activation environment. The live bus was updated, both portal processes
+were cleanly restarted, and a fresh activation of the APX portal produced a
+picker list containing APX Host Console, DeckCraft and Brave. A second clean
+D-Bus activation reproduced the nonempty list. The diagnostic picker was
+closed and the APX portal remains active. Backup:
+`/var/lib/apx/backups/20261109T231802Z-xdph-window-list-regression`.
+Owner confirmation in the Brave picker is still pending.
+
+# Final Brave share follow-up — 2026-11-09
+
+The final restored DeckCraft window session delivers a nonblank frame through
+PipeWire in a direct two-session test. A user D-Bus service override now makes
+portal reactivation consistently use the patched binary. The user's website
+canvas failure needs a live reproduction; it was not established as a portal
+frame failure.
+
+# Brave repeated picker repair — 2026-11-09
+
+XDPH now defaults to allowing a transient restore token, so Chromium can reuse
+the preview source for its final ScreenCast session. A two-session portal probe
+confirmed one chooser and two successful PipeWire streams. Owner verification
+inside Brave is pending.
+
+# Screen sharing update — 2026-11-09
+
+The Faculdade Environment uses a patched XDPH 1.4.1 portal. Screen and region
+portal starts now return one PipeWire stream in direct tests. The corrected
+binary and startup are seeded to all current/future Environments. Window
+selection includes non-Brave windows within an Environment. Per-workspace
+capture is not implemented by this portal; screen capture follows the active
+workspace. Brave preview confirmation remains pending.
+
+# Hyprland configuration ownership repair — 2026-11-09
+The owner reported a top error banner after the share-picker deployment. Screenshot showed `cannot open /home/apx/.config/hypr/hyprland.lua: Permission denied`. A test deployment had assigned Faculdade's Home file the Host-mapped UID 98108392; this Home's files must instead be Host UID 1000 because of the bind mount. Restored UID/GID 1000 for the four changed Faculdade files. Reading the Lua file and executing the picker as the Environment user now work; `hyprctl reload` succeeded, `configerrors` is empty, and a fresh top-bar capture shows the error gone. All five registered homes have the same correct UID and modes for these assets. No commit/push.
+
+# Brave microphone, screen sharing and DeckCraft scale — 2026-11-09
+The Faculdade Brave stream was connected and unmuted, but the ALSA Capture hardware control was 0/off; discarded audio measurement was exactly zero. Capture was set to 70%/on and a repeat measurement showed real signal. The exact graphical session script now initializes 0/off Capture controls at startup across APX graphical Environments. The Hyprland portal was configured for dynamic toplevel binding; a real ScreenCast request now lists three open windows. The picker has APX dark styling and a floating rule, deployed to five homes and the independent seed with runtime pins. DeckCraft was upgraded to APX-managed 0.16.0-4 with native X11 pixels and winit scale 1.25; its current XWayland process is visually sharp and the saved presentation was backed up before relaunch. Owner acceptance of audible recording, selected-window capture and drag remains pending. Evidence: `audit/2026-11-09-microphone-screencast-deckcraft/`. No commit/push.
+
+# DeckCraft managed update and Thunar Properties — 2026-11-09
+DeckCraft 0.16.0-3 is installed in Faculdade and pinned as the future Office artifact. Its wrapper tells the upstream updater that APX manages the installation, fixing the attempted ordinary-user write to `/usr/bin/.deckcraft.update`. The owner presentation was saved and backed up before relaunch; it was not edited. The live DeckCraft window runs through XWayland for file drag. Interactive paste and drag acceptance remain pending. The Thunar Properties notebook now uses a dark page with readable text; a screenshot after a graphical-cgroup restart confirms the result. CSS is deployed to all five registered Environments and the independent future seed. Backups: `/var/lib/apx/backups/20261109T194600Z-deckcraft-managed-update` and `/var/lib/apx/backups/20261109T194736Z-thunar-properties`. No commit/push.
+
+# PDF opening and DeckCraft image paste — 2026-11-09
+PDF opening in Faculdade failed while Brave was launched from a Thunar daemon accidentally restarted in the Host-console cgroup. Thunar was relaunched through the graphical compositor and now belongs to the Faculdade graphical service. A disposable PDF opened in the existing Brave window without a new crash; the test tab and file were removed, and the owner's active DeckCraft window stayed focused. The owner-selected PDF association to Brave remains.
+
+DeckCraft 0.5.0 logged unsupported clipboard MIME while Wayland offered a valid `image/png`. Upstream image-paste fix PR #1658 merged before v0.16.0. The official v0.16.0 archive matched its published SHA-256, and an APX package retaining native Wayland was installed in Faculdade without closing the owner's 0.5.0 process. The new binary reports 0.16.0. The verified package and manifest replace the future-Environment Office artifact; the old package remains for rollback. The owner subsequently saved the presentation and DeckCraft was relaunched on 0.16.0-3. Interactive image paste in the new process remains unverified. Backup: `/var/lib/apx/backups/20261109T191900Z-deckcraft-clipboard`. Evidence: `audit/2026-11-09-deckcraft-clipboard/`. No commit/push.
+
+# Ctrl+Enter selection correction — 2026-11-09
+Owner reported Ctrl+Enter did not work. The first correction added Ctrl+Enter, but an end-to-end module test exposed a GTK error: signal emissions cannot be stopped from an emission hook. The final module neutralizes the handled key event without stopping its signal. GTK3/Exo tests on the active Faculdade display confirmed select then deselect in icon and list views; a separate test loaded the final binary and emitted two real GTK key signals, also confirming select then deselect without a crash. The final binary is installed in all five registered homes and the independent seed; the live runtime pin matches. The active Thunar daemon was restarted after verifying it had no open windows; new PID 419839. Final backup: `/var/lib/apx/backups/20261109T185426Z-thunar-selection-rofi` (7 files). Owner interactive acceptance remains pending. No commit/push.
+
+# Thunar selection navigation and chooser entry in Rofi — 2026-11-09
+The GTK module now lets Ctrl+Up/Down start selection navigation in Thunar's file view; Enter toggles the focused item while this mode is active. Leaving the file view restores normal Enter behaviour. The Rofi app catalogue associates the GTK upload/save chooser window with Thunar, using the same name and icon. The module was compiled against the Environment's GTK3 and installed with the catalogue script in the five registered homes and independent creation seed. The active Faculdade Thunar daemon was gracefully restarted after confirming it had no windows; its new process maps the updated module. The live runtime seed has zero digest mismatches, and a disposable future-home copy of all 296 assets passed. Rofi's 43 catalogue tests pass. Interactive key and Rofi visual acceptance remain pending. Backups: `/var/lib/apx/backups/20261109T182428Z-thunar-selection-rofi` and `/var/lib/apx/backups/20261109T182637Z-thunar-selection-rofi`. The repository desktop-seed suite still reports an unrelated dirty hyprland.lua digest mismatch from concurrent work. No commit/push.
+
+# Wi-Fi and Bluetooth five-item paging — 2026-11-05
+The installed Wi-Fi and Bluetooth menus now show up to five discovered entries per page, with forward/back controls. Wi-Fi ranks by measured signal, Bluetooth by connected/named/paired status and available RSSI. The active shell loaded this version; owner responsiveness acceptance is pending.
+
+# Bluetooth scan menu responsiveness — 2026-11-05
+The installed Bluetooth menu now renders the first 12 available devices and lets the owner reveal more in batches of 12, limiting UI work after a large scan. Source, seed, five Environment copies and runtime/recovery pins match. The active shell reloaded; owner confirmation of smooth interaction during a scan is pending.
+
+# Bluetooth device ordering — 2026-11-05
+The active Host Bluetooth service now prioritizes connected, named and paired devices, then RSSI when BlueZ provides it. The backend reads BlueZ signal data in one object query instead of one command per device. A live scan after deployment confirmed powered state and named devices ahead of address-like labels. The service restart required the existing socket-refresh mechanism to restore the active Environment's client access. Owner visual and responsiveness acceptance remain pending.
+
+# Environment handoff rollback — 2026-10-30
+The owner rejected the handoff presentation trial after the first return from Hytale failed. The exact 23 live files were restored from the 19:03 pre-trial backup, and repository trial source was reverted. The Hub service and container restarted with the pre-trial launcher; the Host catalogue again returns all six Environments. Owner visual and end-to-end confirmation remain pending. APX Recovery and the separate Windows Faculdade native extent correction remain installed. No commit or push. See CURRENT_HANDOFF.md and `docs/history/2026-10-30-handoff-trial-project_state.md`.
+
 # Environments opening ghost contour follow-up — 2026-10-28
 
 The owner reported a ghost contour during Environments opening. The external

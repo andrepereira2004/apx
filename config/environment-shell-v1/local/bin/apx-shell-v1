@@ -105,8 +105,8 @@ start_desktop_service() {
 # removable-media prompts behave like a normal Linux desktop.
 start_desktop_service '^/usr/bin/gnome-keyring-daemon' \
     /usr/bin/gnome-keyring-daemon --start --components=secrets
-start_desktop_service '^/usr/lib/xdg-desktop-portal-hyprland' \
-    /usr/lib/xdg-desktop-portal-hyprland
+start_desktop_service '^/home/apx/.local/libexec/apx-xdph-v1' \
+    /home/apx/.local/libexec/apx-xdph-v1
 start_desktop_service '^/usr/lib/xdg-desktop-portal-gtk' \
     /usr/lib/xdg-desktop-portal-gtk
 start_desktop_service '^/usr/bin/mako([[:space:]]|$)' /usr/bin/mako

@@ -66,7 +66,14 @@ PanelWindow {
         try {
             var notes=JSON.parse(text)
             if (!Array.isArray(notes)) return
-            var visibleNotes=notes.slice(0,3)
+            // Wait for the activity service to classify each Mako item before
+            // showing it. Muted conversations remain in the inbox history.
+            var visibleNotes=notes.filter(function(note) {
+                var entry=DesktopActivity.notificationEntries.find(function(item) {
+                    return item.active && item.mako_id === note.id
+                })
+                return entry && !entry.muted
+            }).slice(0,3)
             var ids=visibleNotes.map(function(n) { return n.id })
             for (var i=0;i<cards.count;++i) {
                 if (ids.indexOf(cards.get(i).noteId)<0) cards.setProperty(i,"closed",true)
@@ -102,8 +109,8 @@ PanelWindow {
     Component.onDestruction: Quickshell.execDetached(["makoctl","mode","-r","apx-animated"])
     Column {
         id: stack
-        x: 12; y: 76
-        width: parent.width-28
+        x: 12; y: Appearance.desktopEdgeInset
+        width: parent.width-32
         spacing: 9
         move: Transition { NumberAnimation { properties: "x,y"; duration: 300; easing.type: Easing.OutCubic } }
         Repeater {

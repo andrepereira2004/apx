@@ -1,8 +1,62 @@
-/* GTK presentation only. Does not rename directories or change file operations. */
+/* Thunar GTK presentation and selection navigation. Does not change file operations. */
 #include <gtk/gtk.h>
 
 static gboolean is_type(GtkWidget *w, const char *name) {
     return g_strcmp0(G_OBJECT_TYPE_NAME(w), name) == 0;
+}
+/* Ctrl+Enter toggles the cursor directly. After Ctrl+Up/Down, plain Enter
+ * toggles it too. Outside that mode, plain Enter still opens files. */
+static gboolean file_view(GtkWidget *widget) {
+    if (!is_type(widget, "ExoIconView") && !GTK_IS_TREE_VIEW(widget)) return FALSE;
+    GType standard_view = g_type_from_name("ThunarStandardView");
+    for (GtkWidget *parent = gtk_widget_get_parent(widget); parent;
+         parent = gtk_widget_get_parent(parent))
+        if (standard_view && g_type_is_a(G_OBJECT_TYPE(parent), standard_view))
+            return TRUE;
+    return FALSE;
+}
+static gboolean file_key(GtkWidget *widget, GdkEventKey *event) {
+    if (!file_view(widget)) return FALSE;
+    guint modifiers = event->state & gtk_accelerator_get_default_mod_mask();
+    if ((event->keyval == GDK_KEY_Up || event->keyval == GDK_KEY_Down ||
+         event->keyval == GDK_KEY_KP_Up || event->keyval == GDK_KEY_KP_Down) &&
+        modifiers == GDK_CONTROL_MASK) {
+        g_object_set_data(G_OBJECT(widget), "apx-selection-navigation", GINT_TO_POINTER(1));
+        return FALSE; /* Native Ctrl+arrow moves the cursor without selecting. */
+    }
+    if ((event->keyval != GDK_KEY_Return && event->keyval != GDK_KEY_KP_Enter) ||
+        (modifiers != GDK_CONTROL_MASK &&
+         (modifiers != 0 || !g_object_get_data(G_OBJECT(widget), "apx-selection-navigation"))))
+        return FALSE;
+    if (is_type(widget, "ExoIconView")) {
+        g_signal_emit_by_name(widget, "toggle-cursor-item");
+    } else {
+        GtkTreePath *path = NULL;
+        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+        gtk_tree_view_get_cursor(GTK_TREE_VIEW(widget), &path, NULL);
+        if (path) {
+            if (gtk_tree_selection_path_is_selected(selection, path))
+                gtk_tree_selection_unselect_path(selection, path);
+            else
+                gtk_tree_selection_select_path(selection, path);
+            gtk_tree_path_free(path);
+        }
+    }
+    return TRUE;
+}
+static gboolean on_key(GSignalInvocationHint *hint, guint n, const GValue *values, gpointer data) {
+    GtkWidget *widget = g_value_get_object(values);
+    GdkEventKey *event = g_value_get_boxed(values + 1);
+    if (GTK_IS_WIDGET(widget) && event && file_key(widget, event)) {
+        /* The signal hook has no return slot. Neutralize the event before GTK
+         * propagates it to parent widgets, so Enter cannot also open a file. */
+        event->keyval = GDK_KEY_VoidSymbol;
+    }
+    return TRUE;
+}
+static gboolean file_focus_out(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
+    g_object_set_data(G_OBJECT(widget), "apx-selection-navigation", NULL);
+    return FALSE;
 }
 static GtkWidget *find_widget(GtkWidget *w, GType type) {
     if (g_type_is_a(G_OBJECT_TYPE(w), type)) return w;
@@ -104,6 +158,10 @@ static void label_changed(GObject *object, GParamSpec *pspec, gpointer unused) {
     g_free(text);
 }
 static void visit(GtkWidget *widget, GtkWidget *window) {
+    if (file_view(widget) && !g_object_get_data(G_OBJECT(widget), "apx-selection-keys")) {
+        g_object_set_data(G_OBJECT(widget), "apx-selection-keys", GINT_TO_POINTER(1));
+        g_signal_connect(widget, "focus-out-event", G_CALLBACK(file_focus_out), NULL);
+    }
     if (GTK_IS_TOOL_ITEM(widget)) {
         const gchar *id = g_object_get_data(G_OBJECT(widget), "id");
         if (g_strcmp0(id, "open-home") == 0 || g_strcmp0(id, "open-parent") == 0 || g_strcmp0(id, "menu") == 0 || g_strcmp0(id, "search") == 0) {
@@ -163,5 +221,6 @@ G_MODULE_EXPORT void gtk_module_init(gint *argc, gchar ***argv) {
     if (g_strcmp0(g_get_prgname(), "thunar") != 0) return;
     gpointer klass = g_type_class_ref(GTK_TYPE_WIDGET);
     g_signal_add_emission_hook(g_signal_lookup("map", GTK_TYPE_WIDGET), 0, on_map, NULL, NULL);
+    g_signal_add_emission_hook(g_signal_lookup("key-press-event", GTK_TYPE_WIDGET), 0, on_key, NULL, NULL);
     g_type_class_unref(klass);
 }

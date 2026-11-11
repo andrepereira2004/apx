@@ -133,6 +133,19 @@
 .background button:disabled { color: #a4abc0; }
 .background button.suggested-action { border-color: #d9dcea; }
 .background button.destructive-action { color: #ffb4b4; border-color: #99565d; }
+/* Properties notebooks otherwise inherit a light page behind pale labels. */
+dialog.background notebook,
+dialog.background notebook > stack,
+dialog.background notebook > stack > box,
+dialog.background notebook header {
+    background-color: rgba(16, 17, 23, 0.94);
+    background-image: none;
+    color: #d9dcea;
+}
+dialog.background notebook label,
+dialog.background notebook tab label { color: #d9dcea; opacity: 1; }
+dialog.background notebook tab { background-color: transparent; }
+dialog.background notebook tab:checked { box-shadow: inset 0 -2px #8ab4ff; }
 menu, .thunar menu, popover, .thunar popover {
     background-image: none;
     background-color: rgba(16, 17, 23, 0.85);

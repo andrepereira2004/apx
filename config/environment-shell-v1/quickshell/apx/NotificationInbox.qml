@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import "NotificationGroups.js" as Groups
 
@@ -48,6 +49,8 @@ Column {
     component Message: Rectangle {
         id: message
         required property var note
+        property string muteScope: "thread"
+        property string muteDuration: "15m"
         height: messageContent.implicitHeight + 26
         radius: 12
         color: messageMouse.containsMouse && note.can_open ? "#2b303d" : "#20232d"
@@ -107,6 +110,46 @@ Column {
                         onClicked: DesktopActivity.action(["notification", "read", String(message.note.id)]) }
                 }
             }
+            Row {
+                width: parent.width; spacing: 6
+                NotificationMuteSelector {
+                    id: scopePicker
+                    width: Math.max(100, (parent.width - 112) * .43); height: 30
+                    model: ["Conversa / remetente", "Aplicação"]
+                    currentIndex: message.muteScope === "app" ? 1 : 0
+                    onActivated: message.muteScope = currentIndex === 1 ? "app" : "thread"
+                    Accessible.name: "Silenciar por"
+                }
+                NotificationMuteSelector {
+                    id: durationPicker
+                    width: Math.max(82, (parent.width - 112) * .39); height: 30
+                    model: ["15 min", "1 h", "6 h", "24 h", "Indefinido"]
+                    onActivated: message.muteDuration = ["15m", "1h", "6h", "24h", "forever"][currentIndex]
+                    Accessible.name: "Duração do silêncio"
+                }
+                Rectangle {
+                    width: 98; height: 30
+                    radius: 7; color: muteActionMouse.containsMouse ? "#385065" : "#303b4d"
+                    opacity: enabled ? 1 : .5
+                    enabled: !DesktopActivity.busy && (message.muteScope === "app" || !!(message.note.thread_key || message.note.title))
+                    Accessible.role: Accessible.Button
+                    Accessible.name: muteActionLabel.text
+                    activeFocusOnTab: true
+                    function activate() {
+                        DesktopActivity.action(["notification", "mute", String(message.note.id), message.muteScope,
+                            (message.muteScope === "app" ? message.note.muted_app : message.note.muted_thread) ? "off" : message.muteDuration])
+                    }
+                    Text {
+                        id: muteActionLabel; anchors.centerIn: parent
+                        text: (message.muteScope === "app" ? message.note.muted_app : message.note.muted_thread) ? "Reativar" : "Silenciar"
+                        color: "#e9eff7"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
+                    }
+                    MouseArea { id: muteActionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                        onClicked: parent.activate() }
+                    Keys.onReturnPressed: activate()
+                    Keys.onSpacePressed: activate()
+                }
+            }
         }
     }
     Text {
@@ -114,6 +157,41 @@ Column {
         renderType: Text.CurveRendering
         width: parent.width; text: Groups.unreadLabel(inbox.notes.length)
         color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize
+    }
+    Text {
+        width: parent.width; visible: (DesktopActivity.state.mutes || []).length > 0
+        text: "Silêncios ativos"; color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.bodySize
+        font.weight: Font.DemiBold
+    }
+    Repeater {
+        model: DesktopActivity.state.mutes || []
+        Rectangle {
+            id: muteRow
+            required property var modelData
+            width: inbox.width; height: 44; radius: 10; color: "#20232d"
+            Row {
+                anchors.fill: parent; anchors.margins: 7; spacing: 8
+                Text {
+                    width: parent.width - reactivate.width - parent.spacing; anchors.verticalCenter: parent.verticalCenter
+                    text: muteRow.modelData.label + " · " + (muteRow.modelData.until === null ? "indefinido" : new Date(muteRow.modelData.until * 1000).toLocaleString())
+                    elide: Text.ElideRight; color: "#d9dcea"; font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize
+                }
+                Rectangle {
+                    id: reactivate; width: 90; height: 30; anchors.verticalCenter: parent.verticalCenter
+                    radius: 7; color: reactivateMouse.containsMouse ? "#385065" : "#303b4d"
+                    enabled: !DesktopActivity.busy; opacity: enabled ? 1 : .5
+                    Accessible.role: Accessible.Button; Accessible.name: "Reativar notificações"
+                    activeFocusOnTab: true
+                    function activate() { DesktopActivity.action(["notification", "unmute", JSON.stringify(muteRow.modelData.scope)]) }
+                    Text { anchors.centerIn: parent; text: "Reativar"; color: "#e9eff7"
+                        font.family: Appearance.fontFamily; font.pixelSize: Appearance.metaSize }
+                    MouseArea { id: reactivateMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                        onClicked: reactivate.activate() }
+                    Keys.onReturnPressed: activate()
+                    Keys.onSpacePressed: activate()
+                }
+            }
+        }
     }
     Text {
         renderType: Text.CurveRendering

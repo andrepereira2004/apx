@@ -46,8 +46,11 @@ class ScreenshotTests(unittest.TestCase):
             with patch.object(module.Path, "home", return_value=home), \
                  patch.dict(os.environ, {"XDG_RUNTIME_DIR": str(runtime)}), \
                  patch.object(module.subprocess, "run", side_effect=run), \
-                 patch.object(module.subprocess, "Popen"):
+                 patch.object(module.subprocess, "Popen") as launch:
                 self.assertEqual(module.main(), 0)
+
+            self.assertTrue(any(call.args[0] == ["wl-copy", "--foreground", "--sensitive", "--type", "image/png"]
+                                for call in launch.call_args_list))
 
             saved = list((home / "Pictures/Screenshots").glob("Screenshot_*.png"))
             self.assertEqual(len(saved), 1)

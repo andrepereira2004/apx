@@ -425,6 +425,7 @@ ShellRoot {
     property real controlPageOffset: 0
     property bool controlPageCapturing: false
     property bool controlPageQueued: false
+    property bool pendingControlLeft: false
     property int controlPageGeneration: 0
     property var controlPageCapture: null
     property rect outgoingPageRect: Qt.rect(0, 0, 0, 0)
@@ -491,6 +492,17 @@ ShellRoot {
             root.controlPageCapture = null
             Qt.callLater(function() {
                 if (!popup.open || root.popupClosing || root.controlPageCapturing || controlPageAnimation.running) return
+                if (root.pendingControlLeft) {
+                    root.pendingControlLeft = false
+                    var icon = root.controlsBrightnessOpen ? combinedVolumeIcon
+                             : root.controlsAudioOpen ? volumeDetailIcon
+                             : root.controlsMicrophoneOpen ? microphoneDetailIcon : null
+                    if (icon && icon.visible && icon.enabled) {
+                        root.menuKeyboardNavigation = true
+                        root.focusMenuItem(icon)
+                        return
+                    }
+                }
                 var items = root.genericMenuItems()
                 if (root.menuKeyboardNavigation && items.length) root.focusMenuItem(items[0])
             })
@@ -526,6 +538,47 @@ ShellRoot {
     property int volumeInFlight: -1
     property int volumeLastSent: -1
     property bool volumeMuted: false
+    property int mediaVolumeValue: 100
+    property int notificationsVolumeValue: 100
+    property int mediaVolumeBeforeMute: 100
+    property int notificationsVolumeBeforeMute: 100
+    property var categoryVolumePending: ({})
+    function setCategoryVolume(kind, value) {
+        var level = Math.max(0, Math.min(100, Math.round(value)))
+        if (kind === "media") {
+            mediaVolumeValue = level
+            if (level > 0) mediaVolumeBeforeMute = level
+        } else if (kind === "notifications") {
+            notificationsVolumeValue = level
+            if (level > 0) notificationsVolumeBeforeMute = level
+        }
+        else return
+        var next = Object.assign({}, categoryVolumePending)
+        next[kind] = level
+        categoryVolumePending = next
+        dispatchCategoryVolume()
+    }
+    function toggleCategoryMute(kind) {
+        if (kind === "media") {
+            if (mediaVolumeValue > 0) mediaVolumeBeforeMute = mediaVolumeValue
+            setCategoryVolume(kind, mediaVolumeValue > 0 ? 0 : mediaVolumeBeforeMute)
+        } else if (kind === "notifications") {
+            if (notificationsVolumeValue > 0) notificationsVolumeBeforeMute = notificationsVolumeValue
+            setCategoryVolume(kind, notificationsVolumeValue > 0 ? 0 : notificationsVolumeBeforeMute)
+        }
+    }
+    function dispatchCategoryVolume() {
+        if (categoryVolumeSetProcess.running) return
+        var keys = Object.keys(categoryVolumePending)
+        if (!keys.length) return
+        var kind = keys[0]
+        var value = categoryVolumePending[kind]
+        var next = Object.assign({}, categoryVolumePending)
+        delete next[kind]
+        categoryVolumePending = next
+        categoryVolumeSetProcess.command = ["/home/apx/.local/bin/apx-audio-categories-v1", "set", kind, String(value)]
+        categoryVolumeSetProcess.running = true
+    }
     property bool apxShortcutsEnabled: true
     property string batteryText: "--"
     readonly property string batteryIconName: {
@@ -570,11 +623,15 @@ ShellRoot {
 
     component MenuSlider: Slider {
         id: keyboardSlider
+        property color focusBorderColor: root.cyan
         activeFocusOnTab: true
         readonly property Item navigationTarget: parent
         readonly property bool keyboardSelected: activeFocus && root.menuKeyboardNavigation
         readonly property bool keyboardEditing: root.editingMenuSlider === keyboardSlider
-        property bool directArrowAdjustment: true
+        property bool directArrowAdjustment: false
+        property Item keyboardLeftTarget: null
+        property Item keyboardDownTarget: null
+        property var secondEnterAction: null
         signal keyboardValueChanged(real nextValue)
         onActiveFocusChanged: {
             if (!activeFocus && keyboardEditing) root.editingMenuSlider = null
@@ -582,8 +639,12 @@ ShellRoot {
         Keys.priority: Keys.BeforeItem
         Keys.onPressed: function(event) {
             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                if (!event.isAutoRepeat)
-                    root.editingMenuSlider = keyboardEditing ? null : keyboardSlider
+                if (!event.isAutoRepeat) {
+                    if (keyboardEditing && secondEnterAction) {
+                        root.editingMenuSlider = null
+                        secondEnterAction()
+                    } else root.editingMenuSlider = keyboardEditing ? null : keyboardSlider
+                }
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape && keyboardEditing) {
                 root.editingMenuSlider = null
@@ -593,6 +654,17 @@ ShellRoot {
                     var direction = event.key === Qt.Key_Up || event.key === Qt.Key_Right ? 1 : -1
                     keyboardValueChanged(Math.max(from, Math.min(to, Math.round(value) + direction * (directArrowAdjustment ? (event.modifiers & Qt.ShiftModifier ? 5 : 1) : 5))))
                     event.accepted = true
+                } else if (event.key === Qt.Key_Down && keyboardDownTarget && keyboardDownTarget.enabled) {
+                    root.focusMenuItem(keyboardDownTarget)
+                    event.accepted = true
+                } else if (event.key === Qt.Key_Left && keyboardLeftTarget && keyboardLeftTarget.enabled) {
+                    event.accepted = true
+                    if (controlPageAnimation.running || controlPageCapturing)
+                        root.pendingControlLeft = true
+                    else {
+                        root.menuKeyboardNavigation = true
+                        root.focusMenuItem(keyboardLeftTarget)
+                    }
                 } else root.navigateGenericMenu(event)
             } else if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
                 root.editingMenuSlider = null
@@ -609,7 +681,7 @@ ShellRoot {
             z: 100
             color: "transparent"
             border.width: keyboardSlider.keyboardEditing ? 2 : 1
-            border.color: root.cyan
+            border.color: keyboardSlider.focusBorderColor
             visible: keyboardSlider.activeFocus && root.menuKeyboardNavigation
         }
     }
@@ -855,7 +927,11 @@ ShellRoot {
     }
 
     function navigateGenericMenu(event) {
-        if (controlPageAnimation.running || controlPageCapturing) { event.accepted = true; return }
+        if (controlPageAnimation.running || controlPageCapturing) {
+            if (event.key === Qt.Key_Left && root.popupKind === "controls") root.pendingControlLeft = true
+            event.accepted = true
+            return
+        }
         if (popupKind === "calendar" || (popupKind === "environments" && isHub)) return
         var tab = event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab
         var arrow = [Qt.Key_Up, Qt.Key_Down, Qt.Key_Left, Qt.Key_Right].indexOf(event.key) >= 0
@@ -869,6 +945,39 @@ ShellRoot {
         if (!items.length) return
         var current = -1
         for (var i = 0; i < items.length; ++i) if (items[i].activeFocus) current = i
+        if (event.key === Qt.Key_Up && root.popupKind === "controls" && root.controlsAudioOpen && current >= 1) {
+            var previousCard = current >= 7 ? mediaCategoryCardMouse
+                             : current >= 4 ? volumeDetailCardMouse
+                             : audioBackButton.keyboardTarget
+            event.accepted = true
+            menuKeyboardNavigation = true
+            focusMenuItem(previousCard)
+            return
+        }
+        if (event.key === Qt.Key_Up && root.popupKind === "controls" && root.controlsMicrophoneOpen && current >= 1) {
+            event.accepted = true
+            menuKeyboardNavigation = true
+            focusMenuItem(microphoneBackButton.keyboardTarget)
+            return
+        }
+        if (current === 0 && event.key === Qt.Key_Down && root.popupKind === "controls"
+                && (root.controlsAudioOpen || root.controlsMicrophoneOpen)) {
+            menuKeyboardNavigation = true
+            focusMenuItem(root.controlsAudioOpen ? volumeDetailCardMouse : microphoneDetailCardMouse)
+            event.accepted = true
+            return
+        }
+        if (current < 0 && event.key === Qt.Key_Left && root.popupKind === "controls") {
+            var firstIcon = root.controlsBrightnessOpen ? combinedVolumeIcon
+                          : root.controlsAudioOpen ? volumeDetailIcon
+                          : root.controlsMicrophoneOpen ? microphoneDetailIcon : null
+            if (firstIcon && firstIcon.visible && firstIcon.enabled) {
+                menuKeyboardNavigation = true
+                focusMenuItem(firstIcon)
+                event.accepted = true
+                return
+            }
+        }
         if (arrow && current >= 0 && items[current].cursorPosition !== undefined
                 && items[current].text !== undefined) return
         var backwards = event.key === Qt.Key_Backtab || event.key === Qt.Key_Up || event.key === Qt.Key_Left
@@ -1234,7 +1343,11 @@ ShellRoot {
     function wifiAvailableNetworks() {
         return Array.from(new Set(hostState.available_networks || []))
             .filter(function(name) { return name !== hostState.network_name })
+            .sort(function(a, b) { return (Number(wifiDetails(b).signal) || 0) - (Number(wifiDetails(a).signal) || 0) || a.localeCompare(b) })
     }
+    property int wifiPage: 0
+    function wifiPageNetworks() { return wifiAvailableNetworks().slice(wifiPage * 5, wifiPage * 5 + 5) }
+    function changeWifiPage(delta) { wifiPage = Math.max(0, wifiPage + delta); menuFlick.stopWheel(); menuFlick.contentY = 0 }
     function completeWifiConnection() {
         hostState = Object.assign({}, hostState, {network_name: wifiSelectedSsid})
         cancelWifiPassword()
@@ -1386,6 +1499,8 @@ ShellRoot {
         controlsConnectivityOpen = section === "connectivity" ? !wasOpen : ((section === "wifi" || section === "bluetooth") && wasOpen)
         controlsWifiOpen = section === "wifi" && !wasOpen
         controlsBluetoothOpen = section === "bluetooth" && !wasOpen
+        if (controlsWifiOpen) wifiPage = 0
+        if (controlsBluetoothOpen) bluetoothPage = 0
         controlsBrightnessOpen = section === "brightness" && !wasOpen
         controlsAudioOpen = section === "audio" && !wasOpen
         controlsMicrophoneOpen = section === "microphone" && !wasOpen
@@ -1421,6 +1536,8 @@ ShellRoot {
         else if (action === "exit") { closePopup(); if (!hostExitProcess.running) hostExitProcess.running = true }
     }
 
+    property int bluetoothPage: 0
+
     function controlsAllClosed() {
         return !controlsBrightnessOpen && !controlsConnectivityOpen && !controlsWifiOpen && !controlsBluetoothOpen && !controlsAudioOpen && !controlsMicrophoneOpen && !controlsActivityKind.length
     }
@@ -1445,6 +1562,8 @@ ShellRoot {
         if (!bluetoothDisplayPowered()) return []
         return bluetoothDevicesUnique().filter(function(device) { return device.paired !== true && device.connected !== true })
     }
+    function bluetoothPageDevices() { return bluetoothDisplayPowered() ? bluetoothDevicesUnique().slice(bluetoothPage * 5, bluetoothPage * 5 + 5) : [] }
+    function changeBluetoothPage(delta) { bluetoothPage = Math.max(0, bluetoothPage + delta); menuFlick.stopWheel(); menuFlick.contentY = 0 }
     function revealBluetoothForm() {
         Qt.callLater(function() {
             menuFlick.stopWheel()
@@ -2844,6 +2963,7 @@ ShellRoot {
     function hostAction(operation, target) {
         if (hostActionProcess.running)
             return
+        if (operation === "wifi-scan") wifiPage = 0
         var args = ["/run/apx/host-services-ui-v3.py", operation]
         if (target !== undefined && target !== "")
             args.push(target)
@@ -3357,7 +3477,7 @@ ShellRoot {
         id: bluetoothScanProcess
         command: ["/run/apx/host-services-client-v3.py", "bluetooth-scan"]
         stderr: StdioCollector { onStreamFinished: if (text.trim().length) root.bluetoothMessage = text.trim() }
-        onStarted: root.bluetoothMessage = ""
+        onStarted: { root.bluetoothMessage = ""; root.bluetoothPage = 0 }
         onExited: (exitCode, exitStatus) => {
             root.bluetoothMessage = exitCode === 0 ? "" : (root.bluetoothMessage || "Não foi possível procurar dispositivos.")
             hostStatusProcess.running = true
@@ -3493,6 +3613,33 @@ ShellRoot {
             else if (!volumeSlider.pressed && !volumeProcess.running)
                 volumeProcess.running = true
         }
+    }
+
+    Process {
+        id: categoryVolumeSetProcess
+        onExited: { root.dispatchCategoryVolume(); if (!categoryVolumeSyncProcess.running) categoryVolumeSyncProcess.running = true }
+    }
+    Process {
+        id: categoryVolumeSyncProcess
+        command: ["/home/apx/.local/bin/apx-audio-categories-v1", "sync"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    var values = JSON.parse(text).levels || ({})
+                    if (!categoryVolumeSetProcess.running && !Object.keys(root.categoryVolumePending).length
+                            && !mediaCategorySlider.pressed && !notificationsCategorySlider.pressed) {
+                        root.mediaVolumeValue = values.media === undefined ? 100 : values.media
+                        root.notificationsVolumeValue = values.notifications === undefined ? 100 : values.notifications
+                        if (root.mediaVolumeValue > 0) root.mediaVolumeBeforeMute = root.mediaVolumeValue
+                        if (root.notificationsVolumeValue > 0) root.notificationsVolumeBeforeMute = root.notificationsVolumeValue
+                    }
+                } catch (e) { console.warn("Audio categories:", e) }
+            }
+        }
+    }
+    Timer {
+        interval: 5000; repeat: true; running: true; triggeredOnStart: true
+        onTriggered: if (!categoryVolumeSetProcess.running && !categoryVolumeSyncProcess.running) categoryVolumeSyncProcess.running = true
     }
 
     Process {
@@ -4534,6 +4681,7 @@ ShellRoot {
 
     component MenuButton: Rectangle {
         id: menuButton
+        readonly property Item keyboardTarget: menuMouse
         property string label: ""
         property string iconName: ""
         property bool accent: false
@@ -4590,6 +4738,7 @@ ShellRoot {
         BounceMouseArea {
             id: menuMouse
             anchors.fill: parent
+            navigationHandler: root.navigateGenericMenu
             enabled: menuButton.enabled
             hoverEnabled: true
             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -7131,7 +7280,7 @@ ShellRoot {
                         }
                         Text { renderType: Text.QtRendering; visible: !root.wifiPasswordVisible && root.wifiMessage.length > 0; width: parent.width; wrapMode: Text.Wrap; text: root.wifiMessage; color: root.wifiMessage.indexOf("Não") === 0 ? "#ff91a4" : root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                         Repeater {
-                            model: root.wifiDisplayPowered() && !root.wifiPasswordVisible ? root.wifiAvailableNetworks() : []
+                            model: root.wifiDisplayPowered() && !root.wifiPasswordVisible ? root.wifiPageNetworks() : []
                             Rectangle {
                                 required property string modelData
                                 visible: modelData !== root.hostState.network_name
@@ -7168,6 +7317,12 @@ ShellRoot {
                                     }
                                 }
                             }
+                        }
+                        Row {
+                            visible: !root.wifiPasswordVisible && root.wifiAvailableNetworks().length > 5
+                            width: parent.width; spacing: 8
+                            MenuButton { width: (parent.width - 8) / 2; height: Appearance.menuActionHeight; label: "Anterior"; enabled: root.wifiPage > 0; onActivated: root.changeWifiPage(-1) }
+                            MenuButton { width: (parent.width - 8) / 2; height: Appearance.menuActionHeight; label: "Mais redes"; enabled: (root.wifiPage + 1) * 5 < root.wifiAvailableNetworks().length; onActivated: root.changeWifiPage(1) }
                         }
                         Text { renderType: Text.QtRendering;
                             visible: root.wifiDisplayPowered() && !root.wifiPasswordVisible && !root.wifiAvailableNetworks().length
@@ -7303,18 +7458,18 @@ ShellRoot {
                                 }
                             }
                             Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothMessage.length > 0; width: parent.width; wrapMode: Text.Wrap; text: root.bluetoothMessage; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
-                            Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothConnectedDevices().length > 0; text: "Ligados"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothPageDevices().some(function(device) { return device.connected === true }); text: "Ligados"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                             Repeater {
-                                model: bluetoothContent.formVisible ? [] : root.bluetoothConnectedDevices()
+                                model: bluetoothContent.formVisible ? [] : root.bluetoothPageDevices().filter(function(device) { return device.connected === true })
                                 BluetoothDeviceRow {
                                     required property var modelData
                                     device: modelData; connected: true; paired: modelData.paired === true
                                     onActivated: root.bluetoothDeviceAction("bluetooth-disconnect", modelData)
                                 }
                             }
-                            Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothKnownDevices().length > 0; text: "Guardados"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothPageDevices().some(function(device) { return device.paired === true && device.connected !== true }); text: "Guardados"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                             Repeater {
-                                model: bluetoothContent.formVisible ? [] : root.bluetoothKnownDevices()
+                                model: bluetoothContent.formVisible ? [] : root.bluetoothPageDevices().filter(function(device) { return device.paired === true && device.connected !== true })
                                 BluetoothDeviceRow {
                                     required property var modelData
                                     device: modelData; paired: true
@@ -7322,14 +7477,20 @@ ShellRoot {
                                     onForgetRequested: root.beginBluetoothRemove(modelData)
                                 }
                             }
-                            Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothAvailableDevices().length > 0; text: "Disponíveis"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
+                            Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothPageDevices().some(function(device) { return device.paired !== true && device.connected !== true }); text: "Disponíveis"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                             Repeater {
-                                model: bluetoothContent.formVisible ? [] : root.bluetoothAvailableDevices()
+                                model: bluetoothContent.formVisible ? [] : root.bluetoothPageDevices().filter(function(device) { return device.paired !== true && device.connected !== true })
                                 BluetoothDeviceRow {
                                     required property var modelData
                                     device: modelData
                                     onActivated: root.beginBluetoothPair(modelData)
                                 }
+                            }
+                            Row {
+                                visible: !bluetoothContent.formVisible && root.bluetoothDevicesUnique().length > 5
+                                width: parent.width; spacing: 8
+                                MenuButton { width: (parent.width - 8) / 2; height: Appearance.menuActionHeight; label: "Anterior"; enabled: root.bluetoothPage > 0; onActivated: root.changeBluetoothPage(-1) }
+                                MenuButton { width: (parent.width - 8) / 2; height: Appearance.menuActionHeight; label: "Mais dispositivos"; enabled: (root.bluetoothPage + 1) * 5 < root.bluetoothDevicesUnique().length; onActivated: root.changeBluetoothPage(1) }
                             }
                             Text { renderType: Text.QtRendering; visible: !bluetoothContent.formVisible && root.bluetoothDisplayPowered() && !bluetoothScanProcess.running && !root.bluetoothKnownDevices().length && !root.bluetoothConnectedDevices().length && !root.bluetoothAvailableDevices().length && !root.bluetoothMessage.length; width: parent.width; wrapMode: Text.Wrap; text: "Nenhum dispositivo encontrado"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
                         }
@@ -7346,18 +7507,37 @@ ShellRoot {
                         MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: root.openControlSection("brightness") }
                         Rectangle {
                             id: combinedVolumeCard
+                            readonly property bool keyboardSelected: root.menuKeyboardNavigation
+                                && (combinedVolumeCardMouse.activeFocus || combinedVolumeIcon.activeFocus || combinedVolumeSlider.activeFocus)
                             width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
-                            color: root.controlButtonSurface
+                            color: keyboardSelected ? root.controlButtonActive : root.controlButtonSurface
+                            border.width: keyboardSelected ? 1 : 0; border.color: Appearance.buttonSelectedBorder
                             BounceMouseArea {
                                 id: combinedVolumeCardMouse
                                 anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardEnterHandler: function() {
+                                    root.menuKeyboardNavigation = true
+                                    root.focusMenuItem(combinedVolumeSlider)
+                                    root.editingMenuSlider = combinedVolumeSlider
+                                }
+                                keyboardLeftHandler: function(event) {
+                                    root.menuKeyboardNavigation = true
+                                    root.focusMenuItem(combinedVolumeIcon)
+                                    event.accepted = true
+                                }
+                                outlineEnabled: false
                                 Accessible.name: "Som"
                                 onClicked: root.openControlSection("audio")
                             }
                                 RadioIconButton {
+                                    id: combinedVolumeIcon
                                     x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter; iconName: root.volumeMuted ? "volume-x" : "volume-2"
+                                    navigationHandler: root.navigateGenericMenu
+                                    showOutline: activeFocus && root.menuKeyboardNavigation
                                     powered: !root.volumeMuted; busy: localActionProcess.running
                                     actionLabel: root.volumeMuted ? "Reativar som" : "Silenciar som"
+                                    keyboardRightTarget: combinedVolumeSlider
                                     onActivated: root.toggleVolumeMute()
                                 }
 
@@ -7371,13 +7551,17 @@ ShellRoot {
                             }
                             MenuSlider {
                                 id: combinedVolumeSlider
+                                secondEnterAction: function() { root.openControlSection("audio") }
+                                keyboardLeftTarget: combinedVolumeIcon
+                                KeyNavigation.tab: combinedBrightnessCardMouse
+                                focusBorderColor: Appearance.buttonSelectedBorder
                                 anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset
                                 anchors.right: combinedVolumePercent.left; anchors.rightMargin: 8
                                 anchors.verticalCenter: parent.verticalCenter
                                 height: 16; topPadding: 0; bottomPadding: 0; from: 0; to: 100; stepSize: 1; activeFocusOnTab: true
                                 Accessible.name: "Som"
                                 onKeyboardValueChanged: nextValue => root.commitVolume(nextValue)
-                                onMoved: root.previewVolume(value)
+                                onMoved: if (pressed) root.previewVolume(value)
                                 onPressedChanged: { if (pressed) forceActiveFocus(); else root.commitVolume(value) }
                                 Binding { target: combinedVolumeSlider; property: "value"; value: root.volumeMuted ? 0 : root.volumeValue; when: !combinedVolumeSlider.pressed }
                                 background: Rectangle {
@@ -7390,18 +7574,32 @@ ShellRoot {
                         }
                         Rectangle {
                             id: combinedBrightnessCard
+                            readonly property bool keyboardSelected: root.menuKeyboardNavigation
+                                && (combinedBrightnessCardMouse.activeFocus || combinedBrightnessIcon.activeFocus || displayBrightnessSlider.activeFocus)
                             width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
-                            color: root.controlButtonSurface
+                            color: keyboardSelected ? root.controlButtonActive : root.controlButtonSurface
+                            border.width: keyboardSelected ? 1 : 0; border.color: Appearance.buttonSelectedBorder
                             BounceMouseArea {
                                 id: combinedBrightnessCardMouse
                                 anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardLeftHandler: function(event) {
+                                    root.menuKeyboardNavigation = true
+                                    root.focusMenuItem(combinedBrightnessIcon)
+                                    event.accepted = true
+                                }
+                                outlineEnabled: false
                                 Accessible.name: "Brilho do ecrã"
                                 onClicked: root.toggleDisplayDim()
                             }
                                 RadioIconButton {
+                                    id: combinedBrightnessIcon
                                     x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter; iconName: "sun"
+                                    navigationHandler: root.navigateGenericMenu
+                                    showOutline: activeFocus && root.menuKeyboardNavigation
                                     powered: root.displayBrightness > 5; busy: displayBrightnessProcess.running
                                     actionLabel: root.displayBrightness > 5 ? "Reduzir brilho" : "Restaurar brilho"
+                                    keyboardRightTarget: displayBrightnessSlider
                                     onActivated: root.toggleDisplayDim()
                                 }
 
@@ -7415,13 +7613,15 @@ ShellRoot {
                             }
                             MenuSlider {
                                 id: displayBrightnessSlider
+                                keyboardLeftTarget: combinedBrightnessIcon
+                                focusBorderColor: Appearance.buttonSelectedBorder
                                 anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset
                                 anchors.right: combinedBrightnessPercent.left; anchors.rightMargin: 8
                                 anchors.verticalCenter: parent.verticalCenter
                                 height: 16; topPadding: 0; bottomPadding: 0; from: 5; to: 100; stepSize: 1; activeFocusOnTab: true
                                 Accessible.name: "Brilho do ecrã"
                                 onKeyboardValueChanged: nextValue => root.commitDisplayBrightness(nextValue)
-                                onMoved: root.previewDisplayBrightness(value)
+                                onMoved: if (pressed) root.previewDisplayBrightness(value)
                                 onPressedChanged: { if (pressed) forceActiveFocus(); else root.commitDisplayBrightness(value) }
                                 Binding { target: displayBrightnessSlider; property: "value"; value: root.displayBrightness; when: !displayBrightnessSlider.pressed }
                                 background: Rectangle {
@@ -7438,24 +7638,56 @@ ShellRoot {
                     Column {
                         visible: root.renderedControls.controlsAudioOpen
                         width: parent.width; spacing: 8
-                        MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("audio") }
+                        MenuButton { id: audioBackButton; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("audio") }
                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Som"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                     }
                     Column {
                         width: parent.width; spacing: 8; visible: root.renderedControls.controlsAudioOpen
 
                         Rectangle {
+                            readonly property bool keyboardSelected: root.menuKeyboardNavigation
+                                && (volumeDetailCardMouse.activeFocus || volumeDetailIcon.activeFocus || volumeSlider.activeFocus)
                             width: parent.width; height: 80; radius: Appearance.menuActionRadius
-                            color: root.controlButtonSurface; border.width: 0; border.color: root.controlButtonOutline
+                            color: keyboardSelected ? root.controlButtonActive : root.controlButtonSurface
+                            border.width: keyboardSelected ? 1 : 0; border.color: Appearance.buttonSelectedBorder
+                            BounceMouseArea {
+                                id: volumeDetailCardMouse
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: false
+                                outlineEnabled: false
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardLeftHandler: function(event) {
+                                    root.menuKeyboardNavigation = true
+                                    root.focusMenuItem(volumeDetailIcon)
+                                    event.accepted = true
+                                }
+                                keyboardEnterHandler: function() {
+                                    root.menuKeyboardNavigation = true
+                                    root.focusMenuItem(volumeSlider)
+                                    root.editingMenuSlider = volumeSlider
+                                }
+                                keyboardDownHandler: function(event) {
+                                    root.focusMenuItem(mediaCategoryCardMouse)
+                                    event.accepted = true
+                                }
+                                Accessible.name: "Volume de saída"
+                            }
                             RadioIconButton {
-                                x: 6; y: 3
+                                id: volumeDetailIcon
+                                x: Appearance.menuIconInset; y: Appearance.menuIconInset
+                                showOutline: activeFocus && root.menuKeyboardNavigation
                                 iconName: root.volumeMuted ? "volume-x" : "volume-2"
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardRightTarget: volumeSlider
+                                keyboardDownTarget: mediaCategoryCardMouse
                                 powered: !root.volumeMuted; busy: localActionProcess.running
                                 actionLabel: root.volumeMuted ? "Reativar som" : "Silenciar som"
                                 onActivated: root.toggleVolumeMute()
                             }
                             Text { renderType: Text.QtRendering;
-                                anchors.left: parent.left; anchors.leftMargin: 50; anchors.top: parent.top; anchors.topMargin: 12
+                                anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.top: parent.top; anchors.topMargin: 12
                                 text: root.volumeMuted ? "Volume silenciado" : "Volume de saída"
                                 color: root.volumeMuted ? root.textDim : root.textMain
                                 font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal
@@ -7467,6 +7699,9 @@ ShellRoot {
                             }
                             MenuSlider {
                                 id: volumeSlider
+                                focusBorderColor: Appearance.buttonSelectedBorder
+                                keyboardLeftTarget: volumeDetailIcon
+                                keyboardDownTarget: mediaCategoryCardMouse
                                 onKeyboardValueChanged: (nextValue) => root.commitVolume(nextValue)
                                 anchors.left: parent.left; anchors.leftMargin: 16
                                 anchors.right: parent.right; anchors.rightMargin: 14
@@ -7474,7 +7709,7 @@ ShellRoot {
                                 height: 28; from: 0; to: 100; stepSize: 1
                                 activeFocusOnTab: true
                                 enabled: !localActionProcess.running
-                                onMoved: root.previewVolume(value)
+                                onMoved: if (pressed) root.previewVolume(value)
                                 onPressedChanged: {
                                     if (pressed)
                                         forceActiveFocus()
@@ -7494,32 +7729,160 @@ ShellRoot {
                                 handle: Item { width: 0; height: 0 }
                             }
                         }
-
-
+                        Rectangle {
+                            readonly property bool keyboardSelected: root.menuKeyboardNavigation
+                                && (mediaCategoryCardMouse.activeFocus || mediaCategoryIcon.activeFocus || mediaCategorySlider.activeFocus)
+                            width: parent.width; height: 80; radius: Appearance.menuActionRadius
+                            color: keyboardSelected ? root.controlButtonActive : root.controlButtonSurface
+                            border.width: keyboardSelected ? 1 : 0; border.color: Appearance.buttonSelectedBorder
+                            BounceMouseArea {
+                                id: mediaCategoryCardMouse
+                                anchors.fill: parent; acceptedButtons: Qt.NoButton
+                                cursorShape: Qt.PointingHandCursor; hoverEnabled: false; outlineEnabled: false
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardLeftHandler: function(event) { root.focusMenuItem(mediaCategoryIcon); event.accepted = true }
+                                keyboardDownHandler: function(event) { root.focusMenuItem(notificationsCategoryCardMouse); event.accepted = true }
+                                keyboardEnterHandler: function() { root.focusMenuItem(mediaCategorySlider); root.editingMenuSlider = mediaCategorySlider }
+                                Accessible.name: "Música e vídeo"
+                            }
+                            RadioIconButton {
+                                id: mediaCategoryIcon
+                                x: Appearance.menuIconInset; y: Appearance.menuIconInset
+                                iconName: "music"; powered: root.mediaVolumeValue > 0
+                                showOutline: activeFocus && root.menuKeyboardNavigation
+                                actionLabel: root.mediaVolumeValue > 0 ? "Silenciar música e vídeo" : "Reativar música e vídeo"
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardRightTarget: mediaCategorySlider
+                                keyboardDownTarget: notificationsCategoryCardMouse
+                                onActivated: root.toggleCategoryMute("media")
+                            }
+                            Text { anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.top: parent.top; anchors.topMargin: 12
+                                text: "Música e vídeo"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                            Text { anchors.right: parent.right; anchors.rightMargin: 14; anchors.top: parent.top; anchors.topMargin: 12
+                                text: root.mediaVolumeValue + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                            MenuSlider {
+                                id: mediaCategorySlider
+                                focusBorderColor: Appearance.buttonSelectedBorder
+                                keyboardLeftTarget: mediaCategoryIcon
+                                keyboardDownTarget: notificationsCategoryCardMouse
+                                anchors.left: parent.left; anchors.leftMargin: 16; anchors.right: parent.right; anchors.rightMargin: 14
+                                anchors.bottom: parent.bottom; anchors.bottomMargin: 7
+                                height: 28; from: 0; to: 100; stepSize: 1; activeFocusOnTab: true
+                                Accessible.name: "Volume de música e vídeo"
+                                onKeyboardValueChanged: value => root.setCategoryVolume("media", value)
+                                onMoved: if (pressed) root.mediaVolumeValue = Math.round(value)
+                                onPressedChanged: if (!pressed) root.setCategoryVolume("media", value)
+                                Binding { target: mediaCategorySlider; property: "value"; value: root.mediaVolumeValue; when: !mediaCategorySlider.pressed }
+                                background: Rectangle {
+                                    x: mediaCategorySlider.leftPadding; y: mediaCategorySlider.topPadding + mediaCategorySlider.availableHeight / 2 - height / 2
+                                    width: mediaCategorySlider.availableWidth; height: 5; radius: 3; color: root.controlButtonOutline
+                                    Rectangle { width: mediaCategorySlider.visualPosition * parent.width; height: parent.height; radius: 3; color: root.textMain }
+                                }
+                                handle: Item { width: 0; height: 0 }
+                            }
+                        }
+                        Rectangle {
+                            readonly property bool keyboardSelected: root.menuKeyboardNavigation
+                                && (notificationsCategoryCardMouse.activeFocus || notificationsCategoryIcon.activeFocus || notificationsCategorySlider.activeFocus)
+                            width: parent.width; height: 80; radius: Appearance.menuActionRadius
+                            color: keyboardSelected ? root.controlButtonActive : root.controlButtonSurface
+                            border.width: keyboardSelected ? 1 : 0; border.color: Appearance.buttonSelectedBorder
+                            BounceMouseArea {
+                                id: notificationsCategoryCardMouse
+                                anchors.fill: parent; acceptedButtons: Qt.NoButton
+                                cursorShape: Qt.PointingHandCursor; hoverEnabled: false; outlineEnabled: false
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardLeftHandler: function(event) { root.focusMenuItem(notificationsCategoryIcon); event.accepted = true }
+                                keyboardEnterHandler: function() { root.focusMenuItem(notificationsCategorySlider); root.editingMenuSlider = notificationsCategorySlider }
+                                Accessible.name: "Notificações"
+                            }
+                            RadioIconButton {
+                                id: notificationsCategoryIcon
+                                x: Appearance.menuIconInset; y: Appearance.menuIconInset
+                                iconName: "bell"; powered: root.notificationsVolumeValue > 0
+                                showOutline: activeFocus && root.menuKeyboardNavigation
+                                actionLabel: root.notificationsVolumeValue > 0 ? "Silenciar notificações" : "Reativar notificações"
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardRightTarget: notificationsCategorySlider
+                                onActivated: root.toggleCategoryMute("notifications")
+                            }
+                            Text { anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.top: parent.top; anchors.topMargin: 12
+                                text: "Notificações"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                            Text { anchors.right: parent.right; anchors.rightMargin: 14; anchors.top: parent.top; anchors.topMargin: 12
+                                text: root.notificationsVolumeValue + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                            MenuSlider {
+                                id: notificationsCategorySlider
+                                focusBorderColor: Appearance.buttonSelectedBorder
+                                keyboardLeftTarget: notificationsCategoryIcon
+                                anchors.left: parent.left; anchors.leftMargin: 16; anchors.right: parent.right; anchors.rightMargin: 14
+                                anchors.bottom: parent.bottom; anchors.bottomMargin: 7
+                                height: 28; from: 0; to: 100; stepSize: 1; activeFocusOnTab: true
+                                Accessible.name: "Volume de notificações"
+                                onKeyboardValueChanged: value => root.setCategoryVolume("notifications", value)
+                                onMoved: if (pressed) root.notificationsVolumeValue = Math.round(value)
+                                onPressedChanged: if (!pressed) root.setCategoryVolume("notifications", value)
+                                Binding { target: notificationsCategorySlider; property: "value"; value: root.notificationsVolumeValue; when: !notificationsCategorySlider.pressed }
+                                background: Rectangle {
+                                    x: notificationsCategorySlider.leftPadding; y: notificationsCategorySlider.topPadding + notificationsCategorySlider.availableHeight / 2 - height / 2
+                                    width: notificationsCategorySlider.availableWidth; height: 5; radius: 3; color: root.controlButtonOutline
+                                    Rectangle { width: notificationsCategorySlider.visualPosition * parent.width; height: parent.height; radius: 3; color: root.textMain }
+                                }
+                                handle: Item { width: 0; height: 0 }
+                            }
+                        }
                     }
 
                     Column {
                         visible: root.renderedControls.controlsMicrophoneOpen
                         width: parent.width; spacing: 8
-                        MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("microphone") }
+                        MenuButton { id: microphoneBackButton; iconName: "chevron-left"; label: "Voltar a som e brilho"; onActivated: root.openControlSection("microphone") }
                         Text { renderType: Text.QtRendering; leftPadding: Appearance.menuTitleInset; text: "Microfone"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: Appearance.titleSize; font.weight: Font.DemiBold }
                     }
                     Column {
                         width: parent.width; spacing: 8; visible: root.renderedControls.controlsMicrophoneOpen
                         Rectangle {
+                            readonly property bool keyboardSelected: root.menuKeyboardNavigation
+                                && (microphoneDetailCardMouse.activeFocus || microphoneDetailIcon.activeFocus || microphoneSlider.activeFocus)
                             width: parent.width; height: 80; radius: Appearance.menuActionRadius
-                            color: root.controlButtonSurface; border.width: 0; border.color: root.controlButtonOutline
+                            color: keyboardSelected ? root.controlButtonActive : root.controlButtonSurface
+                            border.width: keyboardSelected ? 1 : 0; border.color: Appearance.buttonSelectedBorder
+                            BounceMouseArea {
+                                id: microphoneDetailCardMouse
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: false
+                                outlineEnabled: false
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardLeftHandler: function(event) {
+                                    root.menuKeyboardNavigation = true
+                                    root.focusMenuItem(microphoneDetailIcon)
+                                    event.accepted = true
+                                }
+                                keyboardEnterHandler: function() {
+                                    root.menuKeyboardNavigation = true
+                                    root.focusMenuItem(microphoneSlider)
+                                    root.editingMenuSlider = microphoneSlider
+                                }
+                                Accessible.name: "Volume do microfone"
+                            }
                             RadioIconButton {
-                                x: 6; y: 3
+                                id: microphoneDetailIcon
+                                x: Appearance.menuIconInset; y: Appearance.menuIconInset
+                                showOutline: activeFocus && root.menuKeyboardNavigation
                                 iconName: root.microphoneMuted ? "mic-off" : "mic"
+                                navigationHandler: root.navigateGenericMenu
+                                keyboardRightTarget: microphoneSlider
                                 powered: !root.microphoneMuted; busy: localActionProcess.running
                                 actionLabel: root.microphoneMuted ? "Reativar microfone" : "Silenciar microfone"
                                 onActivated: root.toggleMicrophoneMute()
                             }
-                            Text { renderType: Text.QtRendering; anchors.left: parent.left; anchors.leftMargin: 50; anchors.top: parent.top; anchors.topMargin: 12; text: root.microphoneMuted ? "Microfone silenciado" : "Volume de entrada"; color: root.microphoneMuted ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+                            Text { renderType: Text.QtRendering; anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.top: parent.top; anchors.topMargin: 12; text: root.microphoneMuted ? "Microfone silenciado" : "Volume de entrada"; color: root.microphoneMuted ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                             Text { renderType: Text.QtRendering; anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 12; text: Math.round(microphoneSlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
                             MenuSlider {
                                 id: microphoneSlider
+                                focusBorderColor: Appearance.buttonSelectedBorder
+                                keyboardLeftTarget: microphoneDetailIcon
                                 onKeyboardValueChanged: (nextValue) => root.commitMicrophoneVolume(nextValue)
                                 anchors.left: parent.left; anchors.leftMargin: 16; anchors.right: parent.right; anchors.rightMargin: 14
                                 anchors.bottom: parent.bottom; anchors.bottomMargin: 7
@@ -7529,8 +7892,8 @@ ShellRoot {
                                 Binding { target: microphoneSlider; property: "value"; value: root.microphoneVolume; when: !microphoneSlider.pressed }
                                 background: Rectangle {
                                     x: microphoneSlider.leftPadding; y: microphoneSlider.topPadding + microphoneSlider.availableHeight / 2 - height / 2
-                                    width: microphoneSlider.availableWidth; height: 5; radius: 3; color: microphoneSlider.keyboardEditing ? Qt.darker(root.cyan, 2.5) : root.controlButtonOutline
-                                    Rectangle { width: microphoneSlider.visualPosition * parent.width; height: parent.height; radius: 3; color: microphoneSlider.keyboardEditing ? root.cyan : (root.microphoneMuted ? root.textDim : root.textMain) }
+                                    width: microphoneSlider.availableWidth; height: 5; radius: 3; color: root.controlButtonOutline
+                                    Rectangle { width: microphoneSlider.visualPosition * parent.width; height: parent.height; radius: 3; color: root.microphoneMuted ? root.textDim : root.textMain }
                                 }
                                 handle: Item { width: 0; height: 0 }
                             }

@@ -21,6 +21,23 @@ def load_daemon():
 
 
 class HostServicesV3PhysicalTests(unittest.TestCase):
+    def test_bluetooth_orders_named_and_stronger_devices_without_per_device_reads(self):
+        subject = load_daemon()
+        catalogue = "Device 11:11:11:11:11:11 11-11-11-11-11-11\nDevice 22:22:22:22:22:22 Headphones\nDevice 33:33:33:33:33:33 Keyboard\n"
+        calls = []
+
+        def fake_run(arguments, timeout=10):
+            calls.append(arguments)
+            output = catalogue if arguments == ("/usr/bin/bluetoothctl", "devices") else ""
+            return SimpleNamespace(returncode=0, stdout=output)
+
+        with mock.patch.object(subject, "run", side_effect=fake_run), \
+                mock.patch.object(subject, "_bluetooth_signals", return_value={"22:22:22:22:22:22": -70, "33:33:33:33:33:33": -40}), \
+                mock.patch.object(subject.Path, "exists", return_value=True):
+            devices = subject.bluetooth_state()["devices"]
+        self.assertEqual([item["name"] for item in devices], ["Keyboard", "Headphones", "11-11-11-11-11-11"])
+        self.assertFalse(any(arguments[:2] == ("/usr/bin/bluetoothctl", "info") for arguments in calls))
+
     def test_daemon_uses_peer_auth_typed_operations_and_no_secret_argv_or_tempfile(self):
         source = DAEMON.read_text(); compile(source, str(DAEMON), "exec")
         for required in ('SOCKET = Path("/run/apx/host-services-v3.sock")', "authorize_shared_service_peer",

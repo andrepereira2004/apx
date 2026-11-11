@@ -489,13 +489,11 @@ hl.window_rule({
     border_size = 2,
 })
 
--- Animate Rofi entrance/exit only; internal mode changes remain immediate.
--- QuickShell menus animate internally and retain their own content transition.
+-- Show Rofi immediately; its cold-start work can stall a layer animation.
 hl.layer_rule({
     name = "apx-rofi-menu-motion",
     match = { namespace = "^rofi$" },
-    animation = "slide bottom",
-    no_anim = false,
+    no_anim = true,
 })
 hl.window_rule({
     name = "apx-thunar-modal-dialogs",
@@ -523,6 +521,16 @@ hl.window_rule({
     animation = "popin 94%",
 })
 
+hl.window_rule({
+    name = "apx-screen-share-picker",
+    match = { class = "^hyprland-share-picker$" },
+    float = true,
+    center = true,
+    size = { "640", "500" },
+    no_anim = false,
+    animation = "popin 94%",
+})
+
 -- Toggle workspace labels while keeping their icon in the bar.
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell -c apx ipc call host toggleWorkspaces"))
 
@@ -543,7 +551,7 @@ if gestureChoiceFile then
 end
 
 -- Smooth fractional scaling for legacy X11 applications such as the Launcher.
-hl.config({xwayland={use_nearest_neighbor=false}})
+hl.config({xwayland={use_nearest_neighbor=false,force_zero_scaling=true}})
 
 -- Optional Environment-local native X11 density, enabled by compatible app wrappers.
 local x11Density = "/home/apx/.config/hypr/apx-x11-density.lua"

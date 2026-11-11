@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "package": "deckcraft",
+  "filename": "deckcraft-0.16.0-4-x86_64.pkg.tar.zst",
+  "sha256": "eaf66156fecd15c326cdbfc446b779bd68f2cd4bf156cf96fc29e1911c3a56df",
+  "upstream_archive_sha256": "eed572b2f62395d0f5cfe246a728189651e95e4ecdf4c3e0ad87b77a3831e086",
+  "upstream_url": "https://github.com/storytold/deckcraft/releases/download/v0.16.0/deckcraft-0.16.0-linux-x86_64.tar.gz",
+  "managed_update": true,
+  "display_backend": "x11-native-resolution",
+  "clipboard_fix_pr": "https://github.com/storytold/deckcraft/pull/1658",
+  "winit_x11_scale_factor": 1.25
+}

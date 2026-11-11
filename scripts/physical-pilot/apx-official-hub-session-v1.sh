@@ -18,6 +18,7 @@ readonly AUDIO_CONTROL=${APX_AUDIO_CONTROL_DEVICE:?}
 readonly AUDIO_PLAYBACK=${APX_AUDIO_PLAYBACK_DEVICE:?}
 readonly AUDIO_CAPTURE=${APX_AUDIO_CAPTURE_DEVICE:?}
 readonly AUDIO_TIMER=${APX_AUDIO_TIMER_DEVICE:?}
+readonly AUDIO_DISPLAY_CONTROL=${APX_AUDIO_DISPLAY_CONTROL_DEVICE:-}
 readonly GPU_POLICY=${APX_GPU_POLICY:?}
 readonly DISPLAY_CARD=${APX_DISPLAY_CARD:?}
 readonly DISPLAY_RENDER=${APX_DISPLAY_RENDER:?}
@@ -89,13 +90,67 @@ fi
 
 audio_card=${AUDIO_CONTROL##*C}
 [[ $audio_card =~ ^[0-9]+$ ]]
+# Raw ALSA capture bypasses desktop mixer policy. A freshly initialized card can
+# expose a PipeWire source while the hardware Capture control is 0/off.
+# Initialize that control once per graphical session; PipeWire still owns the
+# user's normal mute and input-volume settings.
+if [[ $SESSION_MODE == desktop ]]; then
+  /usr/bin/python3 - "$audio_card" <<'APX_ALSA_CAPTURE_INIT'
+import ctypes, sys
+card = sys.argv[1]
+assert card.isdecimal()
+a = ctypes.CDLL('libasound.so.2')
+def bind(name, args):
+ f=getattr(a,name); f.argtypes=args; f.restype=ctypes.c_int; return f
+P=ctypes.c_void_p; I=ctypes.c_int; L=ctypes.c_long; S=ctypes.c_char_p
+open_mixer=bind('snd_mixer_open',[ctypes.POINTER(P),I]);attach=bind('snd_mixer_attach',[P,S]);register=bind('snd_mixer_selem_register',[P,P,P]);load=bind('snd_mixer_load',[P]);close=bind('snd_mixer_close',[P]);id_malloc=bind('snd_mixer_selem_id_malloc',[ctypes.POINTER(P)]);id_free=bind('snd_mixer_selem_id_free',[P]);set_index=bind('snd_mixer_selem_id_set_index',[P,I]);set_index.restype=None;set_name=bind('snd_mixer_selem_id_set_name',[P,S]);set_name.restype=None;find=bind('snd_mixer_find_selem',[P,P]);find.restype=P
+get_range=bind('snd_mixer_selem_get_capture_volume_range',[P,ctypes.POINTER(L),ctypes.POINTER(L)]);get_range.restype=None;get_volume=bind('snd_mixer_selem_get_capture_volume',[P,I,ctypes.POINTER(L)]);get_switch=bind('snd_mixer_selem_get_capture_switch',[P,I,ctypes.POINTER(I)]);set_volume=bind('snd_mixer_selem_set_capture_volume_all',[P,L]);set_switch=bind('snd_mixer_selem_set_capture_switch_all',[P,I])
+def check(n):
+ if n<0:raise RuntimeError(f'ALSA error {n}')
+m=P();sid=P();check(open_mixer(ctypes.byref(m),0))
+try:
+ check(attach(m,f'hw:{card}'.encode()));check(register(m,None,None));check(load(m));check(id_malloc(ctypes.byref(sid)))
+ set_index(sid,0);set_name(sid,b'Capture');e=find(m,sid)
+ if not e:raise RuntimeError('Capture mixer control missing')
+ low=L();high=L();get_range(e,ctypes.byref(low),ctypes.byref(high))
+ left=L();right=L();switch=I();check(get_volume(e,0,ctypes.byref(left)));check(get_volume(e,1,ctypes.byref(right)));check(get_switch(e,0,ctypes.byref(switch)))
+ if left.value<=low.value and right.value<=low.value:
+  target=low.value+round((high.value-low.value)*0.7);check(set_volume(e,target))
+ if not switch.value:check(set_switch(e,1))
+ print(f'APX ALSA capture ready on card {card}: volume={left.value}/{high.value}, enabled={switch.value}', flush=True)
+finally:
+ if sid:id_free(sid)
+ close(m)
+APX_ALSA_CAPTURE_INIT
+fi
+
+display_audio_card=
+if [[ -n $AUDIO_DISPLAY_CONTROL ]]; then
+  [[ $AUDIO_DISPLAY_CONTROL =~ ^/dev/snd/controlC[0-9]+$ && -c $AUDIO_DISPLAY_CONTROL ]]
+  [[ $(stat -Lc '%t' "$AUDIO_DISPLAY_CONTROL") == 74 ]]
+  display_audio_card=${AUDIO_DISPLAY_CONTROL##*C}
+  [[ $display_audio_card != "$audio_card" ]]
+fi
 install -d -m 0700 -o 1000 -g 1000 "$RUNTIME/config/pipewire/pipewire.conf.d"
 audio_fragment="$RUNTIME/config/pipewire/pipewire.conf.d/99-apx-exact-analog.conf"
+{
 printf '%s\n' \
   'context.objects = [' \
   "  { factory = adapter args = { factory.name = api.alsa.pcm.sink node.name = apx_internal_output node.description = \"APX Internal Output\" media.class = \"Audio/Sink\" api.alsa.path = \"hw:${audio_card},0\" audio.channels = 2 audio.position = [ FL FR ] } }" \
-  "  { factory = adapter args = { factory.name = api.alsa.pcm.source node.name = apx_internal_microphone node.description = \"APX Internal Microphone\" media.class = \"Audio/Source\" api.alsa.path = \"hw:${audio_card},0\" audio.channels = 2 audio.position = [ FL FR ] } }" \
-  ']' > "$audio_fragment"
+  "  { factory = adapter args = { factory.name = api.alsa.pcm.source node.name = apx_internal_microphone node.description = \"APX Internal Microphone\" media.class = \"Audio/Source\" api.alsa.path = \"hw:${audio_card},0\" audio.channels = 2 audio.position = [ FL FR ] } }"
+if [[ -n $display_audio_card ]]; then
+  for index in {0..15}; do
+    variable="APX_AUDIO_DISPLAY_PLAYBACK_${index}_DEVICE"
+    playback=${!variable:-}
+    [[ -n $playback ]] || continue
+    [[ $playback =~ ^/dev/snd/pcmC[0-9]+D[0-9]+p$ && -c $playback ]]
+    [[ $playback =~ ^/dev/snd/pcmC${display_audio_card}D([0-9]+)p$ ]]
+    device=${BASH_REMATCH[1]}
+    printf '  { factory = adapter args = { factory.name = api.alsa.pcm.sink node.name = apx_display_output_%s node.description = "Monitor HDMI/DisplayPort %s" media.class = "Audio/Sink" api.alsa.path = "hw:%s,%s" audio.channels = 2 audio.position = [ FL FR ] } }\n' "$device" "$device" "$display_audio_card" "$device"
+  done
+fi
+printf '%s\n' ']'
+} > "$audio_fragment"
 chown 1000:1000 "$audio_fragment"
 chmod 0600 "$audio_fragment"
 

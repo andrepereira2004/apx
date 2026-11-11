@@ -1,0 +1,36 @@
+diff --git a/src/portals/Screencopy.cpp b/src/portals/Screencopy.cpp
+index 34af332..d627603 100644
+--- a/src/portals/Screencopy.cpp
++++ b/src/portals/Screencopy.cpp
+@@ -9,6 +9,8 @@
+ #include <pipewire/pipewire.h>
+ #include "linux-dmabuf-v1.hpp"
+ #include <unistd.h>
++#include <chrono>
++#include <thread>
+ 
+ constexpr static int MAX_RETRIES        = 10;
+ constexpr static int MAX_DMABUF_RETRIES = 2;
+@@ -317,6 +319,22 @@ void CScreencopyPortal::startSharing(CScreencopyPortal::SSession* pSession) {
+     wl_display_dispatch(g_pPortalManager->m_sWaylandConnection.display);
+     wl_display_roundtrip(g_pPortalManager->m_sWaylandConnection.display);
+ 
++    // A frame can arrive on a later compositor repaint than the first sync.
++    // Wait for its format before advertising a PipeWire stream.
++    for (int attempt = 0; attempt < 100 && pSession->sharingData.frameInfoDMA.fmt == DRM_FORMAT_INVALID &&
++                          pSession->sharingData.frameInfoSHM.fmt == DRM_FORMAT_INVALID;
++         ++attempt) {
++        std::this_thread::sleep_for(std::chrono::milliseconds(10));
++        if (wl_display_roundtrip(g_pPortalManager->m_sWaylandConnection.display) < 0)
++            break;
++    }
++
++    if (pSession->sharingData.frameInfoDMA.fmt == DRM_FORMAT_INVALID && pSession->sharingData.frameInfoSHM.fmt != DRM_FORMAT_INVALID) {
++        pSession->sharingData.frameInfoDMA.fmt = pSession->sharingData.frameInfoSHM.fmt;
++        pSession->sharingData.frameInfoDMA.w = pSession->sharingData.frameInfoSHM.w;
++        pSession->sharingData.frameInfoDMA.h = pSession->sharingData.frameInfoSHM.h;
++    }
++
+     if (pSession->sharingData.frameInfoDMA.fmt == DRM_FORMAT_INVALID) {
+         Debug::log(ERR, "[screencopy] Couldn't obtain a format from dma"); // todo: blocks shm
+         return;

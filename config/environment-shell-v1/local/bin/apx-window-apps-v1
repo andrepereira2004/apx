@@ -426,6 +426,10 @@ def catalog():
             1 if klass in WINDOW_CLASS_ALIASES.get(item['id'], ()) else
             2 if klass == item['id'].rsplit('.', 1)[-1].casefold() else 3
         ), default=None)
+        # The upload/save chooser is the file-manager surface in the window list.
+        # Reuse Thunar's catalogue entry so its label and resolved icon match.
+        if app is None and klass == 'xdg-desktop-portal-gtk':
+            app = apps.get('thunar')
         if app is None:
             name, icon = WINDOW_PRESENTATION.get(klass, (str(window.get('initialClass') or window.get('class')), klass))
             app = apps.setdefault('window:' + klass, {'id': '', 'name': name,

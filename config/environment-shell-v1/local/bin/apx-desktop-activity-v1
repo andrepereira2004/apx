@@ -84,6 +84,61 @@ def watch_media():
 
 
 NOTIFICATION_STORE = Path.home() / '.local/state/apx/notifications-v1.json'
+MUTE_DURATIONS = {'15m': 900, '1h': 3600, '6h': 21600, '24h': 86400, 'forever': None}
+
+
+def notification_scope(note, level):
+    app = str(note.get('desktop_entry') or note.get('app') or '').casefold()
+    if level == 'app':
+        return ['app', app]
+    thread = str(note.get('thread_key') or note.get('title') or '').casefold()
+    if not thread:
+        raise ValueError('Esta notificação não identifica uma conversa ou remetente.')
+    return ['thread', app, thread]
+
+
+def active_mute(store, note):
+    now = time.time()
+    scopes = [notification_scope(note, 'app')]
+    if note.get('thread_key') or note.get('title'):
+        scopes.append(notification_scope(note, 'thread'))
+    return next((rule for rule in store.get('mutes', [])
+                 if (rule.get('until') is None or rule['until'] > now)
+                 and rule.get('scope') in scopes), None)
+
+
+def set_notification_mute(raw_id, level, duration):
+    if not re.fullmatch(r'[0-9]{1,10}', raw_id or '') or level not in ('app', 'thread') or duration not in (*MUTE_DURATIONS, 'off'):
+        raise ValueError('Silenciamento inválido.')
+    notes, _ = notifications()
+    note = next((n for n in notes if n['id'] == int(raw_id)), None)
+    if not note:
+        raise ValueError('Esta notificação já não está disponível.')
+    scope = notification_scope(note, level)
+    with notification_store() as store:
+        store['mutes'] = [rule for rule in store.get('mutes', []) if rule.get('scope') != scope]
+        if duration != 'off':
+            seconds = MUTE_DURATIONS[duration]
+            label = note.get('app', 'Aplicação') if level == 'app' else note.get('title') or note.get('thread_key')
+            store['mutes'].append(dict(scope=scope, label=str(label)[:300],
+                                       until=time.time() + seconds if seconds else None))
+
+
+def notification_mutes():
+    with notification_store() as store:
+        return [rule for rule in store.get('mutes', [])
+                if rule.get('until') is None or rule['until'] > time.time()]
+
+
+def unmute_notification_scope(raw_scope):
+    try: scope = json.loads(raw_scope)
+    except (ValueError, TypeError): raise ValueError('Silenciamento inválido.')
+    if (not isinstance(scope, list) or len(scope) not in (2, 3)
+            or scope[0] not in ('app', 'thread') or (scope[0] == 'app') != (len(scope) == 2)
+            or any(not isinstance(value, str) or not 0 < len(value) <= 300 for value in scope[1:])):
+        raise ValueError('Silenciamento inválido.')
+    with notification_store() as store:
+        store['mutes'] = [rule for rule in store.get('mutes', []) if rule.get('scope') != scope]
 
 
 def desktop_entries_by_name():
@@ -136,7 +191,7 @@ def notification_store():
             if not isinstance(data.get('records'), list) or type(data.get('next_id')) is not int:
                 raise ValueError('Invalid history')
         except (OSError, ValueError, TypeError, AttributeError):
-            data = dict(next_id=1, records=[])
+            data = dict(next_id=1, records=[], mutes=[])
         before = json.dumps(data, sort_keys=True, ensure_ascii=False)
         yield data
         encoded = json.dumps(data, sort_keys=True, ensure_ascii=False)
@@ -182,6 +237,9 @@ def notifications():
                                     can_open=(action == 'list' and 'default' in (item.get('actions') or {}))
                                     or bool(desktop_entry)))
     with notification_store() as store:
+        store['mutes'] = [rule for rule in store.get('mutes', [])
+                          if isinstance(rule, dict) and isinstance(rule.get('scope'), list)
+                          and (rule.get('until') is None or isinstance(rule.get('until'), (int, float)) and rule['until'] > time.time())]
         by_key = {(r['owner'], r['mako_id']): r for r in store['records']}
         for record in store['records']:
             if record.get('app') == 'APX Captura':
@@ -198,8 +256,15 @@ def notifications():
                 store['next_id'] += 1
                 store['records'].append(record)
             record.update(note)
+            record['muted'] = bool(active_mute(store, record))
         store['records'] = sorted(store['records'], key=lambda n: n['id'], reverse=True)[:200]
-        notes = [dict(n) for n in store['records'] if not n.get('read', False)]
+        notes = []
+        for record in store['records']:
+            record['muted'] = bool(active_mute(store, record))
+            record['muted_app'] = any(rule.get('scope') == notification_scope(record, 'app') for rule in store['mutes'])
+            record['muted_thread'] = bool(record.get('thread_key') or record.get('title')) and any(
+                rule.get('scope') == notification_scope(record, 'thread') for rule in store['mutes'])
+            if not record.get('read', False): notes.append(dict(record))
     return notes, len(notes)
 
 
@@ -263,7 +328,7 @@ def notification_action(action, raw_id=None):
 
 def status():
     notes,count=notifications()
-    return dict(players=players(),notifications=notes,active_notifications=count)
+    return dict(players=players(),notifications=notes,active_notifications=count,mutes=notification_mutes())
 
 
 def main(args):
@@ -272,14 +337,22 @@ def main(args):
     if args==['get']:pass
     elif args==['get-notifications']:
         notes,count=notifications()
-        print(json.dumps(dict(notifications=notes,active_notifications=count),ensure_ascii=False));return
+        print(json.dumps(dict(notifications=notes,active_notifications=count,mutes=notification_mutes()),ensure_ascii=False));return
     elif args==['get-media']:
         print(json.dumps(dict(players=players()),ensure_ascii=False));return
     elif len(args) in (2,3) and args[0]=='notification':
+        if args[1] == 'unmute' and len(args) == 3:
+            unmute_notification_scope(args[2])
+            notes,count=notifications()
+            print(json.dumps(dict(notifications=notes,active_notifications=count,mutes=notification_mutes()),ensure_ascii=False));return
         if (args[1] == 'read-all') != (len(args) == 2): raise ValueError('Ação de notificação inválida.')
         notification_action(args[1], args[2] if len(args) == 3 else None)
         notes,count=notifications()
-        print(json.dumps(dict(notifications=notes,active_notifications=count),ensure_ascii=False));return
+        print(json.dumps(dict(notifications=notes,active_notifications=count,mutes=notification_mutes()),ensure_ascii=False));return
+    elif len(args)==5 and args[:2]==['notification', 'mute']:
+        set_notification_mute(args[2], args[3], args[4])
+        notes,count=notifications()
+        print(json.dumps(dict(notifications=notes,active_notifications=count,mutes=notification_mutes()),ensure_ascii=False));return
     elif len(args)==3 and args[0]=='media':
         name,action=args[1:]
         if not re.fullmatch(r'org\.mpris\.MediaPlayer2\.[A-Za-z0-9_.-]{1,200}',name):raise ValueError('Reprodutor inválido.')

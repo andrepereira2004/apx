@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+"""Persist per-role PipeWire stream volumes inside one APX Environment."""
+import fcntl
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile
+from contextlib import contextmanager
+from pathlib import Path
+
+
+STATE = Path.home() / '.local/state/apx/audio-categories-v1.json'
+ROLES = {'media', 'notifications'}
+NOTIFICATION_ROLES = {'notification', 'event', 'alert'}
+
+
+def category(node):
+    if not isinstance(node, dict) or node.get('type') != 'PipeWire:Interface:Node':
+        return None
+    props = (node.get('info') or {}).get('props') or {}
+    if props.get('media.class') != 'Stream/Output/Audio':
+        return None
+    role = str(props.get('media.role') or '').casefold()
+    return 'notifications' if role in NOTIFICATION_ROLES else 'media'
+
+
+def streams(nodes):
+    result = {}
+    for node in nodes:
+        kind = category(node)
+        ident = node.get('id') if isinstance(node, dict) else None
+        serial = ((node.get('info') or {}).get('props') or {}).get('object.serial') if isinstance(node, dict) else None
+        if kind and type(ident) is int and ident >= 0 and serial is not None:
+            result[str(serial)] = (ident, kind)
+    return result
+
+
+def graph():
+    result = subprocess.run(['/usr/bin/pw-dump'], capture_output=True, text=True, check=True, timeout=3)
+    nodes = json.loads(result.stdout)
+    if not isinstance(nodes, list):
+        raise ValueError('Grafo de áudio inválido.')
+    return streams(nodes)
+
+
+@contextmanager
+def state():
+    STATE.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if STATE.is_symlink() or STATE.with_suffix('.lock').is_symlink():
+        raise ValueError('Estado de áudio inválido.')
+    fd = os.open(STATE.with_suffix('.lock'), os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, 'r+') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            data = json.loads(STATE.read_text())
+            if not isinstance(data.get('levels'), dict) or not isinstance(data.get('seen'), dict):
+                raise ValueError('Estado de áudio inválido.')
+        except (OSError, ValueError, TypeError, AttributeError):
+            data = {'levels': {}, 'seen': {}}
+        before = json.dumps(data, sort_keys=True)
+        yield data
+        if json.dumps(data, sort_keys=True) != before:
+            fd, temporary = tempfile.mkstemp(prefix='.audio-', dir=STATE.parent)
+            try:
+                with os.fdopen(fd, 'w') as output:
+                    json.dump(data, output, sort_keys=True)
+                    output.write('\n')
+                os.replace(temporary, STATE)
+            finally:
+                Path(temporary).unlink(missing_ok=True)
+
+
+def apply(data, active, changed=None):
+    data['seen'] = {serial: kind for serial, (_, kind) in active.items()
+                    if data['seen'].get(serial) == kind and kind != changed}
+    for serial, (ident, kind) in active.items():
+        if kind not in data['levels'] or serial in data['seen']:
+            continue
+        level = data['levels'][kind]
+        result = subprocess.run(['/usr/bin/wpctl', 'set-volume', '-l', '1', str(ident), f'{level}%'],
+                                capture_output=True, text=True, timeout=3)
+        if result.returncode == 0:
+            data['seen'][serial] = kind
+
+
+def main(args):
+    if args != ['sync'] and (len(args) != 3 or args[0] != 'set' or args[1] not in ROLES
+                             or not re.fullmatch(r'(?:100|[0-9]{1,2})', args[2])):
+        raise ValueError('Controlo de volume inválido.')
+    changed = args[1] if args[0] == 'set' else None
+    with state() as data:
+        if changed:
+            data['levels'][changed] = int(args[2])
+        try: active = graph()
+        except (OSError, ValueError, subprocess.SubprocessError): active = {}
+        apply(data, active, changed)
+        print(json.dumps({'levels': data['levels']}))
+
+
+if __name__ == '__main__':
+    try:
+        main(sys.argv[1:])
+    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        print(error, file=sys.stderr)
+        sys.exit(1)

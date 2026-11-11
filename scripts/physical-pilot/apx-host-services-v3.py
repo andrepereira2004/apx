@@ -289,6 +289,29 @@ def _bluetooth_addresses(kind: str) -> set[str]:
             if (match := re.match(r"^Device\s+((?:[0-9A-F]{2}:){5}[0-9A-F]{2})(?:\s|$)", line))}
 
 
+def _bluetooth_named(name: str, address: str) -> bool:
+    return bool(name.strip()) and name.replace("-", ":").upper() != address
+
+
+def _bluetooth_signals() -> dict[str, int]:
+    result = run(("/usr/bin/busctl", "--json=short", "call", "org.bluez", "/",
+                  "org.freedesktop.DBus.ObjectManager", "GetManagedObjects"), timeout=2)
+    if result.returncode:
+        return {}
+    try:
+        objects = json.loads(result.stdout)["data"][0]
+        signals = {}
+        for path, interfaces in objects.items():
+            device = interfaces.get("org.bluez.Device1", {})
+            address = device.get("Address", {}).get("data")
+            rssi = device.get("RSSI", {}).get("data")
+            if type(address) is str and type(rssi) is int:
+                signals[address] = rssi
+        return signals
+    except (KeyError, IndexError, AttributeError, TypeError, ValueError):
+        return {}
+
+
 def bluetooth_state() -> dict[str, object]:
     active = run(("/usr/bin/systemctl", "is-active", "--quiet", "bluetooth.service")).returncode == 0
     show = run(("/usr/bin/bluetoothctl", "show")) if active else None
@@ -296,20 +319,26 @@ def bluetooth_state() -> dict[str, object]:
     paired = _bluetooth_addresses("Paired") if active else set()
     connected = _bluetooth_addresses("Connected") if active else set()
     trusted = _bluetooth_addresses("Trusted") if active else set()
+    signals = _bluetooth_signals() if active else {}
     devices = []
     catalogue = run(("/usr/bin/bluetoothctl", "devices")).stdout if active else ""
     for line in catalogue.splitlines():
         match = re.match(r"^Device\s+((?:[0-9A-F]{2}:){5}[0-9A-F]{2})\s+(.+)$", line)
         if match:
+            address, name = match.group(1), match.group(2)[:128]
             devices.append({"address": match.group(1), "connected": match.group(1) in connected,
-                            "name": match.group(2)[:128], "paired": match.group(1) in paired,
-                            "trusted": match.group(1) in trusted})
+                            "name": name, "paired": match.group(1) in paired,
+                            "trusted": match.group(1) in trusted,
+                            "signal": signals.get(address)})
     return {"backend": "bluez" if active else "unavailable",
             "controller_present": Path("/sys/class/bluetooth/hci0").exists(),
             "discovering": bool(re.search(r"^\s*Discovering:\s+yes\s*$", text, re.MULTILINE)),
             "pairable": bool(re.search(r"^\s*Pairable:\s+yes\s*$", text, re.MULTILINE)),
             "powered": bool(re.search(r"^\s*Powered:\s+yes\s*$", text, re.MULTILINE)),
-            "devices": sorted(devices, key=lambda item: (not item["paired"], item["name"], item["address"]))}
+            "devices": sorted(devices, key=lambda item: (
+                not item["connected"], not _bluetooth_named(item["name"], item["address"]),
+                not item["paired"], -(item["signal"] if item["signal"] is not None else -999),
+                item["name"], item["address"]))}
 
 
 def bluetooth_soft_blocked() -> bool:

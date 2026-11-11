@@ -6,6 +6,25 @@ ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'config/environment-shell-v1/quickshell/apx/shell.qml'
 class BluetoothMenuTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which('node'),'Node required')
+    def test_wifi_pages_follow_signal_strength(self):
+        source=SOURCE.read_text()
+        functions=source[source.index('    function wifiAvailableNetworks()'):source.index('    function completeWifiConnection()')]
+        functions=functions.replace('property int wifiPage: 0','let wifiPage=0')
+        script='''const assert=require('node:assert/strict');
+const hostState={network_name:'current',available_networks:['weak','strong','mid','a','b','c','current'],network_details:[{ssid:'weak',signal:10},{ssid:'strong',signal:90},{ssid:'mid',signal:60},{ssid:'a',signal:50},{ssid:'b',signal:40},{ssid:'c',signal:30}]};
+const wifiDetails=name=>hostState.network_details.find(x=>x.ssid===name)||{signal:0};
+const menuFlick={stopWheel(){},contentY:0};
+'''+functions+'''
+assert.deepEqual(wifiPageNetworks(),['strong','mid','a','b','c']);
+changeWifiPage(1);
+assert.deepEqual(wifiPageNetworks(),['weak']);
+changeWifiPage(-1);
+assert.deepEqual(wifiPageNetworks(),['strong','mid','a','b','c']);
+'''
+        result=subprocess.run(['node','-e',script],capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+
+    @unittest.skipUnless(shutil.which('node'),'Node required')
     def test_device_groups_are_unique_disjoint_and_respect_radio_power(self):
         s=SOURCE.read_text();functions=s[s.index('    function bluetoothDevicesUnique()'):s.index('    function revealBluetoothForm()')]
         script='''const assert=require('node:assert/strict');
@@ -16,6 +35,8 @@ const hostState={bluetooth_devices:[{address:'A',paired:true,connected:true},{ad
 assert.deepEqual(bluetoothConnectedDevices().map(x=>x.address),['A','D']);
 assert.deepEqual(bluetoothKnownDevices().map(x=>x.address),['B']);
 assert.deepEqual(bluetoothAvailableDevices().map(x=>x.address),['C']);
+let bluetoothPage=0;
+assert.deepEqual(bluetoothPageDevices().map(x=>x.address),['A','B','C','D']);
 powered=false;
 assert.deepEqual(bluetoothConnectedDevices(),[]);assert.deepEqual(bluetoothKnownDevices(),[]);assert.deepEqual(bluetoothAvailableDevices(),[]);
 '''

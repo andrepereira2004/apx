@@ -9,6 +9,10 @@ Rectangle {
     property bool busy: false
     property bool cardHoverEnabled: true
     property bool cardOutlineEnabled: true
+    property bool showOutline: true
+    property var navigationHandler: null
+    property Item keyboardRightTarget: null
+    property Item keyboardDownTarget: null
     signal activated()
     width: Appearance.menuIconCircleSize; height: width; radius: width / 2
     antialiasing: true
@@ -20,13 +24,14 @@ Rectangle {
     border.width: 0
     ButtonOutline {
         outlineTarget: button
+        shown: button.showOutline
         selected: button.activeFocus || button.powered
         hovered: iconHover.hovered && button.enabled
     }
     MenuHover {
         parent: button.parent; z: 100
         enabled: button.cardHoverEnabled && button.enabled && !button.parent.children.some(child => child.keyboardActivationPending !== undefined)
-        outlineEnabled: button.cardOutlineEnabled
+        outlineEnabled: button.cardOutlineEnabled && button.showOutline
     }
     HoverHandler { id: iconHover; blocking: false }
     scale: mouse.pressed ? .94 : 1
@@ -42,11 +47,19 @@ Rectangle {
         opacity: button.powered ? 1 : .55
         Behavior on opacity { NumberAnimation { duration: 90 } }
     }
+    Keys.priority: Keys.BeforeItem
     Keys.onPressed: event => {
         if ([Qt.Key_Return, Qt.Key_Enter, Qt.Key_Space].indexOf(event.key) >= 0) {
             if (!event.isAutoRepeat) button.activated()
             event.accepted = true
-        }
+        } else if (event.key === Qt.Key_Right && button.keyboardRightTarget && button.keyboardRightTarget.enabled) {
+            button.keyboardRightTarget.forceActiveFocus(Qt.TabFocusReason)
+            event.accepted = true
+        } else if (event.key === Qt.Key_Down && button.keyboardDownTarget && button.keyboardDownTarget.enabled) {
+            button.keyboardDownTarget.forceActiveFocus(Qt.TabFocusReason)
+            event.accepted = true
+        } else if (button.navigationHandler && [Qt.Key_Tab, Qt.Key_Backtab, Qt.Key_Up, Qt.Key_Down, Qt.Key_Left, Qt.Key_Right].indexOf(event.key) >= 0)
+            button.navigationHandler(event)
     }
     MouseArea {
         id: mouse; anchors.fill: parent; hoverEnabled: true

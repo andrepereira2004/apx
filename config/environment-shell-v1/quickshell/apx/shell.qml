@@ -371,7 +371,7 @@ ShellRoot {
     readonly property int environmentPopupHeight: !isHub ? 214
         : (environmentCreateOpen ? (environmentSystemKind === "windows-native" && nativeCreationPreview.target ? 620 : 540) + (environmentManagementBusy ? 42 : 0)
            : (environmentEditOpen ? 430
-           : 200 + Math.max(1, Math.min(5, environmentCatalog.length)) * 51
+           : 200 + Math.max(1, environmentCatalog.length) * 51
              + (environmentDeleteConfirm ? 88 : 0) + (environmentManagementBusy ? 42 : 0)
              + (nativeWindowsRecoveryAvailable() ? 100 : 0) + (environmentManagementState.native_v3 ? (environmentManagementState.native_v3_delete_retry ? 180 : 130) : 0)))
     // APX queued main menu switch: never reveal a new page at the old anchor.
@@ -379,6 +379,10 @@ ShellRoot {
     property string popupKind: ""
     property Item popupTarget: null
     property real islandProgress: 0
+    function popupContentReveal(progress) {
+        var t = Math.max(0, Math.min(1, (progress - .16) / .74))
+        return t * t * (3 - 2 * t)
+    }
     property bool popupClosing: false
     property real islandContentOpacity: 1
     readonly property string menuRoute: [popupKind, controlsBrightnessOpen, controlsConnectivityOpen, controlsWifiOpen, controlsBluetoothOpen, controlsAudioOpen, controlsMicrophoneOpen, controlsMoreOpen, controlsAppearanceOpen, controlsActivityKind, shortcutsOpen, powerConfirmOpen, calendarView, calendarEditor, environmentCreateOpen, environmentEditOpen, environmentDeleteConfirm].join(":")
@@ -430,7 +434,7 @@ ShellRoot {
     property var controlPageCapture: null
     property rect outgoingPageRect: Qt.rect(0, 0, 0, 0)
     function controlDepth(state) {
-        if (state.controlsAppearanceOpen || state.shortcutsOpen || state.controlsActivityKind === "trackpad") return 2
+        if (state.controlsAppearanceOpen || state.shortcutsOpen || state.controlsActivityKind === "trackpad" || state.controlsActivityKind === "mouse") return 2
         if (state.controlsWifiOpen || state.controlsBluetoothOpen) return 2
         if (state.controlsMoreOpen || state.controlsConnectivityOpen || state.controlsBrightnessOpen || state.controlsAudioOpen || state.controlsMicrophoneOpen || state.controlsActivityKind) return 1
         return 0
@@ -450,6 +454,8 @@ ShellRoot {
         cancelControlTransition()
         controlPageRequestedRoute = menuRoute
         controlPageDirection = controlDepth(root) >= controlDepth(renderedControls) ? 1 : -1
+        // Keep a small amount of the live page visible through the swap.
+        // Capturing it to an image made the transition pause on this GPU.
         controlPageAnimation.restart()
         popupBackground.forceActiveFocus()
         Qt.callLater(function() {
@@ -927,7 +933,7 @@ ShellRoot {
     }
 
     function navigateGenericMenu(event) {
-        if (controlPageAnimation.running || controlPageCapturing) {
+        if (controlPageAnimation.running || controlPageCapturing || batteryPageAnimation.running) {
             if (event.key === Qt.Key_Left && root.popupKind === "controls") root.pendingControlLeft = true
             event.accepted = true
             return
@@ -1021,7 +1027,7 @@ ShellRoot {
         repeat: true
         running: popup.open && root.menuKeyboardNavigation && root.popupKind !== "calendar" && (root.popupKind !== "environments" || !root.isHub)
         onTriggered: {
-            if (controlPageAnimation.running || controlPageCapturing) return
+            if (controlPageAnimation.running || controlPageCapturing || batteryPageAnimation.running) return
             // The action temporarily disables its button; let it regain focus.
             if (root.focusedMenuItem && root.focusedMenuItem.visible && root.focusedMenuItem.keyboardActivationPending === true) return
             var items = root.genericMenuItems()
@@ -1034,6 +1040,42 @@ ShellRoot {
     }
     property var hardwareProfile: ({ platform_profile: "unknown", gpu_profile: "unknown", requested_gpu_profile: "unknown", reboot_required: false })
     property bool batteryDetailsOpen: false
+    property bool batteryDisplayedDetailsOpen: false
+    property real batteryPageProgress: 1
+    property real batteryPageOffset: 0
+    property int batteryPageDirection: 1
+    onBatteryDetailsOpenChanged: {
+        if (!popup.open || popupKind !== "battery" || popupClosing || islandProgress < .99) {
+            batteryPageAnimation.stop()
+            batteryDisplayedDetailsOpen = batteryDetailsOpen
+            batteryPageProgress = 1
+            batteryPageOffset = 0
+            return
+        }
+        batteryPageDirection = batteryDetailsOpen ? 1 : -1
+        batteryPageAnimation.restart()
+    }
+    SequentialAnimation {
+        id: batteryPageAnimation
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "batteryPageProgress"; to: 0; duration: 90; easing.type: Easing.InQuad }
+            NumberAnimation { target: root; property: "batteryPageOffset"; to: -root.batteryPageDirection * 10; duration: 90; easing.type: Easing.InQuad }
+        }
+        ScriptAction { script: {
+            root.batteryDisplayedDetailsOpen = root.batteryDetailsOpen
+            menuFlick.contentY = 0
+            root.batteryPageOffset = root.batteryPageDirection * 10
+        } }
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "batteryPageProgress"; to: 1; duration: 190; easing.type: Easing.OutCubic }
+            NumberAnimation { target: root; property: "batteryPageOffset"; to: 0; duration: 190; easing.type: Easing.OutCubic }
+        }
+        onFinished: Qt.callLater(function() {
+            if (!popup.open || root.popupClosing || !root.menuKeyboardNavigation) return
+            var items = root.genericMenuItems()
+            if (items.length) root.focusMenuItem(items[0])
+        })
+    }
     property bool hardwareBusy: false
     property string platformProfileTarget: ""
     property bool hardwareConfirmOpen: false
@@ -1154,6 +1196,16 @@ ShellRoot {
     property bool workspacesExpanded: true
     property bool ghostGreetingVisible: false
     Timer { id: ghostGreetingTimer; interval: 3000; onTriggered: root.ghostGreetingVisible = false }
+    Timer {
+        id: controlOpenWifiScanTimer
+        interval: 650
+        onTriggered: if (popup.open && root.popupKind === "controls") root.hostAction("wifi-scan")
+    }
+    Timer {
+        id: controlOpenRefreshTimer
+        interval: 280
+        onTriggered: if (popup.open && root.popupKind === "controls" && !root.popupClosing) root.refreshDynamicStatus()
+    }
     property int trackpadSensitivity: -30
     property string trackpadSensitivityError: ""
     property int mouseSensitivity: 0
@@ -2130,6 +2182,8 @@ ShellRoot {
         if (popupKind === "media" && mediaButton)
             mediaButton.beginHoverHandoff(popupBarPointer.containsMouse && popupBarPointer.hoveredBarTarget === mediaButton)
         popupClosing = true
+        controlOpenWifiScanTimer.stop()
+        controlOpenRefreshTimer.stop()
         cancelControlTransition()
         popupAnimationPending = false
         popupKeyboardRequested = false
@@ -2138,6 +2192,7 @@ ShellRoot {
     }
 
     function finishClosePopup() {
+        popupCloseAnimation.stop()
         ghostGreetingTimer.stop()
         ghostGreetingVisible = false
         var pending = pendingPopupRequest
@@ -2200,14 +2255,15 @@ ShellRoot {
                                        popupTarget.width, popupTarget.height)
             }
         }
-        islandContentOpacity = 0
-        islandContentAnimation.restart()
+        islandContentAnimation.stop()
+        islandContentOpacity = 1
         menuKeyboardNavigation = false
         menuNavigationColumn = NaN
         pendingMenuRevealItem = null
         environmentKeyboardFocus = false
         popup.open = true
-        root.refreshDynamicStatus()
+        if (root.popupKind === "controls") controlOpenRefreshTimer.restart()
+        else root.refreshDynamicStatus()
         popupAnimationPending = true
         // Set focus after the card is visible, including on the first opening.
         Qt.callLater(function() {
@@ -2272,7 +2328,8 @@ ShellRoot {
         if (!target) return
         if (popup.open && root.popupKind !== kind) {
             pendingPopupRequest = {kind: kind, target: target, keyboardRequested: keyboardRequested === true}
-            root.closePopup()
+            // Keyboard menu switches should not wait for the old close animation.
+            root.finishClosePopup()
             return
         }
         pendingPopupRequest = null
@@ -2283,7 +2340,13 @@ ShellRoot {
             root.selectedBar = targetBar
         }
         if (popupKind === kind && popup.open) {
-            if (popupClosing) return
+            if (popupClosing) {
+                popupCloseAnimation.stop()
+                pendingPopupRequest = null
+                popupKeyboardRequested = keyboardRequested === true
+                showPopup()
+                return
+            }
             popupKeyboardRequested = false
             animatedBarOpenKind = ""
             animatedBarCloseKind = kind
@@ -2314,9 +2377,13 @@ ShellRoot {
         popupTarget = target
         showPopup()
         if (kind === "controls")
-            hostAction("wifi-scan")
+            controlOpenWifiScanTimer.restart()
         if (kind === "battery") {
+            batteryPageAnimation.stop()
             batteryDetailsOpen = hardwareConfirmOpen || hardwareProfile.reboot_required === true
+            batteryDisplayedDetailsOpen = batteryDetailsOpen
+            batteryPageProgress = 1
+            batteryPageOffset = 0
             loadHardwareProfile()
         }
         if (kind === "environments" && root.isHub) {
@@ -5415,7 +5482,10 @@ ShellRoot {
                     root.cancelWifiPassword()
                 else if (root.popupKind === "calendar" && root.calendarEditor)
                     root.cancelCalendarEditor()
-                else
+                else if (root.popupKind === "battery" && root.batteryDetailsOpen && !root.hardwareConfirmOpen) {
+                    root.batteryDetailsOpen = false
+                    menuFlick.contentY = 0
+                } else
                     root.closePopup()
             }
         }
@@ -5463,7 +5533,7 @@ ShellRoot {
             width: Math.max(popupBackground.width, root.outgoingPageRect.width) + 56
             height: Math.max(popupBackground.height, root.outgoingPageRect.height)
             visible: enabled
-            enabled: popup.open && root.popupKind === "controls" && root.controlPageCapturing
+            enabled: popup.open && ((root.popupKind === "controls" && root.controlPageCapturing) || (root.popupKind === "battery" && batteryPageAnimation.running))
             acceptedButtons: Qt.AllButtons
             hoverEnabled: true
             onWheel: (wheel) => { wheel.accepted = true }
@@ -5513,19 +5583,23 @@ ShellRoot {
                 && menuFlick.contentY >= scrollingHeader.mapToItem(menuFlick.contentItem, 0, 0).y + scrollingHeader.height
             readonly property real viewportTargetHeight: Math.min(
                 Math.max(0, popup.height - Appearance.menuTop - 10),
-                Appearance.menuMaxHeight,
+                root.popupKind === "environments" ? popup.height : Appearance.menuMaxHeight,
                 menuContent.implicitHeight + contentInset + contentBottomInset)
             // Scrolling uses a stable viewport; only its visible frame fits to whole cards.
             // Feeding the fitted frame back into Flickable would repeatedly shrink it.
             property real viewportHeight: viewportTargetHeight
-            Behavior on viewportHeight { enabled: root.popupKind !== "controls" && root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+            Behavior on viewportHeight { enabled: root.popupKind !== "controls" && root.popupKind !== "battery" && root.islandProgress > .99 && !root.popupClosing && !(root.popupKind === "media" && mediaMenu.mediaTransitionRunning); NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
             readonly property real targetHeight: root.menuHeightForCompleteActions(viewportHeight)
             readonly property real settledHeight: targetHeight
             property real settledX: Math.max(Appearance.desktopEdgeInset, Math.min(root.popupLeftMargin, popup.width - targetWidth - Appearance.desktopEdgeInset))
             Behavior on settledX { enabled: root.popupKind !== "controls" && popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
             readonly property bool alignPhysicalPixels: root.islandProgress === 1 && !root.popupClosing
                 && !root.controlPageCapturing && !controlPageAnimation.running
-            readonly property real animatedX: root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress
+            // The Control Centre is anchored to the right-hand bar button.
+            // Keep its right edge fixed so the panel opens left and down.
+            readonly property real animatedX: root.popupKind === "controls"
+                ? settledX + targetWidth - (root.islandOrigin.width + (targetWidth - root.islandOrigin.width) * root.islandProgress)
+                : root.islandOrigin.x + (settledX - root.islandOrigin.x) * root.islandProgress
             x: alignPhysicalPixels ? Math.round(animatedX * renderScale) / renderScale : animatedX
             property real settledY: Appearance.menuTop
             Behavior on settledY { enabled: root.popupKind !== "controls" && popup.open && root.islandProgress > .99 && !root.popupClosing; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
@@ -5533,6 +5607,13 @@ ShellRoot {
             y: alignPhysicalPixels ? Math.round(animatedY * renderScale) / renderScale : animatedY
             width: root.islandOrigin.width + (targetWidth - root.islandOrigin.width) * root.islandProgress
             height: root.islandOrigin.height + (settledHeight - root.islandOrigin.height) * root.islandProgress
+            // Animate the panel frame as battery or Control Centre pages exchange.
+            // Content is hidden at the midpoint, then fades in as the new
+            // height settles.
+            Behavior on height {
+                enabled: popup.open && (root.popupKind === "battery" || (root.popupKind === "controls" && controlPageAnimation.running)) && root.islandProgress > .99 && !root.popupClosing
+                NumberAnimation { duration: 280; easing.type: Easing.OutCubic }
+            }
             Keys.onPressed: function(event) { root.navigateGenericMenu(event) }
             // All menus emerge from their trigger using the Calendar geometry animation.
             scale: 1
@@ -5549,7 +5630,7 @@ ShellRoot {
             }
             radius: Math.min(height / 2, Appearance.desktopCornerRadius)
             readonly property bool splitControls: root.popupKind === "controls" && root.renderedControlsAllClosed() && !root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.powerConfirmOpen
-            color: splitControls ? "transparent" : root.popupPanel
+            color: root.popupPanel
             Behavior on color { enabled: root.popupKind !== "controls"; ColorAnimation { id: panelMaterialFade; duration: 180; easing.type: Easing.OutCubic } }
             border.width: 0
             border.color: root.shellBorder
@@ -5647,7 +5728,9 @@ ShellRoot {
             // Content stays behind the translucent title; only the outer viewport clips it.
             Item {
                 id: menuScrollClip
-                x: popupBackground.contentInset
+                // Keep content at its settled screen position while each
+                // popup grows from its own bar button around that position.
+                x: popupBackground.settledX - popupBackground.x + popupBackground.contentInset
                 y: popupBackground.contentInset
                 width: menuFlick.width
                 height: menuFlick.height
@@ -5662,7 +5745,10 @@ ShellRoot {
                 // animated outer card clips the reveal without reflowing every frame.
                 width: Math.max(0, popupBackground.targetWidth - popupBackground.contentInset * 2)
                 height: Math.max(0, root.islandOrigin.height + (popupBackground.viewportHeight - root.islandOrigin.height) * root.islandProgress - popupBackground.contentInset - popupBackground.contentBottomInset)
-                opacity: Math.max(0, (root.islandProgress - .3) / .7) * (root.popupKind === "media" ? 1 : root.islandContentOpacity) * (root.popupKind === "controls" ? root.controlPageProgress : 1)
+                // Show compact controls only once the shared reveal has
+                // reached full opacity, so text never shifts shade mid-open.
+                opacity: (root.popupKind === "controls" && popupBackground.splitControls && root.islandProgress < .9
+                    ? 0 : root.popupContentReveal(root.islandProgress)) * (root.popupKind === "media" ? 1 : root.islandContentOpacity) * (root.popupKind === "controls" ? Math.max(.35, root.controlPageProgress) : (root.popupKind === "battery" ? Math.max(.35, root.batteryPageProgress) : 1))
                 enabled: !root.popupClosing && root.islandProgress > .8
                 contentWidth: width
                 contentHeight: menuContent.implicitHeight
@@ -5719,7 +5805,7 @@ ShellRoot {
                     id: menuContent
                     width: parent.width
                     spacing: root.popupKind === "controls" ? 8 : 5
-                    transform: Translate { x: root.popupKind === "controls" ? root.controlPageOffset : 0 }
+                    transform: Translate { x: root.popupKind === "controls" ? root.controlPageOffset : (root.popupKind === "battery" ? root.batteryPageOffset : 0) }
 
                     Column {
                         id: calendarMenu
@@ -6317,7 +6403,7 @@ ShellRoot {
                 MenuHeader {
                     id: scrollingMenuHeader
                     visible: root.popupKind !== "calendar" && !popupBackground.splitControls
-                    title: root.popupKind === "media" ? "Reprodução" : root.popupKind === "battery" ? "Bateria e Energia" : (root.popupKind === "controls" ? (root.renderedControls.controlsActivityKind === "notifications" ? "Notificações" : root.renderedControls.shortcutsOpen ? "Lista de Atalhos" : (root.renderedControls.controlsMoreOpen ? (root.renderedControls.controlsAppearanceOpen ? "Personalização" : (root.renderedControls.controlsActivityKind === "trackpad" ? "Trackpad" : "Mais opções")) : "Central de Controlo")) : (root.popupKind === "environments" ? (root.environmentCreateOpen ? "Criar environment" : "Environments") : "[ " + root.popupKind.toUpperCase() + " Control ]"))
+                    title: root.popupKind === "media" ? "Reprodução" : root.popupKind === "battery" ? (root.batteryDisplayedDetailsOpen ? "Detalhes e gráficos" : "Bateria e Energia") : (root.popupKind === "controls" ? (root.renderedControls.controlsActivityKind === "notifications" ? "Notificações" : root.renderedControls.shortcutsOpen ? "Lista de Atalhos" : (root.renderedControls.controlsMoreOpen ? (root.renderedControls.controlsAppearanceOpen ? "Personalização" : (root.renderedControls.controlsActivityKind === "trackpad" ? "Trackpad" : (root.renderedControls.controlsActivityKind === "mouse" ? "Rato" : "Mais opções"))) : "Central de Controlo")) : (root.popupKind === "environments" ? (root.environmentCreateOpen ? "Criar environment" : "Environments") : "[ " + root.popupKind.toUpperCase() + " Control ]"))
                 }
 
                 Column {
@@ -7950,7 +8036,7 @@ ShellRoot {
 
                 Column {
                     width: parent.width; spacing: 8
-                    visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsAppearanceOpen && root.renderedControls.controlsActivityKind !== "trackpad"
+                    visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && !root.renderedControls.shortcutsOpen && !root.renderedControls.controlsAppearanceOpen && root.renderedControls.controlsActivityKind !== "trackpad" && root.renderedControls.controlsActivityKind !== "mouse"
                     MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar aos controlos"; onActivated: { root.controlsMoreOpen = false; menuFlick.contentY = 0 } }
                     MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "paintbrush"; label: "Personalização"; onActivated: { Appearance.refresh(); personalizationPanel.section = ""; root.controlsAppearanceOpen = true; menuFlick.contentY = 0 } }
                     Column {
@@ -7964,9 +8050,19 @@ ShellRoot {
                         Text { renderType: Text.QtRendering; text: "Super+Ctrl+Home traz o ponteiro para o portátil."; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
                         Text { renderType: Text.QtRendering; visible: root.displayLayoutError.length > 0; width: parent.width; text: root.displayLayoutError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
                     }
+                    MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "mouse"; label: "Rato"; onActivated: { root.controlsActivityKind = "mouse"; menuFlick.contentY = 0 } }
+                    MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "touchpad"; label: "Trackpad"; onActivated: { root.controlsActivityKind = "trackpad"; menuFlick.contentY = 0 } }
+                    MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "list"; label: "Lista de atalhos"; onActivated: { root.shortcutsOpen = true; menuFlick.contentY = 0 } }
+                }
+
+                Column {
+                    id: mouseSettingsPage
+                    width: parent.width; spacing: 8
+                    visible: root.popupKind === "controls" && root.renderedControls.controlsMoreOpen && root.renderedControls.controlsActivityKind === "mouse" && !root.renderedControls.controlsAppearanceOpen && !root.renderedControls.shortcutsOpen
+                    MenuButton { outlined: true; iconName: "chevron-left"; label: "Voltar às opções"; onActivated: { root.controlsActivityKind = ""; menuFlick.contentY = 0 } }
                     Rectangle {
                         id: mouseSensitivityCard
-                        width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; color: root.controlButtonSurface
+                        width: parent.width; height: 72; radius: Appearance.menuActionRadius; color: root.controlButtonSurface
                         border.width: 0; border.color: root.controlButtonOutline
                         RadioIconButton {
                             x: Appearance.menuIconInset; anchors.verticalCenter: parent.verticalCenter
@@ -7976,11 +8072,12 @@ ShellRoot {
                             busy: pointerPowerProcess.running || !root.pointerDevices.mouse.available
                             onActivated: root.togglePointer("mouse")
                         }
-                        Text { renderType: Text.QtRendering; id: mouseSensitivityPercent; width: 46; horizontalAlignment: Text.AlignRight; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; text: Math.round(mouseSensitivitySlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                        Text { renderType: Text.QtRendering; id: mouseSensitivityPercent; width: 46; horizontalAlignment: Text.AlignRight; anchors.right: parent.right; anchors.rightMargin: 12; y: 12; text: Math.round(mouseSensitivitySlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
+                        Text { renderType: Text.QtRendering; anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; y: 12; text: "Cursor"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         MenuSlider {
                             id: mouseSensitivitySlider
                             anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.right: mouseSensitivityPercent.left; anchors.rightMargin: 8
-                            anchors.verticalCenter: parent.verticalCenter
+                            y: 44
                             height: 16; topPadding: 0; bottomPadding: 0; from: 0; to: 100; stepSize: 1
                             activeFocusOnTab: true
                             Accessible.name: "Sensibilidade do rato"
@@ -8009,8 +8106,6 @@ ShellRoot {
                         }
                     }
                     Text { renderType: Text.QtRendering; visible: root.mouseSensitivityError.length > 0; width: parent.width; text: root.mouseSensitivityError; color: "#ff91a4"; wrapMode: Text.WordWrap; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
-                    MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "touchpad"; label: "Trackpad"; onActivated: { root.controlsActivityKind = "trackpad"; menuFlick.contentY = 0 } }
-                    MenuButton { height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "list"; label: "Lista de atalhos"; onActivated: { root.shortcutsOpen = true; menuFlick.contentY = 0 } }
                 }
 
                 Column {
@@ -8242,7 +8337,7 @@ ShellRoot {
                     Column {
                     width: parent.width
                     spacing: 12
-                    visible: root.popupKind === "battery"
+                    visible: root.popupKind === "battery" && !root.batteryDisplayedDetailsOpen
                     Rectangle {
                         width: parent.width; height: root.batteryDischarging ? 130 : 98; radius: 14; color: root.controlButtonSurface
                         Text { renderType: Text.QtRendering; id: batteryCapacity; x: 14; y: 10; text: root.batteryText; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: 28; font.weight: Font.DemiBold }
@@ -8308,7 +8403,7 @@ ShellRoot {
                         enabled: !root.hardwareConfirmOpen
                         opacity: enabled ? 1 : .42
                         Accessible.role: Accessible.Button
-                        Accessible.name: root.batteryDetailsOpen ? "Ocultar detalhes e gráficos" : "Mostrar detalhes e gráficos"
+                        Accessible.name: "Abrir detalhes e gráficos"
                         LucideIcon { x: 12; anchors.verticalCenter: parent.verticalCenter; width: Appearance.menuGlyphSize; height: width; name: "list"; tint: root.textMain }
                         Text { renderType: Text.QtRendering;
                             x: 38; width: parent.width - 76; anchors.verticalCenter: parent.verticalCenter
@@ -8318,18 +8413,27 @@ ShellRoot {
                         LucideIcon {
                             anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             width: Appearance.menuGlyphSize; height: width; name: "chevron-right"; tint: root.textMain
-                            rotation: root.batteryDetailsOpen ? 270 : 90
-                            Behavior on rotation { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+                            rotation: 0
                         }
                         BounceMouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: root.batteryDetailsOpen = !root.batteryDetailsOpen
+                            onClicked: { root.batteryDetailsOpen = true; menuFlick.contentY = 0 }
                         }
                     }
+                    }
+
                     Column {
                         width: parent.width; spacing: 12
-                        visible: root.batteryDetailsOpen || root.hardwareConfirmOpen
-                        Row {
+                        visible: root.popupKind === "battery" && root.batteryDisplayedDetailsOpen
+                        MenuButton {
+                            width: parent.width; height: Appearance.menuActionHeight
+                            outlined: true; iconName: "chevron-left"; label: "Voltar à bateria"
+                            enabled: !root.hardwareConfirmOpen
+                            onActivated: { root.batteryDetailsOpen = false; menuFlick.contentY = 0 }
+                        }
+                        Column {
+                            width: parent.width; spacing: 12
+                            Row {
                             width: parent.width; spacing: 8
                             Repeater {
                                 model: [
@@ -8434,7 +8538,7 @@ ShellRoot {
         // The frame sits above the masked card so its top edge remains complete.
         Rectangle {
             z: 4
-            visible: popup.open && !popupBackground.splitControls
+            visible: popup.open
             x: popupBackground.x; y: popupBackground.y
             width: popupBackground.width; height: popupBackground.height
             radius: popupBackground.radius
@@ -8443,18 +8547,6 @@ ShellRoot {
             // The panel starts at its trigger. Keep its frame out of that
             // origin until the card has visibly moved away from the button.
             opacity: Math.max(0, Math.min(1, (root.islandProgress - 0.4) / 0.6))
-            antialiasing: true
-        }
-        Rectangle {
-            z: 4
-            visible: popup.open && popupBackground.splitControls && compactDashboard.visible
-            x: popupBackground.x + popupBackground.contentInset + root.controlPageOffset
-            y: popupBackground.y + popupBackground.contentInset - menuFlick.contentY
-            width: compactDashboard.width; height: compactDashboard.topCardHeight
-            radius: popupBackground.radius
-            color: "transparent"
-            border.width: 1; border.color: root.shellBorder
-            opacity: menuFlick.opacity
             antialiasing: true
         }
     }

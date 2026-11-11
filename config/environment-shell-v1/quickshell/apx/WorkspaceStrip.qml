@@ -29,6 +29,14 @@ Item {
     signal activated()
     property real reveal: expanded ? 1 : 0
     Behavior on reveal { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+    // The outline is hosted above the clipped label viewport, so dismiss it
+    // promptly instead of letting it linger for the full width animation.
+    property real outlineDismiss: expanded ? 1 : 0
+    Behavior on outlineDismiss { NumberAnimation { duration: 90; easing.type: Easing.OutCubic } }
+    readonly property real openingOutlineOpacity: {
+        var t = Math.max(0, Math.min(1, (reveal - .7) / .28))
+        return t * t * (3 - 2 * t)
+    }
     implicitWidth: workspaceSymbol.width + labelsViewport.width
     implicitHeight: 32
     width: implicitWidth; height: implicitHeight
@@ -101,8 +109,8 @@ Item {
                 delegate: BarButton {
                     id: workspaceButton
                     outlineHost: strip.barWindow.contentItem
-                    outlineShown: strip.visible && strip.reveal > 0
-                    outlineOpacity: strip.reveal
+                    outlineShown: strip.visible && (strip.expanded ? strip.openingOutlineOpacity > 0 : strip.outlineDismiss > 0)
+                    outlineOpacity: strip.expanded ? strip.openingOutlineOpacity : strip.outlineDismiss
                     grouped: strip.grouped
                     minimumWidth: 32
                     horizontalPadding: 16
@@ -129,8 +137,8 @@ Item {
             BarButton {
                 id: nextWorkspaceButton
                 outlineHost: strip.barWindow.contentItem
-                outlineShown: strip.visible && strip.reveal > 0
-                outlineOpacity: strip.reveal
+                outlineShown: strip.visible && (strip.expanded ? strip.openingOutlineOpacity > 0 : strip.outlineDismiss > 0)
+                outlineOpacity: strip.expanded ? strip.openingOutlineOpacity : strip.outlineDismiss
                 grouped: strip.grouped
                 visible: strip.workspaces.length > 5
                 label: ""

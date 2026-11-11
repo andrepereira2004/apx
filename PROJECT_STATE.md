@@ -1,3 +1,396 @@
+# Compact Control Centre text waits for full opacity — installed, 2026-11-11
+
+The owner reported that letters still changed shade as the compact Control
+Centre expanded. The common popup reveal faded the whole content layer over
+the dark panel; the compact Control Centre now keeps that layer hidden until
+opening progress reaches 0.9, when the common reveal has full opacity. Text
+therefore appears at its final color. Other menus and Control Centre page
+transitions retain their existing opacity behavior. Installed in seed and five
+homes, with runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T223626Z-control-text-full-opacity`.
+SHA-256: `ffab89265d40407f0832e21dca048920888abd9141e9545ed4350468e95aab60`.
+The reload crashed into its reporter and the shell supervisor was restarted.
+A stable live IPC opening recorded 25 frames, settled 340x394, and a normal
+close. Owner perceptual acceptance pending.
+
+# Control Centre inset trial reverted — 2026-11-11
+
+At the owner's request, only the compact Control Centre Calendar-inset trial
+was reverted from `/var/lib/apx/backups/20261111T222026Z-control-calendar-inset-trial`.
+Source, seed, five homes and Host runtime pin again use the pre-trial shell
+SHA-256 `1a48033f81b7f79130de48dbc3e96151a57d28008e276b49943324f876bb6311`.
+The live hot reload crashed; its shell supervisor was restarted and a new
+QuickShell instance is active. IPC opened and closed Control Centre after
+recovery. Earlier independent menu and workspace changes remain installed.
+
+# Control Centre Calendar inset trial — installed, 2026-11-11
+
+The owner asked to try the remaining visual layout difference and revert only
+this step if disliked. The compact Control Centre now uses Calendar's 10 px
+top/side and 12 px bottom content inset instead of zero. Item positioning,
+fixed width, reveal opacity, animation timing and all other menus are unchanged.
+This increases the compact panel's settled height from 394 to 416 px. Exact
+pre-trial backup: `/var/lib/apx/backups/20261111T222026Z-control-calendar-inset-trial`.
+Installed shell SHA-256: `b65cd3ce47ac3178a3e352395e1356fe2950eb7e9668d6d330a41ace468ced1f`.
+The hot reload crashed and left a crash reporter; the shell supervisor was
+restarted and active QuickShell recovered. The stale reporter was closed. Live
+IPC then opened/closed Control Centre and Calendar at settled sizes 340x416
+and 440x444. Await owner visual judgment; revert only this inset trial if asked.
+
+# Workspace outline enters near end of reveal — installed, 2026-11-11
+
+The owner reported that the active workspace outline now appeared too early
+when expanding with Super+W. Its opening opacity now starts once the strip
+reaches 70% reveal and eases to full near 98%, after most of the button is
+visible. The separate 90 ms dismissal remains. Installed WorkspaceStrip.qml
+in seed and five homes and updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T221405Z-workspace-outline-late-entrance`.
+SHA-256: `baec81c2213474140dca93a92a1c95c909f1e4031693034f550628fb59dabbbe`.
+Active QuickShell accepted a close/reopen IPC toggle and returned to expanded.
+Owner visual acceptance pending.
+
+# Workspace outline dismisses promptly — installed, 2026-11-11
+
+The owner reported that Super+W left the active workspace's white outline
+visible too long, especially at the strip edge. WorkspaceStrip keeps button
+outlines above the clipped label viewport; those outlines previously faded
+with the full 280 ms width reveal. Outline dismissal now has its own 90 ms
+fade, while the strip width and opening animation retain their prior timing.
+Installed WorkspaceStrip.qml in seed and five homes and updated the Host runtime
+digest. Backup: `/var/lib/apx/backups/20261111T221126Z-workspace-outline-dismiss`.
+SHA-256: `553787c98ce181f0c784328df9db0c7cd340b2f3b2626470aeaba3073e522169`.
+Active QuickShell accepted a Super+W-equivalent IPC close and reopen; state
+changed immediately and returned to expanded. Owner visual acceptance pending.
+
+# Stationary content reveal for all QuickShell menus — installed, 2026-11-11
+
+The owner requested the Control Centre's corrected opening behavior on the
+other QuickShell menus. The shared content viewport now offsets its x position
+against the animated popup x, so content stays at its settled screen position
+while the panel expands from each bar button. Calendar was already effectively
+stationary; Battery, Media and Environments now use the same rule. Installed
+in seed and five homes with runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T215803Z-stationary-all-menu-content`.
+SHA-256: `1a48033f81b7f79130de48dbc3e96151a57d28008e276b49943324f876bb6311`.
+Live IPC opened and closed Calendar, Control Centre, Battery, Media and
+Environments. Stable probes found at most 19 ms between frames on Control
+Centre, 16 ms on Battery and 15 ms on Media. Owner visual acceptance pending.
+
+# Control Centre content anchored during reveal — installed, 2026-11-11
+
+The owner requested a deeper evaluation after the shorter animation still felt
+less fluid than Calendar. The key geometric difference was that Calendar's
+content stays at a fixed screen x while the Control Centre's content was
+attached to its left edge, traveling about 299 px as the right-anchored panel
+expanded. The Control Centre content viewport is now offset by the remaining
+width, keeping its screen position fixed while the panel reveals it from right
+to left. This also applies during closing. Its open duration and content
+opacity curve again match Calendar (300 ms); delayed status and Wi-Fi refresh
+remain. Installed in seed and five homes, with runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T215427Z-stationary-control-content`.
+SHA-256: `61deea0514689fb848c7a5d656213c1af0bf9886afe7f18ebc868faf36108eee`.
+The active QuickShell crashed during hot reload and restarted. Stable live
+probes then recorded Calendar 25 frames, 12 ms median / 17 ms maximum, and
+Control Centre 26 frames, 12 ms median / 14 ms maximum. Both closed normally.
+Owner visual acceptance pending.
+
+# Control Centre opening content stabilized — installed, 2026-11-11
+
+The owner still perceived the faster Control Centre as less fluid. Frame probes
+measure presentation cadence but cannot detect content changing mid-animation.
+Code review found seven dynamic status reads launched at popup open, a Wi-Fi
+scan at 320 ms, and the full compact dashboard becoming visible while its
+frame still grew. The compact dashboard now fades in later in the expansion;
+status refresh starts after 280 ms and Wi-Fi scan after 650 ms. Calendar and
+other menu refresh timing is unchanged. Installed in seed and five homes with
+runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T214824Z-control-open-deferred-refresh`.
+SHA-256: `36b88283d3d26d761d17b14dc77f92fd8aff78c7de44a30b162d8f34f16f16ac`.
+After reload, a stable live Control Centre opening probe recorded 21 frames,
+12 ms median and 13 ms maximum; the menu closed normally. Owner visual
+acceptance pending.
+
+# Control Centre opening time tuned — installed, 2026-11-11
+
+The owner perceived Calendar as faster. Both open animations were 300 ms, but
+live probes saw Calendar reach 99% progress at about 228 ms and Control Centre
+at about 241 ms. The Control Centre opening duration is now 240 ms with the
+same easing and content reveal. Installed in seed and five homes, with runtime
+digest updated. Backup: `/var/lib/apx/backups/20261111T214605Z-faster-controls-open`.
+SHA-256: `036d9a292b788e355ee76ac0f36de6a478e5e13a71910e30850ecada56798f81`.
+Stable live probes after reload: Calendar reached 99% at 228 ms; Control Centre
+at 191 ms. Both had 12 ms median frame intervals, and both closed normally.
+Owner visual acceptance pending.
+
+# Menu shortcuts respond during transitions — installed, 2026-11-11
+
+The owner requested immediate Super+A/D and other menu shortcut response while
+a popup is opening or closing. Switching to a different menu previously queued
+the request until the old close animation ended. The switch now completes the
+old popup state immediately and begins the requested popup; pressing the same
+shortcut during close reverses into opening from its current progress. The
+close animation is stopped when finalizing, so it cannot later clear the new
+menu. Installed in seed and five homes with runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T214146Z-responsive-shortcuts`. SHA-256:
+`c76bb0233823f1609f873c47816001b52315658cd4385f0df33688c885a9d0ed`.
+Live IPC tested Calendar→Control Centre while opening, Control Centre
+close→reopen, and rapid Battery→Control Centre→Calendar→Battery. Each requested
+kind became active without a pending menu; final close completed normally.
+Owner keyboard feel remains to be confirmed.
+
+# Continuous Control Centre opening frame — installed, 2026-11-11
+
+The owner asked for a deeper performance check. Live opening probes before the
+change recorded Calendar at 12 ms median / 22 ms maximum and Control Centre at
+12 ms median / 17 ms maximum, with no repeatable Control Centre frame loss.
+The compact Control Centre did switch between two separate border rectangles
+at the final animation frame, a visible discontinuity despite regular frame
+timing. It now keeps one outer frame through opening, settled state and close.
+Installed in seed and five homes; Host runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T213818Z-control-continuous-frame`.
+SHA-256: `8c3de2f2350b5db37e524262c507832fb128eaba89dcb5fb92f3f19822db6a6c`.
+After reload, live probes recorded Calendar 25 frames, 12 ms median / 14 ms
+maximum and Control Centre 25 frames, 12 ms median / 18 ms maximum; no interval
+exceeded 20 ms. Both menus closed normally. Owner visual acceptance pending.
+
+# Control Centre entrance contour aligned with Calendar — installed, 2026-11-11
+
+The owner requested a deeper comparison of how the two menus appear. Code
+inspection found that the compact Control Centre still had a separate popup
+opacity path and painted its full-size dashboard outline outside the animated
+clip. The popup now uses the same opacity as Calendar, and the shared outer
+frame follows the expanding panel until it settles; the dashboard outline
+then takes over. This avoids a full-size outline appearing ahead of the
+panel. Installed in the independent seed and five registered homes and
+updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T213228Z-control-calendar-frame`.
+Active Faculdade QuickShell crashed during hot reload, restarted automatically,
+and logged `Configuration Loaded` at 21:32:35 UTC. Source, seed, five homes,
+and runtime pin agree at SHA-256
+`6c5a4f4a3359c5259985f2db675ea68946be21a6963707d1ed8ebac96a36337e`.
+The popup opens and closes through IPC. Owner visual acceptance remains pending.
+
+# Control Centre opens right to left — installed, 2026-11-11
+
+The owner corrected the previous trajectory: the compact Control Centre should
+expand from its right-hand trigger toward the left, while descending. Replaced
+the early left-anchor relocation with a fixed-right-edge geometry during
+opening. The Calendar-style late content reveal and stable opaque background
+remain. Installed `shell.qml` in the independent seed and five registered
+homes and updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T212949Z-control-right-to-left`.
+Active Faculdade QuickShell logged `Configuration Loaded` at 21:29:58 UTC.
+A live IPC geometry trace showed the panel right edge fixed at x=1376 across
+opening progress 0→1 while its left edge moved x=1335→1036 and height grew.
+The menu closed normally. Owner visual acceptance remains pending.
+
+# Control Centre opening trajectory — installed, 2026-11-11
+
+The owner noticed the compact Control Centre looked as if it opened sideways,
+while Calendar expanded diagonally. Runtime geometry confirmed the Control
+Centre's left edge moved roughly 300 px during its visible growth; Calendar's
+left edge remained fixed. The compact Control Centre now completes that
+horizontal relocation during the first 20% of opening progress, while its
+panel opacity remains near zero. Once visible, its horizontal anchor stays
+fixed and the panel grows in width and height. Its settled location, close
+animation, and content-reveal curve are unchanged. Installed `shell.qml` in the
+independent seed and five registered homes with the Host runtime digest updated.
+Backup: `/var/lib/apx/backups/20261111T212743Z-control-diagonal-open`.
+Active Faculdade QuickShell crashed on hot reload, restarted automatically, and
+logged `Configuration Loaded` at 21:27:50 UTC. A live IPC test observed the
+left edge fixed at x=1036 from 42% through settled opening progress; the menu
+closed after the test. Owner visual acceptance remains pending.
+
+# Control Centre opening matched to Calendar — installed, 2026-11-11
+
+The owner clarified that Calendar's presentation is preferred: the panel
+appears first and letters become readable only near its extended size. The
+previous compact Control Centre trial showed the full text growing with the
+panel. The compact Control Centre now uses the common popup-content reveal
+again and keeps the same opaque popup background through opening, settled
+state, and closing. This also removes the background-state switch that could
+look like a ghost window on close. Its existing dashboard card and navigation
+remain intact. Installed `shell.qml` in the independent seed and five
+registered homes and updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T212423Z-control-calendar-reveal`.
+Active Faculdade QuickShell crashed during hot reload, restarted automatically,
+and logged `Configuration Loaded` at 21:24:30 UTC. The owner had the Control
+Centre open during final read-only state inspection; no forced close was made.
+Owner visual acceptance remains pending.
+
+# Control Centre ghost-close intermediate fix — installed, 2026-11-11
+
+The owner reported a ghost window, later clarified as occurring only when
+closing the compact Control Centre. The prior opening-only opaque background
+reappeared as soon as the close animation moved below full progress. The
+intermediate fix kept that extra background transparent throughout closing;
+a live close test observed transparent `panel_color` at progress 0.94, 0.51,
+0.07 and 0.00, then a closed popup. Backup:
+`/var/lib/apx/backups/20261111T212230Z-control-close-ghost`. The later
+Calendar-style change above supersedes this intermediate conditional and
+keeps one consistent background instead.
+
+# Compact Control Centre opening simplified — installed, 2026-11-11
+
+The owner clarified that Calendar's efficient opening is preferred: the
+compact Control Centre appeared to dim and retract its text. The compact
+Control Centre now keeps its content at full opacity while the shared popup
+geometry reveals it. Its outer frame remains opaque during growth, then hands
+its same-colour surface to the existing dashboard card at the settled size.
+Calendar and other popups keep their existing reveal. Installed `shell.qml` in
+the independent seed and five registered homes and updated the Host runtime
+digest. Backup: `/var/lib/apx/backups/20261111T212014Z-control-calendar-open`.
+Active Faculdade QuickShell crashed on hot reload, restarted automatically,
+and logged `Configuration Loaded` at 21:20:21 UTC. A stable live opening probe
+recorded 26 frames, 12 ms median and 16 ms maximum frame interval. The menu
+closed after the test. Owner perceptual acceptance remains pending.
+
+# Control Centre opening optimized — installed, 2026-11-11
+
+The owner reported that opening the compact Control Centre felt more stuck than
+Calendar or Environments. Opening-frame probes found similar frame intervals:
+Control Centre and Calendar both had a 12 ms median; after this change one
+complete Control Centre run had a 16 ms maximum versus 18 ms for Calendar.
+The compact Control Centre uses a transparent outer panel, unlike the opaque
+Calendar/Environment frames. Its opening background now fades in the same
+`popupBackground` rectangle as the dashboard content, removing a separate
+underlay draw item. The automatic Wi-Fi scan starts 320 ms after opening
+instead of during the initial reveal; closing cancels that timer. Installed
+`shell.qml` in the independent seed and five registered homes with the Host
+runtime digest updated. Backup:
+`/var/lib/apx/backups/20261111T211712Z-control-open-optimize`.
+Active Faculdade QuickShell logged `Configuration Loaded` at 21:17:15 UTC
+without a reload error. The menu opened and closed in a live IPC check; owner
+perceptual acceptance remains pending.
+
+# Common QuickShell popup opening and battery opacity — installed, 2026-11-11
+
+The owner selected the Control Centre's 35% minimum page opacity for battery
+page swaps. Battery now uses the same floor, keeping content visible at the
+midpoint. Backup: `/var/lib/apx/backups/20261111T211048Z-battery-opacity-floor`.
+The owner then requested smoother opening for the QuickShell bar menus. Their
+content now uses one smoothstep reveal tied directly to the common 300 ms
+panel-growth animation, instead of a separate 200 ms content animation during
+opening. This applies to Control Centre, Battery, Calendar, Environments and
+Media popups; their internal navigation remains independent. Backup:
+`/var/lib/apx/backups/20261111T211229Z-popup-open-reveal`.
+Both versions were installed in the independent seed and five registered homes
+with Host runtime digests updated. The active Faculdade QuickShell loaded the
+latter at 21:12:36 UTC after automatic recovery from a hot-reload crash. Live
+IPC checks opened and closed all five popup kinds. Owner perceptual acceptance
+remains pending.
+
+# Control Centre midpoint stall follow-up — installed, 2026-11-11
+
+The owner reported a pause at the midpoint after the outgoing-page screenshot
+crossfade. Removed the `grabToImage` capture from Control Centre transitions.
+The existing 90 ms exit and 190 ms entry still run, while the live menu keeps
+at least 35% opacity through the page swap so the panel does not go blank.
+Installed `shell.qml` in the independent seed and five registered homes and
+updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T210736Z-control-transition-stall`.
+The active graphical session switched to Faculdade during deployment; its
+QuickShell logged `Configuration Loaded` at 21:07:25 UTC. The transition was
+not exercised in that user session. Owner perceptual acceptance remains
+pending.
+
+# Control Centre page blink removed — installed, 2026-11-11
+
+The owner reported a visible blink during Control Centre page changes. The page
+transition previously faded the live menu to zero before swapping pages, with
+no outgoing-page image. It now captures the displayed menu before the animation,
+keeps that image visible through the midpoint, and fades it out as the new page
+fades in. If capture fails, the live menu retains a 35% opacity floor. The
+existing 90 ms exit, 190 ms entry, lateral motion, and panel-height animation
+are retained. Installed `shell.qml` in the independent seed and five registered
+homes and updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T210534Z-control-page-crossfade`.
+Hub QuickShell crashed during hot reload, restarted automatically, and logged
+`Configuration Loaded` at 21:05:37 UTC. A live Hub IPC test of main↔More
+showed the outgoing image visible throughout the low-opacity interval, panel
+height 394→437→394 px, and the menu closed after the test. Owner perceptual
+acceptance remains pending.
+
+# Mouse control aligned with More options navigation — installed, 2026-11-11
+
+The owner reported that Mouse was unlike the other buttons in Control Centre
+`Mais opções`. The inline mouse sensitivity card was moved to its own `Rato`
+page, matching the Trackpad navigation pattern. `Mais opções` now shows a
+normal Mouse/Rato MenuButton; the detail page has Back, the mouse power icon,
+and the cursor sensitivity slider. The Mouse page uses the same depth-two
+transition as Trackpad. Installed `shell.qml` in the independent seed and five
+registered homes and updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T210300Z-mouse-controls-page`.
+Hub QuickShell crashed during hot reload, restarted automatically, and logged
+`Configuration Loaded` at 21:03:04 UTC. Owner interaction acceptance remains
+pending.
+
+# Control Centre panel height transition — installed, 2026-11-11
+
+The owner requested the battery-style expand/retract frame animation for Control
+Centre page changes. The existing 280 ms OutCubic panel-height animation now
+also runs while the Control Centre page transition is active. Its content still
+switches at the existing transition midpoint; height changes outside page
+transitions retain their prior behavior. Installed `shell.qml` in the independent
+seed and five registered homes and updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T205651Z-controls-panel-resize`.
+Hub QuickShell crashed during hot reload and its crash recovery briefly failed
+to reopen a config path. The APX shell launcher retried, and the new process
+logged `Configuration Loaded` at 20:56:56 UTC. Owner visual acceptance remains
+pending.
+
+# Battery return panel expansion — installed, 2026-11-11
+
+The owner observed that returning from `Detalhes e gráficos` to the taller
+battery main page lacked a visible panel expansion. The battery panel frame
+now animates its height over 280 ms with OutCubic easing as pages swap at the
+transition midpoint. Its content viewport changes immediately while the page
+is hidden, then the new page fades in as the frame settles. Installed the
+updated `shell.qml` in the independent seed and five registered homes and
+updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T205526Z-battery-return-expand`.
+Hub QuickShell crashed during hot reload, restarted automatically, and logged
+`Configuration Loaded` at 20:55:30 UTC. Owner visual acceptance remains
+pending.
+
+# Battery page transition animation — installed, 2026-11-11
+
+The owner requested the Control Centre page transition on the battery main and
+`Detalhes e gráficos` pages. Battery navigation now uses the same 90 ms exit
+and 190 ms entry fade/10 px slide sequence, swapping content at the midpoint.
+The menu title follows the displayed page and input is blocked during the
+transition. Installed `shell.qml` in the independent seed and five registered
+homes and updated the Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T200826Z-battery-page-animation`.
+Active Hub QuickShell logged `Configuration Loaded` at 20:08:28 UTC without a
+reload error. Physical animation acceptance remains pending.
+
+# Battery details moved to a separate page — installed, 2026-11-11
+
+The owner requested that `Detalhes e gráficos` open a separate page instead of
+expanding the battery menu. The main battery page now ends with that button;
+the details page contains the existing power, health and GPU controls and a
+`Voltar à bateria` action. The title follows the active page, and Escape
+returns from details when no GPU confirmation is pending. Installed the updated
+`shell.qml` in the independent seed and five registered homes and updated the
+Host runtime digest. Backup:
+`/var/lib/apx/backups/20261111T200225Z-battery-details-page`.
+Hub QuickShell crashed during hot reload, restarted automatically, and logged
+`Configuration Loaded` at 20:02:28 UTC. Visual and interaction acceptance
+remain pending.
+
+# Environment menu height — installed, 2026-11-11
+
+The owner requested keeping the Environment list and management buttons in their
+existing order while allowing the menu to grow beyond the former 460 px cap.
+The Environment viewport now grows to the available screen height; scrolling
+remains only when its content exceeds the screen. The catalog-dependent
+reported height no longer caps at five rows. Installed the two-line `shell.qml`
+change in the independent seed and five registered homes, with the Host runtime
+digest updated. Backup: `/var/lib/apx/backups/20261111T195950Z-environment-menu-height`.
+Hub QuickShell crashed once during hot reload, restarted automatically, and
+logged `Configuration Loaded` at 20:00:26 UTC. Visual acceptance is pending.
+
 # Microphone Up returns to Back in one press — installed, 2026-11-11
 
 The owner reported needing about three Up presses from a selected Microphone

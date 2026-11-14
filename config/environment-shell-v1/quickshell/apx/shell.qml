@@ -5253,7 +5253,7 @@ ShellRoot {
                     label: ""
                     alternateLabel: ""
                     iconName: "hexagon"
-                    alternateIconName: "ghost"
+                    alternateIconName: "bot"
                     accessibleLabel: "Central de Controlo"
                     alternateActive: root.bar === screenBar && popup.open && root.popupKind === "controls"
                     animateActivation: root.animatedBarOpenKind === "controls"

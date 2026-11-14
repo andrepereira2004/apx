@@ -576,3 +576,65 @@
      }
  
    g_free (highlight_color);
+--- a/thunar/thunar-path-entry.c
++++ b/thunar/thunar-path-entry.c
+@@ -166,6 +166,8 @@
+   guint check_completion_idle_id;
+ 
+   gboolean search_mode;
++  gboolean search_closing;
++  guint search_closing_timeout;
+ };
+ 
+ 
+@@ -629,6 +631,12 @@
+     {
+       GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
+       path_entry->search_mode = TRUE;
++      if (path_entry->search_closing_timeout)
++        {
++          g_source_remove (path_entry->search_closing_timeout);
++          path_entry->search_closing_timeout = 0;
++          path_entry->search_closing = FALSE;
++        }
+       update_icon = TRUE;
+       if (GTK_IS_WINDOW (window))
+         thunar_window_update_search (THUNAR_WINDOW (window));
+@@ -766,7 +774,7 @@
+   g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+   g_object_unref (G_OBJECT (preferences));
+ 
+-  if (path_entry->search_mode == TRUE)
++  if (path_entry->search_mode == TRUE || path_entry->search_closing)
+     {
+       gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_PRIMARY,
+                                          use_symbolic_icons ? "system-search-symbolic" : "system-search");
+@@ -1419,12 +1427,28 @@
+ 
+ 
+ 
++static gboolean
++thunar_path_entry_finish_search_transition (gpointer data)
++{
++  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (data);
++  path_entry->search_closing = FALSE;
++  path_entry->search_closing_timeout = 0;
++  thunar_path_entry_update_icon (path_entry);
++  return G_SOURCE_REMOVE;
++}
++
++
+ void
+ thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
+ {
+   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+ 
+   path_entry->search_mode = FALSE;
++  path_entry->search_closing = TRUE;
++  if (path_entry->search_closing_timeout)
++    g_source_remove (path_entry->search_closing_timeout);
++  path_entry->search_closing_timeout = g_timeout_add_full (G_PRIORITY_DEFAULT, 200, thunar_path_entry_finish_search_transition,
++                      g_object_ref (path_entry), g_object_unref);
+ 
+   gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
+ }

@@ -11000,3 +11000,18 @@ Evidência e reprodução: `audit/2026-11-14-thunar-chooser-refinement/README.md
 O commit deste conjunto separa alterações de outras tarefas ainda locais;
 os pins e digest de recuperação do commit correspondem aos seus próprios
 assets, enquanto o working tree conserva o runtime completo do piloto.
+
+## Animação ao sair da pesquisa, 2026-11-14
+
+A pedido do proprietário, o Thunar conserva a lupa na entrada durante os 200 ms
+seguintes ao cancelamento, cobrindo o crossfade de 180 ms; depois restaura o
+ícone normal para edição do caminho. Cancelamentos rápidos substituem o timer
+anterior. O seletor usa altura vertical homogénea no stack e a entrada sem as
+margens do headerbar: caminho (y=11, altura=50) antes, durante e depois da
+transição; entrada centrada (y=12, altura=48). O teste instrumentado do Thunar
+confirmou a lupa enquanto a transição corria, ciclos rápidos e Ctrl+L; o teste
+do seletor confirmou a posição estável e pesquisa/histórico. A aceitação visual
+da animação pelo proprietário ainda está pendente. Módulo e binário nativo
+recompilados, instalados no piloto; patch 4.20.10 dry-run passou. Backups:
+`/var/lib/apx/backups/20261114T180732Z-search-crossfade` e
+`/var/lib/apx/backups/20261114T180914Z-search-crossfade`. Sem commit/push.

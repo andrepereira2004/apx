@@ -383,6 +383,7 @@ static gboolean adapt_header_idle(gpointer data) {
             nav->search_button = search;
             nav->old_revealer = revealer;
             gtk_stack_set_homogeneous(GTK_STACK(stack), FALSE);
+            gtk_stack_set_vhomogeneous(GTK_STACK(stack), TRUE);
             gtk_stack_set_transition_type(GTK_STACK(stack), GTK_STACK_TRANSITION_TYPE_NONE);
             gtk_stack_set_transition_duration(GTK_STACK(stack), 180);
             gtk_widget_set_hexpand(stack, TRUE);

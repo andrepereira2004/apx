@@ -200,11 +200,14 @@ def wallpaper(path):
 
 
 def choose_wallpaper():
+    module = HOME / '.local/lib/apx/libchooser-places.so'
+    if module.is_file():
+        os.environ['GTK_MODULES'] = ':'.join(filter(None, (os.environ.get('GTK_MODULES'), str(module))))
     import gi
     gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk
     dialog = Gtk.FileChooserDialog(title='Wallpaper deste Environment', action=Gtk.FileChooserAction.OPEN)
-    dialog.add_buttons('Cancelar', Gtk.ResponseType.CANCEL, 'Escolher imagem', Gtk.ResponseType.OK)
+    dialog.add_buttons('Cancelar', Gtk.ResponseType.CANCEL, 'Escolher', Gtk.ResponseType.OK)
     pictures = HOME / 'Pictures'
     dialog.set_current_folder(str(pictures if pictures.is_dir() else HOME))
     image_filter = Gtk.FileFilter(); image_filter.set_name('Imagens (PNG, JPEG, WebP, BMP)')

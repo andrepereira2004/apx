@@ -60,6 +60,10 @@ static gboolean file_focus_out(GtkWidget *widget, GdkEventFocus *event, gpointer
 }
 static GtkWidget *find_widget(GtkWidget *w, GType type) {
     if (g_type_is_a(G_OBJECT_TYPE(w), type)) return w;
+    if (GTK_IS_STACK(w)) {
+        GtkWidget *visible = gtk_stack_get_visible_child(GTK_STACK(w));
+        return visible ? find_widget(visible, type) : NULL;
+    }
     if (GTK_IS_CONTAINER(w)) {
         GList *children = gtk_container_get_children(GTK_CONTAINER(w));
         GtkWidget *found = NULL;
@@ -157,16 +161,84 @@ static void label_changed(GObject *object, GParamSpec *pspec, gpointer unused) {
     if (g_strcmp0(text, "apx") == 0) g_object_set(object, "text", "APX", NULL);
     g_free(text);
 }
+static void suppress_tooltip(GObject *object, GParamSpec *pspec, gpointer data) {
+    (void) pspec; (void) data;
+    if (gtk_widget_get_has_tooltip(GTK_WIDGET(object)))
+        gtk_widget_set_has_tooltip(GTK_WIDGET(object), FALSE);
+}
+static void disable_tooltip(GtkWidget *widget) {
+    suppress_tooltip(G_OBJECT(widget), NULL, NULL);
+    if (!g_object_get_data(G_OBJECT(widget), "apx-no-tooltip")) {
+        g_object_set_data(G_OBJECT(widget), "apx-no-tooltip", GINT_TO_POINTER(1));
+        g_signal_connect(widget, "notify::has-tooltip", G_CALLBACK(suppress_tooltip), NULL);
+    }
+}
+static void sync_search_button(GObject *object, GParamSpec *pspec, gpointer data) {
+    (void) pspec; (void) data;
+    GtkWidget *widget = GTK_WIDGET(object);
+    gboolean searching = gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(widget));
+    gtk_widget_set_no_show_all(widget, searching);
+    if (gtk_widget_get_visible(widget) == searching)
+        gtk_widget_set_visible(widget, !searching);
+}
+
+static gboolean refresh_breadcrumb_width(gpointer data) {
+    GtkWidget *button = data;
+    GtkWidget *box = gtk_bin_get_child(GTK_BIN(button));
+    if (!gtk_widget_get_mapped(button) || !GTK_IS_CONTAINER(box)) return G_SOURCE_REMOVE;
+    /* Native label requests can retain metrics measured before the APX font
+     * was applied. Recompute with the final style, retaining Thunar's bold
+     * width reservation and maximum-width/ellipsizing behavior. */
+    GList *children = gtk_container_get_children(GTK_CONTAINER(box));
+    for (GList *item = children; item; item = item->next)
+        if (GTK_IS_LABEL(item->data)) gtk_widget_set_size_request(item->data, -1, -1);
+    g_list_free(children);
+    g_signal_emit_by_name(button, "style-updated");
+    return G_SOURCE_REMOVE;
+}
+
+static void adapt_toolbar_button(GtkWidget *widget) {
+    if (GTK_IS_BUTTON(widget)) {
+        for (GtkWidget *parent = gtk_widget_get_parent(widget); parent; parent = gtk_widget_get_parent(parent)) {
+            if (GTK_IS_TOOLBAR(parent)) {
+                gtk_style_context_add_class(gtk_widget_get_style_context(widget), "apx-toolbar-button");
+                gtk_widget_set_valign(widget, GTK_ALIGN_CENTER);
+                break;
+            }
+        }
+    }
+}
 static void visit(GtkWidget *widget, GtkWidget *window) {
+    disable_tooltip(widget);
+    adapt_toolbar_button(widget);
     if (file_view(widget) && !g_object_get_data(G_OBJECT(widget), "apx-selection-keys")) {
         g_object_set_data(G_OBJECT(widget), "apx-selection-keys", GINT_TO_POINTER(1));
         g_signal_connect(widget, "focus-out-event", G_CALLBACK(file_focus_out), NULL);
     }
     if (GTK_IS_TOOL_ITEM(widget)) {
+        /* Taller hit areas must not force navigation into square tool items. */
+        gtk_tool_item_set_homogeneous(GTK_TOOL_ITEM(widget), FALSE);
         const gchar *id = g_object_get_data(G_OBJECT(widget), "id");
-        if (g_strcmp0(id, "open-home") == 0 || g_strcmp0(id, "open-parent") == 0 || g_strcmp0(id, "menu") == 0 || g_strcmp0(id, "search") == 0) {
+        if (g_strcmp0(id, "open-home") == 0 || g_strcmp0(id, "open-parent") == 0 || g_strcmp0(id, "menu") == 0) {
             gtk_widget_set_no_show_all(widget, TRUE);
             gtk_widget_hide(widget);
+        }
+        if (g_strcmp0(id, "search") == 0 && GTK_IS_TOOL_BUTTON(widget) &&
+            !g_object_get_data(G_OBJECT(widget), "apx-search-icon")) {
+            GtkWidget *icon = gtk_image_new_from_icon_name("system-search-symbolic", GTK_ICON_SIZE_BUTTON);
+            gtk_image_set_pixel_size(GTK_IMAGE(icon), 20);
+            gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(widget), icon);
+            gtk_widget_set_margin_end(widget, 8);
+            gtk_widget_show(icon);
+            GtkWidget *button = gtk_bin_get_child(GTK_BIN(widget));
+            if (button)
+                gtk_style_context_add_class(gtk_widget_get_style_context(button), "apx-search-button");
+            g_object_set_data(G_OBJECT(widget), "apx-search-icon", GINT_TO_POINTER(1));
+            if (GTK_IS_TOGGLE_TOOL_BUTTON(widget)) {
+                g_signal_connect(widget, "notify::active", G_CALLBACK(sync_search_button), NULL);
+                g_signal_connect(widget, "notify::visible", G_CALLBACK(sync_search_button), NULL);
+                sync_search_button(G_OBJECT(widget), NULL, NULL);
+            }
         }
     }
     if (is_type(widget, "ThunarShortcutsView")) {
@@ -206,6 +278,15 @@ static void visit(GtkWidget *widget, GtkWidget *window) {
 }
 static gboolean on_map(GSignalInvocationHint *hint, guint n, const GValue *values, gpointer data) {
     GtkWidget *widget = g_value_get_object(values);
+    GtkWidget *top = gtk_widget_get_toplevel(widget);
+    if (is_type(top, "ThunarWindow")) {
+        disable_tooltip(widget);
+        adapt_toolbar_button(widget);
+        if (is_type(widget, "ThunarLocationButton"))
+            g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, refresh_breadcrumb_width,
+                            g_object_ref(widget), g_object_unref);
+        if (GTK_IS_TOOL_ITEM(widget) || GTK_IS_TOOLBAR(widget)) visit(widget, top);
+    }
     if (GTK_IS_WINDOW(widget) && is_type(widget, "ThunarWindow")) {
         gtk_window_set_decorated(GTK_WINDOW(widget), FALSE);
         visit(widget, widget);

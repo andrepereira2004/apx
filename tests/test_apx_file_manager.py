@@ -16,13 +16,14 @@ class FileManagerTests(unittest.TestCase):
             self.assertEqual(ACTIONS.files(),0)
             run.assert_not_called()
 
-    def test_workload_initializes_folders_and_opens_or_focuses(self):
+    def test_workload_initializes_folders_and_opens_with_apx_wrapper(self):
         with patch.object(Path,'is_socket',return_value=False), patch.object(Path,'is_file',return_value=True), patch.object(ACTIONS.shutil,'which',return_value='/usr/bin/xdg-user-dirs-update'), patch.object(ACTIONS.subprocess,'run',return_value=Mock(returncode=0,stdout='ok\n')) as run:
             self.assertEqual(ACTIONS.files(),0)
             self.assertEqual(run.call_args_list[0].args[0],['/usr/bin/xdg-user-dirs-update'])
             code=run.call_args_list[2].args[0][2]
-            self.assertIn('hl.dsp.focus',code)
-            self.assertIn('/usr/bin/thunar /home/Home',code)
+            self.assertIn('hl.exec_cmd',code)
+            self.assertIn('/home/apx/.local/bin/thunar --window /home/apx',code)
+            self.assertNotIn('/usr/bin/thunar',code)
             self.assertIn('USER=apx LOGNAME=apx',code)
 
     def test_missing_file_manager_reports_failure(self):

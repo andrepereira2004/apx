@@ -1,5 +1,9 @@
 <channel name="thunar" version="1.0">
-  <property name="last-view" type="string" value="ThunarIconView" />
+  <property name="last-view" type="string" value="ThunarDetailsView" />
+  <property name="last-location-bar" type="string" value="ThunarLocationButtons" />
+  <property name="last-details-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_25_PERCENT" />
+  <property name="misc-date-style" type="string" value="THUNAR_DATE_STYLE_CUSTOM" />
+  <property name="misc-date-custom-style" type="string" value="%d/%m/%Y" />
   <property name="last-icon-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_100_PERCENT" />
   <property name="last-side-pane" type="string" value="ThunarShortcutsPane" />
   <property name="shortcuts-icon-size" type="uint" value="16" />
@@ -11,6 +15,7 @@
     <value type="string" value="file:///" />
   </property>
   <property name="hidden-devices" type="array">
+    <value type="string" value="Partilha" />
     <value type="string" value="APX_ROOT" />
     <value type="string" value="APX_EFI" />
     <value type="string" value="APXWINSETUP" />

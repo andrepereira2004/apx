@@ -1,0 +1,51 @@
+GtkPaned GtkPaned ['horizontal'] (0, 73, 739, 697) margin 0 padding 0 0 0 0 border 0 0 cssmargin 0 0
+GtkPlacesSidebar GtkPlacesSidebar ['sidebar', 'frame'] (0, 0, 191, 697) margin 0 padding 0 0 0 0 border 0 1 cssmargin 0 0
+HADJ 0.0 0.0 190.0 190.0
+GtkStack GtkStack ['view'] (0, 0, 547, 697) margin 0 padding 0 0 0 0 border 0 0 cssmargin 0 0
+GtkScrolledWindow GtkScrolledWindow [] (0, 0, 547, 697) margin 0 padding 0 0 0 0 border 0 0 cssmargin 0 0
+HADJ 0.0 0.0 547.0 547.0
+GtkTreeView GtkTreeView ['view'] (0, 0, 547, 697) margin 0 padding 0 0 0 0 border 0 0 cssmargin 0 0
+TREE True 0 0 treeview.view:focus:dir(ltr)
+  header:dir(ltr)
+    button:dir(ltr)
+      box.horizontal:dir(ltr)
+        widget:dir(ltr)
+          label:dir(ltr)
+        image:dir(ltr)
+    [button:dir(ltr)]
+      box.horizontal:dir(ltr)
+        widget:dir(ltr)
+          label:dir(ltr)
+        [image:dir(ltr)]
+    button:dir(ltr)
+      box.horizontal:dir(ltr)
+        widget:dir(ltr)
+          label:dir(ltr)
+        [image:dir(ltr)]
+    button:dir(ltr)
+      box.horizontal:dir(ltr)
+        widget:dir(ltr)
+          label:dir(ltr)
+        [image:dir(ltr)]
+    button:dir(ltr)
+      box.horizontal:dir(ltr)
+        widget:dir(ltr)
+          label:dir(ltr)
+        image:dir(ltr)
+
+GtkButton GtkButton ['image-button'] (8, 11, 32, 50) margin 0 padding 2 2 2 2 border 0 0 cssmargin 6 6
+GtkButton GtkButton ['image-button'] (42, 11, 32, 50) margin 0 padding 2 2 2 2 border 0 0 cssmargin 6 6
+GtkStack GtkStack [] (98, 11, 387, 50) margin 0 padding 0 0 0 0 border 0 0 cssmargin 0 0
+GtkButton GtkButton ['flat'] (0, 0, 68, 50) margin 0 padding 5 5 3 3 border 0 0 cssmargin 0 0
+GtkButton GtkButton ['apx-current-path', 'flat', 'text-button'] (68, 0, 98, 50) margin 0 padding 5 5 3 3 border 0 0 cssmargin 0 0
+GtkToggleButton GtkToggleButton ['image-button', 'toggle'] (513, 11, 38, 50) margin 0 padding 2 2 2 2 border 0 0 cssmargin 6 6
+GtkButton GtkButton ['text-button'] (557, 11, 84, 50) margin 0 padding 10 10 2 2 border 0 0 cssmargin 6 6
+GtkButton GtkButton ['text-button'] (647, 11, 84, 50) margin 0 padding 10 10 2 2 border 0 0 cssmargin 6 6
+LABEL BEFORE Documents (minimum_width=88, natural_width=88) (width=72, height=18) JetBrains Mono 10
+LABEL ATTRBOLD (minimum_width=88, natural_width=88) (width=72, height=18)
+LABEL BEFORE apx (minimum_width=32, natural_width=32) (width=24, height=18) JetBrains Mono 10
+LABEL ATTRBOLD (minimum_width=32, natural_width=32) (width=24, height=18)
+LABEL BEFORE apx (minimum_width=32, natural_width=32) (width=24, height=18) JetBrains Mono 10
+LABEL ATTRBOLD (minimum_width=32, natural_width=32) (width=24, height=18)
+LABEL BEFORE Documents (minimum_width=88, natural_width=88) (width=72, height=18) JetBrains Mono Bold 10
+LABEL ATTRBOLD (minimum_width=88, natural_width=88) (width=72, height=18)

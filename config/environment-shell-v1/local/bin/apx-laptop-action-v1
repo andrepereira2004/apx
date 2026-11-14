@@ -45,8 +45,8 @@ def files() -> int:
     if updater:
         subprocess.run([updater], check=False, timeout=5)
     subprocess.run(["/home/apx/.local/bin/apx-application-catalog-v1"], check=False, timeout=10)
-    # Ask Thunar for a fresh window on every shortcut invocation.
-    code = 'hl.exec_cmd("env -u GIO_USE_VFS USER=apx LOGNAME=apx HOME=/home/apx /usr/bin/thunar --window /home/apx")'
+    # Preserve APX's GTK module for both the panel button and file shortcut.
+    code = 'hl.exec_cmd("env -u GIO_USE_VFS USER=apx LOGNAME=apx HOME=/home/apx /home/apx/.local/bin/thunar --window /home/apx")'
     try:
         result = subprocess.run((HYPRCTL, "eval", code), capture_output=True,
                                 text=True, timeout=3, check=False)

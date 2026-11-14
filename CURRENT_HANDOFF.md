@@ -10977,3 +10977,26 @@ and the selected native boot runner passed its Host `--validate-only` check.
 The check dynamically identified the EFI entry for the selected Windows; no
 firmware, partition, Windows, or boot state was changed. Owner boot and return
 through the Hub remain unobserved.
+
+## Thunar e seletor — apresentação aceite, 2026-11-14
+
+O proprietário aceitou o resultado final e pediu commit e push. O último
+ajuste removeu margens nativas de 1 px em cima/baixo das linhas laterais do
+seletor e aumentou o fundo de 36 para 38 px, conservando o passo e o centro
+dos ícones/textos. A medição confirmou linhas adjacentes sem intervalo;
+`sidebar-gap-final.png` mostra Imagens selecionado e Vídeos em hover.
+Backup `/var/lib/apx/backups/20261114T180002Z-thunar-toolbar-launch`.
+
+O conjunto aceite inclui barras/caminhos e ícones alinhados, pesquisa nativa
+com crossfade de 180 ms, lupa exterior oculta durante a pesquisa, histórico
+com estados de disponibilidade, tooltips suprimidos, metadados centrados,
+seleção estável sem foco, nomes com mais recuo, divisor branco e seleção
+lateral arredondada. O botão Ficheiros, atalho e menu de aplicações carregam
+o wrapper Thunar. O patch nativo é para Thunar 4.20.10 e foi instalado nos
+quatro Environments do piloto com Thunar; não é instalação automática em
+novos Environments. Fonte, módulos compilados e assets do seed estão no repo.
+
+Evidência e reprodução: `audit/2026-11-14-thunar-chooser-refinement/README.md`.
+O commit deste conjunto separa alterações de outras tarefas ainda locais;
+os pins e digest de recuperação do commit correspondem aos seus próprios
+assets, enquanto o working tree conserva o runtime completo do piloto.

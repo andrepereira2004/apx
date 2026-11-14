@@ -1,4 +1,6 @@
 /* APX Files: a single translucent surface, opaque text and icons. */
+@define-color theme_selected_bg_color #353a4a;
+@define-color theme_selected_fg_color #ffffff;
 .thunar.background { background-color: rgba(16, 17, 23, 0.85); color: #d9dcea; }
 .thunar .standard-view, .thunar .standard-view .view,
 .thunar .sidebar, .thunar .sidebar .view,
@@ -10,12 +12,41 @@
 }
 .thunar .sidebar { border-right: 1px solid #343947; }
 .thunar .sidebar .view { padding: 5px; }
+.thunar .standard-view treeview.view cell { padding: 3px 7px; }
+.thunar .standard-view treeview.view { -GtkTreeView-horizontal-separator: 10; }
 .thunar toolbar { padding: 4px; border-bottom: 1px solid #343947; }
 .thunar button { border-radius: 12px; }
 .thunar entry { background: #1b1d26; border: 1px solid #414654; border-radius: 12px; color: #d9dcea; padding: 6px; }
 .thunar .view:selected, .thunar .view:selected:focus { background-color: #353a4a; color: #ffffff; border-radius: 6px; }
+.thunar treeview.view:selected,
+.thunar treeview.view:selected:focus,
+.thunar treeview.view:selected:backdrop,
+.thunar treeview.view cell:selected,
+.thunar treeview.view cell:selected:focus,
+.thunar treeview.view cell:selected:backdrop {
+    background-color: #353a4a;
+    background-image: none;
+    color: #ffffff;
+    box-shadow: none;
+    outline-style: none;
+}
+.thunar treeview.view row:selected,
+.thunar treeview.view row:selected:focus,
+.thunar treeview.view .cell:selected,
+.thunar .standard-view treeview *:selected {
+    background-color: #353a4a;
+    background-image: none;
+    color: #ffffff;
+    box-shadow: none;
+}
 .thunar .view:hover { background-color: #292d3a; }
 .thunar entry:focus { border-color: #d9dcea; }
+.thunar toolbar entry,
+.thunar toolbar entry:focus {
+    border: 0;
+    outline: none;
+    box-shadow: none;
+}
 .thunar menu, .thunar popover { background-color: #101117; color: #d9dcea; }
 .thunar notebook header { background: rgba(27, 29, 38, 0.6); }
 .thunar notebook tab:checked { box-shadow: inset 0 -2px #d9dcea; }
@@ -32,6 +63,21 @@
 /* Compact navigation; bright symbolic sidebar icons follow foreground. */
 .thunar .sidebar .view, .thunar .sidebar image { color: #ffffff; -gtk-icon-shadow: none; }
 .thunar toolbar button { padding: 2px; min-width: 20px; min-height: 24px; }
+.thunar toolbar .apx-search-button {
+    min-width: 34px;
+    min-height: 34px;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    color: #ffffff;
+}
+.thunar toolbar .apx-search-button:hover,
+.thunar toolbar .apx-search-button:checked,
+.thunar toolbar .apx-search-button:active {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+}
 .thunar toolbar image { -gtk-icon-transform: scale(1); }
 
 /* Show the hovered place and keep the current place visibly selected. */
@@ -179,6 +225,11 @@ filechooser row:selected, filechooser row:selected:backdrop {
     color: #ffffff;
 }
 filechooser row:hover { background-color: #292d3a; }
+filechooser placessidebar row:selected,
+filechooser placessidebar row:selected:hover,
+filechooser placessidebar row:selected:backdrop {
+    border-radius: 6px;
+}
 filechooser treeview header button {
     background-color: #1b1d26;
     background-image: none;
@@ -194,6 +245,20 @@ filechooser entry, filechooser searchentry {
     border-radius: 12px;
 }
 filechooser separator { background-color: #343947; }
+filechooser placessidebar .apx-places-heading {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 10pt;
+    padding: 11px 19px 14px;
+}
+filechooser placessidebar .apx-places-heading-devices { padding-bottom: 5px; }
+filechooser placessidebar row {
+    min-height: 38px;
+    padding-left: 22px;
+    font-size: 10pt;
+}
+filechooser placessidebar row label { color: #ffffff; }
+filechooser placessidebar row revealer label { margin-left: 10px; }
 
 /* APX chooser icons use white symbolic shapes, including Places and toolbar. */
 filechooser image {
@@ -215,6 +280,69 @@ dialog.background headerbar.titlebar:backdrop {
     background-color: rgba(16, 17, 23, 0.85);
     background-image: none;
     box-shadow: none;
+}
+dialog.background headerbar.apx-chooser-header {
+    min-height: 72px;
+    padding: 0 8px;
+    font-family: "JetBrains Mono";
+    font-size: 10pt;
+}
+dialog.background headerbar.apx-chooser-header button {
+    background: transparent;
+    background-image: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    outline: 0;
+}
+dialog.background headerbar.apx-chooser-header button:hover {
+    background-color: rgba(53, 58, 74, 0.6);
+    border-radius: 8px;
+}
+dialog.background headerbar.apx-chooser-header .apx-header-path button {
+    min-height: 44px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 3px 5px;
+    color: #ffffff;
+}
+dialog.background headerbar.apx-chooser-header .apx-header-path {
+    font-size: 10pt;
+}
+dialog.background headerbar.apx-chooser-header .apx-header-path button.apx-current-path {
+    font-weight: bold;
+}
+dialog.background headerbar.apx-chooser-header .apx-chooser-navigation > button {
+    min-width: 25px;
+    min-height: 46px;
+    margin: 0;
+    padding: 2px;
+    border-radius: 12px;
+    color: #d9dcea;
+}
+dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button {
+    min-height: 34px;
+    padding: 2px 10px;
+    color: #ffffff;
+}
+dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child {
+    min-width: 34px;
+    padding: 2px;
+    color: #d9dcea;
+}
+dialog.background headerbar.apx-chooser-header image {
+    -gtk-icon-transform: scale(1);
+    -gtk-icon-shadow: none;
+}
+dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child image {
+    color: #d9dcea;
+}
+dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child image {
+    margin-bottom: 2px;
+}
+dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child:hover,
+dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child:checked {
+    background: transparent;
 }
 
 /* APX application chooser: one translucent surface, including the empty state. */
@@ -267,3 +395,70 @@ filechooser .path-bar button:checked { background: #353a4a; }
     background: #1b1d26; padding: 6px 10px; box-shadow: none;
 }
 filechooser scrolledwindow.frame { border: 1px solid #343947; border-radius: 0; }
+
+/* Keep the chooser's larger hit areas; only match disabled icon treatment. */
+dialog.background headerbar.apx-chooser-header .apx-chooser-navigation > button:disabled,
+dialog.background headerbar.apx-chooser-header .apx-chooser-navigation > button:disabled image {
+    color: #a4abc0;
+}
+dialog.background headerbar.apx-chooser-header entry.apx-chooser-search,
+dialog.background headerbar.apx-chooser-header entry.apx-chooser-search:focus {
+    background: #1b1d26;
+    color: #d9dcea;
+    caret-color: #d9dcea;
+    border: 0;
+    outline: none;
+    box-shadow: none;
+    border-radius: 14px;
+    padding: 8px 10px;
+    min-height: 32px;
+}
+
+/* Hidden breadcrumb scroll controls must not leave a focus/hover outline. */
+.thunar .path-bar button.apx-breadcrumb-slider,
+.thunar .path-bar button.apx-breadcrumb-slider:focus,
+.thunar .path-bar button.apx-breadcrumb-slider:hover,
+.thunar .path-bar button.apx-breadcrumb-slider:backdrop {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+/* Preserve the chooser selection across keyboard focus and window changes. */
+filechooser treeview.view:selected,
+filechooser treeview.view:selected:focus,
+filechooser treeview.view:selected:backdrop,
+filechooser treeview.view cell:selected,
+filechooser treeview.view cell:selected:backdrop {
+    background-color: #353a4a;
+    background-image: none;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+/* Match the chooser's 50 px button hit areas without changing icon sizes. */
+.thunar toolbar button.apx-toolbar-button {
+    min-height: 45px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-width: 0;
+}
+.thunar toolbar .path-bar button.apx-toolbar-button {
+    min-height: 44px;
+    padding: 3px 5px;
+    border-width: 0;
+}
+.thunar toolbar .path-bar button.apx-toolbar-button:hover,
+.thunar toolbar .path-bar button.apx-toolbar-button:checked:hover {
+    background-color: rgba(53, 58, 74, 0.6);
+    border-radius: 8px;
+}
+.thunar toolbar .path-bar button.apx-breadcrumb-slider:hover {
+    background: transparent;
+}
+
+/* Keep the divider's wider drag target transparent over the filename gutter. */
+filechooser paned > separator {
+    background-color: transparent;
+    background-image: image(#ffffff);
+}

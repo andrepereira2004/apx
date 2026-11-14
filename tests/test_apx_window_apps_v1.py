@@ -99,6 +99,21 @@ class WindowApplicationsTests(unittest.TestCase):
         self.assertEqual(m.native_launch_command({'id':'brave-browser'}), ['/usr/bin/brave','--new-window'])
         self.assertEqual(m.native_launch_command({'id':'thunar'}), ['/usr/bin/thunar','--window',str(Path.home())])
 
+    def test_thunar_menu_launch_uses_environment_wrapper_when_executable(self):
+        m=load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            home=Path(directory)
+            launcher=home/'.local/bin/thunar'
+            launcher.parent.mkdir(parents=True)
+            launcher.write_text('#!/bin/sh\nexec /usr/bin/thunar "$@"\n')
+            with patch.object(m.Path, 'home', return_value=home):
+                launcher.chmod(0o700)
+                self.assertEqual(m.native_launch_command({'id':'thunar'}),
+                                 [str(launcher),'--window',str(home)])
+                launcher.chmod(0o600)
+                self.assertEqual(m.native_launch_command({'id':'thunar'}),
+                                 ['/usr/bin/thunar','--window',str(home)])
+
     def test_secondary_actions_preserve_current_folder_and_catalogue(self):
         m=load_module()
         apps=[dict(id='brave-browser',name='Brave',windows=[],iconPath='/icon'),

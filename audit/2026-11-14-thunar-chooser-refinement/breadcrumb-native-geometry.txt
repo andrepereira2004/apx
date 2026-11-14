@@ -1,0 +1,33 @@
+STYLE padding=2,2 border=0,0 margins=0,0
+BUTTON GtkButton 29x50 active=0
+ICON go-previous-symbolic allocation=24x45 pixel-size=-1
+STYLE padding=2,2 border=0,0 margins=0,0
+BUTTON GtkButton 29x50 active=0
+ICON go-next-symbolic allocation=24x45 pixel-size=-1
+PART ThunarLocationButton visible=1 size=98x50 padding=5,5 margin=0,0 text=
+PART GtkBox visible=1 size=88x44 padding=0,0 margin=0,0 text=
+PART GtkImage visible=0 size=1x1 padding=4,4 margin=0,0 text=
+PART GtkLabel visible=1 size=88x44 padding=8,8 margin=0,0 text=Documents
+PART GtkLabel visible=0 size=1x1 padding=0,8 margin=0,0 text=Documents
+STYLE padding=3,3 border=0,0 margins=0,0
+BUTTON ThunarLocationButton 98x50 active=1
+PART ThunarLocationButton visible=1 size=68x50 padding=5,5 margin=0,0 text=
+PART GtkBox visible=1 size=58x44 padding=0,0 margin=0,0 text=
+PART GtkImage visible=1 size=24x44 padding=4,4 margin=0,0 text=
+PART GtkLabel visible=1 size=32x44 padding=0,8 margin=0,0 text=apx
+PART GtkLabel visible=0 size=1x1 padding=0,8 margin=0,0 text=apx
+STYLE padding=3,3 border=0,0 margins=0,0
+BUTTON ThunarLocationButton 68x50 active=0
+PART ThunarLocationButton visible=1 size=1x1 padding=5,5 margin=0,0 text=
+PART GtkBox visible=1 size=1x1 padding=0,0 margin=0,0 text=
+PART GtkImage visible=0 size=1x1 padding=4,4 margin=0,0 text=
+PART GtkLabel visible=1 size=1x1 padding=8,8 margin=0,0 text=home
+PART GtkLabel visible=0 size=1x1 padding=0,8 margin=0,0 text=home
+PART ThunarLocationButton visible=1 size=1x1 padding=5,5 margin=0,0 text=
+PART GtkBox visible=1 size=1x1 padding=0,0 margin=0,0 text=
+PART GtkImage visible=1 size=1x1 padding=4,4 margin=0,0 text=
+PART GtkLabel visible=0 size=1x1 padding=0,8 margin=0,0 text=
+PART GtkLabel visible=0 size=1x1 padding=0,8 margin=0,0 text=
+STYLE padding=2,2 border=0,0 margins=0,0
+BUTTON GtkToggleButton 39x50 active=0
+ICON system-search-symbolic allocation=20x45 pixel-size=20

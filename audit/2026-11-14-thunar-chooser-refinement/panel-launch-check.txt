@@ -1,0 +1,1 @@
+PASS: installed apx-laptop-action-v1 files launched a stopped Thunar through compositor; module found in process maps. PID 1388609

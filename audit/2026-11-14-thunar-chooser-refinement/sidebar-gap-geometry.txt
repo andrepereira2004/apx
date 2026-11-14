@@ -1,0 +1,12 @@
+['APX'] (43, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Desktop'] (81, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Recentes'] (119, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Lixo'] (157, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Downloads'] (195, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Documentos'] (233, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Imagens'] (271, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Vídeos'] (309, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Música'] (347, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Aplicações'] (385, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Explorar rede'] (508, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0
+['Partilha Environments'] (589, 38) margin 0 0 border 0 0 padding 0 0 widget-margin 0 0

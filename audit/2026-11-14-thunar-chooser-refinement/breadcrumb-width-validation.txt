@@ -1,0 +1,16 @@
+PASS: fresh dialog starts with breadcrumbs and visible magnifier, search closed.
+PASS: initial/end states, rapid back/forward, history branching, Alt+Left, inline native search/results, close and tooltip suppression.
+PASS: native 180 ms crossfade
+PASS: magnifier visible before search
+PASS: magnifier hidden during search
+PASS: opening transition running
+PASS: opening transition completed
+PASS: search entry active
+PASS: magnifier restored on exit
+PASS: closing transition running
+PASS: closing transition completed
+PASS: breadcrumbs restored
+PASS: rapid toggles settle in search
+PASS: Ctrl+L still edits the path without hiding search button
+PASS: path editing returns to breadcrumbs
+RESULT: PASS

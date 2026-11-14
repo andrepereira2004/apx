@@ -676,7 +676,10 @@ def native_launch_command(app):
     if app['id'] == 'brave-browser':
         return ['/usr/bin/brave', '--new-window']
     if app['id'] == 'thunar':
-        return ['/usr/bin/thunar', '--window', str(Path.home())]
+        # Keep APX's GTK module when launching from the applications menu.
+        launcher = Path.home() / '.local/bin/thunar'
+        executable = str(launcher) if launcher.is_file() and os.access(launcher, os.X_OK) else '/usr/bin/thunar'
+        return [executable, '--window', str(Path.home())]
     return ['/usr/bin/gtk-launch', app['id']]
 
 

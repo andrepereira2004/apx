@@ -108,7 +108,7 @@ start_desktop_service '^/usr/bin/gnome-keyring-daemon' \
 start_desktop_service '^/home/apx/.local/libexec/apx-xdph-v1' \
     /home/apx/.local/libexec/apx-xdph-v1
 start_desktop_service '^/usr/lib/xdg-desktop-portal-gtk' \
-    /usr/lib/xdg-desktop-portal-gtk
+    /usr/bin/env GTK_MODULES=/home/apx/.local/lib/apx/libchooser-places.so /usr/lib/xdg-desktop-portal-gtk
 start_desktop_service '^/usr/bin/mako([[:space:]]|$)' /usr/bin/mako
 start_desktop_service '[/]apx-notification-focus-v1([[:space:]]|$)' \
     /home/apx/.local/bin/apx-notification-focus-v1

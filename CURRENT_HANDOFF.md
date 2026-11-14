@@ -11015,3 +11015,15 @@ da animação pelo proprietário ainda está pendente. Módulo e binário nativo
 recompilados, instalados no piloto; patch 4.20.10 dry-run passou. Backups:
 `/var/lib/apx/backups/20261114T180732Z-search-crossfade` e
 `/var/lib/apx/backups/20261114T180914Z-search-crossfade`. Sem commit/push.
+
+## Seletor do portal para abrir e guardar, 2026-11-14
+
+O portal GTK usado pelo Brave carrega o módulo APX também quando é iniciado
+pela shell. O cabeçalho identifica as ações pelos códigos de resposta GTK;
+nos diálogos de guardar conserva a entrada nativa do nome no corpo e mostra
+Nome, Cancelar e Salvar. O proprietário confirmou visualmente o seletor ao
+guardar uma imagem no Brave. Testes cobrem abrir e guardar, respostas, nome
+e caminho, rótulos e pesquisa; o teste de navegação do wallpaper também
+passou. O backend foi reiniciado sem diálogo aberto, preservando o Brave.
+Seed e cinco homes atualizados; último backup
+`/var/lib/apx/backups/20261114T182057Z-browser-file-chooser`.

@@ -221,6 +221,28 @@ static GtkWidget *find_filter_bar(GtkWidget *widget) {
     return found;
 }
 
+static GtkWidget *find_chooser_widget(GtkWidget *widget) {
+    if (GTK_IS_FILE_CHOOSER_WIDGET(widget)) return widget;
+    if (!GTK_IS_CONTAINER(widget)) return NULL;
+    GList *children = gtk_container_get_children(GTK_CONTAINER(widget));
+    GtkWidget *found = NULL;
+    for (GList *item = children; item && !found; item = item->next)
+        found = find_chooser_widget(GTK_WIDGET(item->data));
+    g_list_free(children);
+    return found;
+}
+
+static GtkWidget *find_filename_label(GtkWidget *widget) {
+    if (GTK_IS_LABEL(widget)) return widget;
+    if (!GTK_IS_CONTAINER(widget)) return NULL;
+    GList *children = gtk_container_get_children(GTK_CONTAINER(widget));
+    GtkWidget *found = NULL;
+    for (GList *item = children; item && !found; item = item->next)
+        found = find_filename_label(GTK_WIDGET(item->data));
+    g_list_free(children);
+    return found;
+}
+
 static GtkWidget *find_search_entry(GtkWidget *widget) {
     if (GTK_IS_SEARCH_ENTRY(widget)) return widget;
     if (!GTK_IS_CONTAINER(widget)) return NULL;
@@ -318,6 +340,35 @@ static gboolean adapt_header_idle(gpointer data) {
     if (GTK_IS_HEADER_BAR(header)) {
         gtk_style_context_add_class(gtk_widget_get_style_context(header), "apx-chooser-header");
         gtk_header_bar_set_title(GTK_HEADER_BAR(header), NULL);
+        /* Save dialogs put their live filename entry in the custom title.
+         * Move that entire native widget into the chooser body before replacing
+         * the title, preserving GTK's bindings, focus and validation. */
+        GtkFileChooserAction action = gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog));
+        GtkWidget *old_title = gtk_header_bar_get_custom_title(GTK_HEADER_BAR(header));
+        if ((action == GTK_FILE_CHOOSER_ACTION_SAVE || action == GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER) && old_title) {
+            GtkWidget *chooser = find_chooser_widget(dialog);
+            GtkWidget *body = NULL;
+            if (GTK_IS_CONTAINER(chooser)) {
+                GList *children = gtk_container_get_children(GTK_CONTAINER(chooser));
+                for (GList *item = children; item && !body; item = item->next)
+                    if (GTK_IS_BOX(item->data)) body = GTK_WIDGET(item->data);
+                g_list_free(children);
+            }
+            if (!body) { g_object_unref(dialog); return G_SOURCE_REMOVE; }
+            GtkWidget *filename_label = find_filename_label(old_title);
+            if (filename_label && action == GTK_FILE_CHOOSER_ACTION_SAVE)
+                gtk_label_set_text(GTK_LABEL(filename_label), "Nome");
+            g_object_ref(old_title);
+            gtk_header_bar_set_custom_title(GTK_HEADER_BAR(header), NULL);
+            gtk_box_pack_start(GTK_BOX(body), old_title, FALSE, FALSE, 0);
+            gtk_box_reorder_child(GTK_BOX(body), old_title, 0);
+            gtk_widget_set_margin_start(old_title, 12);
+            gtk_widget_set_margin_end(old_title, 12);
+            gtk_widget_set_margin_top(old_title, 6);
+            gtk_widget_set_margin_bottom(old_title, 6);
+            gtk_widget_show(old_title);
+            g_object_unref(old_title);
+        }
         /* GTK updates the search subtitle asynchronously; reserve no central title. */
         GtkWidget *contents = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
         gtk_widget_set_hexpand(contents, TRUE);
@@ -328,16 +379,23 @@ static gboolean adapt_header_idle(gpointer data) {
         GtkWidget *choose = NULL;
         GList *children = gtk_container_get_children(GTK_CONTAINER(header));
         for (GList *item = children; item; item = item->next) {
-            if (GTK_IS_BUTTON(item->data) &&
-                g_strcmp0(gtk_button_get_label(GTK_BUTTON(item->data)), "Cancelar") == 0)
-                cancel = GTK_WIDGET(item->data);
-            if (GTK_IS_BUTTON(item->data) &&
-                g_strcmp0(gtk_button_get_label(GTK_BUTTON(item->data)), "Escolher") == 0)
-                choose = GTK_WIDGET(item->data);
-            if (GTK_IS_TOGGLE_BUTTON(item->data)) search = GTK_WIDGET(item->data);
+            if (GTK_IS_TOGGLE_BUTTON(item->data)) {
+                search = GTK_WIDGET(item->data);
+            } else if (GTK_IS_BUTTON(item->data)) {
+                gint response = gtk_dialog_get_response_for_widget(GTK_DIALOG(dialog), item->data);
+                if (response == GTK_RESPONSE_CANCEL || response == GTK_RESPONSE_CLOSE)
+                    cancel = GTK_WIDGET(item->data);
+                else if (response == GTK_RESPONSE_ACCEPT || response == GTK_RESPONSE_OK ||
+                         response == GTK_RESPONSE_YES || response == GTK_RESPONSE_APPLY)
+                    choose = GTK_WIDGET(item->data);
+            }
         }
         g_list_free(children);
         if (search && cancel && choose) {
+            if (action == GTK_FILE_CHOOSER_ACTION_SAVE) {
+                gtk_button_set_label(GTK_BUTTON(cancel), "Cancelar");
+                gtk_button_set_label(GTK_BUTTON(choose), "Salvar");
+            }
             GtkWidget *actions = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
             gtk_style_context_add_class(gtk_widget_get_style_context(actions), "apx-chooser-actions");
             GtkWidget *buttons[] = { search, cancel, choose };

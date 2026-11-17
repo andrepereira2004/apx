@@ -1,0 +1,27 @@
+/* APX archive creation: the same graphite surface and typography as Files. */
+window.apx-compress { background-color: rgba(16,17,23,.96); color: #d9dcea; font: 11pt Selawik; border: 1px solid #414654; border-radius: 0 0 14px 14px; }
+.apx-compress decoration { box-shadow: 0 18px 50px rgba(0,0,0,.35); border-radius: 14px; }
+.apx-compress headerbar { background: #101117; border: 0; border-bottom: 1px solid #343947; border-radius: 14px 14px 0 0; padding: 14px 16px; box-shadow: none; }
+.apx-compress headerbar .title { font-weight: 600; color: #f1f2f7; }
+.apx-compress headerbar .subtitle { font-size: 10pt; color: #a4aaba; }
+.apx-compress entry, .apx-compress combobox button { background: #1b1d26; color: #e7e9f0; border: 1px solid #414654; border-radius: 10px; padding: 11px 14px; min-height: 22px; box-shadow: none; }
+.apx-compress entry:focus, .apx-compress combobox button:focus { border-color: #c1c7d8; box-shadow: none; }
+.apx-compress button { background: transparent; color: #d9dcea; border: 1px solid #414654; border-radius: 10px; padding: 10px 16px; box-shadow: none; }
+.apx-compress button:hover { background: #292d3a; border-color: #697182; }
+.apx-compress button.apx-compress-primary { background: #353a4a; border-color: #626b80; color: #ffffff; font-weight: 600; }
+.apx-compress button.apx-compress-primary:hover { background: #464e63; }
+.apx-compress button:disabled { opacity: .45; }
+.apx-compress .apx-compress-label { font-size: 10pt; color: #bcc3d3; font-weight: 600; }
+.apx-compress .apx-compress-hint { color: #9ca6b9; font-size: 10pt; }
+.apx-compress .apx-compress-folder { background: #191b24; border: 1px solid #343947; border-radius: 10px; padding: 8px 12px; }
+.apx-compress .apx-compress-folder button { padding: 7px 12px; }
+.apx-compress .apx-compress-error { color: #f0a4a4; }
+.apx-compress button.flat { border-color: transparent; color: #aeb7ca; padding: 5px 0; font-size: 10pt; }
+.apx-compress button.flat:hover { background: transparent; color: #f1f2f7; }
+.apx-compress progressbar trough { background: #1b1d26; border: 1px solid #343947; border-radius: 6px; min-height: 8px; }
+.apx-compress progressbar progress { background: #8592b0; border: 0; border-radius: 6px; }
+.apx-compress menu { background: #161820; border: 1px solid #414654; padding: 6px; border-radius: 10px; }
+.apx-compress menuitem { padding: 9px 12px; color: #d9dcea; border-radius: 6px; }
+.apx-compress menuitem:hover { background: #353a4a; }
+
+.apx-compress entry selection { background-color: #353a4a; color: #ffffff; }

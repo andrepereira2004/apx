@@ -14,8 +14,9 @@ PanelWindow {
     visible: cards.count > 0
     mask: Region { item: stack }
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: editingId >= 0 ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     readonly property int cardHeight: Math.min(128, Math.max(122, Math.floor(((screen ? screen.height : 720)-110)/3)))
+    property int editingId: -1
     property var queue: []
     function refresh() { if (!reader.running) reader.running = true }
     function status() {
@@ -44,6 +45,7 @@ PanelWindow {
     function closeCard(id, activate, action) {
         var i=indexFor(id)
         if (i<0 || cards.get(i).closed) return
+        if (editingId === id) editingId = -1
         var note=JSON.parse(cards.get(i).payload)
         cards.setProperty(i,"closed",true)
         if (activate) command(["makoctl","invoke","-n",String(id),action || "default"])
@@ -54,6 +56,10 @@ PanelWindow {
         var i=indexFor(id)
         if (i<0 || cards.get(i).closed || opener.running) return
         var note=JSON.parse(cards.get(i).payload)
+        if (note.category === "apx-localsend-peer") {
+            editingId=id
+            return
+        }
         if ((note.app_name === "APX Captura" || note.app_name === "APX Browser") && note.actions && note.actions.default) {
             closeCard(id,true,"default")
             return
@@ -72,12 +78,13 @@ PanelWindow {
                 var entry=DesktopActivity.notificationEntries.find(function(item) {
                     return item.active && item.mako_id === note.id
                 })
-                return entry && !entry.muted
+                return note.app_name === "APX Captura" || (entry && !entry.muted)
             }).slice(0,3)
             var ids=visibleNotes.map(function(n) { return n.id })
             for (var i=0;i<cards.count;++i) {
                 if (ids.indexOf(cards.get(i).noteId)<0) cards.setProperty(i,"closed",true)
             }
+            if (editingId >= 0 && ids.indexOf(editingId)<0) editingId=-1
             visibleNotes.reverse().forEach(function(note, order) {
                 var index=toasts.indexFor(note.id)
                 if (index<0) cards.append({noteId: note.id,payload: JSON.stringify(note),closed: false,arrivalOrder: order})
@@ -124,6 +131,25 @@ PanelWindow {
                 required property int arrivalOrder
                 readonly property var note: JSON.parse(payload)
                 readonly property bool screenshot: note.app_name === "APX Captura"
+                readonly property bool localsendPeer: note.category === "apx-localsend-peer"
+                readonly property bool editing: toasts.editingId === noteId
+                property string peerError: ""
+                onEditingChanged: if (editing) Qt.callLater(function() { peerInput.forceActiveFocus() })
+                function submitPeer() {
+                    if (peerApply.running) return
+                    var address=peerInput.text.trim()
+                    if (!address.length) { peerError="Introduz o endereço IP"; return }
+                    peerError=""
+                    peerApply.command=["/home/apx/.local/bin/apx-localsend-launch-v1","--apply",address]
+                    peerApply.running=true
+                }
+                Process {
+                    id: peerApply
+                    onExited: function(code) {
+                        if (code === 0) toasts.closeCard(holder.noteId,false,"")
+                        else holder.peerError="IP inválido ou fora da rede atual"
+                    }
+                }
                 width: stack.width
                 height: visual.height
                 property real reveal: 0
@@ -140,7 +166,11 @@ PanelWindow {
                     id: visual
                     x: 26*(1-holder.reveal)+holder.dragOffset
                     width: holder.width
-                    height: holder.screenshot ? 198 : toasts.cardHeight
+                    height: holder.screenshot ? 198 : holder.editing ? 184 : toasts.cardHeight
+                    Behavior on height {
+                        enabled: holder.localsendPeer
+                        NumberAnimation { duration: 240; easing.type: Easing.OutCubic }
+                    }
                     clip: true
                     radius: 16
                     color: "#181c25"
@@ -257,6 +287,49 @@ PanelWindow {
                                 font.family: Appearance.fontFamily
                                 font.pixelSize: 12
                             }
+                        }
+                        Rectangle {
+                            id: peerField
+                            visible: holder.localsendPeer && (holder.editing || opacity > 0)
+                            opacity: holder.editing ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            enabled: holder.editing
+                            anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+                            height: 36
+                            radius: 9
+                            color: "#2a3647"
+                            border.width: 1
+                            border.color: peerInput.activeFocus ? "#6c829b" : "#506177"
+                            TextInput {
+                                id: peerInput
+                                anchors.fill: parent
+                                anchors.leftMargin: 12
+                                anchors.rightMargin: 12
+                                verticalAlignment: TextInput.AlignVCenter
+                                color: "#f0f5fb"
+                                selectionColor: "#506177"
+                                font.family: Appearance.fontFamily
+                                font.pixelSize: 12
+                                clip: true
+                                onAccepted: holder.submitPeer()
+                                Keys.onEscapePressed: toasts.editingId=-1
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    visible: !peerInput.text.length
+                                    text: "Escreve o IP e prime Enter"
+                                    color: "#b9c8d6"
+                                    font: peerInput.font
+                                }
+                            }
+                        }
+                        Text {
+                            visible: holder.editing && holder.peerError.length>0
+                            anchors { left: parent.left; right: parent.right; bottom: peerField.top; bottomMargin: 4 }
+                            text: holder.peerError
+                            color: "#ffaaa8"
+                            font.family: Appearance.fontFamily
+                            font.pixelSize: 11
+                            elide: Text.ElideRight
                         }
                     }
                         Rectangle {

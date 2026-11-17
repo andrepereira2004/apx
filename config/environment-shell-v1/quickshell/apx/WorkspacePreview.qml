@@ -55,15 +55,17 @@ Rectangle {
             id: desktop
             width: parent.width
             height: width * preview.monitorHeight / preview.monitorWidth
-            color: "#0a1014"
+            color: Appearance.wallpaperBorder === "white" ? "#ffffff" : "#000000"
             clip: true
             radius: 5
             Image {
+                id: previewWallpaper
                 anchors.fill: parent
                 source: preview.wallpaper
                 fillMode: Appearance.wallpaperFit === "fit" ? Image.PreserveAspectFit
                         : Appearance.wallpaperFit === "stretch" ? Image.Stretch : Image.PreserveAspectCrop
                 scale: Appearance.wallpaperZoom / 100
+                transform: Translate { x: Appearance.wallpaperTranslation(Appearance.wallpaperOffsetX, previewWallpaper.width, previewWallpaper.paintedWidth, Appearance.wallpaperZoom); y: Appearance.wallpaperTranslation(Appearance.wallpaperOffsetY, previewWallpaper.height, previewWallpaper.paintedHeight, Appearance.wallpaperZoom) }
                 asynchronous: true
             }
             Repeater {

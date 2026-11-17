@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+"""APX compression dialog. Files remain inside this Environment."""
+import os
+from pathlib import Path
+import subprocess
+import sys
+import threading
+import time
+
+sys.path.insert(0, str(Path.home() / '.local/lib/apx'))
+from apx_compression import FORMATS, EXTENSIONS, MINECRAFT, Cancelled, create_archive, extension_for_name, suggest_format, with_extension
+
+
+def main():
+    # Native folder selection uses the same APX picker as the other apps.
+    module = str(Path.home() / '.local/lib/apx/libchooser-places.so')
+    if Path(module).is_file():
+        os.environ['GTK_MODULES'] = ':'.join(filter(None, (os.environ.get('GTK_MODULES', ''), module)))
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk, GLib
+    GLib.set_prgname('apx-compress-v1')
+    GLib.set_application_name('Comprimir')
+    Gtk.init(None)
+    paths = [Path(os.path.abspath(path)) for path in sys.argv[1:]]
+    if not paths:
+        chooser = Gtk.FileChooserDialog(title='Selecionar ficheiros para comprimir', action=Gtk.FileChooserAction.OPEN)
+        chooser.add_buttons('Cancelar', Gtk.ResponseType.CANCEL, 'Selecionar', Gtk.ResponseType.OK)
+        chooser.set_select_multiple(True)
+        if chooser.run() != Gtk.ResponseType.OK:
+            chooser.destroy(); return
+        paths = [Path(p) for p in chooser.get_filenames()]; chooser.destroy()
+    if not paths: return
+    window = Gtk.Window(title='Comprimir')
+    window.set_wmclass('apx-compress-v1', 'apx-compress-v1')
+    window.set_default_size(620, -1)
+    window.set_resizable(False)
+    window.set_position(Gtk.WindowPosition.CENTER)
+    window.set_type_hint(Gdk.WindowTypeHint.DIALOG)
+    window.set_icon_name('package-x-generic')
+    window.get_style_context().add_class('apx-compress')
+    provider = Gtk.CssProvider()
+    provider.load_from_path(str(Path.home() / '.local/share/apx/compress.css'))
+    Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_USER + 1)
+    header = Gtk.HeaderBar(title='Comprimir')
+    header.set_show_close_button(False)
+    header.set_subtitle(paths[0].name if len(paths) == 1 else str(len(paths)) + ' itens selecionados')
+    cancel_button = Gtk.Button(label='Cancelar')
+    create_button = Gtk.Button(label='Comprimir')
+    create_button.get_style_context().add_class('apx-compress-primary')
+    header.pack_start(cancel_button); header.pack_end(create_button)
+    window.set_titlebar(header)
+    body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
+    body.set_border_width(24); window.add(body)
+    form = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18); body.pack_start(form, True, True, 0)
+    def field(title, child):
+        group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        label = Gtk.Label(label=title, xalign=0)
+        label.get_style_context().add_class('apx-compress-label')
+        group.pack_start(label, False, False, 0); group.pack_start(child, False, False, 0)
+        form.pack_start(group, False, False, 0)
+    name = Gtk.Entry(); name.set_activates_default(True)
+    kind = suggest_format(paths)
+    base = (paths[0].stem if paths[0].is_file() else paths[0].name) if len(paths) == 1 else 'Arquivo'
+    name.set_text(with_extension(base, kind))
+    field('Nome do arquivo', name)
+    formats = Gtk.ComboBoxText()
+    short_labels = {'mcworld': 'Minecraft · Mundo Bedrock', 'mcpack': 'Minecraft · Pacote', 'mcaddon': 'Minecraft · Complemento'}
+    for key, label, ext in FORMATS: formats.append(key, short_labels.get(key, label) + ' (' + ext + ')')
+    formats.set_active_id(kind); field('Formato', formats)
+    destination = paths[0].parent
+    folder_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+    folder_label = Gtk.Label(label=str(destination), xalign=0); folder_label.set_ellipsize(3)
+    folder_label.set_hexpand(True)
+    folder_label.set_width_chars(24); folder_label.set_max_width_chars(34)
+    folder_button = Gtk.Button(label='Escolher…')
+    folder_row.get_style_context().add_class('apx-compress-folder')
+    folder_row.pack_start(Gtk.Image.new_from_icon_name('folder-symbolic', Gtk.IconSize.BUTTON), False, False, 0)
+    folder_row.pack_start(folder_label, True, True, 0); folder_row.pack_start(folder_button, False, False, 0)
+    field('Guardar em', folder_row)
+    hint = Gtk.Label(xalign=0); hint.set_line_wrap(True)
+    hint.get_style_context().add_class('apx-compress-hint')
+    form.pack_start(hint, False, False, 0)
+    error = Gtk.Label(xalign=0); error.set_line_wrap(True)
+    error.get_style_context().add_class('apx-compress-error'); error.set_no_show_all(True)
+    body.pack_start(error, False, False, 0)
+    progress = Gtk.ProgressBar(); progress.set_show_text(True); progress.set_no_show_all(True)
+    body.pack_start(progress, False, False, 0)
+    footer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+    advanced = Gtk.Button(label='Mais opções…'); advanced.get_style_context().add_class('flat')
+    footer.pack_start(advanced, False, False, 0); body.pack_start(footer, False, False, 0)
+    running = False; close_after_cancel = False; updating_name = False
+    stop = threading.Event()
+    def update_hint():
+        current = formats.get_active_id()
+        hints = {
+            'mcworld': 'Seleciona a pasta do mundo Bedrock. Fecha o mundo antes de comprimir.',
+            'mcpack': 'O manifest.json fica na raiz do pacote, sem uma pasta extra.',
+            'mcaddon': 'Reúne pacotes e mundos Minecraft num único complemento.',
+        }
+        hint.set_text(hints.get(current, str(len(paths)) + (' item selecionado' if len(paths) == 1 else ' itens selecionados')))
+    def format_changed(*args):
+        nonlocal updating_name
+        if updating_name: return
+        updating_name = True
+        name.set_text(with_extension(name.get_text(), formats.get_active_id()))
+        updating_name = False; update_hint()
+    def name_changed(*args):
+        if updating_name: return
+        selected = extension_for_name(name.get_text())
+        if selected and selected != formats.get_active_id(): formats.set_active_id(selected)
+    formats.connect('changed', format_changed); name.connect('changed', name_changed)
+    def choose_folder(*args):
+        nonlocal destination
+        chooser = Gtk.FileChooserDialog(title='Guardar arquivo em', transient_for=window, action=Gtk.FileChooserAction.SELECT_FOLDER)
+        chooser.add_buttons('Cancelar', Gtk.ResponseType.CANCEL, 'Selecionar', Gtk.ResponseType.OK)
+        chooser.set_current_folder(str(destination))
+        if chooser.run() == Gtk.ResponseType.OK:
+            destination = Path(chooser.get_filename()); folder_label.set_text(str(destination))
+        chooser.destroy()
+    folder_button.connect('clicked', choose_folder)
+    def quit_or_cancel(*args):
+        nonlocal close_after_cancel
+        if running:
+            close_after_cancel = True; stop.set(); cancel_button.set_sensitive(False)
+            progress.set_text('A cancelar…'); return True
+        Gtk.main_quit(); return True
+    cancel_button.connect('clicked', quit_or_cancel); window.connect('delete-event', quit_or_cancel)
+    window.connect('key-press-event', lambda widget, event: quit_or_cancel() if event.keyval == Gdk.KEY_Escape else False)
+    def more_options(*args):
+        subprocess.Popen(['/usr/bin/file-roller', '--add'] + [str(p) for p in paths], start_new_session=True)
+        Gtk.main_quit()
+    advanced.connect('clicked', more_options)
+    def set_progress(fraction, filename):
+        progress.set_fraction(fraction); progress.set_text('A comprimir… ' + str(round(fraction * 100)) + '%'); return False
+    def completed(result, failure):
+        nonlocal running
+        running = False
+        if close_after_cancel:
+            Gtk.main_quit(); return False
+        if failure:
+            form.set_sensitive(True); advanced.set_sensitive(True); create_button.set_sensitive(True); cancel_button.set_sensitive(True)
+            progress.hide(); error.set_text(str(failure)); error.show(); return False
+        subprocess.Popen(['/usr/bin/notify-send', '-a', 'Ficheiros', '-i', 'package-x-generic', 'Arquivo criado', result.name], start_new_session=True)
+        Gtk.main_quit(); return False
+    def begin(*args):
+        nonlocal running
+        if running: return
+        filename = name.get_text().strip()
+        if not filename or filename in ('.', '..') or '/' in filename or '\x00' in filename:
+            error.set_text('Escreve um nome válido para o arquivo.'); error.show(); return
+        current = formats.get_active_id(); filename = with_extension(filename, current)
+        output = destination / filename
+        if output.exists() or output.is_symlink():
+            error.set_text('Já existe um arquivo com esse nome. Escolhe outro nome.'); error.show(); return
+        error.hide(); form.set_sensitive(False); advanced.set_sensitive(False); create_button.set_sensitive(False)
+        stop.clear(); running = True; progress.set_fraction(0); progress.set_text('A preparar…'); progress.show()
+        def worker():
+            result = None; failure = None; last = [0.0]
+            def report(fraction, file):
+                now = time.monotonic()
+                if now - last[0] >= .1:
+                    last[0] = now; GLib.idle_add(set_progress, fraction, file)
+            try: result = create_archive(paths, output, current, stop, report)
+            except Exception as exc: failure = exc
+            GLib.idle_add(completed, result, failure)
+        threading.Thread(target=worker, daemon=True).start()
+    create_button.connect('clicked', begin)
+    create_button.set_can_default(True); window.set_default(create_button)
+    update_hint(); window.show_all(); name.grab_focus()
+    name.select_region(0, len(name.get_text()) - len(EXTENSIONS[kind]))
+    Gtk.main(); window.destroy()
+
+if __name__ == '__main__':
+    main()

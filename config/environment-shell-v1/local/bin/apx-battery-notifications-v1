@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Threshold battery notifications through the standard APX notification cards."""
+import fcntl
+import json
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+import threading
+import time
+
+
+def transition(state, percent, discharging):
+    updated = {'warned20': bool(state.get('warned20', False)), 'warned10': bool(state.get('warned10', False))}
+    # Hysteresis rearms after real recovery, not percentage jitter.
+    if percent >= 22: updated['warned20'] = False
+    if percent >= 12: updated['warned10'] = False
+    if not discharging: return updated, None
+    if percent <= 10 and not updated['warned10']:
+        updated.update(warned20=True, warned10=True)
+        return updated, 10
+    if percent < 20 and not updated['warned20']:
+        updated['warned20'] = True
+        return updated, 20
+    return updated, None
+
+
+def snapshot(root=Path('/sys/class/power_supply')):
+    for battery in sorted(root.iterdir()):
+        if (battery/'type').read_text().strip() != 'Battery': continue
+        if (battery/'scope').exists() and (battery/'scope').read_text().strip() == 'Device': continue
+        percent = int((battery/'capacity').read_text().strip())
+        if not 0 <= percent <= 100: raise ValueError('invalid battery percentage')
+        return percent, (battery/'status').read_text().strip() == 'Discharging'
+    return None
+
+
+def save_state(path, state):
+    fd, temporary = tempfile.mkstemp(prefix='.battery-', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w') as stream: json.dump(state, stream)
+        os.replace(temporary, path)
+    finally: Path(temporary).unlink(missing_ok=True)
+
+
+def notify(level, percent):
+    critical = level == 10
+    title = 'Bateria crítica' if critical else 'Bateria fraca'
+    body = (str(percent) + '% de bateria. Liga o carregador para continuar.' if critical else
+            str(percent) + '% de bateria. Podes ativar o modo de baixo consumo.')
+    helper = Path.home()/'.local/libexec/apx-system-power-client-v1.py'
+    command = ['/usr/bin/notify-send', '-a', 'Bateria e Energia', '-i',
+               'battery-caution' if critical else 'battery-low', '-u',
+               'critical' if critical else 'normal', '-t', '20000' if critical else '12000', '--wait']
+    if helper.is_file(): command.append('--action=power-save=Ativar baixo consumo')
+    result = subprocess.run(command + [title, body], capture_output=True, text=True, check=False)
+    if result.returncode:
+        print('APX battery notification failed: ' + result.stderr.strip(), flush=True)
+        return
+    if result.stdout.strip() == 'power-save':
+        # Only a deliberate button click invokes the already authenticated
+        # APX power-profile control; alerts never change the profile themselves.
+        action = subprocess.run([str(helper), 'platform-set', 'low-power'], capture_output=True, text=True, timeout=20, check=False)
+        subprocess.run(['/usr/bin/notify-send', '-a', 'Bateria e Energia', '-i', 'battery-low',
+                        'Baixo consumo ativado' if action.returncode == 0 else 'Não foi possível ativar o baixo consumo',
+                        'Perfil Poupar energia selecionado.' if action.returncode == 0 else 'Abre Bateria e Energia para escolher o perfil.'], check=False)
+
+
+def main():
+    directory = Path.home()/'.local/state/apx-battery-notifications-v1'
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory/'watch.lock').open('a') as lock:
+        try: fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError: return
+        path = directory/'state.json'
+        try:
+            state = json.loads(path.read_text())
+            if type(state) is not dict: state = {}
+        except (OSError, ValueError): state = {}
+        while True:
+            try:
+                current = snapshot()
+                if current:
+                    percent, discharging = current
+                    updated, event = transition(state, percent, discharging)
+                    if updated != state:
+                        save_state(path, updated); state = updated
+                    if event:
+                        print('APX battery alert: ' + str(event) + '% threshold, actual ' + str(percent) + '%', flush=True)
+                        threading.Thread(target=notify, args=(event, percent), daemon=True).start()
+            except (OSError, ValueError) as error:
+                print('APX battery monitor: ' + str(error), flush=True)
+            time.sleep(15)
+
+
+if __name__ == '__main__': main()

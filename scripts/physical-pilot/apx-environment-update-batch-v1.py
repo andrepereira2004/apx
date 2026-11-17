@@ -14,7 +14,7 @@ import sys
 import time
 
 sys.path.insert(0, '/usr/lib/apx')
-from apx_environment_update_batch import build_environment_plan
+from apx_environment_update_batch import MINIMUM_UPDATE_FREE_BYTES, build_environment_plan
 
 BASE = Path('/var/lib/apx/environment-updates-v1')
 ENVIRONMENTS = Path('/var/lib/apx/environments')
@@ -62,6 +62,12 @@ def preview():
     return build_environment_plan(inventory(), stat.f_bavail * stat.f_frsize)
 
 
+def require_update_space():
+    stat = os.statvfs(ENVIRONMENTS)
+    if stat.f_bavail * stat.f_frsize < MINIMUM_UPDATE_FREE_BYTES:
+        raise RuntimeError('Espaço livre abaixo de 16 GiB; atualização interrompida antes do próximo alvo.')
+
+
 def latest_status():
     paths = sorted(BASE.glob('*/status.json'), reverse=True)
     if not paths: return {'state': 'idle'}
@@ -71,6 +77,11 @@ def latest_status():
         current = preview()
         if current['targets'] != plan['targets']:
             value.update(state='failed', error='A operação antiga pertence a outra geração dos Environments. É necessária uma nova atualização com cópias de segurança atuais.')
+            atomic(paths[0], value)
+    if value.get('state') == 'queued-hub' and time.time() - value.get('hub_queue_time', 0) > 30:
+        unit = 'apx-environment-hub-update-' + value['operation'].lower() + '.service'
+        if subprocess.run(['/usr/bin/systemctl', 'is-active', '--quiet', unit]).returncode != 0:
+            value.update(state='failed', error='A etapa do Hub não arrancou; verifica os registos antes de repetir.')
             atomic(paths[0], value)
     if value.get('state') in ('queued', 'running'):
         operation = value.get('operation', '')
@@ -126,17 +137,28 @@ def maintenance_command(target, operation_dir):
     return identity, machine, unit + '.service', command
 
 
-def execute(operation):
+def execute(operation, *, resume_hub=False, host_digest=None):
     if OPERATION.fullmatch(operation) is None: raise RuntimeError('Invalid operation')
     directory = BASE / operation
     plan = read_json(directory / 'plan.json')
+    previous = read_json(directory / 'status.json') if resume_hub else None
+    if resume_hub:
+        if previous.get('state') != 'queued-hub' or (host_digest is not None and not re.fullmatch(r'[0-9a-f]{64}', host_digest)):
+            raise RuntimeError('No matching approved Hub completion')
+        expected = {target['name'] for target in plan['targets'] if target['execution'] != 'local-last'}
+        if set(previous.get('completed', [])) != expected:
+            raise RuntimeError('Other Environments are not complete')
     descriptor = os.open(TRANSITION_LOCK, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
-    status = {'operation': operation, 'state': 'running', 'completed': [], 'current': ''}
+    status = dict(previous) if resume_hub else {'operation': operation, 'state': 'running', 'completed': [], 'current': ''}
+    if resume_hub: status.update(state='updating-hub', current='hub')
     with os.fdopen(descriptor, 'w') as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             if POWER_RESERVATION.exists(): raise RuntimeError('Power operation pending')
-            if preview() != plan: raise RuntimeError('Environment plan changed; preview again')
+            require_update_space()
+            if not resume_hub and preview() != plan: raise RuntimeError('Environment plan changed; preview again')
+            if resume_hub and preview()['targets'] != plan['targets']:
+                raise RuntimeError('Environment generations changed; preview again')
             if plan['classification'] != 'ready-for-approval': raise RuntimeError('Plan blocked')
             # The desktop helper is installed from a root-owned, digest-pinned seed.
             st = SEED.stat()
@@ -154,13 +176,18 @@ def execute(operation):
                 def run(args, timeout=120):
                     return subprocess.run(args, stdout=log, stderr=log, check=True, timeout=timeout)
                 # Every target, including the still-active Hub, gets its own copy.
-                for target in plan['targets']:
+                for target in (plan['targets'] if not resume_hub else [target for target in plan['targets'] if target['execution'] == 'local-last']):
+                    require_update_space()
                     name = target['name']
                     for part in ('root', 'home'):
-                        run(['/usr/bin/btrfs', 'subvolume', 'snapshot', '-r', str(ENVIRONMENTS / name / part), str(rollback / (name + '-' + part))])
+                        suffix = '-final' if resume_hub else ''
+                        run(['/usr/bin/btrfs', 'subvolume', 'snapshot', '-r', str(ENVIRONMENTS / name / part), str(rollback / (name + '-' + part + suffix))])
                 for target in plan['targets']:
-                    if target['execution'] == 'local-last': continue
+                    if (target['execution'] == 'local-last') != resume_hub: continue
+                    require_update_space()
                     name = target['name']; status['current'] = name; atomic(directory / 'status.json', status)
+                    if resume_hub:
+                        run(['/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py', '--recover'], timeout=180)
                     record = read_json(ENVIRONMENTS / name / 'registration.json')
                     if record['generation'] != target['generation'] or record['state'] != 'stopped':
                         raise RuntimeError('Target generation or state changed')
@@ -196,14 +223,47 @@ def execute(operation):
                             raise RuntimeError('Maintenance container did not stop')
                         run(network + ['remove', '--environment', identity])
                     status['completed'].append(name); atomic(directory / 'status.json', status)
-            status.update(state='awaiting-hub', current='hub', message='Os outros Environments estão atualizados. Falta atualizar o Hub nesta janela.')
+                    require_update_space()
+            if resume_hub:
+                status.update(state='return-pending', current='', message='Environments concluídos; a preparar o regresso do Hub.')
+            else:
+                status.update(state='awaiting-hub', current='hub', message='Os outros Environments estão atualizados. Falta atualizar o Hub nesta janela.')
             atomic(directory / 'status.json', status)
         except Exception as error:
             status.update(state='failed', error=str(error), message='A atualização parou; os resultados e cópias de segurança foram preservados.')
             atomic(directory / 'status.json', status)
+            if resume_hub and read_json(ENVIRONMENTS / 'hub/registration.json').get('state') == 'stopped':
+                import importlib.util
+                spec = importlib.util.spec_from_file_location('apx_update_return', '/usr/lib/apx/apx-coordinated-update-runner-v1.py')
+                module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+                module.schedule_hub_return(operation)
+            raise
+    if resume_hub:
+        try:
+            import importlib.util
+            if host_digest is not None:
+                spec = importlib.util.spec_from_file_location('apx_coordinated_update_authority', '/usr/lib/apx/apx-coordinated-update-v1.py')
+                authority = importlib.util.module_from_spec(spec); spec.loader.exec_module(authority)
+                result = authority.apply('apply', {'plan_digest': host_digest, 'confirmation': 'CONFIRMAR'})
+                status.update(state='complete', current='', message='Environments concluídos; atualização do Host em curso.', host_operation=result['operation'])
+            else:
+                spec = importlib.util.spec_from_file_location('apx_update_return', '/usr/lib/apx/apx-coordinated-update-runner-v1.py')
+                module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+                module.schedule_hub_return(operation)
+                status.update(state='complete', current='', message='Todos os Environments foram atualizados. O Hub está a regressar.')
+            atomic(directory / 'status.json', status)
+        except Exception as error:
+            status.update(state='failed', error=str(error), message='A etapa do Host não começou; cópias preservadas.')
+            atomic(directory / 'status.json', status)
+            import importlib.util
+            spec = importlib.util.spec_from_file_location('apx_update_return', '/usr/lib/apx/apx-coordinated-update-runner-v1.py')
+            module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+            module.schedule_hub_return(operation)
             raise
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--operation', required=True)
-    execute(parser.parse_args().operation)
+    parser.add_argument('--resume-hub', action='store_true'); parser.add_argument('--host-digest')
+    args = parser.parse_args()
+    execute(args.operation, resume_hub=args.resume_hub, host_digest=args.host_digest)

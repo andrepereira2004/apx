@@ -1,3 +1,332 @@
+# Comprimir: cantos internos corrigidos — 2026-11-17
+
+A junção entre o cabeçalho e «Nome do arquivo» ficou reta; o CSS deixa de
+arredondar o topo da superfície de conteúdo abaixo do cabeçalho separado.
+Aspeto confirmado na janela real, sem erros CSS. Instalado na seed/cinco
+homes, pins e recuperação sincronizados. Menus já abertos precisam de ser
+reabertos. Evidência/backup: `audit/2026-11-17-compress-corners/README.md`.
+Sem commit/push.
+
+# Compressão APX, Rofi, bateria e Vanilla - BEJA — concluído, 2026-11-16
+
+O menu «Comprimir» tem agora janela APX própria, com nome/formato/destino,
+progresso/cancelamento e ZIP, TAR, TAR.gz, TAR.xz, MCWORLD, MCPACK e MCADDON.
+Os formatos Minecraft verificam a estrutura da raiz e reempacotam ZIPs sem
+criar um arquivo dentro de outro; não convertem mundos Java nem validam
+integralmente o conteúdo de NBT/LevelDB. «Mais opções» conserva File Roller.
+A ação e o módulo comum funcionaram no Thunar stock 4.20.9; seed e cinco homes
+instalados, com cópia independente de um home novo verificada pelo código real.
+Foi corrigido o limite do helper xdph já admitido (2 MiB só para esse binário)
+e quatro referências de seed desatualizadas, preservando a diferença entre
+perfil fonte e seed instalada e sem instalar alterações alheias de outros UIs.
+
+No Rofi: opção NVIDIA removida; «Ir para janela» com ícone de janela; novo
+ícone do APX Terminal só no Rofi; segundo clique direito recolhe o painel de
+ações mantendo o catálogo. Testes e página JSON real verificaram os estados.
+Bateria: avisos APX a <20% e <=10% enquanto descarrega, com estado persistente,
+histerese e ação «Ativar baixo consumo» pelo cliente Host existente, só após
+clique. Um aviso real de 7% foi entregue; o proprietário ligou o carregador
+antes do observador arrancar (11%, Charging). O observador está ativo e arranca
+nos Environments existentes/futuros. Nenhum perfil foi mudado automaticamente.
+
+Vanilla - BEJA estava em pasta duplicada. Backup completo por reflink em
+`~/.local/state/apx-world-import-repair/20261116T215841Z`; 27 ficheiros intactos
+verificados por SHA-256. Corrigida a localização sem reescrever dados do mundo.
+O proprietário confirmou «sim ja aparece» no jogo. Jogabilidade não testada.
+
+72 testes passaram (15 compressão, 44 Rofi, 8 seed, 5 bateria); GUI real criou
+ZIP e o backend criou/leu ZIP na pen FAT, com fixtures descartáveis removidos.
+Ambos os conjuntos de hashes da seed e sintaxe verificados. Evidência/backups:
+`audit/2026-11-16-apx-compression/README.md` e
+`audit/2026-11-16-vanilla-world-import/README.md`. Sem commit/push.
+
+# Thunar: ejetar, comprimir e hora — instalado, 2026-11-16
+
+«Desmontar com segurança» passou a «Ejetar com segurança». O plugin nativo
+já oferecia «Criar arquivo…» numa seleção local; a ausência relatada não foi
+reproduzida. O menu identifica agora a mesma ação como «Comprimir… (ZIP,
+TAR…)», sem alterar callback ou duplicar ações. Menu real capturado com a
+opção visível; File Roller criou ZIP e TAR e o conteúdo dos fixtures foi
+verificado. Só ficheiros descartáveis foram usados.
+A Data de modificação mostra agora dia/mês/ano e horas:minutos no Thunar e
+nos seletores GTK. Seed/homes, fonte/binário, pins e recuperação sincronizados.
+Build e patch nativo de 15 fontes passaram; Open e Save renderizaram hora.
+Thunar reaberto na pen e backend GTK recarregado, launcher preservado.
+Evidência e dois backups: `audit/2026-11-16-thunar-create-archive/README.md`.
+Sem commit/push.
+
+# Thunar: remoção segura e avisos de dispositivos — instalado, 2026-11-16
+
+O proprietário pediu desmontar/ejetar no Thunar e notificações de entrada/saída
+com o aspeto atual. Thunar tem agora «Desmontar com segurança» no menu da pen
+e botão de ejeção na barra lateral. Para as duas pens admitidas, o pedido passa
+pelo broker autenticado para o serviço Host de montagem; não há novas
+permissões de blocos ou de montagem no Environment. A desmontagem comum recusa
+ficheiros em uso e impede remontagem automática até desligar/religar a pen.
+O aviso confirma remoção segura, sem alegar desligamento elétrico da unidade.
+As notificações em português usam os cartões Mako existentes, com ícone USB,
+sem duplicação pelo udiskie. Observador GIO local acompanha dispositivos de
+armazenamento removíveis; transições da ponte não geram falsas desconexões.
+17 testes de media/notificações e 10 de contrato passaram; compilação e patch
+nativo completos passaram. Ficheiro temporário aberto bloqueou a desmontagem
+real; após fechar/remover o teste, o callback real do menu desmontou a pen e
+Mako registou o aviso. A pen foi religada e voltou a montar. Thunar atualizado
+foi reaberto pelo wrapper normal; seed/cinco homes e pins sincronizados.
+Detalhes, limites e três backups: `audit/2026-11-16-thunar-safe-remove/README.md`.
+Sem commit/push.
+
+# Acesso à pen USB corrigido — instalado, 2026-11-16
+
+Após aparecer no seletor, a pen dava Access denied porque a montagem direta
+por UDisks é recusada no Environment isolado. O Host admite agora também a
+pen USB FAT UUID 4079-3F8D/serial 77EA21C2 na ponte existente, além da Ventoy.
+Apenas ficheiros são partilhados, sem entregar blocos ou permissões gerais.
+O marcador dinâmico «PEN USB 1 GB» substitui a entrada nativa recusada enquanto
+a ponte está montada. Instalação na semente/cinco homes, Host e pins com backup
+`/var/lib/apx/backups/20261116T194051Z-usb-access` (22 ficheiros verificados).
+Nove testes unitários passaram. Cliques reais na linha GTK abriram a pen em
+Abrir e Guardar; seleção/leitura/escrita verificadas com um ficheiro temporário
+já removido. Pedidos reais OpenFile/SaveFile capturados e fechados. Sem importar
+ficheiros do proprietário ou executar download no Brave. Environment e launcher
+preservados; só serviços do seletor/ponte recarregados. Evidência e limites:
+`audit/2026-11-16-usb-access/README.md`. Sem commit/push.
+
+# Dispositivos desmontados no seletor — corrigido, 2026-11-16
+
+O proprietário quer os dispositivos na janela de abrir/guardar do Bedrock e
+Brave. O filtro APX ocultava volumes nativos ainda sem URI por estarem
+desmontados. Conserva agora essas linhas de dispositivos; a pen atual
+«1.0 GB Volume» aparece sob Dispositivos em abrir e guardar. Fonte/módulo,
+semente e cinco homes instalados; pins e recuperação sincronizados. Backend
+GTK recarregado, launcher preservado. Testes GTK e pedidos reais OpenFile e
+SaveFile com capturas passaram. Acesso/montagem da nova pen e operações
+concretas no Brave não testados; a ponte Ventoy não foi ampliada. Evidência:
+`audit/2026-11-16-chooser-unmounted-devices/README.md`. Backup:
+`/var/lib/apx/backups/20261116T193621Z-chooser-unmounted-devices`.
+Sem commit/push.
+
+# «Abrir» no seletor de ficheiros — corrigido, 2026-11-16
+
+O proprietário não conseguia enviar o .mcpack pelo seletor do BedrockOnLinux.
+A inspeção do diálogo real mostrou o ficheiro selecionado mas «Abrir»
+desativado (GTK_RESPONSE_OK). A personalização movia os botões nativos para
+uma caixa dentro do título, impedindo a descoberta normal por GtkDialog.
+Os botões permanecem agora filhos diretos do headerbar; o aspeto é aplicado
+por classes CSS. Botões desativados têm texto atenuado. Fonte, módulo e CSS
+instalados nos cinco homes e semente, com pins sincronizados. Recarregado
+apenas o backend GTK do seletor; launcher preservado. O pedido antigo foi
+cancelado, sem importar o pacote do proprietário. O teste real pelo portal
+retornou código 0 e o URI exato de um ficheiro temporário. Abrir múltiplo com
+GTK_RESPONSE_OK, lookup nativo e entrega da seleção passaram. Backups:
+`/var/lib/apx/backups/20261116T001452Z-chooser-open-response`. Evidência:
+`audit/2026-11-16-chooser-open-response/`. Sem commit/push.
+
+# Dispositivos USB e «Extrair aqui» — instalado, 2026-11-16
+
+A pen entregue pela ponte `/media/apx-usb/` aparece agora em Dispositivos, com
+ícone USB, no Thunar e no seletor GTK. A recarga mantém a lista sem duplicados;
+a montagem continua limitada à pen já autorizada e não há ejetar local.
+Instalados quatro binários Thunar e módulo GTK/semente; pins sincronizados.
+O erro «Extrair aqui» vinha de File Roller estar definido como padrão sem
+associações explícitas na lista de aplicativos que o plugin consulta.
+Acrescentadas associações de 17 tipos nos quatro homes com arquivos e na
+semente, preservando preferências. A ação real do plugin passou com ZIP e TAR
+de teste; disponibilidade dinâmica da pen e navegação GTK também passaram.
+Thunar reaberto em português em Downloads no workspace 4. O Backup.zip foi
+extraído antes da clarificação do pedido; o proprietário autorizou deixar o
+resultado. A reparação é independente disso. Backups e evidência:
+`audit/2026-11-15-external-devices/README.md`. Sem commit/push.
+
+# Ícone bot na Central de Controlo — 2026-11-14
+
+O fantasma do botão da Central de Controlo foi substituído pelo ícone Lucide `bot` na fonte, no seed e nos cinco homes. O botão mantém a interação existente; o novo SVG e os pins de runtime foram atualizados. A alteração preservou as diferenças anteriores entre o shell do Hub/seed e os restantes. O processo QuickShell continua ativo após a instalação; confirmação visual pelo proprietário pendente. Backup: `/var/lib/apx/backups/20261114T182343Z-keyboard-controls`. Sem commit/push.
+
+# Ícones Aplicações e Partilha no seletor — 2026-11-14
+
+O Thunar atribui `layout-grid` e `folders` a estas duas entradas. O seletor já usava os mesmos ficheiros do tema APX-Graphite, mas a rasterização direta a 16 px deixava os traços apagados. A intensidade alfa destes dois ícones foi ajustada mantendo os SVG originais e a dimensão de 16 px. Módulo recompilado com `-Werror`, instalado nos cinco homes, seed e pins de runtime sincronizados. O seletor de wallpaper foi reaberto ao lado do Thunar no workspace 2 e a captura está em `audit/2026-11-14-thunar-chooser-refinement/chooser-thunar-official-icons.png`. Backup: `/var/lib/apx/backups/20261114T150221Z-chooser-official-icons`. Sem commit/push.
+
+# Ajuste visual da barra lateral do seletor — 2026-11-14
+
+Comparadas as janelas reais no workspace 2. O seletor tinha ícones e nomes mais próximos da margem e intervalos verticais diferentes dos do Thunar. O CSS do seletor agora usa o mesmo recuo e uma altura de linha equivalente, com espaço ajustado sob os cabeçalhos Locais, Rede e Partilha. Fonte, binário GTK e CSS instalados nos cinco homes; pins de runtime atualizados. O seletor de wallpaper foi reaberto e colocado ao lado do Thunar no workspace 2. Captura final: `audit/2026-11-14-thunar-chooser-refinement/chooser-thunar-sidebar-final.png`. Compilação `-Werror` e teste de navegação para Partilha Environments passaram. Backups: `/var/lib/apx/backups/20261114T145437Z-chooser-sidebar-alignment` e `/var/lib/apx/backups/20261114T145749Z-chooser-sidebar-heading`. Sem commit/push.
+
+# Barra lateral do seletor alinhada com Thunar — 2026-11-14
+
+O seletor GTK agora apresenta Locais (APX, Desktop, Recentes, Lixo, Downloads, Documentos, Imagens, Vídeos, Música, Aplicações), Dispositivos, Rede (Explorar rede) e Partilha (Partilha Environments), com os nomes e ícones do Thunar. O módulo reorganiza a lista nativa, mantém dispositivos dinâmicos e elimina a montagem Partilha duplicada em Dispositivos. Foi corrigida a ativação da pasta partilhada; o teste no Hytale navega para `file:///home/apx/Partilha`. Fonte, binário, CSS e bookmarks instalados nos cinco homes e seed; pins de runtime sincronizados. Compilação com `-Werror` e teste do seletor instalado passaram. Captura: `audit/2026-11-14-thunar-chooser-refinement/chooser-sidebar-thunar.png`. Backup: `/var/lib/apx/backups/20261114T144946Z-chooser-sidebar-thunar`. Sem commit/push.
+
+# Espaçamento final da lista — instalado, 2026-11-14
+
+O Thunar recebeu espaçamento vertical de 3 px nas células da lista detalhada, com o seletor GTK a 11 pt. CSS instalado no seed e cinco homes; pins de runtime atualizados. Backup: `/var/lib/apx/backups/20261114T103430Z-thunar-compact-rows`. O Thunar ativo do Hytale foi reiniciado com o locale português e voltou ao workspace 2; a captura final substituiu `audit/2026-11-14-thunar-chooser-refinement/thunar-workspace2.png`. Sem commit/push.
+
+# Lista, data, tipo, pesquisa e seleção do Thunar/seletor — instalados, 2026-11-14
+
+O proprietário pediu Thunar mais compacto, seletor GTK ligeiramente maior, datas sem expressões relativas, extensões em “Tipo”, animação ao iniciar pesquisa no Thunar, caminho do Thunar sem a seta interna e seleção menos azul. O Thunar 4.20.10 foi recompilado com o modelo da lista detalhada a mostrar `Pasta` ou a extensão final (`.txt`, `.docx` etc.), o botão de seta interna do caminho oculto e a entrada de pesquisa com revelação de opacidade em 180 ms. Preferências: zoom detalhado 25%, data personalizada `%d/%m/%Y`. O CSS do seletor passou de 10 para 11 pt, e o módulo GTK altera a célula Tipo para a extensão; a barra de pesquisa nativa do seletor manteve a sua animação. A cor de seleção do Thunar recebeu regras explícitas e a cor de seleção GTK do tema foi ajustada para `#353a4a`. O dispositivo/mount `Partilha` foi ocultado da secção Dispositivos do Thunar; o marcador `Partilha Environments` continua em Locais. O Thunar do Hytale foi reiniciado no workspace 2 com locale português, e a captura em `audit/2026-11-14-thunar-chooser-refinement/thunar-workspace2.png` confirma a vista compacta, datas numéricas, tipo `Pasta`, caminho sem seta e Partilha única. O teste ao vivo do seletor confirmou `other-locations=False` e `Backup.tar` como `.tar`. Compilação, patch seco, fontes/seed/pins e hashes dos quatro binários Thunar passaram. Backups: `/var/lib/apx/backups/20261114T102157Z-thunar-chooser-refinement`, `/var/lib/apx/backups/20261114T102534Z-thunar-selection-type`, `/var/lib/apx/backups/20261114T103018Z-thunar-type-share-hide`. A animação de pesquisa e a seleção de uma linha com foco ainda requerem aceitação visual do proprietário. Sem commit/push.
+
+# Seletor de ficheiros e Thunar aproximados — instalado, 2026-11-14
+
+O proprietário comparou no workspace 2 o seletor GTK do wallpaper à esquerda com o Thunar à direita. Mantida no seletor a lista detalhada com colunas e a barra de caminho segmentada. O módulo GTK passa a ocultar “Outras localizações” pela API GtkPlacesSidebar e a acrescentar um acesso à rede; o helper do wallpaper carrega esse módulo antes de inicializar GTK. No Thunar, a vista padrão passa a `ThunarDetailsView` e a barra de localização a `ThunarLocationButtons`, no seed e nos quatro homes com Thunar; a sessão Hytale recebeu os mesmos valores via xfconf. Fonte, seed, cinco homes para o seletor, binário do módulo e pins de runtime sincronizados. Compilação C com `-Werror` e compilação Python passaram. Backup: `/var/lib/apx/backups/20261114T100750Z-chooser-thunar-layout`. O seletor e as janelas Thunar já abertos antes da instalação retêm a apresentação anterior até serem reabertos. A barra lateral GTK continua a ser a implementação nativa de GTK, pelo que a igualdade visual completa e os cabeçalhos de secção personalizados do Thunar ainda não foram validados nem implementados. Sem commit/push.
+
+# Partilha Environments instalada no piloto — 2026-11-14
+
+Instalado o marcador GTK único `file:///home/apx/Partilha Partilha Environments` nos cinco homes e no seed independente. O binário Thunar 4.20.10 foi recompilado sem a secção personalizada duplicada e instalado em Faculdade, Hytale, Minecraft e Steam; o Hub não tem Thunar. Os pins de bookmarks no runtime instalado e na fonte foram atualizados. `make` passou, os cinco bookmarks contêm uma única entrada e os quatro binários têm o mesmo SHA-256. Backup: `/var/lib/apx/backups/20261114T100038Z-partilha-environments`. A janela Thunar aberta no Hytale foi preservada; o processo Thunar em execução ainda é o binário antigo e só mostrará o novo aspeto depois de ser fechado e reiniciado. O seletor GTK de fotografias usa o marcador atualizado. Validação visual pelo proprietário pendente. Sem commit/push.
+
+# Partilha Environments no Thunar e no seletor de ficheiros — 2026-11-14
+
+O proprietário encontrou duas secções/entradas contraditórias na barra lateral do Thunar e pediu a mesma pasta no seletor de fotografias do wallpaper. A proposta no repositório passa a usar um único marcador GTK, `file:///home/apx/Partilha Partilha Environments`, partilhado pelo Thunar e pelo seletor de ficheiros. A secção adicional criada no patch experimental do Thunar foi retirada. O patch foi regenerado a partir do tarball Thunar 4.20.10 e `patch --dry-run` passou. Esta sessão não está no piloto físico; a instalação nos Environments existentes e a confirmação visual ainda estão pendentes. Sem commit/push.
+
+# Efeito original do bloqueio restaurado — 2026-11-13
+
+O proprietário assinalou que o novo bloqueio perdera também o escurecimento. A comparação com o helper anterior confirmou que o original tinha `blur_passes = 3`, `blur_size = 7`, `brightness = 0.45` e não definia `contrast` nem `noise`. O renderizador agora preserva exatamente essas opções e a cor de fallback original `rgba(10, 16, 20, 1.0)`; só muda o caminho para a imagem composta e usa um bloco por monitor. `hyprlock.conf` permaneceu byte a byte igual. Fonte, seed, cinco homes e runtime sincronizados; backup `/var/lib/apx/backups/20261113T213807Z-keyboard-controls`. Captura real em `audit/2026-11-13-wallpaper-white-borders/lock-monitor-original-effects.png` mostra imagem desfocada e escurecida, hora, data, saudação e campo de palavra-passe nas posições anteriores. O escurecimento também torna visualmente cinzentas as margens brancas no bloqueio. Sem commit/push.
+
+# Blur do bloqueio reposto — captura real, 2026-11-13
+
+O proprietário corrigiu a remoção indevida do blur. O renderizador Hyprlock voltou a usar `blur_passes = 3` e `blur_size = 7`, mantendo brilho 1.0 para conservar a cor das margens. Fonte, seed, cinco homes e runtime sincronizados; backup `/var/lib/apx/backups/20261113T213609Z-keyboard-controls`. A configuração gerada da Faculdade mostra blur nos dois monitores. Um novo bloqueio real foi iniciado e capturado em `audit/2026-11-13-wallpaper-white-borders/lock-monitor-blur.png`: fotografia desfocada e margens externas brancas. O proprietário desbloqueia com a palavra-passe habitual. Sem commit/push.
+
+# Bloqueio real capturado após instalação — 2026-11-13
+
+A pedido do proprietário, iniciou-se um novo Hyprlock na Faculdade às 21:35:12 UTC com a configuração já gerada às 21:29:19 UTC. Uma captura real do monitor eDP-1 em `audit/2026-11-13-wallpaper-white-borders/lock-monitor.png` mostra a mesma fotografia e enquadramento do desktop e as margens externas brancas; os elementos de autenticação aparecem por cima. A sessão ficou bloqueada para o proprietário desbloquear com a sua palavra-passe. A opção de margens pretas foi validada no PNG composto de teste, mas ainda não observada num bloqueio real. Sem commit/push.
+
+# Wallpaper do bloqueio acompanha o Environment — instalado, 2026-11-13
+
+O menu de personalização oferece margens brancas ou pretas. A mesma escolha aplica-se ao desktop, à pré-visualização e à imagem composta para o Hyprlock. O novo renderizador usa imagem, modo de encaixe, zoom e deslocamento locais e cria um PNG por dimensão de monitor; também acompanha a rotação automática de 15 minutos. O bloqueio deixa de escurecer ou desfocar a imagem para preservar a cor escolhida. Fonte, seed, cinco homes e hashes de runtime sincronizados; backup `/var/lib/apx/backups/20261113T212915Z-keyboard-controls`. Testes isolados produziram PNGs brancos e pretos com posicionamento, e o teste de preferências passou. A Faculdade gerou configuração com eDP-1 e HDMI-A-1 e caminhos válidos; QuickShell registou `Configuration Loaded` às 21:29:18 UTC. O Hyprlock ativo começou às 21:28:29 UTC, antes da instalação, pelo que a validação visual do próximo bloqueio está pendente. Sem commit/push.
+
+# Margens brancas comprovadas por captura — 2026-11-13
+
+A captura inicial do desktop da Faculdade mostrou faixas pretas fora da fotografia apesar da cor branca da janela de fundo. Foi acrescentado um retângulo branco explícito atrás da imagem. Uma recarga intermédia revelou referências inválidas a `parent` nas transformações; foram substituídas por IDs explícitos das imagens no desktop, na pré-visualização e no editor. Fonte, seed, cinco homes e hashes de runtime coincidem; último backup `/var/lib/apx/backups/20261113T191101Z-keyboard-controls`. O QuickShell da Faculdade registou `Configuration Loaded` às 19:11:04 UTC. A captura limpa do monitor eDP-1 em `audit/2026-11-13-wallpaper-white-borders/clean-monitor.png` mostra branco até às bordas do ecrã; a moldura preta imediatamente à volta da fotografia está incorporada no ficheiro JPEG do proprietário. Sem commit/push.
+
+# Editor de wallpaper instalado no piloto — 2026-11-13
+
+O proprietário autorizou a instalação. Os cinco ficheiros do editor (helper de personalização, `Appearance.qml`, `PersonalizationPanel.qml`, `WorkspacePreview.qml` e `shell.qml`) foram instalados no seed independente e nos cinco homes; os hashes em `/usr/lib/apx/apx-lab-runtime.py` foram atualizados. Todos os bytes coincidem com a fonte. A Faculdade estava ativa e o QuickShell registou `Configuration Loaded` às 19:06:49 UTC após o recarregamento. A cópia de segurança é `/var/lib/apx/backups/20261113T190646Z-keyboard-controls` (nome herdado do instalador reutilizado). O teste de enquadramento/zoom/posição passou. O utilizador ainda não confirmou visualmente as margens brancas nem se o ecrã branco de “Outras localizações” pertence à janela de escolha. Sem commit/push.
+
+# Margens pretas do wallpaper observadas no piloto — 2026-11-13
+
+O proprietário confirma que as margens continuam pretas. A cópia instalada na Faculdade em `/var/lib/apx/environments/faculdade/home/apx/.config/quickshell/apx/shell.qml` ainda usa `color: "#000000"` no fundo do desktop, enquanto a fonte do repositório usa branco. A alteração de zoom/posição/cor permanece apenas no repositório. A árvore de trabalho contém alterações anteriores não commitadas; não foi feita instalação física nesta sessão.
+
+# Posicionamento do wallpaper — implementação no repositório, 2026-11-13
+
+O editor de fundo do ecrã permite arrastar a imagem na pré-visualização, usar a roda do rato para ajustar o zoom e recentrar com um botão. O deslocamento horizontal e vertical é guardado por Environment e aplicado ao desktop e à pré-visualização dos workspaces. As áreas fora da imagem são brancas. Alterações apenas no repositório; instalação e validação visual no piloto ainda não realizadas.
+
+# Environment icons retained during reorder — installed, 2026-11-13
+
+The owner clarified that moving the three-line reorder handle to the right
+must not hide the normal Environment icon on the left. The row now keeps that
+icon and its original label inset in both modes; only the reorder handle
+appears on the right during editing. Installed `shell.qml` in the seed and five
+homes with runtime and recovery pins updated. Backup:
+`/var/lib/apx/backups/20261113T105249Z-environment-handle-keep-icons`.
+The hot reload entered the crash reporter; terminating it let the shell
+supervisor start a fresh QuickShell, which reported “Configuration Loaded” at
+10:53:05 UTC. Pointer acceptance remains with the owner. No commit/push.
+
+# Environment reorder handle on right — installed, 2026-11-13
+
+At the owner's request, the three-line Lucide handle appears at the right edge
+of each Environment row only during reorder mode. The ordinary Environment
+icon stays on the left outside that mode; labels move left during editing and
+the right-side status/size text is hidden to make room for the handle. Installed
+`shell.qml` in the seed and five homes, updated source/live runtime and recovery
+pins. Backup: `/var/lib/apx/backups/20261113T104903Z-environment-handle-right`.
+The hot reload briefly entered its crash reporter and the shell supervisor
+launched a fresh process; “Configuration Loaded” at 10:49:08 UTC. Pointer
+acceptance remains with the owner. No commit/push.
+
+# Environment reorder mode toggles on right click — installed, 2026-11-13
+
+At the owner's request, right clicking an Environment row now toggles reorder
+mode: the second right click exits it and clears drag/drop state. Completing a
+drag still exits automatically. Installed `shell.qml` in the seed and five
+homes, updated source/live runtime and recovery pins, and verified the active
+QuickShell loaded at 10:46:49 UTC without a crash. Backup:
+`/var/lib/apx/backups/20261113T104647Z-environment-reorder-toggle`.
+Pointer acceptance remains with the owner. No commit/push.
+
+# Sharper Hub unavailable-action warning — installed, 2026-11-13
+
+The owner found the small circle-alert icon blurry in the Hub's unavailable
+Applications/Rofi and File Manager warnings. Both now use the official Lucide
+`triangle-alert` SVG, rendered at 20 px in the bar instead of 17 px. Other OSD
+icons retain their size and artwork. Installed icon, `MediaIsland.qml`, and
+`shell.qml` in the seed and five homes, with source/live runtime and recovery
+pins updated. Backup: `/var/lib/apx/backups/20261113T104149Z-lucide-warning`.
+The active QuickShell loaded both dependency and entrypoint changes without a
+crash at 10:41 UTC. Live IPC calls for both actions produced the triangle
+warning in compositor captures. No commit/push.
+
+# Hub file shortcut warning — installed, 2026-11-13
+
+The Hub's `openFiles` IPC action now displays the existing Lucide warning OSD
+with “Ficheiros” and “Gestor de ficheiros não instalado no Hub”, matching the
+Applications/Rofi warning. Workload Environments retain their file action.
+Installed the shell in the seed and five current homes, with source/live
+runtime pins and recovery pin updated. Backup:
+`/var/lib/apx/backups/20261113T103453Z-hub-files-warning`.
+The hot reload entered its crash reporter; terminating that reporter let the
+shell supervisor launch a fresh process. Configuration Loaded at 10:35:48 UTC.
+A live `openFiles` IPC call succeeded and a compositor capture showed the
+exclamation icon in the top bar. No commit/push.
+
+# Hub user files and file manager cleanup — installed, 2026-11-13
+
+At the owner's request, the Hub's `Documents`, `Templates`, and leftover
+developer `Library` contents were removed. `Desktop`, `Downloads`, `Music`,
+`Videos`, `Projects`, and `Public` had no files. The only retained file under
+`Pictures` is the active wallpaper. Thunar itself was already absent from the
+Hub package database and `/usr/bin`; stale Hub-local launch wrappers, D-Bus
+activation files, Thunar/rofi settings, thumbnailer, and test screenshots were
+removed. Hub-local MIME defaults no longer point to Thunar or Brave. Tumbler
+and optional GVfs file-manager backends (MTP, GPhoto2, SMB) were uninstalled
+from the Hub. Core GVfs, shared GTK styling, and the independent seed for
+workload Environments remain. The Hub's file button was already hidden and its
+IPC action already ignored file opening. Hyprland and QuickShell remain active.
+The current clean Hub snapshot still contains the pre-cleanup small personal
+files for recovery. No commit/push.
+
+# Hub cleanup and interrupted update — installed, 2026-11-13
+
+The owner authorized removing irrelevant Hub content and finishing the pending
+update. A November 11 pacman transaction had stopped mid-upgrade and left the
+systemd local package record without `desc`/`files` and a stale database lock.
+After a read-only root snapshot, the record was reconstructed from the prior
+local record and cached package metadata, and a complete in-Environment
+transaction reinstalled systemd and the remaining packages. `pacman -Qk
+systemd` now reports 0 missing files; the only pending package is nvidia-utils,
+intentionally pinned to the Host driver version. The September Environment
+batch is officially `complete`, with all five Environments listed.
+
+Brave, Codex, npm, build tools, OpenCV/VTK and orphaned data-science packages
+were removed from the Hub, along with their user data, package caches, stale
+downloads, Trash and archived journals. The Hub went from ~11 GiB/163,664 files
+to ~3.6 GiB/77,150 files; live Btrfs free space rose from ~74 to ~77 GiB.
+Old Hub-specific rollback snapshots were replaced by the current read-only
+`/var/lib/apx/snapshots/hub-clean-20261113T102340Z/{root,home}` snapshot.
+Other Environment snapshots and all Host packages were preserved. Current
+graphical session remains active. Package post-install hooks reported a
+container-only journal ACL error and unavailable udev varlink, despite the
+successful pacman transaction. No commit/push.
+
+# LocalSend pede o IP ao abrir na Faculdade — instalado, 2026-11-11
+
+Atalho local de LocalSend emite uma notificação real com ícone LocalSend e
+texto «Introduzir o IP do telemóvel.». Clicar na própria notificação expande
+um campo de IP na mesma carta; Enter confirma e abre a app, Esc recolhe.
+O serviço Host v3 admite `localsend.peer.get/set` apenas da sessão
+gráfica ativa com opt-in da mesma geração e valida o novo peer na LAN física.
+Aplicação espera a regra do reconciliador; cancelamento não muda o peer nem
+abre a app. O valor 192.168.1.116 foi aceite, 192.168.2.1 rejeitado e a regra
+ativa continua só para 192.168.1.116. Ambos os serviços estão ativos; entrada
+desktop validada. A notificação sem botão foi observada; a interação no campo
+expandido aguarda observação do proprietário. QML carregado às 23:39 UTC.
+Backup do QML, seed, cinco homes, runtime e lançador:
+/var/lib/apx/backups/20261111T233858Z-localsend-inline-notification.
+Sem commit/push. Backup Host: /var/lib/apx/backups/20261111T231807Z-localsend-popup;
+backups do serviço v3: /var/lib/apx/backups/20261111T231807Z-radio-power e
+20261111T231841Z-radio-power.
+Em resposta ao pedido do dono, a notificação anima a expansão e recolha
+durante 240 ms, com entrada do campo em 180 ms. As outras notificações não
+animam a altura. Fonte, seed, cinco homes e runtime pin coincidem no digest
+`d632fbb4316b8af234a9d16a05b5d315036921c86cdb6bc970bbc90d04514390`.
+QuickShell recarregou às 23:45 UTC sem erro. Backup:
+/var/lib/apx/backups/20261111T234530Z-localsend-notification-animation.
+
 # Control Centre text keeps full shade while closing — installed, 2026-11-11
 
 The owner requested no text-tone fade on collapse. During Control Centre
@@ -10978,6 +11307,639 @@ The check dynamically identified the EFI entry for the selected Windows; no
 firmware, partition, Windows, or boot state was changed. Owner boot and return
 through the Hub remain unobserved.
 
+# Detached Hub update completion and pointer observation — 2026-11-12
+
+Owner reported that using Atualizar in the Hub could end the graphical session
+before the operation finished, requiring `entrar_no_HUB` from Host tty1. The
+installed client confirmed the Hub package update ran inside the graphical
+session and left the 2026-09-13 Environment batch at `awaiting-hub`. The Hub
+completion now runs in a detached Host systemd unit, takes a fresh Hub snapshot,
+recovers the graphical session, updates Hub in its isolated maintenance
+container, records the result, and schedules the graphical Hub's return. The
+separate coordinated Host update runner also schedules a Hub return after
+completion or failure once Hub is stopped. Live Host copies of the client,
+authority, batch runner and Host runner were backed up under
+`/var/lib/apx/backups/20261112T191625Z-detached-hub-update` and installed;
+`apx-coordinated-update-v1.service` restarted healthy. The earlier Host-runner
+copy is under `/var/lib/apx/backups/20261112T190757Z-update-hub-return`.
+Twenty-four targeted tests passed. No package update or Hub recovery was run.
+The pending batch remains `awaiting-hub`; 76 GiB were free, below the existing
+96 GiB update reserve, and Hytale was active. Resume must wait for the reserve
+and the normal return to Hub. The installed Hub button continues to update
+Environments only; it does not silently update Host packages.
+
+Owner described a trail only during fast pointer motion. Active Hytale
+Hyprland 0.56.2 had no loaded cursor plugin. A live trial forcing software
+cursor mode did not change the effect and was reverted to automatic mode 2.
+Automated rapid pointer moves on a static desktop, captured with `grim -c`,
+showed one cursor per frame. This supports a panel-motion explanation but
+cannot prove the physical display's response from digital captures. No cursor
+configuration change was retained; visual acceptance remains open.
+
+Follow-up verification at 19:16 UTC loaded the installed Host authority directly:
+`environments.resume` refused the old batch with `environment-state:hub`,
+`environment-state:hytale`, and `host-reserve-unavailable` and left its status
+unchanged. Host free space was 76 GiB. Read-only size inspection found about
+16 GiB in `/var/lib/apx/package-artifacts`, 7.7 GiB in
+`/var/lib/apx/backups`, and 3.9 GiB in `/root/.codex`; these are observations,
+not approved deletion candidates. A `grim -c` frame from a scripted fast
+pointer move on the static Hytale desktop showed exactly one cursor. Its
+physical display trail, reported only with fast movement, remains unresolved.
+Temporary screenshots created for this test were removed.
+
+A second reversible pointer trial forced hardware cursor mode 0 on active
+Hytale for 25 seconds. `hyprctl monitors -j` confirmed hardware cursors in
+use; the timed service restored automatic mode 2, and its unit became
+inactive. Owner perception during that short interval has not been received.
+
+# Environment update free-space rule corrected — 2026-11-12
+
+Owner rejected the 96 GiB creation reserve as an update prerequisite. That
+reserve belongs to admission of new Environments, not to a package update.
+The Environment batch preview now requires 16 GiB free, consistent with the
+existing physical update floor, and the detached batch runner checks again
+before snapshots, before each target, and after each target. Below that floor
+it stops before the next mutation and retains snapshots and status. The Hub
+client explains this update-specific rule. Installed source, batch runner and
+client were backed up at
+`/var/lib/apx/backups/20261112T193027Z-update-space-rule`; the Host authority
+service restarted healthy. Installed preview no longer reports a free-space
+blocker at the observed 76 GiB. The old batch remains `awaiting-hub` because
+Hytale is active, so no actual package update or Hub transition was performed.
+Twenty-six targeted tests pass. The separate 96 GiB Environment-creation
+admission rule is unchanged.
+
+Owner says the cursor trail still appears only with fast motion, including
+after software and hardware cursor-mode trials. Digital captures of scripted
+fast movement on the static desktop show one pointer per frame; no compositor
+plugin or configured trail was present. The display itself is the leading
+hypothesis, not a confirmed hardware diagnosis. The owner was asked whether
+the effect differs between the built-in and HDMI monitors; answer pending.
+
+Ghosting hardware follow-up: the active 82JU/GKCN65WW has no Linux sysfs
+`overdrive` control. The LenovoLegionLinux project documents a verified probe
+on this exact model/BIOS and reports that its firmware overdrive support query
+returns 0. The installed kernel exposes no overdrive node, consistent with
+that result. No out-of-tree module, firmware call, or display setting was
+changed. The cursor trail remains owner-observed during fast motion; the
+software path does not contain a cursor-trail effect.
+
+Owner-directed live cursor recording at 19:34 UTC: after the owner agreed to
+move the cursor rapidly, captured 70 JPEG frames over 8.1 seconds using
+`grim -c` (cursor included) from active Hytale. The sequence shows cursor
+movement across the dual-monitor desktop; sampled consecutive frames 26–31
+show one pointer each, without a digitally rendered trailing copy. The full
+capture is temporary at `/tmp/apx-pointer-user-recording` on Host and inside
+Hytale, and is not part of the repository because it includes live desktop
+content. This narrows the cause to display/scanout behavior outside the
+screencopy image; the specific physical monitor is not yet confirmed.
+
+Owner confirmed the fast-motion trail appears on both built-in eDP and HDMI
+monitors. The active outputs were 120.21 Hz and 165.00 Hz, with software
+cursors in use. A reversible 30-second trial set HDMI to 119.88 Hz to align
+with eDP; owner reported no change. The timed service restored HDMI to
+165.00 Hz. A second reversible 30-second trial reduced the cursor from 24 to
+16 pixels; owner again reported no change and the timed service restored
+Adwaita 24. Together with the earlier hardware/software cursor mode trials,
+these tests do not support a Hyprland trail effect, a refresh mismatch, or
+cursor size as the cause. The 70-frame digital recording shows one cursor per
+frame, but cannot rule out a sub-frame scanout or optical effect. No permanent
+cursor or display setting was changed.
+
+The owner-directed recording frames were removed from Host and Hytale after
+analysis because they contained the owner's live desktop. The factual result
+is retained above; no image/video artifact remains.
+
+Follow-up on 2026-11-12: the owner showed a phone photo to the built-in webcam;
+the original phone photo visibly contained several cursor silhouettes during
+fast motion. The webcam capture included the owner's face and was deleted
+after inspection. The earlier ~8.6 fps digital capture cannot exclude this
+short-lived effect. Active Hytale has VRR disabled on both outputs and direct
+scanout disabled. A 90-second reversible trial set
+`cursor.enable_hyprcursor = false` (XCursor fallback); the owner reported the
+trail was unchanged. Automatic restoration returned the setting to true.
+The HDMI EDID identifies an HP OMEN 27 G2; HP specifies overdrive for its 1 ms
+response-time claim, exposed through the monitor's physical OSD. Its OSD has
+not been inspected or changed. The built-in panel also shows the effect.
+
+Another 90-second reversible test disabled Hyprland `debug.vfr`, forcing
+continuous composition instead of variable frame timing. The owner reported
+the fast-motion trail unchanged; automatic restoration returned `debug.vfr`
+to true. The active input list includes a Razer DeathAdder Chroma and an ELAN
+touchpad. The owner confirmed the same effect with both, which does not
+support a cause specific to the USB mouse or its polling rate.
+# Environment menu ordering — installed, 2026-11-13
+
+The owner requested a right-click reorder mode in the Hub Environment menu. The
+QuickShell shows a Lucide three-line handle on each row, highlights the drop
+target, saves the chosen order in the Hub user's local settings, and exits
+reorder mode on release. Installed in the seed and five registered homes;
+source and installed runtime pins were updated. The final hot reload crashed
+once; QuickShell restarted and reported “Configuration Loaded” at 10:11:04 UTC.
+Pointer interaction awaits
+owner acceptance. Backup:
+`/var/lib/apx/backups/20261113T100852Z-environment-order` and
+`/var/lib/apx/backups/20261113T101100Z-environment-order-final`.
+
+A read-only live inventory measured the Hub at about 11 GiB and 163,664 files:
+its pacman package cache is 3.2 GiB and system journal 577 MiB. Brave is
+explicitly installed (448 MiB) and its profile is 280 MiB. Codex occupies
+350 MiB under `.local/lib/node_modules` and 173 MiB under `.codex`; npm cache
+and temporary packages occupy another 338 MiB. The system has 616 package
+metadata directories, with a missing `desc` for systemd, so package cleanup
+requires a separate dependency and database review. No live cleanup was
+performed. No commit/push.
+# Environment reorder closes cleanly and uses white border — installed, 2026-11-13
+
+Closing the Environments menu now clears reorder mode and drag/drop state,
+including menu switches and opening a selected environment. Reopening the menu
+starts in normal mode. The edit-mode row border is white, and the blue hover
+outline is disabled while editing. Installed `shell.qml` in the seed and five
+homes, updated source/live runtime and recovery pins. Backup:
+`/var/lib/apx/backups/20261113T105633Z-environment-white-border-close-reset`.
+The active QuickShell reported “Configuration Loaded” at 10:56:37 UTC. Pointer
+acceptance remains with the owner. No commit/push.
+
+# Captura: notificação visível e gravação por escolha — instalada, 2026-11-13
+
+O proprietário reportou que Fn+PrtSc não mostrava a notificação e guardava
+automaticamente. O filtro de cartões agora mostra a notificação APX Captura
+sem esperar pela classificação de atividade. A captura temporária só é
+guardada ao escolher Guardar na pré-visualização; Copiar usa a área de
+transferência e Apagar/expirar descartam a captura. Fonte, seed, cinco homes
+e runtime pin foram atualizados. Backup:
+`/var/lib/apx/backups/20261113T113812Z-screenshot-notification-consent`.
+Teste ao vivo na Faculdade mostrou o cartão visível e nenhum ficheiro novo
+em Imagens/Capturas após expirar; os dois testes focados passaram. A abertura
+e interação visual da pré-visualização ainda dependem de observação do
+proprietário. Sem commit/push.
+
+# Captura sem indicador de câmara na QuickShell — instalada, 2026-11-13
+
+A pedido do proprietário, a captura deixou de invocar o aviso transitório
+de câmara na barra QuickShell. O cartão de notificação da captura continua.
+Fonte, seed, cinco homes e runtime pin sincronizados. Backup:
+`/var/lib/apx/backups/20261113T115303Z-screenshot-no-quickshell-osd`.
+Teste ao vivo na Faculdade: cartão visível e `osd_visible=false` durante a
+captura; testes focados passaram. Sem commit/push.
+
+# Captura com ícone Lucide scan na QuickShell — instalada, 2026-11-13
+
+O proprietário pediu um ícone adequado no aviso transitório QuickShell ao
+tirar print. O ícone oficial Lucide `scan` substitui a câmara; o detalhe diz
+"Captura pronta", sem afirmar que a imagem foi guardada. O aviso voltou a
+ser chamado após a captura temporária. Fonte, seed, cinco homes e runtime pin
+sincronizados. Backup:
+`/var/lib/apx/backups/20261113T120536Z-screenshot-lucide-scan`.
+Teste ao vivo na Faculdade mostrou o aviso (`osd_visible=true`) e o cartão
+de notificação em simultâneo; testes focados passaram. Sem commit/push.
+
+# Thunar e seletor de ficheiros: ícones, pesquisa e Partilha — instalado, 2026-11-14
+
+No piloto físico Hytale, o Thunar usa ícones de lista de 20 px em vez de 16 px
+e o seletor GTK aumenta as superfícies dos ícones na mesma proporção. A barra
+do Thunar mostra apenas uma lupa para pesquisa; o campo de pesquisa mantém a
+animação existente e o botão de lápis foi retirado. A barra de localização
+deixa de mostrar a seta de transbordo à direita e, ao escolher uma pasta-mãe,
+remove os descendentes da trilha. A barra lateral mantém o cabeçalho
+`Dispositivos`, não apresenta aí a pasta partilhada e apresenta
+`Partilha Environments` na secção `Partilha`, com o ícone `folders`.
+
+Fonte, seed e quatro homes dos Environments foram atualizados. Backup anterior
+à instalação: `/var/lib/apx/backups/20261114T123747Z-thunar-share-search-path-icons`.
+Compilação de Thunar e dos dois módulos GTK passou; o patch aplica sem erros
+ao tarball original. A captura ao vivo confirmou a lupa, os ícones, as
+secções `Dispositivos` e `Partilha` e a ausência do botão de lápis e da seta
+direita. O teste do seletor GTK instalado confirmou superfície de 40×40 px
+numa sessão com escala 2, correspondente a 20×20 px lógicos. A poda da trilha
+foi verificada no código compilado; falta observar um clique real de regresso
+numa pasta profunda. Sem commit/push.
+
+## Ajuste da animação de pesquisa, 2026-11-14
+
+O fade anterior não produzia a expansão visível do seletor GTK. A abertura
+da pesquisa no Thunar agora anima a margem final e a opacidade durante 220 ms,
+fazendo o campo crescer da lupa até à largura total. O novo Thunar compilou,
+o patch passou `patch --dry-run` e o binário ELF foi instalado nos quatro
+Environments; a janela Hytale foi reiniciada no workspace 2. Backup:
+`/var/lib/apx/backups/20261114T125758Z-thunar-search-reveal`. Ainda falta
+observar em vídeo o movimento durante o clique real. Sem commit/push.
+
+## Pesquisa sem expansão horizontal e trilha sem casa, 2026-11-14
+
+O proprietário rejeitou a expansão em largura. A pesquisa do Thunar conserva
+agora a largura do campo e usa uma entrada suave com deslocação vertical de
+8 px e fade durante 220 ms, inspirada na abertura do seletor GTK. O ícone de
+casa foi removido apenas do botão `apx` na trilha superior; a casa de `APX`
+na barra lateral continua. O código compilou, o patch aplica limpo ao Thunar
+original, os quatro binários ELF foram instalados e a janela Hytale voltou ao
+workspace 2. A captura ao vivo confirmou a trilha sem casa. Backup:
+`/var/lib/apx/backups/20261114T132236Z-thunar-search-motion-no-home-icon`.
+O movimento durante um clique real ainda não foi capturado. Sem commit/push.
+
+## Correção da casa e altura fixa da pesquisa, 2026-11-14
+
+O proprietário esclareceu que a casa junto de `apx` na trilha devia permanecer.
+O ícone foi reposto nessa posição e retirado apenas da entrada `APX` na barra
+lateral. O espaço vertical da animação de pesquisa está agora reservado mesmo
+quando a pesquisa está fechada; a abertura já não aumenta a altura da barra.
+O Thunar compilou, o patch aplica limpo, os quatro binários ELF foram
+instalados e a janela Hytale reiniciada no workspace 2. A captura ao vivo
+confirmou a casa na trilha e a sua ausência na entrada lateral. Backup:
+`/var/lib/apx/backups/20261114T141323Z-thunar-search-reserved-height-home-icon`.
+Sem commit/push.
+
+## Barra de pesquisa com altura fixa e lupa sem moldura, 2026-11-14
+
+O proprietário forneceu capturas ao vivo do Thunar fechado e com pesquisa
+aberta: o cabeçalho media cerca de 68 px e 90 px, respetivamente. A altura
+mínima da toolbar foi fixada em 72 px lógicos, correspondente à altura maior
+na escala atual, e o caminho foi centrado verticalmente. A casa da entrada
+`APX` lateral é agora omitida no renderer, enquanto a casa junto de `apx` na
+trilha continua. A lupa continua clicável, mas sem borda nem fundo em nenhum
+estado. O Thunar compilou, o patch aplica limpo, os quatro binários foram
+instalados e a janela Hytale foi reiniciada. A captura posterior confirmou
+o cabeçalho já alto em repouso, o caminho centrado e a lupa isolada. Backups:
+`/var/lib/apx/backups/20261114T141850Z-thunar-fixed-search-toolbar` e
+`/var/lib/apx/backups/20261114T142001Z-thunar-search-icon-only`.
+Sem commit/push.
+
+## Pesquisa branca e contorno selecionado do trackpad, 2026-11-14
+
+O campo de pesquisa do Thunar usa contorno branco de 2 px ao receber foco,
+sem sombra azul do tema. A entrada e o regresso do caminho têm agora animação
+de 200 ms com fade suave e deslocação curta; a altura da toolbar permanece
+fixa. No menu Trackpad, o contorno de seleção dos controlos Cursor, Scroll e
+Workspaces passou de ciano para branco. A compilação de Thunar e o dry-run do
+patch passaram. Binário, CSS e QML foram instalados nos quatro Environments;
+as permissões dos ficheiros de configuração foram corrigidas para `apx`.
+QuickShell Hytale confirmou `Configuration Loaded` após a correção e o Thunar
+foi reiniciado no workspace 2. Backup:
+`/var/lib/apx/backups/20261114T142447Z-thunar-search-trackpad-white`.
+Sem commit/push.
+
+## Casa lateral reposta e pesquisa sem solavancos, 2026-11-14
+
+O proprietário esclareceu que a casa ao lado de `APX` na barra lateral também
+deve permanecer. O ícone `go-home` foi reposto e a omissão no renderer removida;
+a casa junto de `apx` na trilha permanece. Para eliminar os solavancos da
+pesquisa, a animação de entrada e saída agora altera apenas a opacidade durante
+180 ms, sem recalcular margens ou tamanho a cada fotograma. O Thunar compilou,
+o patch aplica limpo, os quatro binários ELF foram instalados e a janela Hytale
+foi reiniciada no workspace 2. Backup:
+`/var/lib/apx/backups/20261114T142859Z-thunar-home-smooth-search`.
+Sem commit/push.
+
+## Pesquisa do Thunar sem animação, 2026-11-14
+
+A pedido do proprietário, toda a animação personalizada da entrada e saída
+da pesquisa foi removida. A troca entre caminho e campo é imediata; não há
+tick callback, fade, deslocação nem alteração animada de margens. A altura
+fixa da toolbar, a lupa, o contorno branco e ambos os ícones Home permanecem.
+O Thunar compilou, o patch aplica limpo, os quatro binários foram instalados
+e a janela Hytale foi reiniciada no workspace 2. Backup:
+`/var/lib/apx/backups/20261114T143059Z-thunar-no-search-animation`.
+Sem commit/push.
+
+## Campo de pesquisa sem contorno, 2026-11-14
+
+O proprietário confirmou que a troca é imediata e pediu apenas para retirar a
+borda do campo. O CSS do campo de pesquisa, com e sem foco, tem agora borda,
+outline e sombra removidos. O CSS foi instalado nos quatro homes com
+proprietário `apx`, o runtime pin atualizado, e a janela Thunar Hytale
+reiniciada no workspace 2. Backup:
+`/var/lib/apx/backups/20261114T143402Z-thunar-search-no-border`.
+Sem commit/push.
+# Traços Lucide no seletor — instalado, 2026-11-14
+
+O proprietário autorizou a aplicação do ajuste nos ícones `layout-grid` e
+`folders` do seletor GTK. A função de coloração deixou de duplicar a opacidade
+dos píxeis e passou a usar a cor de texto da linha, como o Thunar. O módulo
+compilou no Hytale com `-Werror`; fonte e binário foram instalados no seed e
+nos cinco homes, com hashes do runtime e pin de recuperação sincronizados.
+As seis cópias e os hashes foram verificados. Backup:
+`/var/lib/apx/backups/20261114T151802Z-chooser-stroke-fix`. Um seletor já
+aberto precisa de ser reaberto para carregar o módulo. A aparência visual
+final ainda não foi confirmada por captura. Sem commit/push.
+
+## Verificação visual e correção final, 2026-11-14
+
+A captura do workspace 2 mostrou que a primeira alteração continuava errada:
+o seletor aberto carregava o módulo antigo. Depois de o reabrir, os dois ícones
+ficaram cinzentos. O GTK recoloria as imagens por cima do resultado do módulo.
+Agora `layout-grid` e `folders` são carregados dos SVG oficiais do tema como
+pixbufs brancos à escala da sessão e entregues diretamente à propriedade
+`start-icon` da linha, sem duplicar a opacidade. A captura final
+`audit/2026-11-14-thunar-chooser-refinement/chooser-final.png` mostra o
+seletor à esquerda e o Thunar à direita, com traços e dimensões equivalentes.
+O módulo compilou com `-Werror` e fonte, binário, seed, cinco homes e hashes
+de runtime foram sincronizados. Backup final:
+`/var/lib/apx/backups/20261114T153229Z-chooser-stroke-fix`. Sem commit/push.
+
+## Letras brancas na lateral do seletor, 2026-11-14
+
+O proprietário pediu que as etiquetas da barra lateral do seletor fossem
+brancas como as do Thunar. A regra CSS limita `#ffffff` às etiquetas das linhas
+de `GtkPlacesSidebar`, mantendo a cor das restantes partes do diálogo. CSS,
+seed, cinco homes e pins de runtime foram atualizados; a personalização CSS
+local do Hytale foi preservada. A janela do seletor foi reaberta e a captura
+`audit/2026-11-14-thunar-chooser-refinement/chooser-white-labels.png` confirma
+as etiquetas brancas. Backup:
+`/var/lib/apx/backups/20261114T153535Z-chooser-stroke-fix`. Sem commit/push.
+
+## Cabeçalho do seletor alinhado com Thunar, 2026-11-14
+
+O proprietário pediu o caminho segmentado no canto superior esquerdo do
+seletor, sem o título “Wallpaper deste Environment”, mantendo Cancelar,
+pesquisa e Escolher imagem sem contorno. O módulo GTK agora espelha o caminho
+atual no cabeçalho com botões navegáveis e oculta a linha de caminho anterior.
+O CSS fixa a altura do cabeçalho em 72 px lógicos; a captura ao vivo
+`audit/2026-11-14-thunar-chooser-refinement/chooser-header-final.png` mostra a
+base da barra à mesma altura da barra do Thunar. Um teste GTK confirmou a
+atualização do caminho de `apx/Pictures` para `apx/.cache/.flatpak` e o clique
+em `apx` regressou a `/home/apx`. O módulo compilou com `-Werror`; fonte,
+binário, CSS, seed, cinco homes e pins de runtime foram verificados. A
+personalização CSS local do Hytale foi preservada. Backup:
+`/var/lib/apx/backups/20261114T154542Z-chooser-header`. Sem commit/push.
+
+O teste adicional confirmou que a pesquisa continuava funcional: ao ativar
+a lupa, o campo de pesquisa volta a aparecer; ao desativá-la, a linha fecha.
+O módulo atualizado foi instalado nos cinco homes e no seed, com pins
+sincronizados. Backup adicional:
+`/var/lib/apx/backups/20261114T154718Z-chooser-header`.
+
+## Setas, caminho e ações no cabeçalho, 2026-11-14
+
+O seletor GTK apresenta agora Voltar e Avançar antes do caminho no cabeçalho.
+O caminho usa a tipografia de 10 pt e destaca o segmento atual como no Thunar.
+As ações à direita seguem a ordem lupa, Cancelar, Escolher imagem. A lupa usa
+o mesmo `system-search-symbolic` de 20 px que o Thunar; as setas foram
+dimensionadas a 20 px. A captura ao vivo
+`audit/2026-11-14-thunar-chooser-refinement/chooser-nav-final.png` compara
+ambas as janelas no workspace 2. Testes GTK confirmaram voltar, avançar,
+ramificação do histórico e abertura/fecho da pesquisa. Fonte, binário, CSS,
+seed, cinco homes e pins de runtime foram atualizados. Backup:
+`/var/lib/apx/backups/20261114T155633Z-chooser-header`. Sem commit/push.
+
+## Comparação detalhada de seletor e Thunar, 2026-11-14
+
+O proprietário pediu paridade visual mais rigorosa. A captura anterior
+mostrava o texto e os ícones da barra lateral do seletor alguns píxeis à
+direita dos do Thunar, texto maior na lista de ficheiros e uma barra inferior
+de filtro que encurtava a lateral. O CSS passou a usar 10 pt no seletor,
+recuo de 22 px nas linhas da lateral e margem de 10 px entre ícone e texto.
+O cabeçalho usa 10 pt e o caminho foi deslocado para coincidir com o começo
+do caminho no Thunar. O módulo oculta a barra inferior apenas no seletor de
+wallpaper quando existe um único filtro; o teste GTK confirmou que esse
+filtro permanece ativo e que a barra ocupa apenas 1 px. A tentativa de
+traduzir títulos de colunas por índice atingiu colunas internas e foi
+revertida antes da captura final.
+
+A captura final `audit/2026-11-14-thunar-chooser-refinement/chooser-parity-final.png`
+mostra laterais com a mesma largura, recuo e altura, e o topo alinhado. Uma
+medição dos píxeis da pasta da primeira linha mostrou 20×16 px nos dois
+programas. A diferença aparente de cor da lateral é causada pela fotografia
+atrás de cada janela: as amostras sobre uma captura do wallpaper sem janelas
+confirmaram aproximadamente 85% de opacidade em ambos os fundos. Fonte,
+binário, CSS, seed, cinco homes e pins de runtime foram verificados. Backup
+final: `/var/lib/apx/backups/20261114T160938Z-chooser-parity`. Sem commit/push.
+
+## Dimensão das setas e desenho da lupa, 2026-11-14
+
+O proprietário assinalou que as setas e a lupa ainda diferiam do Thunar.
+A referência usa setas de 24 px; o seletor tinha 20 px e foi corrigido para
+24 px. A lupa mantém `system-search-symbolic` de 20 px, agora com a cor
+`#d9dcea`, transformação identidade e sem sombra. A margem inferior de
+2 px alinha verticalmente estes ícones; a lupa não recebe fundo no hover.
+A comparação ao vivo está em
+`audit/2026-11-14-thunar-chooser-refinement/icons-comparison.png` e a ampliação
+em `icons-zoom.png` no mesmo diretório (seletor em cima, Thunar em baixo).
+A captura confirma dimensões equivalentes e o alinhamento corrigido; não
+estabelece identidade de cada píxel sob a escala fracionada do compositor.
+Compilação com `-Werror`, fonte/binário/CSS nos cinco homes e seed, pins dos
+dois runtimes, sintaxe Python e digest de recuperação foram verificados.
+Backup final: `/var/lib/apx/backups/20261114T161548Z-chooser-parity`.
+O seletor atualizado ficou aberto no workspace 2. Sem commit/push.
+
+## Texto do botão Escolher, 2026-11-14
+
+A pedido do proprietário, o botão do seletor de wallpaper passou de
+“Escolher imagem” para “Escolher”. O reconhecimento do botão no módulo GTK
+foi atualizado para preservar a ordem das ações. Compilação com `-Werror`,
+sintaxe Python e instalação verificada nos cinco homes, seed e pins.
+Captura ao vivo: `audit/2026-11-14-thunar-chooser-refinement/chooser-label.png`.
+Backup: `/var/lib/apx/backups/20261114T164103Z-chooser-label`. Sem commit/push.
+
+## Colunas do seletor corrigidas, 2026-11-14
+
+O proprietário assinalou os cabeçalhos ingleses do seletor. As colunas agora
+usam Nome, Tamanho, Tipo e Data de modificação, com datas em `%d/%m/%Y`, como
+no Thunar. Foi encontrado e corrigido um erro anterior: a coluna oculta
+Location fazia o índice visual 2 corresponder a Size; a substituição por
+extensões escrevia assim na coluna Tamanho. A adaptação identifica agora as
+colunas pelos IDs de ordenação do modelo GTK e mantém os valores nativos de
+Tamanho. O GTK atualiza dinamicamente o título da data; a tradução acompanha
+essas atualizações. O teste GTK `check-columns.py` confirmou 3 bytes para um
+ficheiro de teste, `.txt` na coluna Tipo, Pasta para uma diretoria, a data
+numérica e a ordenação nativa de todas as colunas visíveis. Compilação com
+`-Werror`, seed/cinco homes, pins e digest de recuperação verificados.
+Captura: `audit/2026-11-14-thunar-chooser-refinement/chooser-columns.png`.
+Backup: `/var/lib/apx/backups/20261114T164518Z-chooser-label`. Sem commit/push.
+
+## Pesquisa no topo, histórico e tooltips, 2026-11-14
+
+O proprietário pediu a apresentação da pesquisa do Thunar no seletor, ausência
+de legendas hover em ambos e correção das setas, preservando os botões maiores
+do seletor. A entrada nativa de pesquisa GTK agora ocupa o lugar do caminho
+no cabeçalho, com transição de 180 ms, alinhamento à lateral, fundo e altura
+correspondentes aos do Thunar. Cancelar/Escolher continuam à direita; a entrada
+fica mais curta para acomodar essas ações. O cabeçalho usa uma caixa única
+para impedir que os títulos/subtítulos dinâmicos do GTK roubem espaço à pesquisa.
+O Escape fecha a pesquisa sem fechar o diálogo. A pesquisa continua nativa.
+
+O histórico serializa pedidos assíncronos e guarda o destino final dos cliques
+rápidos. Alt+Esquerda/Direita usam o mesmo histórico. Os ícones desativados no
+cabeçalho recebem explicitamente a cor do Thunar. Ambos os módulos desativam
+tooltips dos widgets mapeados, incluindo alterações e widgets posteriores.
+A mudança de modelo de pesquisa repunha os renderizadores GTK; a adaptação de
+Tipo/Data é agora reaplicada após essa mudança. Localização, quando mostrada
+pela pesquisa, foi traduzida; Nome tem largura mínima para conservar o cabeçalho.
+
+Testes GTK em `audit/2026-11-14-thunar-chooser-refinement/`:
+`check-search-navigation.py` verificou estados inicial/final, cliques rápidos,
+ramificação, Alt+Esquerda, resultados nativos, tipo/data nos resultados, fecho
+pelo sinal de Escape e tooltips. `check-thunar-tooltips.py` verificou o módulo
+Thunar com widgets existentes, alterados e criados depois do mapeamento numa
+janela de teste. Capturas das janelas reais: `search-navigation-final.png` e
+`navigation-no-tooltips-final.png`. Após os primeiros testes, a largura da
+lateral local foi reposta em 262; os testes seguintes usaram GSETTINGS_BACKEND
+em memória. Compilações com `-Werror`, seed, cinco homes do seletor, quatro
+módulos Thunar existentes, pins/sintaxe dos runtimes e recuperação verificados.
+O módulo Thunar ausente no Hub não foi reinstalado. Thunar foi reaberto em
+`/home/apx/.config` com locale português; ambas as janelas ficaram no workspace 2.
+Backups: `/var/lib/apx/backups/20261114T165328Z-files-search-navigation` (inclui
+Thunar/CSS) e `/var/lib/apx/backups/20261114T165835Z-files-search-navigation`
+(última versão do seletor). Sem commit/push.
+
+## Lupa oculta durante pesquisa e crossfade comum, 2026-11-14
+
+A pedido do proprietário, os botões exteriores de pesquisa desaparecem
+quando a pesquisa está ativa e regressam ao sair, tanto no seletor como no
+Thunar. A lupa interna do campo permanece. O seletor mantém os seus botões
+maiores. O ThunarLocationBar agora conserva caminho e entrada num GtkStack
+com crossfade de 180 ms, igual ao seletor, em vez de remover/adicionar o
+widget imediatamente. O módulo Thunar procura apenas o filho ativo do stack
+para alinhar a entrada. Ctrl+L e o regresso ao caminho permanecem funcionais.
+
+O teste instrumentado do binário real `check-thunar-crossfade.c` confirmou
+transições em curso e concluídas nos dois sentidos, lupa oculta/restaurada,
+ciclos rápidos e Ctrl+L. Um aviso de finalização na primeira compilação foi
+corrigido mantendo uma referência ao stack até ao fim da limpeza do navigator;
+a execução final passou sem Gtk-CRITICAL. `check-search-toggle.py` confirmou
+o seletor, incluindo resultados, datas, histórico e Escape. O teste inicial
+com D-Bus isolado partilhou o runtime de acessibilidade; o launcher original
+foi reiniciado e o socket do bus validado. O segundo teste usou runtime próprio.
+Capturas: `search-magnifier-hidden.png` e `search-magnifier-restored.png`, em
+`audit/2026-11-14-thunar-chooser-refinement/`. Duas janelas atualizadas ficaram
+no workspace 2. Compilação, patch dry-run, quatro ELF Thunar, seed/homes,
+pins e digest de recuperação verificados. Backup:
+`/var/lib/apx/backups/20261114T171200Z-search-crossfade`. Sem commit/push.
+
+## Seleção estável, colunas centradas e arranque sem pesquisa, 2026-11-14
+
+O proprietário assinalou um “fantasma” após fechar a pesquisa: a reprodução
+mostrou o contorno de foco do slider vazio antes de APX, não um resto do
+crossfade. Os sliders internos já sem ícones deixam agora de receber foco e
+têm contorno/fundo transparentes. A lupa exterior do Thunar recebeu margem
+final de 8 px. Cabeçalhos e valores de Tamanho, Tipo e datas são centrados nos
+dois programas. Thunar usa um renderer partilhado próprio para essas colunas;
+Nome e Localização conservam o alinhamento. O seletor expande as células de
+metadados e oculta a célula horária vazia para centrar apenas a data.
+
+A mudança de seleção no Thunar vinha de `thunar_util_clip_view_background`,
+que escolhia outra cor e alfa 0,5 em backdrop. Seleções usam agora a mesma
+cor e alfa 1; destaques não selecionados mantêm o comportamento anterior.
+Antes, amostras RGB eram (53,58,74) com foco e aproximadamente (47,88,138) sem
+foco; depois, as quatro amostras medidas deram (53,58,74) em ambos os estados.
+A seleção do seletor também recebeu regras explícitas para backdrop.
+
+Durante a verificação, o proprietário assinalou que o seletor abria com o
+campo de pesquisa à vista. O GtkStack recebia a seleção do caminho antes de
+essa página estar visível e mantinha a entrada nativa como página inicial.
+A sincronização inicial agora acontece após mostrar as páginas, sem animação
+inicial; só as trocas posteriores usam crossfade. `check-centered-chooser.py`
+passou: abertura com caminho e lupa, pesquisa fechada, alinhamentos, resultados,
+histórico rápido, Escape e tooltips. Compilação dos módulos com `-Werror`,
+compilação Thunar, patch dry-run, quatro ELF, seed/homes e pins verificados.
+Capturas em `audit/2026-11-14-thunar-chooser-refinement/`:
+`ghost-after-search.png` reproduz o problema anterior;
+`centered-selection-active.png` e `centered-selection-inactive.png` validam a
+cor e ausência do contorno; `chooser-starts-closed-final.png` confirma o arranque.
+Backups: `/var/lib/apx/backups/20261114T172252Z-files-selection-columns` e
+`/var/lib/apx/backups/20261114T172557Z-files-selection-columns` (último seletor).
+As duas janelas atualizadas ficaram no workspace 2. Sem commit/push.
+
+## Barra Thunar, último segmento e lançador corrigidos, 2026-11-14
+
+Os ícones Casa/Subir/Menu reapareciam porque `native_launch_command` do menu
+abria `/usr/bin/thunar` diretamente, sem o wrapper que carrega o módulo APX.
+O lançador agora prefere o wrapper executável local, com fallback nativo.
+A abertura pela ação real `open thunar` foi testada e o módulo confirmado no
+mapa do processo. Os 44 testes do lançador passaram, incluindo a regressão.
+
+O módulo aplica a classe de dimensão também aos botões criados após map e
+retira homogeneidade dos GtkToolItem, evitando que maior altura alargue as
+setas. Medição instrumentada do Thunar real confirmou botões de navegação,
+pesquisa e caminho com altura 50 px, como no seletor. Ícones permanecem
+24 px nas setas e 20 px na lupa. O último segmento ativo do caminho volta a
+ter fundo ao passar o rato, incluindo Documents; captura real em
+`audit/2026-11-14-thunar-chooser-refinement/last-document-button-final.png`.
+Medições em `toolbar-geometry.log`; compilação com `-Werror`, diff check,
+seed/homes, pins dos dois runtimes e digest de recuperação passaram.
+Backups desta correção: `20261114T173156Z-thunar-toolbar-launch`,
+`20261114T173534Z-thunar-toolbar-launch` e
+`20261114T173639Z-thunar-toolbar-launch`, em `/var/lib/apx/backups/`.
+Thunar ficou aberto em Documents, em português, ao lado do seletor no
+workspace 2. Sem commit/push.
+
+## Correção adicional do botão Ficheiros da barra, 2026-11-14
+
+O proprietário voltou a abrir Thunar e os ícones extra reapareceram. A
+verificação confirmou processo sem GTK_MODULES, filho direto do Hyprland:
+a correção anterior cobria o menu de aplicações mas não o botão Ficheiros
+nem o atalho, que usam `apx-laptop-action-v1 files`. Esse helper ainda tinha
+`/usr/bin/thunar` literal. Agora chama o wrapper APX pelo caminho absoluto.
+Não foi necessária alteração/reinício do QuickShell.
+
+Teste real: encerrar inteiramente Thunar, executar o helper instalado que
+serve botão/atalho e confirmar o módulo no novo processo; repetido num
+segundo arranque. Captura `panel-launch-fixed.png` mostra ausência de
+Casa/Subir/Menu e os tamanhos restaurados. Os quatro testes do helper
+passaram; o teste antigo ainda esperava foco e `/home/Home`, e foi atualizado
+para verificar janela nova pelo wrapper. Seed, cinco homes, pins dos dois
+runtimes e digest de recuperação verificados. Backup:
+`/var/lib/apx/backups/20261114T173940Z-thunar-toolbar-launch`.
+A alegação anterior de persistência estava incompleta por não cobrir esta
+entrada da barra superior. Sem commit/push.
+
+## Dimensões visíveis dos caminhos e faixa do separador, 2026-11-14
+
+O proprietário pediu altura e largura iguais nos botões do caminho do seletor
+e Thunar, e remoção de uma faixa azul à esquerda dos nomes no seletor.
+A medição anterior de 50 px incluía margens CSS de 6 px em cima/baixo no
+headerbar GTK: o fundo visível do seletor tinha apenas 38 px. Os breadcrumbs
+agora removem essas margens e têm conteúdo mínimo 44 px + padding vertical
+6 px. A classe `path-bar`, o intervalo imagem/texto de 2 px e a ausência de
+espaçamento entre botões reproduzem a geometria nativa.
+
+Thunar conservava pedidos de largura dos labels calculados antes da fonte
+APX definitiva; o módulo recalcula-os em idle após map, invocando a rotina
+nativa para preservar reserva de negrito e limite/reticências. Medidas finais
+no mesmo caminho: apx 68×50 e Documents 98×50 nos dois. Evidência:
+`breadcrumb-native-geometry.txt` e `breadcrumb-chooser-geometry.txt` em
+`audit/2026-11-14-thunar-chooser-refinement/`.
+
+A faixa era o padding de 8 px da área de arrasto do GtkPaned, preenchido pela
+regra genérica `filechooser separator`; não era sombra de scroll. O seletor
+agora deixa essa área transparente e desenha apenas a linha de 1 px, mantendo
+a área de arrasto. Captura real final: `breadcrumb-size-divider-final.png`.
+Compilação dos módulos com -Werror, teste funcional do seletor e teste nativo
+de crossfade/Ctrl+L passaram. Houve apenas o aviso esperado de Tracker3
+indisponível; a pesquisa nativa de fallback devolveu os resultados corretos.
+Seed/homes, pins e recuperação verificados. Backups em `/var/lib/apx/backups/`:
+`20261114T174423Z-thunar-toolbar-launch`,
+`20261114T174731Z-thunar-toolbar-launch` e
+`20261114T174922Z-thunar-toolbar-launch` (últimos módulos).
+Thunar reaberto pelo helper do botão Ficheiros e seletor real do wallpaper
+reaberto no workspace 2. Sem commit/push.
+
+## Botões das setas do seletor alinhados, 2026-11-14
+
+A pedido final do proprietário, o seletor passou de botões de navegação
+32 px com intervalo 2 px para 29×50 px sem intervalo, como medido no Thunar.
+Removidas também as margens verticais CSS de 6 px, igualado o raio a 12 px
+e retirado o deslocamento vertical de 2 px das imagens das setas; ícones
+continuam 24 px. Os restantes controlos não foram alterados.
+Probe do seletor instalado confirmou posições x=8 e x=37 e dimensões 29×50,
+com margens zero. Evidência `arrow-buttons-geometry.txt` e captura real
+`arrow-buttons-final.png` em `audit/2026-11-14-thunar-chooser-refinement/`.
+Compilação -Werror, assets seed/cinco homes, pins e recuperação verificados.
+Backup `/var/lib/apx/backups/20261114T175258Z-thunar-toolbar-launch`.
+Seletor real reaberto ao lado do Thunar no workspace 2. Sem commit/push.
+
+## Recuo dos nomes e apresentação lateral, 2026-11-14
+
+A pedido do proprietário, o Thunar recebeu mais espaço horizontal nas células
+da lista detalhada (`horizontal-separator: 10`). O seletor recebeu linha
+vertical branca de 1 px no separador lateral, conservando transparente a
+área de arrasto, e raio de 6 px na seleção dos locais, incluindo hover e
+backdrop. Alterações limitadas ao CSS; ícones, alturas e mecanismos de
+navegação mantidos. Ambas as aplicações foram reabertas e a captura real
+`audit/2026-11-14-thunar-chooser-refinement/name-sidebar-final.png` confirma
+o recuo, a linha branca e a seleção Imagens arredondada. Seed/cinco homes,
+pins e digest de recuperação verificados; diff check passou. Backup:
+`/var/lib/apx/backups/20261114T175712Z-thunar-toolbar-launch`. Sem commit/push.
+
 ## Thunar e seletor — apresentação aceite, 2026-11-14
 
 O proprietário aceitou o resultado final e pediu commit e push. O último
@@ -11016,14 +11978,55 @@ recompilados, instalados no piloto; patch 4.20.10 dry-run passou. Backups:
 `/var/lib/apx/backups/20261114T180732Z-search-crossfade` e
 `/var/lib/apx/backups/20261114T180914Z-search-crossfade`. Sem commit/push.
 
-## Seletor do portal para abrir e guardar, 2026-11-14
+## Seletor do portal para upload e download, 2026-11-14
 
-O portal GTK usado pelo Brave carrega o módulo APX também quando é iniciado
-pela shell. O cabeçalho identifica as ações pelos códigos de resposta GTK;
-nos diálogos de guardar conserva a entrada nativa do nome no corpo e mostra
-Nome, Cancelar e Salvar. O proprietário confirmou visualmente o seletor ao
-guardar uma imagem no Brave. Testes cobrem abrir e guardar, respostas, nome
-e caminho, rótulos e pesquisa; o teste de navegação do wallpaper também
-passou. O backend foi reiniciado sem diálogo aberto, preservando o Brave.
-Seed e cinco homes atualizados; último backup
-`/var/lib/apx/backups/20261114T182057Z-browser-file-chooser`.
+A pedido do proprietário, o seletor GTK do portal usado por aplicações como
+Brave recebeu a mesma navegação e apresentação do seletor de wallpaper.
+O helper `apx-shell-v1` arrancava o backend GTK diretamente sem GTK_MODULES,
+ignorando o serviço D-Bus local que já o incluía; agora arranca-o com o módulo.
+No módulo, os botões de cancelar e aceitar são identificados pelos códigos de
+resposta GTK, preservando rótulos/ações dos diálogos de abrir e guardar em
+qualquer idioma. Nos diálogos de guardar, o campo nativo do nome, originalmente
+no título GTK, é movido para cima da lista antes de substituir o cabeçalho;
+a ligação, validação e seleção do nome continuam nativas.
+
+Testes GTK confirmaram abrir/guardar, nome e caminho, respostas, pesquisa e
+filtros já existentes; o teste de pesquisa/histórico do wallpaper passou.
+Pedidos reais `OpenFile` e `SaveFile` pelo portal mostraram as janelas adaptadas;
+`browser-portal-save-verified.png` mostra `teste.png` no campo nativo. Não foi
+realizado um download/upload completo dentro do Brave; a integração do portal
+foi testada diretamente. O backend ativo foi reiniciado com o módulo. Seed,
+cinco homes, pins e digest de recuperação verificados, compilação com -Werror e
+bash -n passaram. Backups `/var/lib/apx/backups/20261114T181216Z-browser-file-chooser`
+e `/var/lib/apx/backups/20261114T181349Z-browser-file-chooser`. Sem commit/push.
+
+## Verificação no Brave aberto, 2026-11-14
+
+O proprietário reportou que o seletor ainda não aparecia ao tentar descarregar
+uma imagem. Foi testada a ação Guardar como (Ctrl+S) na janela do Brave já
+existente, PID 47057: criou uma janela `xdg-desktop-portal-gtk` PID 1538042 e a
+captura `browser-user-save-current.png` mostra o seletor APX, nome de ficheiro,
+breadcrumbs, pesquisa, laterais e botões. Também testado um Brave independente
+com o mesmo resultado. A ação específica Guardar imagem como e um upload real
+ainda não foram observados; não se conclui que o relato esteja resolvido para
+esse gesto ou para downloads automáticos que não abrem seletor. Pedido ao dono
+para deixar o diálogo concreto aberto. Não foi reiniciado o Brave do proprietário.
+
+## Botões do seletor de guardar, 2026-11-14
+
+O proprietário confirmou que o menu observado ao guardar imagens já era o
+pretendido e pediu apenas `Cancelar` e `Salvar` em vez de `Cancel` e `Save`.
+O módulo altera os rótulos apenas no modo guardar, mantendo os códigos nativos
+de resposta e os outros diálogos. Compilação -Werror e teste de abrir/guardar
+passaram, incluindo rótulos, caminho, pesquisa e campo de nome. Backend GTK do
+portal reiniciado após o diálogo do proprietário fechar; navegador preservado.
+Instalação no seed/cinco homes e pins atualizados; backup
+`/var/lib/apx/backups/20261114T181924Z-browser-file-chooser`. Sem commit/push.
+
+## Campo Nome do seletor de guardar, 2026-11-14
+
+O proprietário pediu também `Nome` em vez de `Name`. O rótulo nativo do campo
+de guardar é atualizado mantendo a entrada e respetivas ações. Teste GTK
+confirmou Nome, Cancelar e Salvar, nome/caminho e pesquisa. O backend do portal
+foi reiniciado sem diálogo aberto; navegador mantido. Instalado nos cinco homes
+e seed, backup `/var/lib/apx/backups/20261114T182057Z-browser-file-chooser`.

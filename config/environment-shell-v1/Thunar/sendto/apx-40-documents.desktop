@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Documentos
+Icon=folder-documents
+Exec=/home/apx/.local/bin/apx-sendto-local-v1 documents %F
+NoDisplay=true
+

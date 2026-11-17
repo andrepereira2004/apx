@@ -30,7 +30,7 @@ class ScreenshotTests(unittest.TestCase):
             bridge.handle_key(bridge.AT_NAME, bridge.KEY_SELECTIVE_SCREENSHOT, 1, 0x104)
         launch.assert_called_once_with("screenshot")
 
-    def test_fn_capture_keeps_image_after_preview_expires(self):
+    def test_fn_capture_discards_image_after_preview_expires(self):
         module = load_script()
         with tempfile.TemporaryDirectory() as folder:
             home = Path(folder) / "home"
@@ -49,12 +49,10 @@ class ScreenshotTests(unittest.TestCase):
                  patch.object(module.subprocess, "Popen") as launch:
                 self.assertEqual(module.main(), 0)
 
-            self.assertTrue(any(call.args[0] == ["wl-copy", "--foreground", "--sensitive", "--type", "image/png"]
+            self.assertFalse(any(call.args[0][0] == "wl-copy" for call in launch.call_args_list))
+            self.assertTrue(any(call.args[0] == ["quickshell", "-c", "apx", "ipc", "call", "host", "hotkeyScreenshot"]
                                 for call in launch.call_args_list))
-
-            saved = list((home / "Pictures/Screenshots").glob("Screenshot_*.png"))
-            self.assertEqual(len(saved), 1)
-            self.assertEqual(saved[0].read_bytes(), b"png-test")
+            self.assertFalse((home / "Pictures/Screenshots").exists())
             self.assertEqual(list((runtime / "apx-screenshots").glob("capture-*.png")), [])
 
 

@@ -320,12 +320,15 @@ dialog.background headerbar.apx-chooser-header .apx-chooser-navigation > button 
     border-radius: 12px;
     color: #d9dcea;
 }
-dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button {
+dialog.background headerbar.apx-chooser-header .apx-chooser-action {
     min-height: 34px;
     padding: 2px 10px;
     color: #ffffff;
 }
-dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child {
+dialog.background headerbar.apx-chooser-header .apx-chooser-action:disabled {
+    color: rgba(255, 255, 255, 0.4);
+}
+dialog.background headerbar.apx-chooser-header .apx-chooser-search-button {
     min-width: 34px;
     padding: 2px;
     color: #d9dcea;
@@ -334,14 +337,14 @@ dialog.background headerbar.apx-chooser-header image {
     -gtk-icon-transform: scale(1);
     -gtk-icon-shadow: none;
 }
-dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child image {
+dialog.background headerbar.apx-chooser-header .apx-chooser-search-button image {
     color: #d9dcea;
 }
-dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child image {
+dialog.background headerbar.apx-chooser-header .apx-chooser-search-button image {
     margin-bottom: 2px;
 }
-dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child:hover,
-dialog.background headerbar.apx-chooser-header .apx-chooser-actions > button:first-child:checked {
+dialog.background headerbar.apx-chooser-header .apx-chooser-search-button:hover,
+dialog.background headerbar.apx-chooser-header .apx-chooser-search-button:checked {
     background: transparent;
 }
 

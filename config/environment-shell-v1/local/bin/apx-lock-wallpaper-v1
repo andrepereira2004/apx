@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+"""Render the Environment wallpaper composition for Hyprlock."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import tempfile
+import time
+
+HOME = Path.home()
+OUTPUT = HOME / '.local/share/apx/appearance/lock-wallpaper'
+CONFIG = HOME / '.config/hypr/apx-lock-appearance.conf'
+DEFAULT = HOME / '.config/apx/wallpapers/atlantic-coast.png'
+
+
+def monitors():
+    try:
+        result = subprocess.run(['/usr/bin/hyprctl', '-j', 'monitors'],
+                                capture_output=True, text=True, timeout=2)
+        entries = json.loads(result.stdout) if result.returncode == 0 else []
+        found = []
+        for entry in entries:
+            name, width, height = entry.get('name'), entry.get('width'), entry.get('height')
+            if (isinstance(name, str) and re.fullmatch(r'[A-Za-z0-9_-]{1,40}', name)
+                    and type(width) is int and type(height) is int
+                    and 320 <= width <= 8192 and 240 <= height <= 8192
+                    and not entry.get('disabled', False)):
+                found.append((name, width, height))
+        if found:
+            return found
+    except (OSError, ValueError, subprocess.SubprocessError):
+        pass
+    return [('', 1920, 1080)]
+
+
+def translation(percent, viewport, scaled):
+    limit = max(0, (viewport + scaled) / 2 - min(24, scaled / 4))
+    return max(-limit, min(limit, percent * viewport / 100))
+
+
+def picture_for(source, width, height, state):
+    import gi
+    gi.require_version('GdkPixbuf', '2.0')
+    from gi.repository import GdkPixbuf
+
+    border = state.get('wallpaper_border', 'white')
+    fit = state.get('wallpaper_fit', 'crop')
+    zoom = state.get('wallpaper_zoom', 100)
+    offset_x = state.get('wallpaper_offset_x', 0)
+    offset_y = state.get('wallpaper_offset_y', 0)
+    stat = source.stat()
+    signature = (str(source), stat.st_mtime_ns, stat.st_size, width, height,
+                 border, fit, zoom, offset_x, offset_y)
+    digest = hashlib.sha256(repr(signature).encode()).hexdigest()
+    target = OUTPUT / (digest + '.png')
+    if target.is_file():
+        return target
+
+    image = GdkPixbuf.Pixbuf.new_from_file(str(source))
+    image_width, image_height = image.get_width(), image.get_height()
+    factor = max(width / image_width, height / image_height) if fit == 'crop' else min(width / image_width, height / image_height)
+    base_width, base_height = (width, height) if fit == 'stretch' else (image_width * factor, image_height * factor)
+    scaled_width, scaled_height = base_width * zoom / 100, base_height * zoom / 100
+    left = (width - scaled_width) / 2 + translation(offset_x, width, scaled_width)
+    top = (height - scaled_height) / 2 + translation(offset_y, height, scaled_height)
+    canvas = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, width, height)
+    canvas.fill(0xffffffff if border == 'white' else 0x000000ff)
+    x, y = max(0, int(left)), max(0, int(top))
+    right, bottom = min(width, int(left + scaled_width + 0.5)), min(height, int(top + scaled_height + 0.5))
+    if right > x and bottom > y:
+        image.composite(canvas, x, y, right - x, bottom - y, left, top,
+                        scaled_width / image_width, scaled_height / image_height,
+                        GdkPixbuf.InterpType.BILINEAR, 255)
+    OUTPUT.mkdir(parents=True, exist_ok=True, mode=0o700)
+    fd, temporary = tempfile.mkstemp(prefix='.lock-', suffix='.png', dir=OUTPUT)
+    os.close(fd)
+    try:
+        canvas.savev(temporary, 'png', [], [])
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, target)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
+    return target
+
+
+def main():
+    payload = json.loads(sys.argv[1])
+    style, state = payload['style'], payload['wallpaper']
+    border = state.get('wallpaper_border', 'white')
+    if border not in ('white', 'black'):
+        raise ValueError('Cor das margens inválida.')
+    rotating = ('atlantic-coast.png', 'alpine-lake.png', 'rainforest-stream.png')
+    default_source = DEFAULT.parent / rotating[int(time.time() // 900) % len(rotating)]
+    source = Path(state.get('wallpaper', default_source))
+    if not source.is_file() or any(char in str(source) for char in ('\n', '\r', '$', '#', '{', '}')):
+        source = DEFAULT
+    accent = style['color'] if style['icons'] else '#d9dcea'
+    config = '# Generated Environment-local lock presentation; no authentication settings.\n'
+    config += '$apxLockAccent = rgba(' + accent.lstrip('#') + 'ff)\n'
+    for name, width, height in monitors():
+        path = picture_for(source, width, height, state)
+        config += ('background {\n    monitor = ' + name + '\n    path = ' + str(path) +
+                   '\n    color = rgba(10, 16, 20, 1.0)\n    blur_passes = 3\n'
+                   '    blur_size = 7\n    brightness = 0.45\n}\n')
+    CONFIG.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if not CONFIG.exists() or CONFIG.read_text() != config:
+        fd, temporary = tempfile.mkstemp(prefix='.lock-appearance-', dir=CONFIG.parent)
+        try:
+            with os.fdopen(fd, 'w') as stream:
+                stream.write(config)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.chmod(temporary, 0o600)
+            os.replace(temporary, CONFIG)
+        finally:
+            Path(temporary).unlink(missing_ok=True)
+    # Keep bounded copies created by successive slider and drag updates.
+    active = set(re.findall(r'(?m)^    path = (.+)$', config))
+    generated = sorted(OUTPUT.glob('[0-9a-f]' * 64 + '.png'),
+                       key=lambda path: path.stat().st_mtime_ns, reverse=True)
+    for old in generated[12:]:
+        if str(old) not in active:
+            old.unlink(missing_ok=True)
+
+
+if __name__ == '__main__':
+    main()

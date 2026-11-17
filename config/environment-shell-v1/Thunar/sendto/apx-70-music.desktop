@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Música
+Icon=folder-music
+Exec=/home/apx/.local/bin/apx-sendto-local-v1 music %F
+NoDisplay=true
+

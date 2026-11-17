@@ -29,6 +29,8 @@ VFIO_STATE = Path("/run/apx/vfio-pci-environment-v1.json")
 VFIO_PROFILE = "apx-vfio-pci-v1"
 REMOVABLE_HELPER = Path("/usr/lib/apx/apx-removable-media-v1.py")
 REMOVABLE_ROOT = Path("/run/apx/removable-media-v1")
+TRANSFER_ROOT = Path("/var/lib/apx/transfer-v1")
+TRANSFER_SOCKET = Path("/run/apx/transfer-v1.sock")
 VM_FORBIDDEN_PROCESSES = (
     b"quickshell", b"waybar", b"hypridle", b"hyprlock",
     b"pipewire-pulse", b"xdg-desktop-por",
@@ -310,6 +312,11 @@ def configure(engine, name: str) -> dict[str, object]:
                 raise RuntimeError("removable media Host broker is unavailable")
             original_run((str(REMOVABLE_HELPER), "prepare"))
             values.append(f"--bind={REMOVABLE_ROOT}:/media/apx-usb")
+        if "systemd-nspawn" in values or "/usr/bin/systemd-nspawn" in values:
+            values.append(f"--bind-ro={TRANSFER_ROOT}:/home/apx/Partilha:idmap")
+            if not TRANSFER_SOCKET.is_socket():
+                raise RuntimeError("shared file copy service is unavailable")
+            values.append(f"--bind={TRANSFER_SOCKET}:/run/apx/transfer-v1.sock")
         if engine.HOST_CONSOLE_ENABLED:
             if "systemd-nspawn" in values or "/usr/bin/systemd-nspawn" in values:
                 values.append(f"--bind={hardware_socket}:{hardware_socket}")

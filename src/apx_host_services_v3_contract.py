@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import ipaddress
 import re
 import uuid
 
@@ -22,6 +23,7 @@ OPERATIONS = (
     "network.connectivity-check", "network.disconnect", "network.forget",
     "network.portal.open", "network.scan", "network.status", "network.power", "radio.status", "radio.airplane",
     "keyboard.load", "keyboard.save", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save",
+    "localsend.peer.get", "localsend.peer.set", "media.unmount",
 )
 SECRET_FIELDS = frozenset({"credential", "passphrase", "password", "pin", "secret"})
 _REQUEST_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}")
@@ -79,10 +81,27 @@ def validate_payload(operation: str, payload: object) -> dict[str, object]:
     if operation in {"bluetooth.scan", "bluetooth.status", "capabilities.get",
                      "network.connectivity-check", "network.disconnect",
                      "network.portal.open", "network.scan", "network.status", "radio.status", "snapshot.get",
-                     "calendar.load", "appearance.load", "keyboard.load"}:
+                     "calendar.load", "appearance.load", "keyboard.load", "localsend.peer.get"}:
         if payload:
             raise HostServicesV3ContractError("operation takes no payload")
         return {}
+    if operation == "media.unmount":
+        if set(payload) != {"uuid"} or type(payload["uuid"]) is not str or payload["uuid"] not in {"4E21-0000", "4079-3F8D"}:
+            raise HostServicesV3ContractError("removable volume is not admitted")
+        return dict(payload)
+    if operation == "localsend.peer.set":
+        if set(payload) != {"address"} or type(payload["address"]) is not str:
+            raise HostServicesV3ContractError("LocalSend address differs")
+        try:
+            address = ipaddress.IPv4Address(payload["address"])
+        except ipaddress.AddressValueError as error:
+            raise HostServicesV3ContractError("LocalSend address is invalid") from error
+        if str(address) != payload["address"] or not any(address in network for network in (
+            ipaddress.IPv4Network("10.0.0.0/8"), ipaddress.IPv4Network("172.16.0.0/12"),
+            ipaddress.IPv4Network("192.168.0.0/16"),
+        )):
+            raise HostServicesV3ContractError("LocalSend address must be private IPv4")
+        return {"address": str(address)}
     if operation == "radio.airplane":
         if set(payload) != {"enabled"} or type(payload["enabled"]) is not bool:
             raise HostServicesV3ContractError("airplane mode requires a boolean")

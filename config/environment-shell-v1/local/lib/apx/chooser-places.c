@@ -3,6 +3,7 @@
 #include <gmodule.h>
 #include <glib/gstdio.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #define APX_TRASH_FILES_URI "file:///home/apx/.local/share/Trash/files"
 
@@ -396,21 +397,23 @@ static gboolean adapt_header_idle(gpointer data) {
                 gtk_button_set_label(GTK_BUTTON(cancel), "Cancelar");
                 gtk_button_set_label(GTK_BUTTON(choose), "Salvar");
             }
-            GtkWidget *actions = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
-            gtk_style_context_add_class(gtk_widget_get_style_context(actions), "apx-chooser-actions");
-            GtkWidget *buttons[] = { search, cancel, choose };
+            /* GtkDialog discovers response widgets among direct headerbar
+             * children. Nesting them in our title box loses native response
+             * sensitivity and default-button lookup (notably portal OK). */
+            GtkWidget *buttons[] = { choose, cancel, search };
             for (guint i = 0; i < G_N_ELEMENTS(buttons); i++) {
-                g_object_ref(buttons[i]);
-                gtk_container_remove(GTK_CONTAINER(header), buttons[i]);
-                gtk_box_pack_start(GTK_BOX(actions), buttons[i], FALSE, FALSE, 0);
-                g_object_unref(buttons[i]);
+                gtk_container_child_set(GTK_CONTAINER(header), buttons[i],
+                                        "pack-type", GTK_PACK_END,
+                                        "position", (gint)i, NULL);
+                gtk_style_context_add_class(gtk_widget_get_style_context(buttons[i]),
+                                            "apx-chooser-action");
             }
+            gtk_style_context_add_class(gtk_widget_get_style_context(search),
+                                        "apx-chooser-search-button");
             GtkWidget *icon = gtk_image_new_from_icon_name("system-search-symbolic", GTK_ICON_SIZE_BUTTON);
             gtk_image_set_pixel_size(GTK_IMAGE(icon), 20);
             gtk_button_set_image(GTK_BUTTON(search), icon);
             gtk_widget_show(icon);
-            gtk_box_pack_end(GTK_BOX(contents), actions, FALSE, FALSE, 0);
-            gtk_widget_show(actions);
         }
         HeaderNavigation *nav = g_new0(HeaderNavigation, 1);
         nav->chooser = GTK_FILE_CHOOSER(dialog);
@@ -573,7 +576,7 @@ static void modified_cell(GtkTreeViewColumn *column, GtkCellRenderer *cell,
                        G_VALUE_HOLDS_INT64(&value) ? g_value_get_int64(&value) : 0;
     g_value_unset(&value);
     GDateTime *date = timestamp ? g_date_time_new_from_unix_local(timestamp) : NULL;
-    gchar *text = date ? g_date_time_format(date, "%d/%m/%Y") : g_strdup("—");
+    gchar *text = date ? g_date_time_format(date, "%d/%m/%Y %H:%M") : g_strdup("—");
     g_object_set(cell, "text", text, NULL);
     g_free(text);
     if (date) g_date_time_unref(date);
@@ -673,6 +676,7 @@ static gint place_rank(GtkWidget *row) {
     else if (g_strcmp0(uri, "file:///home/apx/Applications") == 0) rank = 9;
     else if (g_strcmp0(uri, "other-locations:///") == 0) rank = 200;
     else if (g_strcmp0(uri, "file:///home/apx/Partilha") == 0 && place == 4) rank = 300;
+    else if (uri && g_str_has_prefix(uri, "file:///media/apx-usb/")) rank = 100;
     else if (section == 2) rank = 100;
     g_free(uri);
     return rank;
@@ -698,7 +702,9 @@ static gboolean show_place(GtkListBoxRow *row, gpointer data) {
     gint place = 0, section = 0;
     g_object_get(row, "uri", &uri, "label", &label, "place-type", &place,
                  "section-type", &section, NULL);
-    gboolean show = uri != NULL;
+    /* Unmounted native device rows have a GVolume but no URI yet. Keep them
+     * available so GTK can mount them through its normal activation path. */
+    gboolean show = uri != NULL || (section == 2 && place == 3);
     if (g_strcmp0(uri, "file:///") == 0 ||
         (g_strcmp0(uri, "file:///home/apx/Partilha") == 0 && place != 4) ||
         g_strcmp0(label, "APX_ROOT") == 0 ||
@@ -707,6 +713,32 @@ static gboolean show_place(GtkListBoxRow *row, gpointer data) {
         g_strcmp0(label, "APXWINTARGET") == 0)
         show = FALSE;
     if (section == 2 && g_strcmp0(label, "Computador") == 0) show = FALSE;
+    /* The Host mounts admitted media through the file bridge. Prefer its
+     * bookmark to the raw GVolume, which this isolated Environment cannot
+     * mount. Only suppress the native row while the bridge is mounted. */
+    if (section == 2 && place == 3) {
+        GVolume *volume = NULL;
+        g_object_get(row, "volume", &volume, NULL);
+        if (volume) {
+            gchar *uuid = g_volume_get_uuid(volume);
+            const gchar *bridge = NULL;
+            if (g_strcmp0(uuid, "4E21-0000") == 0)
+                bridge = "/media/apx-usb/Ventoy";
+            else if (g_strcmp0(uuid, "4079-3F8D") == 0)
+                bridge = "/media/apx-usb/USB-4079-3F8D";
+            gchar *ejected = uuid ? g_strconcat("/media/apx-usb/.ejected-", uuid, NULL) : NULL;
+            if (bridge && ejected && g_file_test(ejected, G_FILE_TEST_IS_REGULAR))
+                show = FALSE;
+            g_free(ejected);
+            struct stat root_stat, volume_stat;
+            if (bridge && g_stat("/media/apx-usb", &root_stat) == 0 &&
+                g_stat(bridge, &volume_stat) == 0 &&
+                root_stat.st_dev != volume_stat.st_dev)
+                show = FALSE;
+            g_free(uuid);
+            g_object_unref(volume);
+        }
+    }
     g_free(uri);
     g_free(label);
     return show;
@@ -785,6 +817,7 @@ static void adapt_place_row(GtkWidget *row) {
     else if (g_strcmp0(uri, "file:///home/apx/Applications") == 0) { label = "Aplicações"; icon = "layout-grid"; }
     else if (g_strcmp0(uri, "other-locations:///") == 0) { label = "Explorar rede"; icon = "network-workgroup"; }
     else if (g_strcmp0(uri, "file:///home/apx/Partilha") == 0 && place == 4) { label = "Partilha Environments"; icon = "folders"; }
+    else if (uri && g_str_has_prefix(uri, "file:///media/apx-usb/")) icon = "drive-removable-media-usb";
     if (label) g_object_set(row, "label", label, NULL);
     if (icon) {
         GIcon *gicon = g_themed_icon_new(icon);

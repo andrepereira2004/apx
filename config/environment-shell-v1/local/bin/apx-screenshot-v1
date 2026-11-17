@@ -483,20 +483,6 @@ def main():
             notify("Não foi possível capturar o ecrã.")
             return 1
         logging.info("PNG captured: %s bytes", source.stat().st_size)
-        pictures = Path.home() / "Pictures" / "Screenshots"
-        pictures.mkdir(mode=0o700, parents=True, exist_ok=True)
-        stamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        descriptor, saved_name = tempfile.mkstemp(prefix="Screenshot_" + stamp + "_",
-                                                 suffix=".png", dir=pictures)
-        os.close(descriptor)
-        saved = Path(saved_name)
-        try:
-            shutil.copyfile(source, saved)
-        except OSError:
-            saved.unlink(missing_ok=True)
-            raise
-        logging.info("Saved screenshot: %s (%s bytes)", saved, saved.stat().st_size)
-        copy_image(saved)
         subprocess.Popen(["quickshell", "-c", "apx", "ipc", "call", "host", "hotkeyScreenshot"],
                          stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                          stderr=subprocess.DEVNULL, start_new_session=True)
@@ -504,7 +490,7 @@ def main():
             "notify-send", "-a", "APX Captura", "-t", "5000", "-i", filename,
             "-h", "string:image-path:" + filename,
             "-A", "default=Abrir captura",
-            "Captura de ecrã", "Guardada em Imagens/Capturas"
+            "Captura de ecrã", "Abrir para copiar, guardar ou apagar"
         ], capture_output=True, text=True, check=False, timeout=8)
         logging.info("Notification result=%s action=%r error=%r", result.returncode, result.stdout.strip(), result.stderr.strip())
         if result.stdout.strip() == "default":

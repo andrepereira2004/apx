@@ -279,6 +279,13 @@ static void visit(GtkWidget *widget, GtkWidget *window) {
 static gboolean on_map(GSignalInvocationHint *hint, guint n, const GValue *values, gpointer data) {
     GtkWidget *widget = g_value_get_object(values);
     GtkWidget *top = gtk_widget_get_toplevel(widget);
+    if (GTK_IS_MENU_ITEM(widget) &&
+        g_strcmp0(gtk_menu_item_get_accel_path(GTK_MENU_ITEM(widget)),
+                  "<Actions>/ThunarActions/Tap::create-archive") == 0 &&
+        g_file_test("/home/apx/.local/bin/apx-compress-v1", G_FILE_TEST_IS_EXECUTABLE)) {
+        gtk_widget_set_no_show_all(widget, TRUE);
+        gtk_widget_hide(widget);
+    }
     if (is_type(top, "ThunarWindow")) {
         disable_tooltip(widget);
         adapt_toolbar_button(widget);

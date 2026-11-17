@@ -55,8 +55,8 @@ def ui() -> int:
 
 def explain_blockers(blockers):
     for blocker in blockers:
-        if blocker == "host-reserve-unavailable":
-            print("Espaço insuficiente: o APX exige pelo menos 96 GiB livres para preservar a reserva e as cópias de segurança.")
+        if blocker == "update-space-below-16-gib":
+            print("Espaço insuficiente para atualizar: são necessários pelo menos 16 GiB livres. O APX volta a verificar antes e depois de cada Environment.")
         elif blocker.startswith(("environment-state:", "environment-running:")):
             print("Fecha o Environment antes de atualizar: " + blocker.split(":", 1)[1])
         else:
@@ -64,9 +64,9 @@ def explain_blockers(blockers):
 
 
 def authorize_update():
-    print("\nAutorizar atualização: Enter para reconhecimento facial ou introduz a tua palavra-passe.", flush=True)
+    print("\nAutoriza a atualização com a tua palavra-passe.", flush=True)
     result = subprocess.run(["/usr/bin/sudo", "-k", "-p",
-                             "Enter para usar a cara / palavra-passe: ", "/usr/bin/true"])
+                             "Palavra-passe: ", "/usr/bin/true"])
     if result.returncode:
         print("Autorização recusada ou cancelada. Nenhuma atualização foi iniciada.", flush=True)
         return False
@@ -89,22 +89,14 @@ def full_ui():
     print("O reinício fica à tua decisão. Aplicações com atualizador próprio são atualizadas nesse programa.")
     if not authorize_update():
         return 1
-    code = environments_ui()
+    code = environments_ui(host_plan["plan_digest"])
     if code:
         return code
-    # Revalidate after application updates; never reuse a stale approval digest.
-    plan = exchange("preview", {})
-    if plan["blockers"] or plan["excluded_environments"]:
-        explain_blockers(plan["blockers"])
-        print("A etapa do Host ficou pendente: o plano mudou. Abre Atualizar para verificar.")
-        return 2
-    result = exchange("apply", {"plan_digest": plan["plan_digest"], "confirmation": "CONFIRMAR"})
-    print(result["message"], flush=True)
-    print("A atualização completa ainda está em curso no Host. O resultado ficará disponível ao voltar ao Hub.", flush=True)
+    print("A atualização continuará no Host. O Hub regressará automaticamente no fim.", flush=True)
     return 0
 
 
-def environments_ui() -> int:
+def environments_ui(host_plan_digest: str | None = None) -> int:
     current = exchange("environments.status", {})
     if current.get("state") not in ("queued", "running", "awaiting-hub"):
         plan = exchange("environments.preview", {})
@@ -113,7 +105,7 @@ def environments_ui() -> int:
             explain_blockers(plan["blockers"]); return 2
         print("Serão atualizados o sistema, as aplicações AUR e os Flatpaks de cada Environment.")
         print("Os outros Environments são atualizados primeiro; o Hub fica para o fim.")
-        print("Cada Environment terá uma cópia de segurança. Depois segue a etapa do Host.")
+        print("Cada Environment terá uma cópia de segurança. O Host não é atualizado por este botão.")
         current = exchange("environments.apply", {"plan_digest": plan["plan_digest"], "confirmation": "CONFIRMAR"})
     operation_id = current["operation"]
     last = None
@@ -128,12 +120,11 @@ def environments_ui() -> int:
         if current.get("operation") != operation_id: raise RuntimeError("Update operation changed")
     if current["state"] != "awaiting-hub":
         print(current.get("error") or current.get("message", "A atualização parou.")); return 2
-    print("\nA atualizar o Hub…", flush=True)
-    result = subprocess.run(["/home/apx/.local/bin/apx-environment-update-v1", "--unattended"])
-    if result.returncode:
-        print("O Hub não terminou a atualização. Abre Atualizar para retomar."); return result.returncode
-    final = exchange("environments.finish", {"operation": operation_id})
-    print(final["message"], flush=True)
+    print("\nA entregar a atualização do Hub ao Host…", flush=True)
+    payload = {"operation": operation_id}
+    if host_plan_digest is not None: payload["host_plan_digest"] = host_plan_digest
+    result = exchange("environments.resume", payload)
+    print(result["message"], flush=True)
     return 0
 
 
@@ -141,7 +132,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("mode", choices=("preview", "status", "include", "exclude", "ui", "environments-ui")); parser.add_argument("environment", nargs="?")
     args = parser.parse_args()
     if args.mode == "environments-ui":
-        try: return full_ui()
+        try: return environments_ui()
         finally:
             try: input("\nEnter para fechar…")
             except (EOFError, KeyboardInterrupt): pass

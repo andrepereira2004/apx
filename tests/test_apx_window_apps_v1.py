@@ -477,7 +477,7 @@ class WindowApplicationsTests(unittest.TestCase):
              patch.dict(module.os.environ, {'ROFI_RETV': '10', 'ROFI_INFO': 'sample'}, clear=True), \
              patch.object(module, 'perform') as perform, redirect_stdout(output):
             module.rofi_rows()
-        self.assertIn('Ir para a próxima janela\0display\x1fIr para a próxima janela\x1finfo\x1faction:cycle:sample', output.getvalue())
+        self.assertIn('Ir para janela\0display\x1fIr para janela\x1finfo\x1faction:cycle:sample', output.getvalue())
         self.assertIn('Terminar tarefa\0display\x1fTerminar tarefa\x1finfo\x1faction:terminate:0xabc', output.getvalue())
         self.assertIn('Desinstalar aplicação\0display\x1fDesinstalar aplicação\x1finfo\x1faction:uninstall:sample', output.getvalue())
         self.assertIn('Sample\0display', output.getvalue())
@@ -531,7 +531,7 @@ class WindowApplicationsTests(unittest.TestCase):
             module.execute_and_close('open', 'sample')
         kill.assert_not_called()
 
-    def test_right_click_on_action_only_keeps_options_open(self):
+    def test_right_click_on_action_closes_options_without_running_action(self):
         module = load_module()
         app = {'id': 'sample', 'name': 'Sample', 'iconPath': '/tmp/icon.svg', 'windows': []}
         output = io.StringIO()
@@ -540,7 +540,8 @@ class WindowApplicationsTests(unittest.TestCase):
                                             'ROFI_DATA': 'selected:sample'}, clear=True), \
              patch.object(module, 'perform') as perform, redirect_stdout(output):
             module.rofi_rows()
-        self.assertIn('Desinstalar aplicação', output.getvalue())
+        self.assertNotIn('Desinstalar aplicação', output.getvalue())
+        self.assertIn('Sample\0display', output.getvalue())
         self.assertNotIn('Confirmar desinstalação', output.getvalue())
         perform.assert_not_called()
 
@@ -553,10 +554,10 @@ class WindowApplicationsTests(unittest.TestCase):
              redirect_stdout(output):
             module.rofi_rows()
         self.assertIn('Desinstalar aplicação', output.getvalue())
-        self.assertNotIn('Ir para a próxima janela', output.getvalue())
+        self.assertNotIn('Ir para janela', output.getvalue())
         self.assertNotIn('Terminar tarefa', output.getvalue())
 
-    def test_hybrid_mode_offers_nvidia_launch_on_selected_application(self):
+    def test_hybrid_mode_does_not_offer_nvidia_action(self):
         module = load_module()
         app = {'id': 'sample', 'name': 'Sample', 'iconPath': '/tmp/icon.svg', 'windows': []}
         output = io.StringIO()
@@ -565,7 +566,7 @@ class WindowApplicationsTests(unittest.TestCase):
              patch.dict(module.os.environ, {'ROFI_RETV': '10', 'ROFI_INFO': 'sample'}, clear=True), \
              redirect_stdout(output):
             module.rofi_rows()
-        self.assertIn('Abrir na NVIDIA\0display\x1fAbrir na NVIDIA\x1finfo\x1faction:nvidia:sample', output.getvalue())
+        self.assertNotIn('NVIDIA', output.getvalue())
 
     def test_nvidia_action_is_limited_to_game_environments_in_hybrid_mode(self):
         module = load_module()
@@ -639,7 +640,7 @@ class WindowApplicationsTests(unittest.TestCase):
              patch.object(module.sys, 'argv', ['apx-window-apps-v1', 'Sample']), \
              redirect_stdout(output):
             module.main()
-        self.assertIn('Ir para a próxima janela', output.getvalue())
+        self.assertIn('Ir para janela', output.getvalue())
 
     def test_focus_restores_minimized_window_to_active_workspace(self):
         module = load_module()

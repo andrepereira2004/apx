@@ -51,9 +51,15 @@ class AppearanceTests(unittest.TestCase):
                 with mock.patch('builtins.print'):
                     app.main(['wallpaper-fit', 'fit'])
                     app.main(['wallpaper-zoom', '135'])
+                    app.main(['wallpaper-position', '{"x": 25, "y": -40}'])
+                    app.main(['wallpaper-border', 'black'])
                 self.assertEqual((app.status()['wallpaper_fit'], app.status()['wallpaper_zoom']), ('fit', 135))
+                self.assertEqual((app.status()['wallpaper_offset_x'], app.status()['wallpaper_offset_y']), (25, -40))
+                self.assertEqual(app.status()['wallpaper_border'], 'black')
                 with self.assertRaises(ValueError): app.main(['wallpaper-fit', 'invalid'])
                 with self.assertRaises(ValueError): app.main(['wallpaper-zoom', '201'])
+                with self.assertRaises(ValueError): app.main(['wallpaper-position', '{"x": 101, "y": 0}'])
+                with self.assertRaises(ValueError): app.main(['wallpaper-border', 'red'])
 
     def test_shared_contract_rejects_paths_keys_and_non_boolean_flags(self):
         good=dict(color='#Ab12EF',icons=True,buttons=False,windows=True)

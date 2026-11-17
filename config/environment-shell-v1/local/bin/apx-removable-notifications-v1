@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""Use the common APX notification cards for removable storage events."""
+import fcntl
+import html
+import os
+from pathlib import Path
+import subprocess
+
+VOLUMES = {
+    '4E21-0000': ('Ventoy', 'PEN USB'),
+    '4079-3F8D': ('USB-4079-3F8D', 'PEN USB 1 GB'),
+}
+
+
+class NotificationTracker:
+    def __init__(self):
+        self.previous = None
+        self.removed_safely = set()
+        self.connected = set()
+        self.ejected = set()
+
+    def update(self, volumes, mounted, ejected):
+        current = (dict(volumes), set(mounted))
+        if self.previous is None:
+            self.previous = current
+            self.connected = set(volumes) | set(mounted)
+            self.ejected = set(ejected)
+            return []
+        old_volumes, old_mounted = self.previous
+        events = []
+        for identity in sorted((old_mounted - mounted) | (ejected - self.ejected)):
+            if identity in mounted: continue
+            if identity in ejected:
+                label = volumes.get(identity, old_volumes.get(identity, identity))
+                events.append(('Dispositivo removido em segurança', label + '\nPode retirar o dispositivo.'))
+                self.removed_safely.add(identity)
+                self.connected.discard(identity)
+        for identity in sorted((volumes.keys() - old_volumes.keys()) | (mounted - old_mounted)):
+            if identity in ejected: continue
+            label = volumes.get(identity, VOLUMES.get(identity, ('', identity))[1])
+            if identity not in self.connected:
+                events.append(('Dispositivo ligado', label))
+                self.connected.add(identity)
+            self.removed_safely.discard(identity)
+        for identity in sorted((old_volumes.keys() | old_mounted) - (volumes.keys() | mounted)):
+            if identity not in self.removed_safely and identity not in ejected:
+                label = old_volumes.get(identity, VOLUMES.get(identity, ('', identity))[1])
+                events.append(('Dispositivo desligado', label))
+            if identity not in ejected:
+                self.removed_safely.discard(identity)
+            self.connected.discard(identity)
+        self.previous = current
+        self.ejected = set(ejected)
+        return events
+
+
+def notify(title, body):
+    print('APX device notification: ' + title + ' | ' + body.replace('\n', ' / '), flush=True)
+    subprocess.run(['/usr/bin/notify-send', '-a', 'Dispositivos', '-i',
+                    'drive-removable-media-usb', '-t', '8000', title,
+                    html.escape(body)], check=False, timeout=5)
+
+
+def main():
+    from gi.repository import Gio, GLib
+    state = Path.home() / '.local/state/apx-removable-notifications-v1'
+    state.mkdir(parents=True, exist_ok=True)
+    with (state / 'watch.lock').open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return
+        tracker = NotificationTracker()
+        monitor = Gio.VolumeMonitor.get()
+        def sample(*args):
+            volumes = {}
+            for volume in monitor.get_volumes():
+                drive = volume.get_drive()
+                if drive is None or not (drive.is_removable() or drive.can_eject()):
+                    continue
+                identity = volume.get_uuid() or volume.get_identifier('unix-device')
+                if identity:
+                    volumes[identity] = VOLUMES.get(identity, ('', volume.get_name()))[1]
+            mounted = {identity for identity, (name, _) in VOLUMES.items()
+                       if os.path.ismount('/media/apx-usb/' + name)}
+            ejected = {identity for identity in VOLUMES
+                       if Path('/media/apx-usb/.ejected-' + identity).is_file()}
+            for title, body in tracker.update(volumes, mounted, ejected):
+                try:
+                    notify(title, body)
+                except (OSError, subprocess.SubprocessError) as error:
+                    print('APX device notification: ' + str(error), flush=True)
+            return True
+        # Poll bridged mounts too: their unmount need not remove the raw volume.
+        # Baseline prevents a notification storm on session/watcher restart.
+        sample()
+        for event in ('volume-added', 'volume-removed', 'volume-changed', 'mount-added', 'mount-removed'):
+            monitor.connect(event, lambda *args: GLib.timeout_add(300, lambda: (sample(), False)[1]))
+        GLib.timeout_add_seconds(1, sample)
+        GLib.MainLoop().run()
+
+
+if __name__ == '__main__':
+    main()

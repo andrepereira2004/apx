@@ -1,0 +1,7 @@
+# Vanilla - BEJA import visibility — 2026-11-16
+
+Owner imported Vanilla - BEJA through BedrockOnLinux but it did not appear in Minecraft. The imported account's minecraftWorlds directory contained Vanilla - BEJA/Vanilla - BEJA/level.dat and db, so the root the game enumerates had no level.dat. The nested Bedrock level.dat had a consistent version/length header (10, 3055; total 3063 bytes), levelname.txt identified the requested world, and db contained 17 files. No Minecraft process had this nested world open.
+
+Executed repair.py as the Environment user: copied the entire original wrapper with cp -a --reflink=always into /home/apx/.local/state/apx-world-import-repair/20261116T215841Z/imported-wrapper, then moved the actual world directory to minecraftWorlds/Vanilla - BEJA. Only the empty extra wrapper was removed. All 27 world files were checked by SHA-256 against both backup and final location. Manifest: /home/apx/.local/state/apx-world-import-repair/20261116T215841Z/repair.json. No level data, chunks, packs or settings were rewritten. The source archive/USB copy was preserved.
+
+Owner subsequently confirmed: «sim ja aparece». The visibility goal is achieved; gameplay/world-content correctness was not tested by the agent. The APX MCWORLD compressor delivered in the same session flattens enclosing roots and repacks existing ZIP files to avoid reproducing this double-folder error. No launcher vendor source patch or duplicate import into Shared storage was necessary. No commit/push.

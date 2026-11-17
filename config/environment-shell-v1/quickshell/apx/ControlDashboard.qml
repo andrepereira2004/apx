@@ -15,7 +15,8 @@ Column {
     component DashboardCard: Rectangle {
         id: card
         property bool showInsetOutline: true
-        color: dashboard.controller.popupPanel
+        // The enclosing popup already supplies the translucent background.
+        color: "transparent"
         antialiasing: true
         Rectangle {
             visible: card.showInsetOutline

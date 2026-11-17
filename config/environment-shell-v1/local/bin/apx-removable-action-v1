@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""Ask the authenticated Host broker to safely unmount one admitted USB."""
+import importlib.util
+import subprocess
+import sys
+
+VOLUMES = {
+    'file:///media/apx-usb/Ventoy': '4E21-0000',
+    'file:///media/apx-usb/USB-4079-3F8D': '4079-3F8D',
+}
+
+def main():
+    if len(sys.argv) != 2 or sys.argv[1] not in VOLUMES:
+        raise ValueError('Dispositivo não autorizado')
+    spec = importlib.util.spec_from_file_location('apx_media_client', '/run/apx/host-services-client-v3.py')
+    client = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(client)
+    client.exchange('media.unmount', {'uuid': VOLUMES[sys.argv[1]]})
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (OSError, RuntimeError, ValueError) as error:
+        subprocess.run(['/usr/bin/notify-send', '-a', 'Dispositivos', '-i',
+                        'drive-removable-media-usb', '-u', 'critical',
+                        'Não foi possível desmontar', str(error)], check=False)
+        raise SystemExit(1)

@@ -47,6 +47,27 @@ criação está instalado: módulo iphone-integration, desligado em todos os pre
 incluindo Completo. Instala LocalSend/Ayatana sem copiar credenciais ou conceder
 LAN. A ligação a um dispositivo tem de ser configurada para o novo Environment.
 
+## Lançador de IP da Faculdade — instalado em 2026-11-11
+
+O atalho LocalSend da Faculdade emite uma notificação real do APX com o ícone
+LocalSend e o texto «Introduzir o IP do telemóvel.». A categoria específica
+`apx-localsend-peer` faz a própria notificação expandir-se ao clicar e mostrar
+um campo de texto. Enter envia o IP ao cliente APX e abre LocalSend se a regra
+de rede for aplicada. Esc recolhe o campo; fechar a notificação cancela.
+Somente esta categoria altera a apresentação das notificações comuns.
+Em 2026-11-11, a expansão/recolha recebeu uma animação de altura de 240 ms
+com desaceleração cúbica; o campo entra em 180 ms. As outras notificações
+mantêm a sua geometria.
+A confirmação chama a operação autenticada `localsend.peer.set` do
+serviço Host v3; o binário LocalSend não é alterado. O Host admite somente o
+utilizador do Environment gráfico ativo, a configuração opt-in da mesma geração
+e um IPv4 privado validado na LAN física pelo helper original. A configuração
+root-owned é substituída atomicamente com modo 0600; em falha, repõe o IP
+anterior. `localsend.peer.get` verifica o opt-in antes de criar a notificação.
+Fechar a notificação ou recolher o campo não altera
+a regra nem abre a app. O serviço v3 recebe acesso de escrita somente ao diretório da
+configuração LocalSend. O isolamento e a revogação da geração mantêm-se.
+
 ## Recuperação e validação
 
 Backup dos artefactos adicionados e inventário em

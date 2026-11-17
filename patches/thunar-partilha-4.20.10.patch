@@ -1,44 +1,46 @@
 --- a/thunar/thunar-shortcuts-model.c
 +++ b/thunar/thunar-shortcuts-model.c
-@@ -143,6 +143,8 @@
- thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model);
- static void
- thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model);
+@@ -69,0 +70,2 @@
++
++static gboolean thunar_shortcuts_model_is_removable_bridge (GFile *location);
+@@ -145,0 +148,2 @@
 +static void
 +thunar_shortcuts_model_shortcut_share (ThunarShortcutsModel *model);
- static gboolean
- thunar_shortcuts_model_get_hidden (ThunarShortcutsModel *model,
-                                    ThunarShortcut       *shortcut);
-@@ -342,6 +344,10 @@
- 
-   /* add bookmarks */
-   thunar_shortcuts_model_shortcut_places (model);
+@@ -344,0 +349,4 @@
 +
 +  /* Keep the shared folder in its own section. */
 +  thunar_shortcuts_model_shortcut_share (model);
 +
- }
- 
- 
-@@ -986,10 +992,12 @@
- update_header:
- 
-               header = lp_header->data;
+@@ -636,2 +644,15 @@
+-      g_value_init (value, G_TYPE_BOOLEAN);
+-      g_value_set_boolean (value, !shortcut->hidden);
++      {
++        gboolean visible = !shortcut->hidden;
++        /* Admitted USB media use Host bridge bookmarks. Their raw UDisks
++         * rows cannot be operated on from the isolated Environment. */
++        if (shortcut->device != NULL)
++          {
++            gchar *identity = thunar_device_get_identifier (shortcut->device);
++            if (g_strcmp0 (identity, "4E21-0000") == 0
++                || g_strcmp0 (identity, "4079-3F8D") == 0)
++              visible = FALSE;
++            g_free (identity);
++          }
++        g_value_init (value, G_TYPE_BOOLEAN);
++        g_value_set_boolean (value, visible);
++      }
+@@ -799 +820 @@
+-        can_eject = FALSE;
++        can_eject = thunar_shortcuts_model_is_removable_bridge (shortcut->location);
+@@ -989 +1010,3 @@
 -              if (header->hidden != (n_children == 0))
 +              gboolean hide_header = n_children == 0
 +                                     && header->group != THUNAR_SHORTCUT_GROUP_DEVICES_HEADER;
 +              if (header->hidden != hide_header)
-                 {
-                   /* set new visibility */
+@@ -992 +1015 @@
 -                  header->hidden = (n_children == 0);
 +                  header->hidden = hide_header;
- 
-                   /* notify view */
-                   path = gtk_tree_path_new_from_indices (idx_header, -1);
-@@ -1088,6 +1096,27 @@
-       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
-       thunar_shortcuts_model_add_shortcut (model, shortcut);
-     }
+@@ -1090,0 +1114,21 @@
 +}
 +
 +
@@ -60,83 +62,123 @@
 +  shortcut->location = g_file_new_for_path ("/home/apx/Partilha");
 +  shortcut->gicon = g_themed_icon_new ("folders");
 +  thunar_shortcuts_model_add_shortcut (model, shortcut);
- }
- 
- 
-@@ -1380,6 +1409,10 @@
-   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
-   _thunar_return_if_fail (name == NULL || g_utf8_validate (name, -1, NULL));
- 
+@@ -1368,0 +1413,12 @@
++/* The Host exports removable files through this bridge; the shortcuts view
++ * delegates safe removal to the authenticated Host service. */
++static gboolean
++thunar_shortcuts_model_is_removable_bridge (GFile *location)
++{
++  const gchar *path = location != NULL ? g_file_peek_path (location) : NULL;
++  return g_strcmp0 (path, "/media/apx-usb/Ventoy") == 0
++         || g_strcmp0 (path, "/media/apx-usb/USB-4079-3F8D") == 0;
++}
++
++
++
+@@ -1381,0 +1438,4 @@
++
 +  /* GTK keeps this bookmark for file choosers; Thunar shows it below Share. */
 +  if (g_strcmp0 (g_file_peek_path (file_path), "/home/apx/Partilha") == 0)
 +    return;
-+
-   shortcut = g_slice_new0 (ThunarShortcut);
-   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
-   shortcut->location = g_object_ref (file_path);
-@@ -1403,6 +1436,10 @@
-   shortcut->sort_id = row_num;
-   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
-   shortcut->name = g_strdup (name);
-+
+@@ -1406,0 +1467,12 @@
 +  /* The Applications bookmark represents a launcher catalog, not documents. */
 +  if (g_strcmp0 (g_file_peek_path (file_path), "/home/apx/Applications") == 0)
 +    shortcut->gicon = g_themed_icon_new ("layout-grid");
- 
-   /* append the shortcut to the list */
-   thunar_shortcuts_model_add_shortcut (model, shortcut);
++
++  /* Dynamic bridge bookmarks belong with devices, not personal folders. */
++  if (thunar_shortcuts_model_is_removable_bridge (file_path))
++    {
++      shortcut->group = THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS;
++      g_clear_object (&shortcut->gicon);
++      shortcut->gicon = g_themed_icon_new ("drive-removable-media-usb");
++    }
++
+@@ -1448 +1520,2 @@
+-      if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
++      if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS
++          || thunar_shortcuts_model_is_removable_bridge (shortcut->location))
+@@ -1508 +1581,2 @@
+-      if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
++      if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS
++          || thunar_shortcuts_model_is_removable_bridge (shortcut->location))
 --- a/thunar/thunar-shortcuts-model.h
 +++ b/thunar/thunar-shortcuts-model.h
-@@ -69,9 +69,12 @@
- #define THUNAR_SHORTCUT_GROUP_NETWORK (THUNAR_SHORTCUT_GROUP_NETWORK_HEADER \
-                                        | THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT \
-                                        | THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS)
+@@ -71,0 +72,2 @@
 +#define THUNAR_SHORTCUT_GROUP_SHARE (THUNAR_SHORTCUT_GROUP_SHARE_HEADER \
 +                                     | THUNAR_SHORTCUT_GROUP_SHARE_FOLDER)
- #define THUNAR_SHORTCUT_GROUP_HEADER (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER \
-                                       | THUNAR_SHORTCUT_GROUP_PLACES_HEADER \
+@@ -74 +76,2 @@
 -                                      | THUNAR_SHORTCUT_GROUP_NETWORK_HEADER)
 +                                      | THUNAR_SHORTCUT_GROUP_NETWORK_HEADER \
 +                                      | THUNAR_SHORTCUT_GROUP_SHARE_HEADER)
- 
- enum _ThunarShortcutGroup
- {
-@@ -93,6 +96,10 @@
-   THUNAR_SHORTCUT_GROUP_NETWORK_HEADER = (1 << 10),  /* network header */
-   THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT = (1 << 11), /* browse network */
-   THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS = (1 << 12),  /* remote ThunarDevices */
+@@ -95,0 +99,4 @@
 +
 +  THUNAR_SHORTCUT_GROUP_SHARE_HEADER = (1 << 13),
 +  THUNAR_SHORTCUT_GROUP_SHARE_FOLDER = (1 << 14),
 +
- };
- 
- 
 --- a/thunar/thunar-shortcuts-view.c
 +++ b/thunar/thunar-shortcuts-view.c
-@@ -1199,6 +1199,8 @@
-             mask = THUNAR_SHORTCUT_GROUP_PLACES;
-           else if ((group & THUNAR_SHORTCUT_GROUP_NETWORK) != 0)
-             mask = THUNAR_SHORTCUT_GROUP_NETWORK;
+@@ -1201,0 +1202,2 @@
 +          else if ((group & THUNAR_SHORTCUT_GROUP_SHARE) != 0)
 +            mask = THUNAR_SHORTCUT_GROUP_SHARE;
-           else
-             _thunar_assert_not_reached ();
- 
+@@ -1236,0 +1239,33 @@
++
++
++static gboolean
++thunar_shortcuts_view_is_bridge (GFile *location)
++{
++  const gchar *path = location != NULL ? g_file_peek_path (location) : NULL;
++  return g_strcmp0 (path, "/media/apx-usb/Ventoy") == 0
++         || g_strcmp0 (path, "/media/apx-usb/USB-4079-3F8D") == 0;
++}
++
++
++static void
++thunar_shortcuts_view_remove_bridge (ThunarShortcutsView *view, GFile *location)
++{
++  gchar *uri = g_file_get_uri (location);
++  gchar *argv[] = { "/home/apx/.local/bin/apx-removable-action-v1", uri, NULL };
++  GError *error = NULL;
++  if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_DEFAULT, NULL, NULL, NULL, &error))
++    {
++      thunar_dialogs_show_error (GTK_WIDGET (view), error, "Não foi possível desmontar o dispositivo");
++      g_error_free (error);
++    }
++  g_free (uri);
++}
++
++
++static void
++thunar_shortcuts_view_bridge_activated (GtkMenuItem *item, ThunarShortcutsView *view)
++{
++  GFile *location = g_object_get_data (G_OBJECT (item), "apx-removable-location");
++  if (thunar_shortcuts_view_is_bridge (location))
++    thunar_shortcuts_view_remove_bridge (view, location);
++}
+@@ -1363,0 +1399,10 @@
++  if (thunar_shortcuts_view_is_bridge (location))
++    {
++      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
++      item = gtk_menu_item_new_with_label ("Ejetar com segurança");
++      g_object_set_data_full (G_OBJECT (item), "apx-removable-location",
++                              g_object_ref (location), g_object_unref);
++      g_signal_connect (item, "activate", G_CALLBACK (thunar_shortcuts_view_bridge_activated), view);
++      gtk_menu_shell_append (GTK_MENU_SHELL (context_menu), item);
++    }
++
+@@ -1849,0 +1895,8 @@
++        }
++      else
++        {
++          GFile *location = NULL;
++          gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION, &location, -1);
++          if (thunar_shortcuts_view_is_bridge (location))
++            thunar_shortcuts_view_remove_bridge (view, location);
++          g_clear_object (&location);
 --- a/thunar/thunar-shortcuts-icon-renderer.c
 +++ b/thunar/thunar-shortcuts-icon-renderer.c
-@@ -227,6 +227,7 @@
-   gdouble                      alpha;
-   gint                         scale_factor;
-   gboolean                     use_symbolic_icons;
+@@ -229,0 +230 @@
 +  gboolean                     lucide_stroke_icon = FALSE;
- 
-   if (!gdk_cairo_get_clip_rectangle (cr, &clip_area))
-     return;
-@@ -245,6 +246,16 @@
-         gicon = g_object_ref (shortcuts_icon_renderer->gicon);
-       else
-         gicon = thunar_device_get_icon (shortcuts_icon_renderer->device, use_symbolic_icons);
+@@ -247,0 +249,10 @@
 +
 +      /* Lucide stroke SVGs must use the regular loader: GTK's symbolic
 +       * conversion treats their paths as filled silhouettes. */
@@ -147,13 +189,7 @@
 +          use_symbolic_icons = FALSE;
 +          lucide_stroke_icon = TRUE;
 +        }
- 
-       scale_factor = gtk_widget_get_scale_factor (widget);
- 
-@@ -270,6 +281,30 @@
-             icon = gtk_icon_info_load_icon (icon_info, NULL);
- 
-           g_object_unref (icon_info);
+@@ -272,0 +284,24 @@
 +        }
 +
 +      /* Keep the official SVG strokes, tinted to the sidebar text color. */
@@ -178,15 +214,9 @@
 +              }
 +          g_object_unref (icon);
 +          icon = tinted;
-         }
- 
-       /* render the icon (if any) */
 --- a/thunar/thunar-list-model.c
 +++ b/thunar/thunar-list-model.c
-@@ -1066,7 +1066,15 @@
-           g_value_take_string (value, g_strdup (device_type));
-           break;
-         }
+@@ -1069 +1069,9 @@
 -      g_value_take_string (value, thunar_file_get_content_type_desc (file));
 +      if (thunar_file_is_directory (file))
 +        g_value_take_string (value, g_strdup ("Pasta"));
@@ -197,15 +227,9 @@
 +          g_value_take_string (value, g_strdup (extension != NULL && extension != basename && extension[1] != '\0' ? extension : "—"));
 +          g_free (basename);
 +        }
-       break;
- 
-     case THUNAR_COLUMN_FILE:
 --- a/thunar/thunar-tree-view-model.c
 +++ b/thunar/thunar-tree-view-model.c
-@@ -1401,7 +1401,15 @@
-           g_value_take_string (value, g_strdup (device_type));
-           break;
-         }
+@@ -1404 +1404,9 @@
 -      g_value_take_string (value, thunar_file_get_content_type_desc (file));
 +      if (thunar_file_is_directory (file))
 +        g_value_take_string (value, g_strdup ("Pasta"));
@@ -216,24 +240,12 @@
 +          g_value_take_string (value, g_strdup (extension != NULL && extension != basename && extension[1] != '\0' ? extension : "—"));
 +          g_free (basename);
 +        }
-       break;
- 
-     case THUNAR_COLUMN_FILE:
 --- a/thunar/thunar-location-buttons.c
 +++ b/thunar/thunar-location-buttons.c
-@@ -77,8 +77,6 @@
- static void
- thunar_location_buttons_unmap (GtkWidget *widget);
- static void
+@@ -80,2 +79,0 @@
 -thunar_location_buttons_on_filler_clicked (ThunarLocationButtons *buttons);
 -static void
- thunar_location_buttons_get_preferred_width (GtkWidget *widget,
-                                              gint      *minimum,
-                                              gint      *natural);
-@@ -261,14 +259,6 @@
- 
- 
- static void
+@@ -264,8 +261,0 @@
 -thunar_location_buttons_on_filler_clicked (ThunarLocationButtons *buttons)
 -{
 -  g_signal_emit_by_name (buttons, "entry-requested", NULL);
@@ -242,34 +254,18 @@
 -
 -
 -static void
- thunar_location_buttons_init (ThunarLocationButtons *buttons)
- {
-   ThunarPreferences *preferences;
-@@ -285,6 +275,8 @@
-   buttons->button_max_width = THUNAR_LOCATION_BUTTON_MAX_WIDTH;
- 
-   buttons->left_slider = gtk_button_new ();
+@@ -287,0 +278,2 @@
 +  gtk_widget_set_can_focus (buttons->left_slider, FALSE);
 +  gtk_style_context_add_class (gtk_widget_get_style_context (buttons->left_slider), "apx-breadcrumb-slider");
-   g_signal_connect (G_OBJECT (buttons->left_slider), "button-press-event", G_CALLBACK (thunar_location_buttons_slider_button_press), buttons);
-   g_signal_connect (G_OBJECT (buttons->left_slider), "button-release-event", G_CALLBACK (thunar_location_buttons_slider_button_release), buttons);
-   g_signal_connect (G_OBJECT (buttons->left_slider), "clicked", G_CALLBACK (thunar_location_buttons_scroll_left), buttons);
-@@ -293,26 +285,21 @@
- 
-   icon = gtk_image_new_from_icon_name (use_symbolic_icons ? "pan-start-symbolic" : "pan-start", GTK_ICON_SIZE_BUTTON);
-   gtk_container_add (GTK_CONTAINER (buttons->left_slider), icon);
+@@ -296 +288,3 @@
 -  gtk_widget_show (icon);
 +  /* APX keeps the navigation arrows in the main toolbar; the breadcrumb
 +   * starts directly with the first path segment. */
 +  gtk_widget_set_no_show_all (icon, TRUE);
- 
-   buttons->right_slider = gtk_button_new ();
+@@ -298,0 +293,2 @@
 +  gtk_widget_set_can_focus (buttons->right_slider, FALSE);
 +  gtk_style_context_add_class (gtk_widget_get_style_context (buttons->right_slider), "apx-breadcrumb-slider");
-   g_signal_connect (G_OBJECT (buttons->right_slider), "button-press-event", G_CALLBACK (thunar_location_buttons_slider_button_press), buttons);
-   g_signal_connect (G_OBJECT (buttons->right_slider), "button-release-event", G_CALLBACK (thunar_location_buttons_slider_button_release), buttons);
-   g_signal_connect (G_OBJECT (buttons->right_slider), "clicked", G_CALLBACK (thunar_location_buttons_scroll_right), buttons);
-   gtk_container_add (GTK_CONTAINER (buttons), buttons->right_slider);
+@@ -303,13 +299,4 @@
 -  gtk_widget_show (buttons->right_slider);
 -
 -  icon = gtk_image_new_from_icon_name (use_symbolic_icons ? "pan-end-symbolic" : "pan-end", GTK_ICON_SIZE_BUTTON);
@@ -287,20 +283,9 @@
 +
 +  /* The remaining toolbar space is visual space, not an edit button. */
 +  buttons->filler_widget = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
- 
-   gtk_container_add (GTK_CONTAINER (buttons), buttons->filler_widget);
-   gtk_widget_show (buttons->filler_widget);
-@@ -432,24 +419,12 @@
-   ThunarFile            *file_parent;
-   ThunarFile            *file;
-   GtkWidget             *button;
+@@ -435 +421,0 @@
 -  GList                 *lp;
- 
-   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
- 
-   /* verify that we're not already using the new directory */
-   if (G_UNLIKELY (buttons->current_directory == current_directory))
-     return;
+@@ -442,11 +427,0 @@
 -
 -  /* check if we already have a visible button for that directory */
 -  for (lp = buttons->list; lp != NULL; lp = lp->next)
@@ -312,21 +297,9 @@
 -          return;
 -        }
 -    }
- 
-   if (G_LIKELY (buttons->current_directory != NULL))
-     {
-@@ -1197,6 +1172,7 @@
-                                  ThunarLocationButtons *buttons)
- {
-   ThunarFile *directory;
+@@ -1199,0 +1175 @@
 +  GtkWidget *fake_root_widget;
-   GList      *lp;
- 
-   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
-@@ -1222,6 +1198,16 @@
-   /* take a reference on the new directory (if any) */
-   if (G_LIKELY (directory != NULL))
-     g_object_ref (G_OBJECT (directory));
+@@ -1224,0 +1201,10 @@
 +
 +  /* A clicked parent becomes the end of the breadcrumb trail. */
 +  fake_root_widget = buttons->fake_root_button != NULL ? buttons->fake_root_button->data : NULL;
@@ -337,88 +310,34 @@
 +  if (buttons->fake_root_button != NULL
 +      && g_list_find (buttons->list, fake_root_widget) == NULL)
 +    buttons->fake_root_button = NULL;
- 
-   /* check if the button is visible on the button bar */
-   if (!gtk_widget_get_child_visible (GTK_WIDGET (button)))
 --- a/thunar/thunar-window.c
 +++ b/thunar/thunar-window.c
-@@ -67,8 +67,6 @@
- 
- 
- #define DEFAULT_LOCATION_BAR_MARGIN 5
+@@ -70,2 +69,0 @@
 -
 -
- 
- /* Property identifiers */
- enum
-@@ -6713,6 +6711,7 @@
-   window->location_bar = thunar_location_bar_new ();
-   gtk_widget_set_margin_start (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
-   gtk_widget_set_margin_end (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
+@@ -6715,0 +6714 @@
 +  gtk_widget_set_valign (window->location_bar, GTK_ALIGN_CENTER);
-   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
-   g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
-   g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
-@@ -6737,6 +6736,8 @@
- 
-   /* setup the toolbar for the location bar */
-   window->location_toolbar = gtk_toolbar_new ();
+@@ -6739,0 +6739,2 @@
 +  /* The search entry is taller than breadcrumbs; reserve its full toolbar height. */
 +  gtk_widget_set_size_request (window->location_toolbar, -1, 72);
-   gtk_toolbar_set_style (GTK_TOOLBAR (window->location_toolbar), GTK_TOOLBAR_ICONS);
-   gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
-                              small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
-@@ -6809,6 +6810,7 @@
- 
-   /* load the correct order and visibility of items in the toolbar */
-   thunar_window_location_toolbar_load_items (window);
+@@ -6811,0 +6813 @@
 +  gtk_widget_show (window->location_toolbar_item_search);
- }
- 
- 
 --- a/thunar/thunar-enum-types.c
 +++ b/thunar/thunar-enum-types.c
-@@ -234,6 +234,7 @@
-       static const GEnumValue values[] =
-       {
-         { THUNAR_ICON_SIZE_16,   "THUNAR_ICON_SIZE_16",        "16px",   },
+@@ -236,0 +237 @@
 +        { THUNAR_ICON_SIZE_20,   "THUNAR_ICON_SIZE_20",        "20px",   },
-         { THUNAR_ICON_SIZE_24,   "THUNAR_ICON_SIZE_24",        "24px",   },
-         { THUNAR_ICON_SIZE_32,   "THUNAR_ICON_SIZE_32",        "32px",   },
-         { THUNAR_ICON_SIZE_48,   "THUNAR_ICON_SIZE_48",        "48px",   },
-@@ -515,7 +516,7 @@
-   switch (zoom_level)
-     {
-     case THUNAR_ZOOM_LEVEL_25_PERCENT:
+@@ -518 +519 @@
 -      return THUNAR_ICON_SIZE_16;
 +      return THUNAR_ICON_SIZE_20;
-     case THUNAR_ZOOM_LEVEL_38_PERCENT:
-       return THUNAR_ICON_SIZE_24;
-     case THUNAR_ZOOM_LEVEL_50_PERCENT:
 --- a/thunar/thunar-enum-types.h
 +++ b/thunar/thunar-enum-types.h
-@@ -160,6 +160,7 @@
- typedef enum
- {
-   THUNAR_ICON_SIZE_16 = 16,
+@@ -162,0 +163 @@
 +  THUNAR_ICON_SIZE_20 = 20,
-   THUNAR_ICON_SIZE_24 = 24,
-   THUNAR_ICON_SIZE_32 = 32,
-   THUNAR_ICON_SIZE_48 = 48,
 --- a/thunar/thunar-location-bar.c
 +++ b/thunar/thunar-location-bar.c
-@@ -51,6 +51,7 @@
- 
-   GtkWidget *locationEntry;
-   GtkWidget *locationButtons;
+@@ -53,0 +54 @@
 +  GtkWidget *transition_stack;
- 
-   gboolean is_searching;
- };
-@@ -152,6 +153,16 @@
-   bar->locationEntry = NULL;
-   bar->locationButtons = NULL;
- 
+@@ -154,0 +156,10 @@
 +  /* Share the chooser's native 180 ms path/search crossfade. */
 +  bar->transition_stack = gtk_stack_new ();
 +  gtk_stack_set_homogeneous (GTK_STACK (bar->transition_stack), FALSE);
@@ -429,39 +348,15 @@
 +  g_object_ref (bar->transition_stack); /* Keep valid through navigator finalization. */
 +  gtk_widget_show (bar->transition_stack);
 +
-   thunar_location_bar_settings_changed (bar);
- 
-   g_signal_connect_swapped (bar->preferences, "notify::last-location-bar", G_CALLBACK (thunar_location_bar_settings_changed), bar);
-@@ -177,6 +188,7 @@
- 
-   /* release from the current_directory */
-   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (bar), NULL);
+@@ -179,0 +191 @@
 +  g_clear_object (&bar->transition_stack);
- 
-   (*G_OBJECT_CLASS (thunar_location_bar_parent_class)->finalize) (object);
- }
-@@ -254,7 +266,7 @@
-   if (current_directory)
-     g_object_ref (current_directory);
- 
+@@ -257 +269 @@
 -  if ((child = gtk_bin_get_child (GTK_BIN (bar))) && THUNAR_IS_NAVIGATOR (child))
 +  if ((child = gtk_stack_get_visible_child (GTK_STACK (bar->transition_stack))) && THUNAR_IS_NAVIGATOR (child))
-     thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (child), current_directory);
- 
-   g_object_notify (G_OBJECT (bar), "current-directory");
-@@ -269,7 +281,7 @@
-   GtkWidget *installedWidget, *child;
- 
-   /* check if the the right type is already installed */
+@@ -272 +284 @@
 -  if ((child = gtk_bin_get_child (GTK_BIN (bar))) && G_TYPE_CHECK_INSTANCE_TYPE (child, type))
 +  if ((child = gtk_stack_get_visible_child (GTK_STACK (bar->transition_stack))) && G_TYPE_CHECK_INSTANCE_TYPE (child, type))
-     return child;
- 
-   if (type == THUNAR_TYPE_LOCATION_ENTRY)
-@@ -298,11 +310,11 @@
- 
-   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (installedWidget), bar->current_directory);
- 
+@@ -301,4 +313,3 @@
 -  if ((child = gtk_bin_get_child (GTK_BIN (bar))))
 -    gtk_container_remove (GTK_CONTAINER (bar), child);
 -
@@ -469,58 +364,31 @@
 +  if (gtk_widget_get_parent (installedWidget) == NULL)
 +    gtk_stack_add_named (GTK_STACK (bar->transition_stack), installedWidget,
 +                         type == THUNAR_TYPE_LOCATION_ENTRY ? "entry" : "path");
-   gtk_widget_show (installedWidget);
+@@ -305,0 +317 @@
 +  gtk_stack_set_visible_child (GTK_STACK (bar->transition_stack), installedWidget);
- 
-   return installedWidget;
- }
-@@ -349,7 +361,7 @@
- {
-   GtkWidget *child;
- 
+@@ -352 +364 @@
 -  child = gtk_bin_get_child (GTK_BIN (bar));
 +  child = gtk_stack_get_visible_child (GTK_STACK (bar->transition_stack));
- 
-   _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
- 
 --- a/thunar/thunar-details-view.c
 +++ b/thunar/thunar-details-view.c
-@@ -286,7 +286,7 @@
- thunar_details_view_init (ThunarDetailsView *details_view)
- {
-   GtkTreeSelection *selection;
+@@ -289 +289 @@
 -  GtkCellRenderer  *right_aligned_renderer;
 +  GtkCellRenderer  *centered_renderer;
-   GtkCellRenderer  *left_aligned_renderer;
-   GtkCellRenderer  *renderer;
-   ThunarColumn      column;
-@@ -337,17 +337,17 @@
-   g_signal_connect_after (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->model), "row-changed",
-                           G_CALLBACK (thunar_details_view_row_changed), details_view);
- 
+@@ -340,2 +340,2 @@
 -  /* allocate the shared right-aligned text renderer */
 -  right_aligned_renderer = g_object_new (thunar_text_renderer_get_type (), "xalign", 1.0f, NULL);
 +  /* allocate the shared centered metadata renderer */
 +  centered_renderer = g_object_new (thunar_text_renderer_get_type (), "xalign", 0.5f, NULL);
- 
-   /* this is required in order to disable foreground & background colors on text renderers when the feature is disabled */
-   g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled",
+@@ -345 +345 @@
 -                          G_OBJECT (right_aligned_renderer), "foreground-set",
 +                          G_OBJECT (centered_renderer), "foreground-set",
-                           G_BINDING_SYNC_CREATE);
-   g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled",
+@@ -348 +348 @@
 -                          G_OBJECT (right_aligned_renderer), "highlighting-enabled",
 +                          G_OBJECT (centered_renderer), "highlighting-enabled",
-                           G_BINDING_SYNC_CREATE);
+@@ -350 +350 @@
 -  g_object_ref_sink (G_OBJECT (right_aligned_renderer));
 +  g_object_ref_sink (G_OBJECT (centered_renderer));
- 
-   /* allocate the shared left-aligned text renderer */
-   left_aligned_renderer = g_object_new (thunar_text_renderer_get_type (), "xalign", 0.0f, NULL);
-@@ -371,6 +371,13 @@
-       gtk_tree_view_column_set_resizable (details_view->columns[column], TRUE);
-       gtk_tree_view_column_set_sort_column_id (details_view->columns[column], column);
-       gtk_tree_view_column_set_title (details_view->columns[column], thunar_column_model_get_column_name (details_view->column_model, column));
+@@ -373,0 +374,7 @@
 +
 +      gboolean centered = column == THUNAR_COLUMN_SIZE || column == THUNAR_COLUMN_SIZE_IN_BYTES
 +                          || column == THUNAR_COLUMN_TYPE || column == THUNAR_COLUMN_DATE_MODIFIED
@@ -528,91 +396,43 @@
 +                          || column == THUNAR_COLUMN_DATE_DELETED || column == THUNAR_COLUMN_RECENCY;
 +      if (centered)
 +        gtk_tree_view_column_set_alignment (details_view->columns[column], 0.5f);
- 
-       /* stay informed whenever the width of the column is changed */
-       g_signal_connect (G_OBJECT (details_view->columns[column]), "notify::width", G_CALLBACK (thunar_details_view_notify_width), details_view);
-@@ -394,8 +401,8 @@
-         }
-       else
-         {
+@@ -397,2 +404,2 @@
 -          /* size is right aligned, everything else is left aligned */
 -          renderer = (column == THUNAR_COLUMN_SIZE || column == THUNAR_COLUMN_SIZE_IN_BYTES) ? right_aligned_renderer : left_aligned_renderer;
 +          /* Center metadata; names, locations and other text retain their alignment. */
 +          renderer = centered ? centered_renderer : left_aligned_renderer;
-           details_view->renderers[column] = renderer;
- 
-           /* add the renderer */
-@@ -442,7 +449,7 @@
-   thunar_details_view_highlight_option_changed (details_view);
- 
-   /* release the shared text renderers */
+@@ -445 +452 @@
 -  g_object_unref (G_OBJECT (right_aligned_renderer));
 +  g_object_unref (G_OBJECT (centered_renderer));
-   g_object_unref (G_OBJECT (left_aligned_renderer));
- }
- 
 --- a/thunar/thunar-util.c
 +++ b/thunar/thunar-util.c
-@@ -1056,10 +1056,8 @@
-   if (G_UNLIKELY (color_selected && !(THUNAR_IS_ICON_RENDERER (cell) && highlight_color != NULL)))
-     {
-       context = gtk_widget_get_style_context (widget);
+@@ -1059,4 +1059,2 @@
 -      if (window_is_backdrop)
 -        gtk_style_context_lookup_color (context, "theme_unfocused_selected_bg_color", &highlight_color_rgba);
 -      else
 -        gtk_style_context_lookup_color (context, "theme_selected_bg_color", &highlight_color_rgba);
 +      /* A selection keeps the same color when its window loses focus. */
 +      gtk_style_context_lookup_color (context, "theme_selected_bg_color", &highlight_color_rgba);
- 
-       if (color)
-         gdk_rgba_free (color);
-@@ -1070,7 +1068,8 @@
-     {
-       gdk_cairo_set_source_rgba (cr, color);
-       gdk_rgba_free (color);
+@@ -1073 +1071,2 @@
 -      cairo_paint_with_alpha (cr, window_is_backdrop ? ALPHA_BACKDROP : ALPHA_FOCUSED);
 +      cairo_paint_with_alpha (cr, color_selected ? ALPHA_FOCUSED :
 +                                  window_is_backdrop ? ALPHA_BACKDROP : ALPHA_FOCUSED);
-     }
- 
-   g_free (highlight_color);
 --- a/thunar/thunar-path-entry.c
 +++ b/thunar/thunar-path-entry.c
-@@ -166,6 +166,8 @@
-   guint check_completion_idle_id;
- 
-   gboolean search_mode;
+@@ -168,0 +169,2 @@
 +  gboolean search_closing;
 +  guint search_closing_timeout;
- };
- 
- 
-@@ -629,6 +631,12 @@
-     {
-       GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
-       path_entry->search_mode = TRUE;
+@@ -631,0 +634,6 @@
 +      if (path_entry->search_closing_timeout)
 +        {
 +          g_source_remove (path_entry->search_closing_timeout);
 +          path_entry->search_closing_timeout = 0;
 +          path_entry->search_closing = FALSE;
 +        }
-       update_icon = TRUE;
-       if (GTK_IS_WINDOW (window))
-         thunar_window_update_search (THUNAR_WINDOW (window));
-@@ -766,7 +774,7 @@
-   g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
-   g_object_unref (G_OBJECT (preferences));
- 
+@@ -769 +777 @@
 -  if (path_entry->search_mode == TRUE)
 +  if (path_entry->search_mode == TRUE || path_entry->search_closing)
-     {
-       gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_PRIMARY,
-                                          use_symbolic_icons ? "system-search-symbolic" : "system-search");
-@@ -1419,12 +1427,28 @@
- 
- 
- 
+@@ -1421,0 +1430,11 @@
 +static gboolean
 +thunar_path_entry_finish_search_transition (gpointer data)
 +{
@@ -624,17 +444,20 @@
 +}
 +
 +
- void
- thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
- {
-   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
- 
-   path_entry->search_mode = FALSE;
+@@ -1427,0 +1447,5 @@
 +  path_entry->search_closing = TRUE;
 +  if (path_entry->search_closing_timeout)
 +    g_source_remove (path_entry->search_closing_timeout);
 +  path_entry->search_closing_timeout = g_timeout_add_full (G_PRIORITY_DEFAULT, 200, thunar_path_entry_finish_search_transition,
 +                      g_object_ref (path_entry), g_object_unref);
- 
-   gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
- }
+--- a/thunar/thunar-action-manager.c
++++ b/thunar/thunar-action-manager.c
+@@ -2344,0 +2345,8 @@
++          /* Make the native compression action explicit in the APX menu.
++           * Keep its provider callback and all format/selection behavior. */
++          gchar *action_name = NULL;
++          g_object_get (lp_item->data, "name", &action_name, NULL);
++          if (g_strcmp0 (action_name, "Tap::create-archive") == 0)
++            g_object_set (lp_item->data, "label", "Comprimir… (ZIP, TAR…)", NULL);
++          g_free (action_name);
++

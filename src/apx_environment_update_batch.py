@@ -6,6 +6,7 @@ import re
 
 NAME = re.compile(r'[a-z](?:[a-z0-9]|-(?=[a-z0-9])){0,26}')
 GENERATION = re.compile(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}')
+MINIMUM_UPDATE_FREE_BYTES = 16 * 1024**3
 
 
 def build_environment_plan(records: list[dict], available_bytes: int) -> dict:
@@ -29,8 +30,8 @@ def build_environment_plan(records: list[dict], available_bytes: int) -> dict:
                         'execution': 'local-last' if name == 'hub' else 'isolated-maintenance'})
     if 'hub' not in seen:
         blockers.append('active-hub-required')
-    if available_bytes < 96 * 1024**3:
-        blockers.append('host-reserve-unavailable')
+    if available_bytes < MINIMUM_UPDATE_FREE_BYTES:
+        blockers.append('update-space-below-16-gib')
     value = {'schema': 1, 'scope': 'all-environments', 'targets': targets,
              'blockers': blockers, 'classification': 'blocked' if blockers else 'ready-for-approval'}
     value['plan_digest'] = hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()

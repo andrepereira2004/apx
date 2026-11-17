@@ -18,6 +18,22 @@ Column {
     signal back()
     signal chooseImage()
     property int pendingWallpaperZoom: -1
+    property int pendingWallpaperX: 999
+    property int pendingWallpaperY: 999
+    function wallpaperX() { return pendingWallpaperX === 999 ? Appearance.wallpaperOffsetX : pendingWallpaperX }
+    function wallpaperY() { return pendingWallpaperY === 999 ? Appearance.wallpaperOffsetY : pendingWallpaperY }
+    function moveWallpaper(x, y) { pendingWallpaperX = Math.max(-100, Math.min(100, Math.round(x))); pendingWallpaperY = Math.max(-100, Math.min(100, Math.round(y))); wallpaperPositionSave.restart() }
+    Timer {
+        id: wallpaperPositionSave
+        interval: 250
+        onTriggered: {
+            if (Appearance.busy) { restart(); return }
+            if (panel.pendingWallpaperX !== 999) {
+                Appearance.change("wallpaper-position", JSON.stringify({x: panel.pendingWallpaperX, y: panel.pendingWallpaperY}))
+                panel.pendingWallpaperX = 999; panel.pendingWallpaperY = 999
+            }
+        }
+    }
     Timer {
         id: wallpaperZoomSave
         interval: 250
@@ -185,6 +201,12 @@ Column {
         }
     }
     Action { text: Appearance.busy ? "A guardar…" : "Escolher imagem…"; iconName: "folder"; enabled: !Appearance.busy; onClicked: panel.chooseImage() }
+    Caption { text: "Cor das margens"; color: "#e1e5f0"; font.pixelSize: Appearance.bodySize }
+    Row {
+        width: parent.width; spacing: 6
+        Action { width: (parent.width - 6) / 2; text: "Brancas"; selected: Appearance.wallpaperBorder === "white"; enabled: !Appearance.busy; onClicked: Appearance.change("wallpaper-border", "white") }
+        Action { width: (parent.width - 6) / 2; text: "Pretas"; selected: Appearance.wallpaperBorder === "black"; enabled: !Appearance.busy; onClicked: Appearance.change("wallpaper-border", "black") }
+    }
     Caption { text: "Enquadramento"; color: "#e1e5f0"; font.pixelSize: Appearance.bodySize }
     Row {
         width: parent.width; spacing: 6
@@ -206,6 +228,29 @@ Column {
         onMoved: { panel.pendingWallpaperZoom = Math.round(value); wallpaperZoomSave.restart() }
         onPressedChanged: if (!pressed) { panel.pendingWallpaperZoom = Math.round(value); wallpaperZoomSave.restart() }
     }
+    Caption { text: "Arraste a imagem para a posicionar. Use a roda do rato para ampliar ou afastar." }
+    Rectangle {
+        id: wallpaperPreview
+        width: parent.width; height: width * 9 / 16; color: Appearance.wallpaperBorder === "white" ? "#ffffff" : "#000000"; clip: true; radius: 6
+        Image {
+            id: editorWallpaper
+            anchors.fill: parent
+            source: Appearance.wallpaper.length ? Appearance.wallpaper : (panel.wallpapers.length ? panel.wallpapers[0] : "")
+            fillMode: Appearance.wallpaperFit === "fit" ? Image.PreserveAspectFit : Appearance.wallpaperFit === "stretch" ? Image.Stretch : Image.PreserveAspectCrop
+            scale: wallpaperZoom.value / 100
+            transform: Translate { x: Appearance.wallpaperTranslation(panel.wallpaperX(), wallpaperPreview.width, editorWallpaper.paintedWidth, wallpaperZoom.value); y: Appearance.wallpaperTranslation(panel.wallpaperY(), wallpaperPreview.height, editorWallpaper.paintedHeight, wallpaperZoom.value) }
+        }
+        MouseArea {
+            anchors.fill: parent; cursorShape: Qt.OpenHandCursor
+            property real startX: 0; property real startY: 0
+            onPressed: function(mouse) { startX = panel.wallpaperX(); startY = panel.wallpaperY(); pressX = mouse.x; pressY = mouse.y; cursorShape = Qt.ClosedHandCursor }
+            onReleased: cursorShape = Qt.OpenHandCursor
+            onPositionChanged: if (pressed) panel.moveWallpaper(startX + (mouse.x - pressX) * 100 / wallpaperPreview.width, startY + (mouse.y - pressY) * 100 / wallpaperPreview.height)
+            onWheel: function(wheel) { panel.pendingWallpaperZoom = Math.max(50, Math.min(200, Math.round(wallpaperZoom.value + (wheel.angleDelta.y > 0 ? 5 : -5)))); wallpaperZoomSave.restart(); wheel.accepted = true }
+            property real pressX: 0; property real pressY: 0
+        }
+    }
+    Action { text: "Centrar imagem"; onClicked: panel.moveWallpaper(0, 0) }
     Action { text: "Voltar à rotação automática"; iconName: "rotate-cw"; enabled: !Appearance.busy && Appearance.wallpaper.length > 0; onClicked: Appearance.change("wallpaper", "default") }
     }
     Caption { visible: Appearance.error.length > 0 || !!Appearance.state.warning; text: Appearance.error || Appearance.state.warning || ""; color: "#ffa8b7" }

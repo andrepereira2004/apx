@@ -116,7 +116,8 @@ WINDOW_CLASS_ALIASES = {'minecraft-launcher': {'minecraft launcher'},
                         'thunar': {'org.xfce.thunar'}}
 
 WINDOW_PRESENTATION = {
-    'apx-host-console-v1': ('APX Terminal', '/home/apx/.local/share/icons/APX-Graphite/scalable/devices/apx-host-terminal.svg'),
+    'apx-compress-v1': ('Comprimir', 'package-x-generic'),
+    'apx-host-console-v1': ('APX Terminal', '/home/apx/.config/quickshell/apx/icons/rofi/terminal.svg'),
     'hytaleclient': ('Hytale', 'com.hypixel.HytaleLauncher'),
 }
 
@@ -216,6 +217,10 @@ def launch_worker(app_id, token, command):
                         'Não foi possível iniciar a aplicação. Tente novamente.'], check=False)
 
 def resolve_icons(apps):
+    for app in apps:
+        if app.get('id') == 'apx-terminal':
+            app['icon'] = '/home/apx/.config/quickshell/apx/icons/rofi/terminal.svg'
+
     apps = list(apps)
     def flatpak_export_icon(icon):
         if not icon or '/' in icon:
@@ -487,7 +492,7 @@ def hyprland_eval(code):
 def action_row(label, symbol, color, action, value, name):
     display = html.escape(label)
     icon = {'open': 'copy-plus', 'terminate': 'x', 'nvidia': 'cpu',
-            'uninstall': 'trash-2', 'confirm': 'check', 'cancel': 'undo-2', 'folder': 'copy-plus', 'cycle': 'bring-to-front'}[action]
+            'uninstall': 'trash-2', 'confirm': 'check', 'cancel': 'undo-2', 'folder': 'copy-plus', 'cycle': 'app-window'}[action]
     icon_path = str(Path.home() / '.config/quickshell/apx/icons/rofi' / (icon + '.svg'))
     return (label + '\0display\x1f' + display + '\x1finfo\x1faction:'
             + action + ':' + value + '\x1fmeta\x1f' + name + '\x1ficon\x1f' + icon_path)
@@ -514,6 +519,9 @@ def rofi_rows():
         if confirming:
             chosen = data.removeprefix('confirm:')
     navigating = False
+    # Right-click toggles an open action panel, including its action rows.
+    if retv == '10' and chosen:
+        chosen, selected, confirming = '', '', False
     # Discard folder state retained by a launcher opened before the flat menu.
     folder, panel = '', ''
     if selected.startswith(('folder:', 'organize:', 'assign:', 'action:folder:')):
@@ -567,9 +575,7 @@ def rofi_rows():
                 rows.append(action_row('Cancelar', '↩', '#9ba3ac', 'cancel', key, name))
             else:
                 if window:
-                    rows.append(action_row('Ir para a próxima janela', '', '', 'cycle', key, name))
-                if app['id'] and nvidia_on_demand():
-                    rows.append(action_row('Abrir na NVIDIA', '◆', '#77c99a', 'nvidia', app['id'], name))
+                    rows.append(action_row('Ir para janela', '', '', 'cycle', key, name))
                 if window:
                     rows.append(action_row('Terminar tarefa', '×', '#e4b75c', 'terminate', window['address'], name))
                 if app['id']:

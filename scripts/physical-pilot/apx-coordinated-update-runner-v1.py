@@ -78,7 +78,7 @@ def resolve_and_stage(directory: Path, repository: Path, name: str) -> list[Path
     # Pacman verifies every staged archive and signature against the frozen database.
     if staged:
         run(("/usr/bin/pacman", "--root", str(root), "--dbpath", str(resolver),
-             "--cachedir", str(packages), "-Suw", "--noconfirm"), timeout=1800)
+             "--cachedir", str(packages), "-Sw", "--noconfirm"), timeout=1800)
     return staged
 
 
@@ -92,6 +92,21 @@ def stop_environments(names: list[str]) -> None:
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
         record = json.loads((ENVIRONMENTS / name / "registration.json").read_text())
         if record.get("state") != "stopped": raise UpdateError(f"Environment did not stop: {name}")
+
+
+def schedule_hub_return(operation: str) -> None:
+    """Start a fresh graphical Hub after this update runner releases its lock."""
+    launcher = "/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py"
+    run(("/usr/bin/systemd-run", "--unit=apx-hub-after-update-" + operation.lower(), "--collect",
+         "--on-active=5s", "--property=Type=exec", "--property=Restart=on-failure",
+         "--property=RestartSec=10s", launcher, "--interactive"))
+
+
+def hub_is_stopped() -> bool:
+    try:
+        return json.loads((ENVIRONMENTS / "hub/registration.json").read_text()).get("state") == "stopped"
+    except (OSError, ValueError):
+        return False
 
 
 def snapshots(directory: Path, names: list[str]) -> dict[str, list[str]]:
@@ -133,6 +148,7 @@ def main() -> int:
     atomic(directory / "status.json", status)
     names = [item["name"] for item in plan["targets"] if item["kind"] == "environment"]
     if any(type(name) is not str or NAME.fullmatch(name) is None for name in names): raise UpdateError("target list differs")
+    hub_return_scheduled = False
     try:
         repository = prepare_repository(directory)
         manifests = {name: resolve_and_stage(directory, repository, name) for name in ["host", *names]}
@@ -142,12 +158,19 @@ def main() -> int:
         for name in ["host", *names]:
             if manifests[name]: run(("/usr/bin/pacman", "--root", str(target_root(name)), "-U", "--noconfirm",
                                      *(str(path) for path in manifests[name])), timeout=3600)
+        if "hub" in names:
+            schedule_hub_return(args.operation)
+            hub_return_scheduled = True
         status.update({"state": "complete", "reboot_required": bool(manifests["host"]),
                        "message": "Atualização concluída; reinicie quando for conveniente."})
         atomic(directory / "status.json", status)
         subprocess.run(("/usr/bin/wall", "APX: atualização concluída. Abra UPDATE no Hub para ver o resultado; o reinício nunca é automático."), check=False)
         return 0
     except Exception as error:
+        if "hub" in names and not hub_return_scheduled and hub_is_stopped():
+            try: schedule_hub_return(args.operation)
+            except Exception as return_error:
+                error = UpdateError(f"{error}; Hub return failed: {return_error}")
         status.update({"state": "failed", "error": str(error)[-1000:],
                        "message": "A operação parou; as cópias de segurança foram preservadas e não houve reversão automática."})
         atomic(directory / "status.json", status)

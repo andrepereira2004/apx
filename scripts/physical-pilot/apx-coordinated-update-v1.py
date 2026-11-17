@@ -97,6 +97,40 @@ def apply_environment_batch(operation: str, payload: dict[str, object]) -> dict[
     batch = environment_batch()
     if operation == "environments.preview": return batch.preview()
     if operation == "environments.status": return batch.latest_status()
+    if operation == "environments.resume":
+        current = batch.latest_status()
+        if current.get("state") != "awaiting-hub" or payload.get("operation") != current.get("operation"):
+            raise ValueError("No matching approved Hub completion")
+        host_digest = payload.get("host_plan_digest")
+        if host_digest is None:
+            if payload != {"operation": current["operation"]}:
+                raise ValueError("Invalid Hub completion request")
+        else:
+            host_plan = preview()
+            if payload != {"operation": current["operation"], "host_plan_digest": host_plan["plan_digest"]}:
+                raise ValueError("Host plan digest differs")
+            if host_plan["classification"] != "ready-for-approval":
+                raise RuntimeError("Host update plan changed or is blocked")
+        stored = batch.read_json(batch.BASE / current["operation"] / "plan.json")
+        current_environment_plan = batch.preview()
+        if current_environment_plan["targets"] != stored["targets"]:
+            raise RuntimeError("Environment generations changed")
+        if current_environment_plan["blockers"]:
+            raise RuntimeError("Environment completion is blocked: " + ", ".join(current_environment_plan["blockers"]))
+        unit = "apx-environment-hub-update-" + current["operation"].lower()
+        queued = dict(current, state="queued-hub", hub_queue_time=time.time())
+        batch.atomic(batch.BASE / current["operation"] / "status.json", queued)
+        command = ("/usr/bin/systemd-run", "--unit=" + unit, "--collect",
+                                 "--property=Type=oneshot", "--property=TimeoutStartSec=infinity",
+                                 "/usr/lib/apx/apx-environment-update-batch-v1.py", "--operation",
+                                 current["operation"], "--resume-hub")
+        if host_digest is not None: command += ("--host-digest", host_digest)
+        result = subprocess.run(command, text=True, capture_output=True, check=False)
+        if result.returncode:
+            batch.atomic(batch.BASE / current["operation"] / "status.json", current)
+            raise RuntimeError("Could not start detached Hub update")
+        return {"accepted": True, "operation": current["operation"], "unit": unit + ".service",
+                "message": "O Host atualizará o Hub e voltará a abrir a interface."}
     if operation == "environments.finish":
         current = batch.latest_status()
         if current.get("state") != "awaiting-hub" or payload != {"operation": current["operation"]}:

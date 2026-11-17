@@ -80,6 +80,16 @@ QtObject {
     readonly property string wallpaper: state.wallpaper || ""
     readonly property string wallpaperFit: state.wallpaper_fit || "crop"
     readonly property int wallpaperZoom: state.wallpaper_zoom || 100
+    readonly property string wallpaperBorder: state.wallpaper_border || "white"
+    readonly property int wallpaperOffsetX: state.wallpaper_offset_x || 0
+    readonly property int wallpaperOffsetY: state.wallpaper_offset_y || 0
+    function wallpaperTranslation(percent, viewport, imageSize, zoom) {
+        var scaled = imageSize * zoom / 100
+        if (viewport <= 0 || scaled <= 0) return 0
+        var visible = Math.min(24, scaled / 4)
+        var limit = Math.max(0, (viewport + scaled) / 2 - visible)
+        return Math.max(-limit, Math.min(limit, percent * viewport / 100))
+    }
     readonly property bool busy: writeProcess.running || chooserProcess.running
     property string error: ""
 

@@ -1,0 +1,16 @@
+[Unit]
+Description=APX shared folder copy service
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/lib/apx/apx-transfer-v1.py
+Restart=always
+RestartSec=1
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/apx/transfer-v1 /run/apx
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -54,6 +54,12 @@ def local():
         zoom = data.get('wallpaper_zoom')
         if type(zoom) is int and 50 <= zoom <= 200:
             result['wallpaper_zoom'] = zoom
+        if data.get('wallpaper_border') in ('white', 'black'):
+            result['wallpaper_border'] = data['wallpaper_border']
+        for axis in ('x', 'y'):
+            offset = data.get('wallpaper_offset_' + axis)
+            if type(offset) is int and -100 <= offset <= 100:
+                result['wallpaper_offset_' + axis] = offset
         return result
     except (OSError, ValueError):
         return {}
@@ -126,13 +132,9 @@ def apply_theme(style, opacity):
     if style['icons']:
         rofi += 'element selected.normal, element selected.active, button selected.normal { text-color: ' + accent + '; border-color: ' + accent + '; }\n'
     atomic(HOME / '.config/rofi/apx-appearance.rasi', rofi.encode())
-    # Only validated, local wallpaper references enter the lock configuration.
-    chosen = local().get('wallpaper', str(HOME / '.config/apx/wallpapers/atlantic-coast.png'))
-    if any(char in chosen for char in ('\n', '\r', '$', '#', '{', '}')): chosen = str(HOME / '.config/apx/wallpapers/atlantic-coast.png')
-    lock = '# Generated Environment-local lock presentation; no authentication settings.\n'
-    lock += '$apxLockAccent = rgba(' + (accent if style['icons'] else DEFAULT_COLOR).lstrip('#') + 'ff)\n'
-    lock += 'background {\n    monitor =\n    path = ' + chosen + '\n    color = rgba(10, 16, 20, 1.0)\n    blur_passes = 3\n    blur_size = 7\n    brightness = 0.45\n}\n'
-    atomic(HOME / '.config/hypr/apx-lock-appearance.conf', lock.encode())
+    subprocess.run(['/home/apx/.local/bin/apx-lock-wallpaper-v1',
+                    json.dumps({'style': style, 'wallpaper': local()})],
+                   check=True, timeout=12)
 
 
 def status():
@@ -158,7 +160,10 @@ def status():
                 border=mix('#0a1014', effective['color'], .55),
                 wallpaper=Path(values['wallpaper']).as_uri() if values.get('wallpaper') else '',
                 wallpaper_fit=values.get('wallpaper_fit', 'crop'),
-                wallpaper_zoom=values.get('wallpaper_zoom', 100), warning=warning)
+                wallpaper_zoom=values.get('wallpaper_zoom', 100),
+                wallpaper_border=values.get('wallpaper_border', 'white'),
+                wallpaper_offset_x=values.get('wallpaper_offset_x', 0),
+                wallpaper_offset_y=values.get('wallpaper_offset_y', 0), warning=warning)
 
 
 def wallpaper(path):
@@ -245,6 +250,17 @@ def main(args):
         if not 50 <= zoom <= 200:
             raise ValueError('O zoom deve estar entre 50 e 200%.')
         values = local(); values['wallpaper_zoom'] = zoom; save(values)
+    elif len(args) == 2 and args[0] == 'wallpaper-position':
+        position = json.loads(args[1])
+        if not isinstance(position, dict) or set(position) != {'x', 'y'} or any(type(position[axis]) is not int or not -100 <= position[axis] <= 100 for axis in ('x', 'y')):
+            raise ValueError('Posição do wallpaper inválida.')
+        values = local()
+        values['wallpaper_offset_x'] = position['x']
+        values['wallpaper_offset_y'] = position['y']
+        save(values)
+    elif len(args) == 2 and args[0] == 'wallpaper-border':
+        if args[1] not in ('white', 'black'): raise ValueError('Cor das margens inválida.')
+        values = local(); values['wallpaper_border'] = args[1]; save(values)
     elif args == ['choose-wallpaper']: choose_wallpaper()
     else: raise ValueError('Opção de personalização inválida.')
     print(json.dumps(status()))

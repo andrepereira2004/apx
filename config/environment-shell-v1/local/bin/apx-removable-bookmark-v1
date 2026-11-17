@@ -10,18 +10,28 @@ import time
 VOLUME = Path('/media/apx-usb/Ventoy')
 URI = 'file:///media/apx-usb/Ventoy'
 LEGACY_URI = 'file:///media/apx-usb'
+VOLUMES = (
+    (VOLUME, URI, 'PEN USB'),
+    (Path('/media/apx-usb/USB-4079-3F8D'),
+     'file:///media/apx-usb/USB-4079-3F8D', 'PEN USB 1 GB'),
+)
 
 
 def refresh(bookmarks=None, present=None):
     bookmarks = bookmarks or Path.home() / '.config/gtk-3.0/bookmarks'
     if bookmarks.is_symlink():
         raise ValueError('Refusing linked bookmark file')
-    present = os.path.ismount(VOLUME) if present is None else present
+    if present is None:
+        present = {uri: os.path.ismount(path) for path, uri, _ in VOLUMES}
+    elif isinstance(present, bool):
+        present = {URI: present}  # Preserve the original single-volume caller.
+    managed = {uri for _, uri, _ in VOLUMES} | {LEGACY_URI}
     old = bookmarks.read_text() if bookmarks.exists() else ''
     lines = [line for line in old.splitlines()
-             if line.split(' ', 1)[0] not in (URI, LEGACY_URI)]
-    if present:
-        lines.append(URI + ' PEN USB')
+             if line.split(' ', 1)[0] not in managed]
+    for _, uri, label in VOLUMES:
+        if present.get(uri, False):
+            lines.append(uri + ' ' + label)
     new = '\n'.join(lines) + ('\n' if lines else '')
     if old == new:
         return False

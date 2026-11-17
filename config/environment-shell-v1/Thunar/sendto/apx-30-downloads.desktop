@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Transferências
+Icon=folder-download
+Exec=/home/apx/.local/bin/apx-sendto-local-v1 downloads %F
+NoDisplay=true
+

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Partilha Environments
+Icon=folders
+Exec=/home/apx/.local/bin/apx-share-copy-v1 copy %F
+NoDisplay=true
+

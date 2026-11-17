@@ -1,0 +1,13 @@
+# Ejetar, comprimir e data/hora — 2026-11-16
+
+O proprietário pediu «Ejetar com segurança», relatou não encontrar compressão ZIP/TAR e, durante o trabalho, pediu hora na Data de modificação do Thunar e dos seletores de ficheiros.
+
+Diagnóstico: o plugin nativo thunar-archive-plugin 0.6.0 está carregado e oferece Tap::create-archive para uma seleção local. A ausência não foi reproduzida na seleção descartável; o rótulo existente era «Criar _arquivo...». Associações File Roller e executáveis ZIP/TAR já estavam presentes. Fontes oficiais consultadas por curl, preservadas neste audit: tap-provider.c/tap-backend.c, https://gitlab.xfce.org/thunar-plugins/thunar-archive-plugin/-/raw/thunar-archive-plugin-0.6.0/thunar-archive-plugin/tap-provider.c e tap-backend.c no mesmo diretório. Não foi inventada uma falha de backend.
+
+Alterações: rótulo nativo da remoção segura passou a «Ejetar com segurança», preservando a desmontagem comum e as verificações anteriores. O menu do Thunar identifica Tap::create-archive pelo ID e apresenta «Comprimir… (ZIP, TAR…)», conservando callback nativo, seleção múltipla e escolha de formatos do File Roller. Não foram acrescentadas ações duplicadas. O formato personalizado do Thunar e a célula do seletor GTK passaram a %d/%m/%Y %H:%M. Restantes preferências de cada home foram preservadas; Hub continua sem configuração Thunar.
+
+Validação: build nativo passou; patch completo de 15 fontes revertido/reaplicado e comparado com a árvore compilada. O teste de interface abriu o menu real por evento de teclado com selected.txt selecionado e confirmou a nova opção mapeada. menu.png mostra Comprimir… (ZIP, TAR…) visível. File Roller criou ZIP e TAR com um ficheiro cujo nome contém espaços e uma pasta com conteúdo aninhado; ambos foram abertos e o conteúdo comparado byte a byte (create.log). Os fixtures foram removidos. Não foram comprimidos ficheiros do proprietário.
+
+A inspeção do seletor GTK instalado renderizou «Data de modificação» como «16/11/2026 20:45» em Open e Save. O xfconf ativo e os quatro homes Thunar têm o formato com horas/minutos. A compilação do módulo GTK passou com -Wall -Wextra -Werror, exceto parâmetros de callbacks preexistentes. Fonte/módulo instalados na seed/cinco homes; preferência Thunar na seed/quatro homes, pins e digest de recuperação sincronizados. Thunar normal reaberto na pen para carregar os novos rótulos; backend GTK recarregado mantendo launcher. Assets binários e formatos instalados verificados.
+
+Backups: /var/lib/apx/backups/20261116T204738Z-thunar-create-archive (quatro binários Thunar) e /var/lib/apx/backups/20261116T205011Z-thunar-create-archive (19 assets/configurações/pins). As preferências de utilizador continuam mutáveis após instalação. Sem commit/push.

@@ -6,4 +6,21 @@ x-scheme-handler/https=apx-browser-redirect.desktop
 inode/directory=thunar.desktop
 
 [Added Associations]
+application/zip=org.gnome.FileRoller.desktop;
+application/x-zip=org.gnome.FileRoller.desktop;
+application/x-zip-compressed=org.gnome.FileRoller.desktop;
+application/x-7z-compressed=org.gnome.FileRoller.desktop;
+application/vnd.rar=org.gnome.FileRoller.desktop;
+application/x-rar=org.gnome.FileRoller.desktop;
+application/x-rar-compressed=org.gnome.FileRoller.desktop;
+application/x-tar=org.gnome.FileRoller.desktop;
+application/x-compressed-tar=org.gnome.FileRoller.desktop;
+application/gzip=org.gnome.FileRoller.desktop;
+application/x-gzip=org.gnome.FileRoller.desktop;
+application/x-bzip=org.gnome.FileRoller.desktop;
+application/x-bzip-compressed-tar=org.gnome.FileRoller.desktop;
+application/x-xz=org.gnome.FileRoller.desktop;
+application/x-xz-compressed-tar=org.gnome.FileRoller.desktop;
+application/zstd=org.gnome.FileRoller.desktop;
+application/x-zstd-compressed-tar=org.gnome.FileRoller.desktop;
 inode/directory=thunar.desktop;

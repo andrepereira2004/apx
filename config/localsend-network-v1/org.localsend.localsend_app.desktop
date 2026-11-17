@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=LocalSend
+Comment=Partilhar ficheiros com iPhone, iPad e outros dispositivos
+Exec=/home/apx/.local/bin/apx-localsend-launch-v1
+Icon=localsend
+Terminal=false
+Categories=Network;FileTransfer;
+StartupWMClass=org.localsend.localsend_app

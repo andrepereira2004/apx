@@ -1,0 +1,6 @@
+Thunar 4.20.10: build succeeded; patch --dry-run passed against upstream tarball.
+GTK chooser module: gcc -shared -fPIC -Wall -Wextra -Werror succeeded.
+Live GTK chooser: other-locations=False; GtkFileSystemModel exposes GFile; Backup.tar Type cell=.tar.
+Live Hytale Thunar: process /proc/166091/exe SHA-256 ded5d77c19f44924cebb7affa6cb7bb93dd0c0240b0bf325cff38bd665d66938; window on workspace 2.
+Source/seed/runtime pins: verified for CSS, chooser module and Thunar preferences.
+Final compact-row CSS backup: /var/lib/apx/backups/20261114T103430Z-thunar-compact-rows.

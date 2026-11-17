@@ -9,6 +9,21 @@ import apx_host_services_v3_contract as subject  # noqa: E402
 
 
 class HostServicesV3ContractTests(unittest.TestCase):
+    def test_unmount_only_admits_fixed_pilot_usb_identities(self):
+        self.assertEqual(subject.parse_request(subject.request_bytes('media.unmount', {'uuid': '4079-3F8D'}))[2], {'uuid': '4079-3F8D'})
+        for payload in ({'uuid': '/dev/sda1'}, {'uuid': 'APX_ROOT'}, {'uuid': '4079-3F8D', 'force': True}, {}):
+            with self.assertRaises(subject.HostServicesV3ContractError):
+                subject.request_bytes('media.unmount', payload)
+
+    def test_localsend_peer_accepts_one_private_ipv4_address(self):
+        parsed = subject.parse_request(subject.request_bytes(
+            "localsend.peer.set", {"address": "192.168.1.116"}))
+        self.assertEqual(parsed[2], {"address": "192.168.1.116"})
+        self.assertEqual(subject.parse_request(subject.request_bytes("localsend.peer.get"))[2], {})
+        for address in ("8.8.8.8", "127.0.0.1", "192.168.1.116;id", "192.168.001.116", "::1"):
+            with self.assertRaises(subject.HostServicesV3ContractError):
+                subject.request_bytes("localsend.peer.set", {"address": address})
+
     def test_versioned_requests_and_structured_responses_round_trip(self):
         request_id, operation, payload = subject.parse_request(subject.request_bytes(
             "network.connect", {"ssid": "Rede", "credential": {"kind": "passphrase", "value": "valid-secret"}},

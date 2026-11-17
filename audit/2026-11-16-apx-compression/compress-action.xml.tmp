@@ -1,0 +1,10 @@
+  <action>
+    <icon>package-x-generic</icon>
+    <name>Comprimir</name>
+    <submenu />
+    <unique-id>1794864000000000-1</unique-id>
+    <command>/home/apx/.local/bin/apx-compress-v1 %F</command>
+    <description>Criar um arquivo ou pacote Minecraft</description>
+    <patterns>*</patterns>
+    <directories /><audio-files /><image-files /><other-files /><text-files /><video-files />
+  </action>

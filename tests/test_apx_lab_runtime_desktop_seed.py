@@ -79,6 +79,26 @@ class RuntimeDesktopSeedTests(unittest.TestCase):
         for name, expected in runtime.DESKTOP_CONFIG_ASSETS.items():
             self.assertEqual(hashlib.sha256((PROFILE / name).read_bytes()).hexdigest(), expected)
 
+    def test_admitted_xdph_helper_has_a_bounded_binary_allowance(self) -> None:
+        for relative, size, accepted in (
+            ('local/libexec/apx-xdph-v1', 1024 * 1024 + 1, True),
+            ('local/libexec/apx-xdph-v1', 2 * 1024 * 1024 + 1, False),
+            ('gtk-3.0/gtk.css', 1024 * 1024 + 1, False),
+        ):
+            runtime = load_runtime()
+            payload = b'x' * size
+            runtime.ENVIRONMENT_SHELL_ASSETS = {relative: hashlib.sha256(payload).hexdigest()}
+            with tempfile.TemporaryDirectory() as directory:
+                seed = Path(directory) / 'seed'
+                target = seed / relative; target.parent.mkdir(parents=True); target.write_bytes(payload)
+                home = Path(directory) / 'home'; home.mkdir()
+                if accepted:
+                    runtime.copy_environment_shell_seed(seed, home, uid=os.getuid(), gid=os.getgid())
+                    self.assertEqual((home / '.local/libexec/apx-xdph-v1').read_bytes(), payload)
+                else:
+                    with self.assertRaises(runtime.Refusal):
+                        runtime.copy_environment_shell_seed(seed, home, uid=os.getuid(), gid=os.getgid())
+
     def test_environment_shell_is_an_independent_exact_copy(self) -> None:
         runtime = load_runtime()
         with tempfile.TemporaryDirectory() as directory:

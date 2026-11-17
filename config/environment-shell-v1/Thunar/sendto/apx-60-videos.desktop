@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Vídeos
+Icon=folder-videos
+Exec=/home/apx/.local/bin/apx-sendto-local-v1 videos %F
+NoDisplay=true
+

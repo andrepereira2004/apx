@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Ambiente de trabalho (cópia)
+Icon=user-desktop
+Exec=/home/apx/.local/bin/apx-sendto-local-v1 desktop %F
+NoDisplay=true
+

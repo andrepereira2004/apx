@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
+import tempfile
 from pathlib import Path
 import pty
 import re
@@ -32,6 +34,8 @@ from apx_captive_portal import (  # noqa: E402
 )
 
 SOCKET = Path("/run/apx/host-services-v3.sock")
+LOCALSEND_CONFIG = Path("/var/lib/apx/localsend-network-v1/config.json")
+LOCALSEND_HELPER = Path("/usr/lib/apx/apx-localsend-network-v1.py")
 RFKILL_ROOT = Path("/sys/class/rfkill")
 RFKILL = "/usr/bin/rfkill"
 WIFI_INTERFACE = "wlan0"
@@ -46,7 +50,7 @@ CAPABILITIES = {
                    "bluetooth.power", "bluetooth.scan", "bluetooth.status",
                    "capabilities.get", "events.subscribe", "network.connect", "network.disconnect",
                    "network.connectivity-check", "network.forget", "network.portal.open",
-                   "network.scan", "network.status", "network.power", "radio.status", "radio.airplane", "keyboard.load", "keyboard.save", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save"],
+                   "network.scan", "network.status", "network.power", "radio.status", "radio.airplane", "keyboard.load", "keyboard.save", "snapshot.get", "calendar.load", "calendar.save", "appearance.load", "appearance.save", "localsend.peer.get", "localsend.peer.set", "media.unmount"],
     "security": {"bluetooth_pairing_agent": "KeyboardDisplay", "enterprise_wifi": True,
                  "secret_transport": "unix-socket-body", "shell": False},
 }
@@ -686,7 +690,77 @@ def wait_for_network(ssid: str, timeout: float = 10) -> dict[str, object]:
     return state
 
 
+def localsend_peer(operation: str, payload: dict[str, object], identity: object) -> dict[str, str]:
+    if identity.role != "graphical-base":
+        raise PermissionError("LocalSend requires the active graphical workload")
+    spec = importlib.util.spec_from_file_location("apx_localsend_network", LOCALSEND_HELPER)
+    if spec is None or spec.loader is None:
+        raise HostServicesV3Error("LocalSend network helper is unavailable")
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    config = helper.trusted_json(LOCALSEND_CONFIG)
+    if config.get("enabled") is not True or (config.get("environment"), config.get("generation")) != (identity.name, identity.generation):
+        raise PermissionError("LocalSend is not enabled for this Environment")
+    if operation == "localsend.peer.get":
+        return {"address": config["peer"]}
+    address = str(payload["address"])
+    route = json.loads(helper.run("/usr/bin/ip", "-j", "-4", "route", "get", address))[0]
+    interfaces = json.loads(helper.run("/usr/bin/ip", "-j", "-4", "address"))
+    defaults = json.loads(helper.run("/usr/bin/ip", "-j", "-4", "route", "show", "default"))
+    helper.validate_lan(address, route, interfaces, defaults)
+    updated = dict(config, peer=address)
+    fd, temporary = tempfile.mkstemp(prefix=".config-", suffix=".json", dir=LOCALSEND_CONFIG.parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "w") as stream:
+            json.dump(updated, stream, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, LOCALSEND_CONFIG)
+    finally:
+        if os.path.exists(temporary): os.unlink(temporary)
+    table = "apx_g" + identity.generation.replace("-", "")[:7] + "_egress_v1"
+    def applied() -> bool:
+        try:
+            rules = helper.run("/usr/bin/nft", "list", "table", "inet", table)
+            return f"ip daddr {address} tcp dport 53317 accept" in rules
+        except (OSError, subprocess.SubprocessError):
+            return False
+    deadline = time.monotonic() + 7
+    while not applied() and time.monotonic() < deadline:
+        time.sleep(0.2)
+    if not applied():
+        fd, temporary = tempfile.mkstemp(prefix=".config-", suffix=".json", dir=LOCALSEND_CONFIG.parent)
+        try:
+            os.fchmod(fd, 0o600)
+            with os.fdopen(fd, "w") as stream:
+                json.dump(config, stream, sort_keys=True)
+                stream.write("\n")
+            os.replace(temporary, LOCALSEND_CONFIG)
+        finally:
+            if os.path.exists(temporary): os.unlink(temporary)
+        raise HostServicesV3Error("LocalSend network rule did not activate")
+    return {"address": address}
+
+
 def apply(operation: str, payload: dict[str, object]) -> object:
+    if operation == "media.unmount":
+        # The authenticated broker has no mount capability. The existing Host
+        # media service owns the mounts and accepts only root callers locally.
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as media:
+            media.settimeout(20)
+            media.connect("/run/apx/removable-media-v1/control.sock")
+            media.sendall((json.dumps({"operation": "unmount", "uuid": payload["uuid"]}) + "\n").encode())
+            data = bytearray()
+            while b"\n" not in data and len(data) < 4096:
+                chunk = media.recv(4096 - len(data))
+                if not chunk: break
+                data.extend(chunk)
+        result = json.loads(data)
+        if result.get("ok") is not True:
+            raise HostServicesV3Error(result.get("error", "Não foi possível desmontar o dispositivo"))
+        return {"unmounted": True, "uuid": payload["uuid"]}
     if operation == "capabilities.get": return CAPABILITIES
     if operation == "snapshot.get": return snapshot()
     if operation == "keyboard.load": return keyboard_load()
@@ -811,9 +885,16 @@ def respond(connection: socket.socket) -> None:
     request_id = "rejected"
     try:
         credentials = struct.unpack("3i", connection.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))
-        authorize_shared_service_peer(HostServicesPeer(*credentials))
+        identity = authorize_shared_service_peer(HostServicesPeer(*credentials))
         request_id, operation, payload = parse_request(receive(connection))
-        if operation in {"bluetooth.device.connect", "bluetooth.device.disconnect", "bluetooth.device.remove",
+        if operation in {"localsend.peer.get", "localsend.peer.set"}:
+            if operation == "localsend.peer.set":
+                if not _MUTATION_LOCK.acquire(blocking=False): raise ConflictError("another Host network transition is active")
+                try: result = localsend_peer(operation, payload, identity)
+                finally: _MUTATION_LOCK.release()
+            else:
+                result = localsend_peer(operation, payload, identity)
+        elif operation in {"bluetooth.device.connect", "bluetooth.device.disconnect", "bluetooth.device.remove",
                          "bluetooth.pair.begin", "bluetooth.pair.respond", "bluetooth.power", "bluetooth.scan",
                          "network.connect", "network.disconnect", "network.power", "network.forget", "network.scan", "radio.airplane"}:
             if not _MUTATION_LOCK.acquire(blocking=False): raise ConflictError("another Host network transition is active")

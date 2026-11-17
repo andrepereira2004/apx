@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Aplicações
+Icon=folder
+Exec=/home/apx/.local/bin/apx-sendto-local-v1 applications %F
+NoDisplay=true
+

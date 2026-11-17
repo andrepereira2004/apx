@@ -22,6 +22,13 @@ ShellRoot {
         property string acknowledgedBackendErrorKey: ""
     }
 
+    Settings {
+        id: environmentOrderSettings
+        location: "file:///home/apx/.config/apx/environment-order.ini"
+        category: "APXEnvironmentOrder"
+        property string names: "[]"
+    }
+
     NotificationToasts { id: notificationToasts }
 
     // One bar per output; a single shared menu/service state follows its trigger.
@@ -263,6 +270,10 @@ ShellRoot {
     onEnvironmentSwitchPendingChanged: if (!environmentSwitchPending) environmentSwitchDispatched = false
     property int environmentSwitchProgress: 0
     property var environmentCatalog: []
+    property bool environmentReorderMode: false
+    property int environmentDragIndex: -1
+    property int environmentDropTarget: -1
+    property bool environmentJustDropped: false
     property var pendingEnvironmentCatalog: null
     property var environmentStorageState: ({ available_bytes: 0, total_bytes: 0, sizes: ({}) })
     property bool environmentShowSizes: false
@@ -2178,6 +2189,7 @@ ShellRoot {
     function closePopup() {
         ghostGreetingTimer.stop()
         ghostGreetingVisible = false
+        if (popupKind === "environments") resetEnvironmentReorderMode()
         if (!popup.open || popupClosing) return
         if (popupKind === "media" && mediaButton)
             mediaButton.beginHoverHandoff(popupBarPointer.containsMouse && popupBarPointer.hoveredBarTarget === mediaButton)
@@ -2192,6 +2204,7 @@ ShellRoot {
     }
 
     function finishClosePopup() {
+        resetEnvironmentReorderMode()
         popupCloseAnimation.stop()
         ghostGreetingTimer.stop()
         ghostGreetingVisible = false
@@ -2414,6 +2427,13 @@ ShellRoot {
     }
 
     function applyEnvironmentCatalog(items) {
+        try {
+            var order = JSON.parse(environmentOrderSettings.names)
+            if (Array.isArray(order)) items.sort(function(a, b) {
+                var ai = order.indexOf(a.name), bi = order.indexOf(b.name)
+                return (ai < 0 ? order.length : ai) - (bi < 0 ? order.length : bi)
+            })
+        } catch (error) { /* Ignore damaged local preferences. */ }
         if (JSON.stringify(items) === JSON.stringify(root.environmentCatalog)) return
         root.environmentCatalog = items
         if (!root.environmentSelection()) {
@@ -2421,6 +2441,24 @@ ShellRoot {
             root.selectedEnvironmentGeneration = ""
         }
         root.resetEnvironmentFocus()
+    }
+
+    function resetEnvironmentReorderMode() {
+        environmentReorderMode = false
+        environmentDragIndex = -1
+        environmentDropTarget = -1
+    }
+
+    function moveEnvironment(from, to) {
+        environmentJustDropped = true
+        Qt.callLater(function() { root.environmentJustDropped = false })
+        resetEnvironmentReorderMode()
+        if (from < 0 || to < 0 || from >= environmentCatalog.length || to >= environmentCatalog.length || from === to) return
+        var reordered = environmentCatalog.slice()
+        reordered.splice(to, 0, reordered.splice(from, 1)[0])
+        environmentOrderSettings.names = JSON.stringify(reordered.map(function(item) { return item.name }))
+        environmentCatalog = reordered
+        resetEnvironmentFocus()
     }
 
     function flushEnvironmentCatalog() {
@@ -2917,6 +2955,7 @@ ShellRoot {
         beginEnvironmentErrorAttempt()
         environmentSwitchProgress = 8
         environmentSwitchPending = true
+        resetEnvironmentReorderMode()
         popup.open = false
         environmentSwitchProcess.command = [root.environmentClient,
                                             environmentIsNative(selected) ? (selected.native_version === 3 ? "native-open-v3" : "native-open") : "open",
@@ -4171,14 +4210,17 @@ ShellRoot {
         }
 
         function openFiles(): void {
-            if (root.isHub) return
+            if (root.isHub) {
+                root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/triangle-alert.svg"), "Ficheiros", "Gestor de ficheiros não instalado no Hub", -1)
+                return
+            }
             if (!fileShortcutProcess.running)
                 fileShortcutProcess.running = true
         }
 
         function openApplications(): void {
             if (root.isHub) {
-                root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/circle-alert.svg"), "Aplicações", "Launcher não instalado no Hub", -1)
+                root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/triangle-alert.svg"), "Aplicações", "Launcher não instalado no Hub", -1)
                 return
             }
             root.toggleApplicationLauncher()
@@ -4381,7 +4423,7 @@ ShellRoot {
         function hotkeyDisplayMirrored(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/monitor.svg"), "Ecrãs", "Imagem duplicada", -1) }
         function hotkeyFailed(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/circle-alert.svg"), "Atalho", "A ação falhou", -1) }
         function hotkeyOverview(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/panels-top-left.svg"), "Janelas abertas", "A mostrar", -1) }
-        function hotkeyScreenshot(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/camera.svg"), "Captura de ecrã", "Guardada em Imagens", -1) }
+        function hotkeyScreenshot(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/scan.svg"), "Captura de ecrã", "Captura pronta", -1) }
         function hotkeyScreenshotUnavailable(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/circle-alert.svg"), "Captura de ecrã", "Ferramenta não instalada", -1) }
         function hotkeyTouchpadOff(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/touchpad-off.svg"), "Touchpad", "Desativado", -1) }
         function hotkeyTouchpadOn(): void { root.showHotkeyOsd(Qt.resolvedUrl("icons/lucide/touchpad.svg"), "Touchpad", "Ativado", -1) }
@@ -4956,17 +4998,20 @@ ShellRoot {
             exclusionMode: ExclusionMode.Ignore
             exclusiveZone: 0
             focusable: false
-            color: "#000000"
+            color: Appearance.wallpaperBorder === "white" ? "#ffffff" : "#000000"
             mask: Region {}
             WlrLayershell.layer: WlrLayer.Background
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
+            Rectangle { anchors.fill: parent; color: Appearance.wallpaperBorder === "white" ? "#ffffff" : "#000000" }
             Image {
+                id: desktopWallpaper
                 anchors.fill: parent
                 source: root.currentWallpaper
                 fillMode: Appearance.wallpaperFit === "fit" ? Image.PreserveAspectFit
                         : Appearance.wallpaperFit === "stretch" ? Image.Stretch : Image.PreserveAspectCrop
                 scale: Appearance.wallpaperZoom / 100
+                transform: Translate { x: Appearance.wallpaperTranslation(Appearance.wallpaperOffsetX, desktopWallpaper.width, desktopWallpaper.paintedWidth, Appearance.wallpaperZoom); y: Appearance.wallpaperTranslation(Appearance.wallpaperOffsetY, desktopWallpaper.height, desktopWallpaper.paintedHeight, Appearance.wallpaperZoom) }
                 smooth: true
                 mipmap: true
                 asynchronous: false
@@ -6552,6 +6597,7 @@ ShellRoot {
                     }
 
                     Column {
+                        id: environmentListColumn
                         width: parent.width; spacing: 7
                         visible: root.isHub && !root.environmentCreateOpen && !root.environmentEditOpen
                         Row {
@@ -6576,15 +6622,17 @@ ShellRoot {
                                 onKeyboardFocusedChanged: if (keyboardFocused) root.revealKeyboardMenuItem(this)
                                 color: keyboardFocused ? root.controlButtonActive : (selected ? root.controlButtonActive : (root.controlButtonSurface))
                                 SelectionIndicator { visible: parent.selected; color: "#ffffff" }
-                                border.width: keyboardFocused ? 1 : 0; border.color: root.cyan
+                                border.width: keyboardFocused || (root.environmentReorderMode && root.environmentDropTarget === index) ? 1 : 0; border.color: root.environmentReorderMode ? "#ffffff" : root.cyan
                                 LucideIcon { anchors.left: parent.left; anchors.leftMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 18; height: 18; name: root.environmentIcon(modelData) }
+                                LucideIcon { id: environmentReorderHandle; visible: root.environmentReorderMode; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 18; height: 18; name: "menu" }
                                 Column {
-                                    anchors.left: parent.left; anchors.leftMargin: 42; anchors.right: environmentRowSize.visible ? environmentRowSize.left : environmentRowStatus.left; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                    anchors.left: parent.left; anchors.leftMargin: 42; anchors.right: root.environmentReorderMode ? environmentReorderHandle.left : (environmentRowSize.visible ? environmentRowSize.left : environmentRowStatus.left); anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 3
                                     Text { renderType: Text.QtRendering; width: parent.width; text: String(modelData.display_name || modelData.name); color: modelData.state === "empty" ? root.textDim : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal; elide: Text.ElideRight }
 
                                 }
                                 Text {
                                     renderType: Text.QtRendering; id: environmentRowStatus
+                                    visible: !root.environmentReorderMode
                                     anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                                     text: modelData.state === "preparing" ? "A preparar" : ""
                                     opacity: root.environmentShowSizes ? 0 : 1
@@ -6596,9 +6644,9 @@ ShellRoot {
                                     id: environmentRowSize
                                     anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                                     text: root.environmentSizeLabel(modelData)
-                                    width: root.environmentShowSizes ? implicitWidth : 0
-                                    visible: width > 0; clip: true
-                                    opacity: root.environmentShowSizes ? 1 : 0
+                                    width: root.environmentShowSizes && !root.environmentReorderMode ? implicitWidth : 0
+                                    visible: width > 0 && !root.environmentReorderMode; clip: true
+                                    opacity: root.environmentShowSizes && !root.environmentReorderMode ? 1 : 0
                                     Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                                     Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                                     color: parent.selected ? root.textMain : root.textDim
@@ -6607,16 +6655,41 @@ ShellRoot {
                                 BounceMouseArea {
                                     id: environmentChoiceMouse
                                     anchors.fill: parent
-                                    enabled: root.environmentIsOpenable(modelData) && !root.environmentManagementBusy && !root.environmentMetadataBusy
+                                    outlineEnabled: !root.environmentReorderMode
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                    enabled: modelData.name.length > 0 && !root.environmentManagementBusy && !root.environmentMetadataBusy
                                     hoverEnabled: true
-                                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: {
+                                    cursorShape: root.environmentReorderMode ? Qt.SizeVerCursor : (enabled ? Qt.PointingHandCursor : Qt.ArrowCursor)
+                                    onPressed: function(mouse) {
+                                        if (mouse.button === Qt.RightButton) {
+                                            root.environmentReorderMode = !root.environmentReorderMode
+                                            root.environmentDragIndex = -1
+                                            root.environmentDropTarget = -1
+                                            mouse.accepted = true
+                                        } else if (root.environmentReorderMode) root.environmentDragIndex = index
+                                    }
+                                    onPositionChanged: function(mouse) {
+                                        if (root.environmentDragIndex < 0) return
+                                        var point = mapToItem(environmentListColumn, mouse.x, mouse.y)
+                                        var rowHeight = Appearance.menuActionHeight + environmentListColumn.spacing
+                                        root.environmentDropTarget = Math.max(0, Math.min(root.environmentCatalog.length - 1,
+                                            Math.round((point.y - parent.y) / rowHeight) + index))
+                                    }
+                                    onReleased: function(mouse) {
+                                        if (mouse.button !== Qt.LeftButton || root.environmentDragIndex < 0) return
+                                        root.moveEnvironment(root.environmentDragIndex, root.environmentDropTarget < 0 ? index : root.environmentDropTarget)
+                                    }
+                                    onClicked: function(mouse) {
+                                        if ((mouse && mouse.button === Qt.RightButton) || root.environmentReorderMode || root.environmentJustDropped || !root.environmentIsOpenable(modelData)) {
+                                            root.environmentJustDropped = false
+                                            return
+                                        }
                                         root.environmentKeyboardFocus = true
                                         root.environmentFocusIndex = index
                                         root.selectEnvironment(modelData)
                                         Qt.callLater(function() { environmentMenu.forceActiveFocus() })
                                     }
-                                    onDoubleClicked: { root.environmentFocusIndex = index; root.selectEnvironment(modelData); root.openSelectedEnvironment() }
+                                    onDoubleClicked: { if (!root.environmentReorderMode && root.environmentIsOpenable(modelData)) { root.environmentFocusIndex = index; root.selectEnvironment(modelData); root.openSelectedEnvironment() } }
                                 }
                             }
                         }
@@ -8126,6 +8199,7 @@ ShellRoot {
                         Text { renderType: Text.QtRendering; id: trackpadSensitivityPercent; width: 46; horizontalAlignment: Text.AlignRight; anchors.right: parent.right; anchors.rightMargin: 12; y: 12; text: Math.round(trackpadSensitivitySlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         MenuSlider {
                             id: trackpadSensitivitySlider
+                            focusBorderColor: "#ffffff"
                             anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.right: trackpadSensitivityPercent.left; anchors.rightMargin: 8
                             y: 44
                             height: 16; topPadding: 0; bottomPadding: 0; from: 0; to: 100; stepSize: 1
@@ -8170,6 +8244,7 @@ ShellRoot {
                         Text { renderType: Text.QtRendering; id: trackpadScrollPercent; width: 46; horizontalAlignment: Text.AlignRight; anchors.right: parent.right; anchors.rightMargin: 12; y: 12; text: Math.round(trackpadScrollSlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         MenuSlider {
                             id: trackpadScrollSlider
+                            focusBorderColor: "#ffffff"
                             anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.right: trackpadScrollPercent.left; anchors.rightMargin: 8
                             y: 44; height: 16; topPadding: 0; bottomPadding: 0
                             from: 0; to: 100; directArrowAdjustment: true; stepSize: 1; activeFocusOnTab: true
@@ -8208,6 +8283,7 @@ ShellRoot {
                         Text { renderType: Text.QtRendering; id: trackpadWorkspacesPercent; width: 46; horizontalAlignment: Text.AlignRight; anchors.right: parent.right; anchors.rightMargin: 12; y: 12; text: Math.round(trackpadWorkspacesSlider.value) + "%"; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         MenuSlider {
                             id: trackpadWorkspacesSlider
+                            focusBorderColor: "#ffffff"
                             anchors.left: parent.left; anchors.leftMargin: Appearance.menuLabelInset; anchors.right: trackpadWorkspacesPercent.left; anchors.rightMargin: 8
                             y: 44; height: 16; topPadding: 0; bottomPadding: 0
                             from: 0; to: 100; directArrowAdjustment: true; stepSize: 1; activeFocusOnTab: true

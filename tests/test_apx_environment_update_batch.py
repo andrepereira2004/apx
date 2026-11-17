@@ -3,11 +3,12 @@ import sys
 from pathlib import Path
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch, Mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from apx_environment_update_batch import build_environment_plan
+from apx_environment_update_batch import MINIMUM_UPDATE_FREE_BYTES, build_environment_plan
 spec = importlib.util.spec_from_file_location('batch_runner', ROOT / 'scripts/physical-pilot/apx-environment-update-batch-v1.py')
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
@@ -47,10 +48,22 @@ class EnvironmentBatchTests(unittest.TestCase):
         self.assertEqual([t['name'] for t in plan['targets']], ['hub', 'work'])
         self.assertEqual(plan['targets'][0]['execution'], 'local-last')
 
-    def test_running_workload_and_insufficient_reserve_block(self):
+    def test_running_workload_and_insufficient_update_space_block(self):
         plan = build_environment_plan([record('hub'), record('work', state='running')], 10)
         self.assertIn('environment-state:work', plan['blockers'])
-        self.assertIn('host-reserve-unavailable', plan['blockers'])
+        self.assertIn('update-space-below-16-gib', plan['blockers'])
+
+    def test_update_space_is_independent_of_creation_reserve(self):
+        self.assertEqual(MINIMUM_UPDATE_FREE_BYTES, 16 * 1024**3)
+        self.assertEqual(build_environment_plan([record('hub')], 76 * 1024**3)['classification'], 'ready-for-approval')
+        self.assertIn('update-space-below-16-gib', build_environment_plan([record('hub')], 15 * 1024**3)['blockers'])
+
+    def test_runner_rechecks_space_before_each_mutation(self):
+        with patch.object(runner.os, 'statvfs', return_value=SimpleNamespace(f_bavail=15, f_frsize=1024**3)):
+            with self.assertRaisesRegex(RuntimeError, '16 GiB'):
+                runner.require_update_space()
+        with patch.object(runner.os, 'statvfs', return_value=SimpleNamespace(f_bavail=16, f_frsize=1024**3)):
+            runner.require_update_space()
 
     def test_generation_changes_approval_digest(self):
         a = build_environment_plan([record('hub'), record('work')], 200 * 1024**3)
@@ -85,6 +98,19 @@ class EnvironmentBatchTests(unittest.TestCase):
                 run.assert_not_called()
                 self.assertIn('failed', (base / op / 'status.json').read_text())
 
+    def test_resume_refuses_incomplete_workloads_before_recovering_hub(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp); op = '20260913T100000Z-123456789abc'; (base / op).mkdir()
+            plan = {'targets': [{'name': 'hub', 'execution': 'local-last'},
+                                {'name': 'work', 'execution': 'isolated-maintenance'}]}
+            (base / op / 'plan.json').write_text(__import__('json').dumps(plan))
+            (base / op / 'status.json').write_text(__import__('json').dumps({
+                'state': 'queued-hub', 'completed': [], 'operation': op}))
+            with patch.object(runner, 'BASE', base), patch.object(runner.subprocess, 'run') as run:
+                with self.assertRaisesRegex(RuntimeError, 'not complete'):
+                    runner.execute(op, resume_hub=True, host_digest='a' * 64)
+                run.assert_not_called()
+
     def test_menu_selects_hub_batch_and_workload_local_helper(self):
         source = (ROOT / 'config/environment-shell-v1/quickshell/apx/shell.qml').read_text()
         block = source.split('Process { id: updateUiProcess;', 1)[1].split('\n    Process', 1)[0]
@@ -103,20 +129,36 @@ class EnvironmentBatchClientTests(unittest.TestCase):
         client = self.client()
         with patch.object(client, 'exchange', side_effect=[{'state': 'running', 'operation': 'one'}, {'state': 'failed', 'operation': 'one', 'error': 'package failed'}]), \
              patch.object(client.time, 'sleep'), patch.object(client.subprocess, 'run') as run:
-            self.assertEqual(client.environments_ui(), 2)
+            self.assertEqual(client.environments_ui('digest'), 2)
             run.assert_not_called()
 
-    def test_resume_finishes_hub_only_after_workloads_completed(self):
+    def test_resume_hands_hub_to_detached_worker(self):
         client = self.client()
-        with patch.object(client, 'exchange', side_effect=[{'state': 'awaiting-hub', 'operation': 'one'}, {'message': 'complete'}]) as exchange, \
-             patch.object(client.subprocess, 'run', return_value=Mock(returncode=0)) as run:
+        with patch.object(client, 'exchange', side_effect=[{'state': 'awaiting-hub', 'operation': 'one'}, {'message': 'accepted'}]) as exchange, \
+             patch.object(client.subprocess, 'run') as run:
             self.assertEqual(client.environments_ui(), 0)
-            run.assert_called_once_with(['/home/apx/.local/bin/apx-environment-update-v1', '--unattended'])
-            self.assertEqual(exchange.call_args.args, ('environments.finish', {'operation': 'one'}))
+            run.assert_not_called()
+            self.assertEqual(exchange.call_args.args, ('environments.resume', {'operation': 'one'}))
 
-    def test_failed_hub_never_reports_batch_complete(self):
+    def test_resume_error_is_reported_without_local_update(self):
         client = self.client()
-        with patch.object(client, 'exchange', return_value={'state': 'awaiting-hub', 'operation': 'one'}) as exchange, \
-             patch.object(client.subprocess, 'run', return_value=Mock(returncode=1)):
-            self.assertEqual(client.environments_ui(), 1)
-            self.assertEqual(exchange.call_count, 1)
+        with patch.object(client, 'exchange', side_effect=[{'state': 'awaiting-hub', 'operation': 'one'}, RuntimeError('blocked')]), \
+             patch.object(client.subprocess, 'run') as run:
+            with self.assertRaisesRegex(RuntimeError, 'blocked'): client.environments_ui('digest')
+            run.assert_not_called()
+
+    def test_host_endpoint_queues_hub_completion_without_host_update(self):
+        spec = importlib.util.spec_from_file_location('update_authority', ROOT / 'scripts/physical-pilot/apx-coordinated-update-v1.py')
+        authority = importlib.util.module_from_spec(spec); spec.loader.exec_module(authority)
+        current = {'state': 'awaiting-hub', 'operation': '20261112T100000Z-123456789abc'}
+        targets = [{'name': 'hub', 'execution': 'local-last'}]
+        fake = SimpleNamespace(latest_status=lambda: current, read_json=lambda _: {'targets': targets},
+                               preview=lambda: {'targets': targets, 'blockers': []}, BASE=Path('/tmp/apx-test'), atomic=Mock())
+        with patch.object(authority, 'environment_batch', return_value=fake), \
+             patch.object(authority.subprocess, 'run', return_value=Mock(returncode=0)) as run:
+            result = authority.apply_environment_batch('environments.resume', {'operation': current['operation']})
+        self.assertTrue(result['accepted'])
+        command = run.call_args.args[0]
+        self.assertIn('--resume-hub', command)
+        self.assertNotIn('--host-digest', command)
+        self.assertEqual(fake.atomic.call_args.args[1]['state'], 'queued-hub')

@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""Copy selected Thunar files into a standard local folder."""
+
+import os
+from pathlib import Path
+import shutil
+import sys
+
+DESTINATIONS = {
+    'home': Path('/home/apx'),
+    'desktop': Path('/home/apx/Desktop'),
+    'documents': Path('/home/apx/Documents'),
+    'downloads': Path('/home/apx/Downloads'),
+    'pictures': Path('/home/apx/Pictures'),
+    'music': Path('/home/apx/Music'),
+    'videos': Path('/home/apx/Videos'),
+    'applications': Path('/home/apx/Applications'),
+}
+
+
+def copy_one(source, destination):
+    source = Path(source)
+    if not source.exists() or source.is_symlink():
+        raise ValueError(f'Origem indisponível: {source}')
+    if source.is_dir() and (source == destination or source in destination.parents):
+        raise ValueError('Não é possível copiar uma pasta para dentro de si própria')
+    stem = source.stem if source.is_file() else source.name
+    suffix = source.suffix if source.is_file() else ''
+    target = destination / source.name
+    index = 1
+    while target.exists():
+        target = destination / f'{stem} (cópia {index}){suffix}'
+        index += 1
+    if source.is_dir():
+        shutil.copytree(source, target, symlinks=False)
+    elif source.is_file():
+        shutil.copy2(source, target, follow_symlinks=False)
+    else:
+        raise ValueError(f'Não é um ficheiro normal: {source}')
+
+
+def show_error(message):
+    try:
+        import gi
+        gi.require_version('Gtk', '3.0')
+        from gi.repository import Gtk
+        popup = Gtk.MessageDialog(message_type=Gtk.MessageType.ERROR,
+                                  buttons=Gtk.ButtonsType.OK, text=message)
+        popup.run()
+        popup.destroy()
+    except ImportError:
+        print(message, file=sys.stderr)
+
+
+def main():
+    try:
+        if len(sys.argv) < 3 or sys.argv[1] not in DESTINATIONS:
+            raise ValueError('Destino inválido')
+        destination = DESTINATIONS[sys.argv[1]]
+        if not destination.is_dir() or destination.is_symlink():
+            raise ValueError('A pasta de destino não está disponível')
+        for source in sys.argv[2:]:
+            copy_one(source, destination)
+    except (OSError, ValueError) as exc:
+        show_error(str(exc))
+        return 1
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

@@ -64,7 +64,8 @@ Rectangle {
         anchors.centerIn: parent
         spacing: island.compact || !summaryText.visible ? 0 : 5
         Item {
-            width: 17; height: 17; anchors.verticalCenter: parent.verticalCenter
+            width: island.showingTransient && island.transientIcon.indexOf("triangle-alert.svg") >= 0 ? 20 : 17
+            height: width; anchors.verticalCenter: parent.verticalCenter
             LucideIcon { anchors.fill: parent; name: "audio-lines"; visible: !island.showingTransient }
             ControlIcon { anchors.fill: parent; source: island.transientIcon; tint: Appearance.iconColor; visible: island.showingTransient && !island.cameraUsage }
             LucideIcon {

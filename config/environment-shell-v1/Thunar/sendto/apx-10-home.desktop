@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Pasta pessoal
+Icon=user-home
+Exec=/home/apx/.local/bin/apx-sendto-local-v1 home %F
+NoDisplay=true
+

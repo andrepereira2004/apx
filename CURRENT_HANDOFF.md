@@ -1,3 +1,205 @@
+## Fade do preto para o desktop na troca — 2026-11-19
+
+O proprietário aprovou a sincronização do fundo com a barra e pediu
+uma chegada mais suave. Nas trocas autenticadas, o wallpaper continua
+a carregar oculto. Depois do primeiro frame da barra e de a imagem estar
+pronta, uma camada preta sobre o fundo dissolve-se em 260 ms. O cursor
+continua a ser revelado no primeiro frame visível do desktop, e os fades
+da barra e do cursor mantêm os tempos anteriores.
+
+Instalado no Hub, Faculdade, Hytale, Minecraft, Steam e na seed. Backup:
+`/var/lib/apx/backups/20261119T225356Z-desktop-arrival-fade/`.
+Passaram 47 testes. A configuração carregou isolada e a superfície real
+de prova em Wayland confirmou preto antes da barra, opacidade intermédia
+e o primeiro frame visível durante o fade. A sessão Minecraft permaneceu
+aberta. A observação visual de uma troca completa está pendente.
+
+O proprietário confirmou a transição visual e pediu um fade mais longo.
+A duração do fundo passou de 260 para 420 ms nos cinco homes e na seed.
+Os fades da barra e do cursor mantêm os tempos anteriores. Os 8 testes
+da seed passaram. Backup: `/var/lib/apx/backups/20261119T225626Z-longer-desktop-fade/`.
+
+## Wallpaper junto ao primeiro frame da barra — 2026-11-19
+
+O proprietário aprovou os fades da barra e do cursor, e pediu para encurtar
+o tempo em que só o wallpaper aparece. Nas trocas autenticadas, o wallpaper
+carrega em segundo plano sobre a superfície preta e fica visível no
+primeiro frame da barra. O tempo e as curvas das animações permanecem
+iguais. Se a barra não chegar a renderizar, um limite de 4 s permite
+mostrar o wallpaper. O arranque normal mantém a apresentação anterior.
+
+Instalado no Hub, Faculdade, Hytale, Minecraft, Steam e na seed para
+novos Environments. Ambos os sentidos usam o mesmo perfil de troca.
+Backup: `/var/lib/apx/backups/20261119T120443Z-wallpaper-bar-timing/`.
+Passaram 47 testes. A configuração carregou isolada em Wayland e uma
+superfície de teste confirmou que a imagem descodifica enquanto está
+oculta e aparece ao receber o frame da barra ou ao esgotar o limite.
+O Minecraft permaneceu aberto. Intervalo visual numa troca completa
+depois da instalação por confirmar.
+
+## Fade da barra e do cursor à chegada — 2026-11-19
+
+O proprietário aceitou aparecer primeiro o wallpaper e pediu um fade curto
+para a barra e o cursor. A barra mantém a preparação anterior e, numa troca,
+passa de transparente a visível em 180 ms, sem mover ou reservar de novo o
+espaço. O cursor nativo usa seis níveis de opacidade em 150 ms, preparados
+a partir do cursor normal do Environment. A última imagem é estática.
+O Hyprland conserva a posição e o ponto de clique. Se não conseguir
+preparar a animação, o caminho existente repõe o cursor normal. O wallpaper
+e a iluminação do painel não são animados por esta alteração.
+
+Instalado na seed e nos cinco homes. Backup:
+`/var/lib/apx/backups/20261119T115804Z-arrival-fade/`.
+A libXcursor confirmou a sequência, o ponto de clique e a imagem normal
+idêntica no fim a 24, 48, 72 e 96. Em Wayland, uma superfície de prova
+desenhou opacidade intermédia e chegou à opacidade final. A configuração
+completa carregou isolada e passaram 47 testes de seed, arranque gráfico
+e recuperação. O Minecraft permaneceu aberto. Falta observar o conjunto
+numa troca completa depois da instalação.
+
+## Barra preparada antes de aparecer — 2026-11-19
+
+Após a última troca o proprietário ainda observou a Quickshell a mudar
+depois de aparecer. A barra podia renderizar a identidade provisória, o
+relógio vazio, a bateria desconhecida e a opacidade predefinida. No
+Minecraft, a opacidade local efetiva difere da predefinida. Na troca das
+00:38, o cursor foi reposto 25 ms depois dos primeiros frames registados.
+A espera de 2,855 s depois de a configuração carregar foi até esses frames,
+não na reposição do cursor.
+
+A opacidade local é lida com o wallpaper antes do primeiro frame. A barra
+reserva o seu lugar desde o arranque. O conteúdo fica oculto até haver os
+primeiros dados de identidade, aparência, relógio e bateria, ou durante
+no máximo 450 ms depois de a superfície conseguir desenhar. O wallpaper
+permanece independente. A reposição do cursor continua a esperar pelos
+frames visíveis. As atualizações normais da barra continuam ativas.
+
+Instalado nos cinco homes e na seed, sem mudar a sessão Minecraft em
+execução. Backup: `/var/lib/apx/backups/20261119T004332Z-prepared-bar-arrival/`.
+A configuração candidata carregou numa sessão Wayland isolada. Uma janela
+Wayland transparente de teste confirmou a primeira apresentação tanto
+com dados prontos como ao esgotar o prazo. Passaram os testes de seed,
+fluxo gráfico, retorno e apresentação inicial. As falhas de navegação
+na bateria e reconciliação de notificações também ocorrem no código
+anterior à alteração. Confirmação visual da próxima troca pendente.
+
+## Tempos de chegada e reposição do cursor — 2026-11-19
+
+Na troca Hub → Minecraft das 00:30, o pedido foi aceite às 00:30:16,
+o Hyprland abriu o painel eDP às 00:30:20, a Quickshell começou às
+00:30:21.669 e concluiu a configuração às 00:30:29.723. O marcador do
+cursor foi escrito às 00:30:32.934, antes do prazo de segurança. A identidade
+já era aceite às 00:30:29.889. No regresso ao Hub, a configuração carregou
+em 2,735 s. O intervalo de preto iluminado coincide com o Hyprland configurar
+o painel antes de a Quickshell apresentar conteúdo. O brilho não é alterado
+durante a troca desde a reversão do ensaio anterior.
+
+A reposição do cursor depende agora dos primeiros frames da barra e do
+fundo, sem depender da consulta de identidade. O registo da Quickshell
+distingue a prontidão visual da reposição do cursor e identifica o caminho
+normal ou de segurança. A verificação de identidade continua no fluxo
+existente. O teste isolado da cache QML forçada não criou novas entradas
+e mostrou tempos variáveis, pelo que não foi adotada.
+
+Instalado nos cinco homes e na seed, preservando o Minecraft em execução.
+Backup: `/var/lib/apx/backups/20261119T003702Z-cursor-first-desktop-frame/`.
+47 testes passaram e a Quickshell candidata carregou em teste Wayland
+isolado com janelas ocultas. Falta medir a próxima troca completa e
+identificar a origem dos 3,2 s entre carga da configuração e reposição do
+cursor.
+
+## Cursor transparente no primeiro frame da troca — 2026-11-19
+
+O Hyprland 0.56.2 verifica a opção de ocultar o cursor num temporizador de
+500 ms, o que permite um cursor visível antes da primeira verificação.
+Em trocas autenticadas, o compositor arranca com o cursor transparente
+APX e repõe o tema padrão quando o wallpaper e a barra são renderizados,
+ou pelo prazo existente de 20 s. As aplicações usam o tema normal e o
+tema transitório não é gravado nas preferências GNOME. A iluminação do
+painel mantém o valor escolhido pelo utilizador durante a troca.
+
+Instalado na seed e nos cinco homes. Backup:
+`/var/lib/apx/backups/20261119T002217Z-transparent-handoff-cursor/`.
+A libXcursor carregou um pixel totalmente transparente a 24 e 48, e
+também encontrou o tema normal. A validação nativa da configuração confirmou
+a escolha do tema transitório no ramo de arranque autenticado. Passaram
+47 testes de seed, fluxo gráfico e recuperação. O Minecraft permaneceu
+aberto. Falta confirmar uma troca visual completa depois desta instalação.
+
+## Ensaio de retroiluminação durante a troca (revertido) — 2026-11-19
+
+O proprietário confirmou que a transição já não mostra o menu do Arch, mas
+ainda viu um breve flash do cursor e a luz do painel atrás do preto. No painel
+AMD eDP, mudar `bl_power` para 4 não alterou a leitura da retroiluminação.
+Pedir brilho 0 levou a leitura de hardware a 0 e o valor de origem foi reposto.
+
+O broker de troca inicia um trabalho separado antes de parar o desktop de
+origem. O trabalho mantém o pedido de brilho em 0 até ao sinal novo de que o
+desktop de destino desenhou o fundo e a barra e revelou o cursor. O systemd
+repõe o brilho anterior ao terminar, inclusive em erro ou ao fim de 25 s,
+sem substituir uma alteração de brilho entretanto aplicada. A atuação é
+limitada ao painel eDP interno identificado neste portátil. A sincronização
+de cursor da Quickshell continua a aplicar-se a todos os ecrãs.
+
+Instalado no broker Host. O reinício deixou o socket principal da sessão
+Minecraft ligado ao inode antigo. O endpoint secundário já suportado pelo
+cliente foi ligado ao novo socket dentro da sessão existente. O broker
+confirmou pedidos `identity.get` da Quickshell sem reiniciar o Minecraft. Backup:
+`/var/lib/apx/backups/20261119T000922Z-hardware-panel-handoff/`.
+Os 9 testes de retorno passaram. Troca: 29/30, com a falha textual do duplo
+clique já conhecida. Um teste de desenvolvimento iniciou inadvertidamente
+a proteção do painel real. O trabalho foi terminado, a imagem regressou e a
+cópia de desenvolvimento ficou impedida de iniciar a proteção de hardware.
+O proprietário testou a troca e rejeitou este ensaio: observou um salto de
+brilho e continuou a ver um flash do cursor. A instalação e o código do
+broker foram repostos para a versão anterior ao ensaio. A Quickshell
+voltou a comunicar com o broker através do socket secundário, com a sessão
+Minecraft preservada.
+
+## Troca com ecrã preto e cursor só à chegada — 2026-11-19
+
+A troca autenticada mantém a consola limpa durante a preparação, sem iniciar
+o Plymouth nessa fase. O arranque normal conserva a configuração de boot.
+O Hyprland oculta o cursor desde o início da sessão de destino. A Quickshell
+pede a sua reposição depois do primeiro frame da barra e do fundo em todos os
+ecrãs e da confirmação da identidade. Se a shell não chegar a esse ponto, o
+cursor é reposto ao fim de 20 s. A troca e a recuperação conservam as
+autorizações existentes.
+
+Instalado na seed, nos cinco homes e no motor usado pelo Hub e workloads, com
+pins verificados. Backup da versão visual já aceite:
+`/var/lib/apx/backups/20261118-accepted-smooth-environment-arrival/`.
+Backup imediatamente antes da instalação:
+`/var/lib/apx/backups/20261119T000116Z-blank-environment-handoff/`.
+52 testes passaram, incluindo a distinção entre troca e arranque normal.
+O Hyprland aceitou a configuração e a Quickshell carregou em teste isolado.
+Um teste Qt de duas superfícies confirmou que a prontidão só muda ao pintar
+a segunda. A sessão Minecraft permaneceu ativa e com cursor visível.
+Confirmação visual de uma troca completa depois da instalação pendente.
+
+## Chegada aos Environments sem camada preta — 2026-11-18
+
+Na última troca Hub → Minecraft, a Quickshell iniciou às 23:24:29.499 e
+terminou de carregar a configuração às 23:24:37.610. A shell ainda desenhava
+uma camada preta de chegada até receber a identidade da sessão e renderizar a
+barra. A camada de chegada foi retirada e o wallpaper passa a descodificar em
+segundo plano, conservando a imagem anterior durante mudanças de fundo. O
+desktop apresenta-se quando as superfícies estão prontas. A saída, a
+autenticação e a recuperação mantêm o fluxo existente. A fonte lê a
+personalização local no arranque, tal como já fazia o perfil instalado.
+
+Correção instalada nos cinco homes e na seed com as diferenças de cada
+perfil preservadas. Pins e cópias de segurança verificados em
+`/var/lib/apx/backups/20261118T235224Z-smooth-environment-arrival/`.
+A configuração candidata carregou num teste Wayland com as janelas ocultas.
+Nesse teste a carga da configuração demorou cerca de 4,8 s antes e depois.
+O Minecraft permaneceu ativo e respondeu pela barra e pelo IPC. Passaram
+21 testes de seed, sessão gráfica e recuperação. Na suíte de troca passaram
+29 dos 30 testes. A falha é uma asserção textual do duplo clique que já não
+corresponde ao código em HEAD. Falta medir a troca completa no ecrã físico.
+
+O proprietário confirmou que a troca ficou bem melhor e que o wallpaper já não desaparece depois de aparecer. O estado instalado aceite está guardado em `/var/lib/apx/backups/20261118-accepted-smooth-environment-arrival/`.
+
 # Comprimir: cantos internos corrigidos — 2026-11-17
 
 A junção entre o cabeçalho e «Nome do arquivo» ficou reta; o CSS deixa de

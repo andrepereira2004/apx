@@ -21,11 +21,13 @@ class ReconciliationTests(unittest.TestCase):
     def test_appearance_preserves_identity_and_accepts_changes(self):
         body = function((QML / 'Appearance.qml').read_text(), 'function acceptReport(text)')
         self.run_js("""
-let state={effective_icon_color:'#d9dcea',opacity:{menus:95}}, error='';
+let state={effective_icon_color:'#d9dcea',opacity:{menus:95}}, error='', initialReportReceived=false;
 function acceptReport(text) {""" + body + """}
 let original=state;
+acceptReport(''); acceptReport('{"effective_icon_color":"invalid"}');
+assert.equal(initialReportReceived,false);
 for(let i=0;i<100;i++) acceptReport(JSON.stringify(original));
-assert.equal(state,original);
+assert.equal(state,original);assert.equal(initialReportReceived,true);
 acceptReport(JSON.stringify({...original,opacity:{menus:90}}));
 assert.notEqual(state,original);assert.equal(state.opacity.menus,90);
 original=state;acceptReport('{broken');assert.equal(state,original);

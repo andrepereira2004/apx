@@ -31,6 +31,38 @@ QtObject {
     readonly property int menuMaxHeight: 460
     readonly property int menuTop: 65
     property var state: ({ icon_color: null, global_icon_color: "#d9dcea", effective_icon_color: "#d9dcea", wallpaper: "", warning: "" })
+    // Read the environment-local wallpaper before the first frame. The full
+    // appearance report can take longer because it also contacts the host.
+    property FileView startupAppearance: FileView {
+        path: "/home/apx/.config/apx/appearance.json"
+        blockLoading: true
+        printErrors: false
+    }
+    Component.onCompleted: {
+        try {
+            var local = JSON.parse(startupAppearance.text())
+            var initial = Object.assign({}, state)
+            var opacity = Object.assign({}, opacityDefaults)
+            if (local.opacity && typeof local.opacity === "object") {
+                for (var target of Object.keys(opacityDefaults)) {
+                    var value = local.opacity[target]
+                    if (Number.isInteger(value) && value >= 0 && value <= 100)
+                        opacity[target] = value
+                }
+            }
+            initial.opacity = opacity
+            if (typeof local.wallpaper === "string" && local.wallpaper.charAt(0) === "/")
+                initial.wallpaper = "file://" + local.wallpaper.split("/").map(encodeURIComponent).join("/")
+            if (["crop", "fit", "stretch"].indexOf(local.wallpaper_fit) !== -1) initial.wallpaper_fit = local.wallpaper_fit
+            if (Number.isInteger(local.wallpaper_zoom) && local.wallpaper_zoom >= 50 && local.wallpaper_zoom <= 200) initial.wallpaper_zoom = local.wallpaper_zoom
+            if (["white", "black"].indexOf(local.wallpaper_border) !== -1) initial.wallpaper_border = local.wallpaper_border
+            for (var axis of ["x", "y"]) {
+                var key = "wallpaper_offset_" + axis
+                if (Number.isInteger(local[key]) && local[key] >= -100 && local[key] <= 100) initial[key] = local[key]
+            }
+            state = initial
+        } catch (e) { /* No valid local choices: use the configured fallback. */ }
+    }
     readonly property var opacityDefaults: ({bar: 93, menus: 95, terminal: 85, files: 85, rofi: 85})
     property bool detailsVisible: false
     property var pendingOpacity: ({})
@@ -93,12 +125,15 @@ QtObject {
     readonly property bool busy: writeProcess.running || chooserProcess.running
     property string error: ""
 
+    property bool initialReportReceived: false
     function acceptReport(text) {
         if (!text.trim().length) return
         try {
             var value = JSON.parse(text)
-            if (/^#[0-9a-fA-F]{6}$/.test(value.effective_icon_color)
-                    && JSON.stringify(value) !== JSON.stringify(state)) state = value
+            if (/^#[0-9a-fA-F]{6}$/.test(value.effective_icon_color)) {
+                if (JSON.stringify(value) !== JSON.stringify(state)) state = value
+                initialReportReceived = true
+            }
         } catch (e) { error = "Não foi possível ler a personalização." }
     }
     function refresh() {

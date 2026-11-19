@@ -1,6 +1,45 @@
 #!/usr/bin/bash
 set -u
 
+handoff_proof=/run/apx/authenticated-handoff-v1
+if [[ ${1:-} == --reveal-handoff-cursor || ${1:-} == --handoff-cursor-fallback ]]; then
+    [[ -r $handoff_proof ]] || exit 0
+    cursor_ready=${XDG_RUNTIME_DIR:-/run/user/1000}/apx-handoff-cursor-ready-v1
+    [[ ! -e $cursor_ready ]] || exit 0
+    if [[ $1 == --handoff-cursor-fallback ]]; then
+        /usr/bin/sleep 20
+        [[ ! -e $cursor_ready ]] || exit 0
+    fi
+    cursor_ctl() {
+        local reply
+        reply=$(/usr/bin/timeout 2 /usr/bin/hyprctl "$@") && [[ $reply == ok ]]
+    }
+
+    # Keep the compositor's real pointer position and hotspot throughout.
+    # The fallback restores immediately if the animation cannot be prepared.
+    if [[ $1 == --reveal-handoff-cursor ]] \
+        && /usr/bin/timeout 1 /home/apx/.local/bin/apx-cursor-fade-v1 \
+        && cursor_ctl eval 'hl.config({cursor={enable_hyprcursor=true,sync_gsettings_theme=false}})' \
+        && cursor_ctl setcursor APX-Handoff-Fade 24 \
+        && cursor_ctl eval 'hl.config({cursor={invisible=false}})'; then
+        # Allow Hyprland's 500 ms visibility tick and the 150 ms animation.
+        /usr/bin/sleep 0.70
+    fi
+    restore_cursor='hl.env("XCURSOR_THEME","default"); hl.config({cursor={invisible=false,enable_hyprcursor=true,sync_gsettings_theme=true}})'
+    cursor_ctl setcursor default 24 || cursor_error=1
+    cursor_ctl eval "$restore_cursor" || exit 1
+    [[ ${cursor_error:-0} == 0 ]] || exit 1
+    /usr/bin/install -m 0600 /dev/null "$cursor_ready" || exit 1
+    printf 'APX: cursor restored (%s) %(%Y-%m-%dT%H:%M:%S%z)T\n' "$1" -1 \
+        >>/home/apx/.local/state/apx-shell-v1/quickshell.log
+    exit 0
+fi
+
+# The supervised fallback may launch this before hyprland.start runs.
+if [[ ${XCURSOR_THEME:-} == APX-Handoff-Transparent ]]; then
+    export XCURSOR_THEME=default
+fi
+
 # Authentication and child applications must retain the real account name.
 # Human-facing labels belong in the UI, never in the login identity.
 export USER=apx
@@ -21,7 +60,6 @@ idle_config=/home/apx/.config/hypr/hypridle.conf
 state_dir=/home/apx/.local/state/apx-shell-v1
 log=$state_dir/quickshell.log
 login_marker=${XDG_RUNTIME_DIR:-/run/user/1000}/apx-initial-login-v1
-handoff_proof=/run/apx/authenticated-handoff-v1
 launcher_lock=${XDG_RUNTIME_DIR:-/run/user/1000}/apx-shell-launcher-v2.lock
 
 # The Lua autostart and the supervised IPC fallback may race on a physical
@@ -136,7 +174,12 @@ fi
 
 while true; do
     printf '\n=== APX shell start %(%Y-%m-%dT%H:%M:%S%z)T ===\n' -1 >>"$log"
-    QT_SCALE_FACTOR=1.1 quickshell --no-duplicate --path "$config" --no-color --log-times -v >>"$log" 2>&1 9>&-
+    animate_handoff=0
+    if [[ -r $handoff_proof && ! -e ${XDG_RUNTIME_DIR:-/run/user/1000}/apx-handoff-cursor-ready-v1 ]]; then
+        animate_handoff=1
+    fi
+    APX_ANIMATE_HANDOFF=$animate_handoff QT_SCALE_FACTOR=1.1 \
+        quickshell --no-duplicate --path "$config" --no-color --log-times -v >>"$log" 2>&1 9>&-
     status=$?
     printf 'APX: Quickshell terminou com estado %s; nova tentativa dentro de 2 segundos.\n' "$status" >>"$log"
     /usr/bin/sleep 2

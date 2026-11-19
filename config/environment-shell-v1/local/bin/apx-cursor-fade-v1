@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Build a temporary animation from the regular compositor cursor."""
+
+import ctypes
+import os
+from pathlib import Path
+import struct
+import tempfile
+
+
+IMAGE_CHUNK = 0xFFFD0002
+STEPS = 5
+FRAME_MS = 30
+
+
+class CursorImage(ctypes.Structure):
+    _fields_ = [(field, ctypes.c_uint) for field in
+                ("version", "size", "width", "height", "xhot", "yhot", "delay")]
+    _fields_.append(("pixels", ctypes.POINTER(ctypes.c_uint32)))
+
+
+def fade(pixel, step):
+    # Xcursor uses premultiplied ARGB, so scale the colour and alpha together.
+    return sum((((pixel >> shift) & 0xFF) * step // STEPS) << shift
+               for shift in (0, 8, 16, 24))
+
+
+def animation():
+    lib = ctypes.CDLL("libXcursor.so.1")
+    lib.XcursorLibraryLoadImage.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int)
+    lib.XcursorLibraryLoadImage.restype = ctypes.POINTER(CursorImage)
+    lib.XcursorImageDestroy.argtypes = (ctypes.POINTER(CursorImage),)
+    lib.XcursorImageDestroy.restype = None
+    frames = []
+    for size in (24, 48, 72, 96):
+        pointer = lib.XcursorLibraryLoadImage(b"left_ptr", b"default", size)
+        if not pointer:
+            raise RuntimeError("the regular cursor could not be loaded")
+        try:
+            image = pointer.contents
+            count = image.width * image.height
+            if not 0 < count <= 256 * 256:
+                raise RuntimeError("the regular cursor has an unsupported size")
+            pixels = image.pixels[:count]
+            for step in range(STEPS + 1):
+                # A zero-delay final frame stops Hyprland's animation timer.
+                delay = 0 if step == STEPS else FRAME_MS
+                header = struct.pack("<9I", 36, IMAGE_CHUNK, size, 1, image.width,
+                                     image.height, image.xhot, image.yhot, delay)
+                frames.append((size, header + struct.pack(f"<{count}I", *(fade(p, step) for p in pixels))))
+        finally:
+            lib.XcursorImageDestroy(pointer)
+
+    header = b"Xcur" + struct.pack("<3I", 16, 0x10000, len(frames))
+    offset = len(header) + 12 * len(frames)
+    table = bytearray()
+    for size, frame in frames:
+        table.extend(struct.pack("<3I", IMAGE_CHUNK, size, offset))
+        offset += len(frame)
+    return header + table + b"".join(frame for _, frame in frames)
+
+
+def main():
+    theme = Path.home() / ".local/share/icons/APX-Handoff-Fade"
+    cursors = theme / "cursors"
+    cursors.mkdir(mode=0o700, parents=True, exist_ok=True)
+    (theme / "index.theme").write_text("[Icon Theme]\nName=APX Handoff Fade\nHidden=true\n")
+    content = animation()
+    with tempfile.NamedTemporaryFile(dir=cursors, delete=False) as staged:
+        path = Path(staged.name)
+        try:
+            staged.write(content)
+            staged.close()
+            os.replace(path, cursors / "left_ptr")
+        finally:
+            path.unlink(missing_ok=True)
+
+
+if __name__ == "__main__":
+    main()

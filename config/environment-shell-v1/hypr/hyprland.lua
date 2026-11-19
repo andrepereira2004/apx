@@ -48,7 +48,35 @@ local terminal    = "/usr/bin/kitty --directory /home/apx"
 -- Autostart necessary processes (like notifications daemons, status bars, etc.)
 -- Or execute your favorite apps at launch like this:
 --
+-- This proof is mounted only for a switch from an authenticated Environment.
+local function canRead(path)
+    local file = io.open(path, "r")
+    if not file then return false end
+    file:close()
+    return true
+end
+
+local handoffRuntime = os.getenv("XDG_RUNTIME_DIR") or "/run/user/1000"
+local handoffCursorPending = canRead("/run/apx/authenticated-handoff-v1")
+    and not canRead(handoffRuntime .. "/apx-handoff-cursor-ready-v1")
+if handoffCursorPending then
+    -- Hyprland applies invisible on a render timer. Make its initial cursor
+    -- transparent too, so the first frame cannot show an arrow.
+    if canRead("/home/apx/.local/share/icons/APX-Handoff-Transparent/cursors/left_ptr") then
+        hl.env("XCURSOR_THEME", "APX-Handoff-Transparent")
+        hl.config({ cursor = { enable_hyprcursor = false, sync_gsettings_theme = false } })
+    end
+    hl.config({ cursor = { invisible = true } })
+end
+
 hl.on("hyprland.start", function ()
+  if handoffCursorPending then
+    -- The compositor has loaded its initial cursor. Keep child apps on their
+    -- regular theme while the compositor waits for the shell's first frame.
+    hl.env("XCURSOR_THEME", "default")
+    -- Restore the pointer even when the shell cannot render the desktop.
+    hl.exec_cmd("/home/apx/.local/bin/apx-shell-v1 --handoff-cursor-fallback")
+  end
   hl.exec_cmd("/home/apx/.local/bin/apx-numlock-state-v1 restore")
   hl.exec_cmd("/home/apx/.local/bin/apx-input-startup-audit-v1")
   hl.exec_cmd("/home/apx/.local/bin/apx-shell-v1")

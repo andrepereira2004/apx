@@ -1735,7 +1735,12 @@ def _launch(test_mode: bool, authenticated_handoff: bool = False) -> dict[str, o
     if run(("machinectl", "list", "--no-legend"), False).stdout.strip():
         raise OfficialHubGraphicalError("another Environment is running")
     inputs = resolve_input_devices()
-    transition_display("start")
+    if authenticated_handoff:
+        # A switch already owns a blank VT. Keep it blank while preparing the
+        # target so Plymouth cannot briefly fall back to the Arch boot splash.
+        clear_transition_consoles()
+    else:
+        transition_display("start")
     audio = resolve_audio_devices()
     graphics = resolve_graphics()
     camera = resolve_camera_device()

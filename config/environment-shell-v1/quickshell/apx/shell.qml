@@ -262,10 +262,51 @@ ShellRoot {
     property int environmentAcknowledgedAttempt: -1
     property string environmentBackendErrorKey: ""
     property bool environmentSwitchPending: false
-    property bool startupCover: true
-    property bool startupBarRendered: false
+    readonly property bool startupBarRendered: barVariants.instances.length > 0
+        && barVariants.instances.every(surface => surface.firstFrame)
+    property bool startupWallpaperRevealed: Quickshell.env("APX_ANIMATE_HANDOFF") !== "1"
+    onStartupBarRenderedChanged: {
+        if (startupBarRendered) startupWallpaperRevealed = true
+    }
+    Timer {
+        // A missing bar must not permanently hide the desktop.
+        interval: 4000
+        running: !root.startupWallpaperRevealed
+        onTriggered: root.startupWallpaperRevealed = true
+    }
+    readonly property bool startupWallpaperRendered: wallpaperVariants.instances.length > 0
+        && wallpaperVariants.instances.every(surface => surface.firstFrame)
     readonly property bool startupReady: identityReady && sessionKindReady && startupBarRendered
-    onStartupReadyChanged: if (startupReady) startupCover = false
+    readonly property bool startupDesktopRendered: startupBarRendered && startupWallpaperRendered
+    onStartupDesktopRenderedChanged: {
+        if (startupDesktopRendered && !loggedFirstDesktopFrame) {
+            loggedFirstDesktopFrame = true
+            console.info("APX: first wallpaper and bar frames rendered")
+        }
+    }
+    property bool loggedFirstDesktopFrame: false
+    property bool initialBatteryReportReceived: false
+    property bool startupBarVisible: false
+    property real startupBarOpacity: startupBarVisible ? 1 : 0
+    Behavior on startupBarOpacity {
+        enabled: Quickshell.env("APX_ANIMATE_HANDOFF") === "1"
+        NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+    }
+    readonly property bool startupBarDataReady: identityReady && sessionKindReady
+        && Appearance.initialReportReceived && initialBatteryReportReceived && clockText.length > 0
+    onStartupBarDataReadyChanged: {
+        if (startupBarDataReady) {
+            startupBarDeadline.stop()
+            startupBarVisible = true
+        }
+    }
+    Timer {
+        id: startupBarDeadline
+        // The budget starts when the reserved surface can draw, not while
+        // Qt is still starting. A slow broker must never keep the bar hidden.
+        interval: 450
+        onTriggered: root.startupBarVisible = true
+    }
     property bool environmentSwitchDispatched: false
     onEnvironmentSwitchPendingChanged: if (!environmentSwitchPending) environmentSwitchDispatched = false
     property int environmentSwitchProgress: 0
@@ -631,6 +672,7 @@ ShellRoot {
         batteryWatts = fields[2] && isFinite(power) && power >= 0 ? power / 1000000 : -1
         batteryHealth = full > 0 && design > 0 ? Math.round(full / design * 100) : -1
         batteryMinutes = status === "Discharging" && energy > 0 && power > 0 ? Math.round(energy / power * 60) : -1
+        initialBatteryReportReceived = true
     }
 
     property Item editingMenuSlider: null
@@ -4187,8 +4229,9 @@ ShellRoot {
                 target: !!root.controlCenterButton})
         }
         function transitionStatus(): string {
-            return JSON.stringify({ startup: root.startupCover, ready: root.startupReady,
-                bar_rendered: root.startupBarRendered, identity_ready: root.identityReady,
+            return JSON.stringify({ startup: false, ready: root.startupReady,
+                bar_rendered: root.startupBarRendered, wallpaper_rendered: root.startupWallpaperRendered,
+                identity_ready: root.identityReady,
                 environment_identity: root.environmentIdentity, environment_icon: root.activeEnvironmentIcon,
                 outgoing: root.environmentSwitchPending, dispatched: root.environmentSwitchDispatched })
         }
@@ -4652,9 +4695,9 @@ ShellRoot {
         onTriggered: if (!environmentManagementStatusProcess.running) environmentManagementStatusProcess.running = true
     }
 
-    Connections {
-        target: bar ? bar.contentItem.Window.window : null
-        function onFrameSwapped() { root.startupBarRendered = true }
+    Process {
+        command: ["/home/apx/.local/bin/apx-shell-v1", "--reveal-handoff-cursor"]
+        running: root.startupDesktopRendered
     }
 
     Timer {
@@ -4998,12 +5041,27 @@ ShellRoot {
             exclusionMode: ExclusionMode.Ignore
             exclusiveZone: 0
             focusable: false
-            color: Appearance.wallpaperBorder === "white" ? "#ffffff" : "#000000"
+            color: "#000000"
             mask: Region {}
             WlrLayershell.layer: WlrLayer.Background
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
-            Rectangle { anchors.fill: parent; color: Appearance.wallpaperBorder === "white" ? "#ffffff" : "#000000" }
+            Connections {
+                target: background.contentItem.Window.window
+                enabled: !background.firstFrame
+                function onFrameSwapped() {
+                    if (root.startupWallpaperRevealed && desktopWallpaper.status !== Image.Loading
+                            && (!background.animateArrival || arrivalCurtain.opacity < 1))
+                        background.firstFrame = true
+                }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                visible: root.startupWallpaperRevealed
+                    && (desktopWallpaper.status !== Image.Loading || desktopWallpaper.implicitWidth > 0)
+                color: Appearance.wallpaperBorder === "white" ? "#ffffff" : "#000000"
+            }
             Image {
                 id: desktopWallpaper
                 anchors.fill: parent
@@ -5014,12 +5072,25 @@ ShellRoot {
                 transform: Translate { x: Appearance.wallpaperTranslation(Appearance.wallpaperOffsetX, desktopWallpaper.width, desktopWallpaper.paintedWidth, Appearance.wallpaperZoom); y: Appearance.wallpaperTranslation(Appearance.wallpaperOffsetY, desktopWallpaper.height, desktopWallpaper.paintedHeight, Appearance.wallpaperZoom) }
                 smooth: true
                 mipmap: true
-                asynchronous: false
+                // Decode large local images without blocking the shell or
+                // clearing the displayed image during a wallpaper change.
+                asynchronous: true
+                retainWhileLoading: true
                 cache: true
+        id: wallpaperVariants
             }
         }
     }
+            id: background
 
+            property bool firstFrame: false
+            readonly property bool animateArrival: Quickshell.env("APX_ANIMATE_HANDOFF") === "1"
+            readonly property bool arrivalReady: root.startupWallpaperRevealed
+                && (desktopWallpaper.status === Image.Ready || desktopWallpaper.status === Image.Error
+                    || (desktopWallpaper.status === Image.Null && String(desktopWallpaper.source) === ""))
+            property bool arrivalStarted: false
+            onArrivalReadyChanged: if (arrivalReady) arrivalStarted = true
+            Component.onCompleted: if (arrivalReady) arrivalStarted = true
     Variants {
         id: barVariants
         model: Quickshell.screens
@@ -5033,6 +5104,9 @@ ShellRoot {
                 root.selectedBar = null
             }
         }
+                // Decode in parallel, but leave the black surface visible
+                // until the first frame of the existing bar fade.
+                visible: root.startupWallpaperRevealed
         property alias calendarButton: calendarButton
         property alias environmentButton: environmentButton
         property alias batteryButton: batteryButton
@@ -5044,6 +5118,17 @@ ShellRoot {
         property alias controlCenterButton: controlCenterButton
         anchors { top: true; left: true; right: true }
         // Share outer edges with tiled application windows.
+            Rectangle {
+                id: arrivalCurtain
+                anchors.fill: parent
+                color: "#000000"
+                opacity: background.arrivalStarted ? 0 : 1
+                visible: background.animateArrival && opacity > 0
+                Behavior on opacity {
+                    enabled: background.animateArrival
+                    NumberAnimation { duration: 420; easing.type: Easing.InOutSine }
+                }
+            }
         margins { left: Appearance.desktopEdgeInset; right: Appearance.desktopEdgeInset }
         implicitHeight: 46
         exclusiveZone: 46
@@ -5053,7 +5138,16 @@ ShellRoot {
         // APX shared launcher pointer focus: Hyprland hits only exclusive surfaces while Rofi owns focus.
         WlrLayershell.keyboardFocus: environmentAppsProcess.running ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
         Shortcut {
+        property bool firstFrame: false
             sequence: "Escape"
+        Connections {
+            target: screenBar.contentItem.Window.window
+            enabled: !screenBar.firstFrame
+            function onFrameSwapped() {
+                if (root.startupBarOpacity > 0) screenBar.firstFrame = true
+                else if (!root.startupBarVisible && !startupBarDeadline.running) startupBarDeadline.start()
+            }
+        }
             enabled: environmentAppsProcess.running
             onActivated: environmentAppsProcess.running = false
         }
@@ -5075,6 +5169,9 @@ ShellRoot {
 
             Row {
                 id: leftActions
+        contentItem.opacity: root.startupBarOpacity
+        mask: root.startupBarOpacity > 0 ? null : startupBarInputMask
+        Region { id: startupBarInputMask }
                 Rectangle {
                     parent: leftActions.parent
                     x: leftActions.x; y: leftActions.y; width: leftActions.width; height: leftActions.height
@@ -5086,6 +5183,7 @@ ShellRoot {
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 6
+            visible: root.startupBarVisible
                 BarButton {
                     id: calendarButton
                     outlineHost: screenBar.contentItem
@@ -5405,7 +5503,9 @@ ShellRoot {
                 }
             }
         }
-        visible: root.environmentSwitchPending || root.startupCover || root.powerTransitionActive
+        // Arrival can paint as soon as its surfaces are ready. Identity is
+        // still required by the controls that depend on it.
+        visible: root.environmentSwitchPending || root.powerTransitionActive
         exclusionMode: ExclusionMode.Ignore
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
         anchors { top: true; bottom: true; left: true; right: true }

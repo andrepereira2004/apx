@@ -88,6 +88,31 @@ class OfficialHubGraphicalTests(unittest.TestCase):
         self.assertEqual(run.call_count, 1)
         self.assertFalse(subject._transition_display_owned)
 
+    def test_authenticated_switch_keeps_the_console_blank_during_preparation(self):
+        subject = load_launcher()
+        with mock.patch.object(Path, "read_text", side_effect=["apx-host", "tty1"]), \
+             mock.patch.object(Path, "is_file", return_value=True), \
+             mock.patch.object(Path, "is_symlink", return_value=False), \
+             mock.patch.object(subject.os, "geteuid", return_value=0), \
+             mock.patch.object(subject, "read_registration", return_value={"state": "stopped"}), \
+             mock.patch.object(subject, "stop_text_hub_if_needed"), \
+             mock.patch.object(subject, "run", return_value=SimpleNamespace(stdout="")), \
+             mock.patch.object(subject, "resolve_input_devices"), \
+             mock.patch.object(subject, "clear_transition_consoles") as clear, \
+             mock.patch.object(subject, "transition_display") as splash, \
+             mock.patch.object(subject, "resolve_audio_devices", side_effect=RuntimeError("stop before launch")):
+            with self.assertRaisesRegex(RuntimeError, "stop before launch"):
+                subject._launch(False, authenticated_handoff=True)
+            clear.assert_called_once_with()
+            splash.assert_not_called()
+
+            clear.reset_mock()
+            with mock.patch.object(Path, "read_text", side_effect=["apx-host", "tty1"]):
+                with self.assertRaisesRegex(RuntimeError, "stop before launch"):
+                    subject._launch(False, authenticated_handoff=False)
+            clear.assert_not_called()
+            splash.assert_called_once_with("start")
+
     def test_loading_releases_on_preparation_error(self):
         subject = load_launcher()
         subject._transition_display_owned = True

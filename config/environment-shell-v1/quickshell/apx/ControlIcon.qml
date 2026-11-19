@@ -12,27 +12,34 @@ Item {
     // logical size, 24-unit viewBox and original stroke unchanged.
     // IconImage is Qt Controls' existing tinted image primitive; bypass only
     // ToolButton's implicit QIcon sizing, not the original SVG artwork.
-    ControlsImpl.IconImage {
+    // Instantiate only the selected renderer, including in closed menus.
+    Loader {
         anchors.fill: parent
-        visible: glyph.originalLucide
-        source: glyph.originalLucide ? glyph.source : ""
-        color: glyph.tint
-        sourceSize: Qt.size(Math.ceil(width * 2), Math.ceil(height * 2))
-        fillMode: Image.PreserveAspectFit
-        smooth: true
-        mipmap: false
+        sourceComponent: glyph.originalLucide ? lucideIcon : fallbackIcon
     }
-    ToolButton {
-        anchors.fill: parent
-        visible: !glyph.originalLucide
-        padding: 0
-        focusPolicy: Qt.NoFocus
-        hoverEnabled: false
-        display: AbstractButton.IconOnly
-        icon.source: glyph.originalLucide ? "" : glyph.source
-        icon.color: glyph.tint
-        icon.width: width
-        icon.height: height
-        background: Item {}
+    Component {
+        id: lucideIcon
+        ControlsImpl.IconImage {
+            source: glyph.source
+            color: glyph.tint
+            sourceSize: Qt.size(Math.ceil(width * 2), Math.ceil(height * 2))
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+            mipmap: false
+        }
+    }
+    Component {
+        id: fallbackIcon
+        ToolButton {
+            padding: 0
+            focusPolicy: Qt.NoFocus
+            hoverEnabled: false
+            display: AbstractButton.IconOnly
+            icon.source: glyph.source
+            icon.color: glyph.tint
+            icon.width: width
+            icon.height: height
+            background: Item {}
+        }
     }
 }

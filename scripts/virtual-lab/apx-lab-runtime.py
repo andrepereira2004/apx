@@ -394,7 +394,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "mimeapps.list": "44c48438b300e51149b138c7d05bb6bd8cde4e51233a334fde9c6e01e6bbc6ad",
     "quickshell/apx/BarButton.qml": "ea14dfef24737f9ee0d4df3ee8f255e67369b0f9d7c094f43f0938baac935fcc",
     "quickshell/apx/BounceMouseArea.qml": "d7238c10c969db951526f6ae34cee38502ba829f0267cb6c1cdb8a1bdb28aa7f",
-    "quickshell/apx/ControlIcon.qml": "537c90da241070a42d34a698c62d62c42abc9863a02e6826595149d38c1da359",
+    "quickshell/apx/ControlIcon.qml": "1d52d19f86582e5e476e85d8b5a6533cb3ce87c866aa33d3812848d51a44a606",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
     "quickshell/apx/shell.qml": "72464e86ba36ecd3833fd51d4c1991b0de7f3e0f1046a87f3600efc5a780b9dd",
     "rofi/config.rasi": "8d8589b53c46c76292fbe0045a9eee8cbd19357efd7472bb6a0d765c60947ce0",

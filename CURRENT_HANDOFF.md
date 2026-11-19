@@ -1,3 +1,25 @@
+## Menos trabalho nos ícones no arranque da Quickshell — 2026-11-19
+
+O proprietário pediu investigação de latência e conservação integral das
+animações e da ordem de chegada. O perfil Qt isolado mostrou 2,37 s na
+compilação da configuração principal e trabalho repetido a criar e
+rasterizar ícones. O componente ControlIcon cria agora só o renderizador
+adequado ao ficheiro, em vez de construir os dois e ocultar um. O desenho,
+as dimensões e a cor utilizam os mesmos tipos e propriedades anteriores.
+
+Arranque isolado da configuração, três amostras por variante: mediana
+3,040 s antes e 1,829 s com a alteração. A variante que adiava também os
+ícones invisíveis não foi adotada. As imagens de prova nativas a 1,25×,
+incluindo SVG Lucide e o caminho alternativo, foram idênticas byte a byte
+e tinham conteúdo visível. Os oito testes da seed passaram. As oito falhas
+da suíte da Central de Controlo repetiram-se com o componente de origem.
+
+Instalado nos cinco homes e na seed, preservando a sessão em execução.
+Os 20 ficheiros instalados da transição, incluindo os fades, apresentam
+os mesmos hashes antes e depois. O proprietário confirmou uma melhoria percetível na troca. O ganho de
+ponta a ponta ainda não foi medido. Backup:
+`/var/lib/apx/backups/20261119T230749Z-quickshell-single-icon-renderer/`.
+
 ## Fade do preto para o desktop na troca — 2026-11-19
 
 O proprietário aprovou a sincronização do fundo com a barra e pediu

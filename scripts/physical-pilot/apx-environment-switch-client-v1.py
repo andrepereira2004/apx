@@ -116,8 +116,8 @@ def main() -> int:
     if mode not in {"native-prepare-v3", "native-activate-v3", "native-rollback-v3", "native-retry-v3", "native-delete-v3", "native-open-v3", "create", "destroy", "edit", "native-discard", "native-open", "native-retry", "native-plan", "open"} \
             and (arguments.target is not None or arguments.generation is not None):
         parser.error(mode + " takes no target")
-    if mode != "edit" and arguments.icon is not None:
-        parser.error("icon is only valid when editing an Environment")
+    if mode not in {"edit", "create"} and arguments.icon is not None:
+        parser.error("icon is only valid for Environment creation or editing")
     modules = arguments.modules.split(",") if arguments.modules else None
     value = exchange(operation, arguments.target, arguments.generation, arguments.description,
                      arguments.preset, modules, arguments.system, arguments.size_gib,

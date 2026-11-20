@@ -20,14 +20,19 @@ import shutil
 import stat
 import subprocess
 import sys
+import time
 import uuid
 
 try:
-    from apx_environment_features import local_packages_for, packages_for, validate_selection
+    from apx_environment_features import (APPLICATION_INSTALL_SCRIPT, APPLICATION_LAUNCH_SCRIPT,
+                                          APPLICATION_MODULES, local_packages_for, packages_for,
+                                          validate_selection)
     from apx_environment_desktop_defaults import install_flatpak_defaults, install_browser_passkey_defaults
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-    from apx_environment_features import local_packages_for, packages_for, validate_selection
+    from apx_environment_features import (APPLICATION_INSTALL_SCRIPT, APPLICATION_LAUNCH_SCRIPT,
+                                          APPLICATION_MODULES, local_packages_for, packages_for,
+                                          validate_selection)
     from apx_environment_desktop_defaults import install_flatpak_defaults, install_browser_passkey_defaults
 
 
@@ -69,6 +74,8 @@ DESKTOP_CONFIG_ASSETS = {
 ENVIRONMENT_SHELL_SEED = Path("/usr/share/apx/config-seeds/environment-shell-v1")
 LOCAL_PACKAGE_ARTIFACTS = STATE / "package-artifacts"
 LOCAL_PACKAGE_MANIFESTS = {
+    "chatgpt-bin": "chatgpt-bin-v1.json",
+    "salvador-de-mundos-apx": "salvador-de-mundos-apx-v1.json",
     "localsend-bin": "localsend-bin-v1.json",
     "gridcraft": "gridcraft-v1.json",
     "wordcraft": "wordcraft-v1.json",
@@ -77,10 +84,13 @@ LOCAL_PACKAGE_MANIFESTS = {
     "nvidia-utils": "nvidia-utils-v1.json",
 }
 ENVIRONMENT_SHELL_ASSETS = {
+    "quickshell/apx/icons/lucide/square-dashed-plus.svg": "3eb66ccd73b86b40805f590f7d504c28723db22d8f878cf251be051609e132ae",
+    "quickshell/apx/icons/lucide/banknote.svg": "212d628014554424ec0041ab56e8869149d255b7077cfd6977d4ab2be32e8cb1",
+    "quickshell/apx/icons/lucide/briefcase-business.svg": "98388a2bf7b9d102d77772d125d26f59ea3bed0d8573a5fc8907003099ae9a54",
     "local/bin/apx-cursor-fade-v1": "98496109e58de5619eeb30b46d09acb6a244de1f38eef7d596c2dd9c336f7b08",
     "local/share/icons/APX-Handoff-Transparent/index.theme": "e14e380f820e4c3039e7d1066eced10113d645a7549603ab4499aba8d9907ba7",
     "local/share/icons/APX-Handoff-Transparent/cursors/left_ptr": "11df2e5456affb6b1670756084995dd7ed1185634ad759f0c2b40bf00fa7ba53",
-    "local/bin/apx-battery-notifications-v1": "755071d1fcb241b6f16e93274f572d96959176a05255cb926a3d3a017c29888f",
+    "local/bin/apx-battery-notifications-v1": "7a8a81010d5801b223af59a92375407cc1fe3a26233efe5cc38d0e721dc76c7b",
     "quickshell/apx/icons/rofi/terminal.svg": "02fdc21ef7cc7598832b4461d6e361f4d2f830feecc17356060d430408f867ac",
     "quickshell/apx/icons/rofi/app-window.svg": "75f549fb6cddf4a5214f126053019b00fd86b75e47c83ba8f4af59475f34b7fa",
     "local/share/apx/compress.css": "071fb4a048b414a786617bf0101a5d411363b2b1fe193e1f1cd84beb1a0d35d4",
@@ -326,7 +336,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "Thunar/sendto/apx-80-applications.desktop": "f3ba0454b9fd8b1bbfdf4b007b6a97676dc0215a3651a1d9d83231330003096d",
     "Thunar/sendto/apx-90-share.desktop": "9b71a516a2a6d2ca3e3e0d88a0cba3835b053e94bdff19f9a7b8be24a50978cb",
     "Thunar/uca.xml": "22877567e91b08aec5453ee5f6095795a9af09f2d62da0b343d08d920ee8583b",
-    "apx/bashrc": "c92bd4f495294992126c8145ef2990d3042ba4d42c820332881ad08669872c04",
+    "apx/bashrc": "962737f9f96ffb2753bd3ccc521f69527e38554cffd64703103d2cbf30131113",
     "apx/wallpapers/alpine-lake.png": "dd5794c56ac03f3befb28b48554222da3a44f8f695fb4f1e9f8ac8c3f14ff09d",
     "apx/wallpapers/atlantic-coast.png": "2204c16ad3f3cea13c2b0af0179800262a0a282685bcea13e2d94d1da7cf1411",
     "apx/wallpapers/rainforest-stream.png": "624a391248bee708ce4195735f9e69937083d0e2f7ba4b9f025d92f231916535",
@@ -357,9 +367,10 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/bin/apx-mouse-sensitivity-v1": "8e6a8286f25c030c5d274f874176e7b12708daeddb0b23191a3159880d16e145",
     "local/bin/apx-legion-brightness-keys-v1.py": "a2954759100308229643ccf4277b9dd37ec4154e73fae6e3d1712318d3fe8a7e",
     "local/bin/apx-notification-focus-v1": "835cc0302f10f01c2417077884fca7f9b9a6b95b2328ac8d32dccc4e93ca7cc0",
-    "local/bin/apx-shell-v1": "c0e91ab0867d1e47cde2c5e9e95eacaf19c5adfb914c0ece7738c3384296e1b4",
+    "local/bin/apx-shell-v1": "e6dcc156bf98e2f4725ddd67c9405f8c3a741a8d48c2bc1d72ea3a604eb1abe1",
     "local/bin/apx-shortcuts-v1": "c94ec111c09c46cfd58e4c74b400d224e736e593754c8e1b9896eca9ea288995",
-    "local/bin/apx-sysinfo": "1daf4b37c84c855191d2190e2c44a91b95b96b0ce1a46944ea28f580349d14b5",
+    "local/bin/apx-atualizar-info": "646355f15b98e192cfeb36b0059a530481978a53d9418941ca4ea885561c5eb6",
+    "local/bin/apx-sysinfo": "2597cbe2647175b1faddd36259ddb8c0e2b9b16430a582adce7a6320cb57219e",
     "local/bin/apx-window-apps-v1": "83c5a33bab8aa994fc9bf52660eb1c44a261e5c701dfb8e088c9e5ae716688d4",
     "local/bin/apx-workspace-overview-v1": "830c8dd169b2e180bcc2671c52c14ada5037873ebc3152090af466522b76483e",
     "local/libexec/apx-rofi-secondary-v1.so": "1de32d764d0a359a3b6334097a92452155a50d38adc92ac035c213296ffea75d",
@@ -396,7 +407,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "quickshell/apx/BounceMouseArea.qml": "d7238c10c969db951526f6ae34cee38502ba829f0267cb6c1cdb8a1bdb28aa7f",
     "quickshell/apx/ControlIcon.qml": "1d52d19f86582e5e476e85d8b5a6533cb3ce87c866aa33d3812848d51a44a606",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
-    "quickshell/apx/shell.qml": "72464e86ba36ecd3833fd51d4c1991b0de7f3e0f1046a87f3600efc5a780b9dd",
+    "quickshell/apx/shell.qml": "dafa0ad4751bfef6a67b440585ab5cf44394a052f8950acfcb1a0f61559a5fd6",
     "rofi/config.rasi": "8d8589b53c46c76292fbe0045a9eee8cbd19357efd7472bb6a0d765c60947ce0",
     "xdg-desktop-portal/portals.conf": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
     "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "a6cbd2d09507270cd3cfb449542e0bd7ec6254019703359854b36e476a2d468e",
@@ -816,9 +827,28 @@ def admitted_release(role: str) -> Path:
     return release
 
 
+def environment_creation_icon(icon: str) -> Path:
+    if not isinstance(icon, str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", icon):
+        raise Refusal("Ícone do Environment inválido.")
+    for directory in (ENVIRONMENT_SHELL_SEED / "quickshell/apx/icons/lucide",
+                      Path("/usr/share/apx/icons/lucide-1.77.0")):
+        candidate = directory / (icon + ".svg")
+        try:
+            info = candidate.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISREG(info.st_mode) and info.st_uid == 0 and not (info.st_mode & 0o022) and 0 < info.st_size < 65536:
+            return candidate
+    raise Refusal("O ícone selecionado não existe no catálogo Lucide.")
+
+
 def make_plan(action: str, name: str, role: str | None = None,
               update_policy: str = "follow-host", description: str = "",
-              preset: str = "intermediate", modules: tuple[str, ...] | list[str] = ()) -> dict[str, object]:
+              preset: str = "intermediate", modules: tuple[str, ...] | list[str] = (), icon: str | None = None) -> dict[str, object]:
+    if icon is not None:
+        if action != "create" or role != "graphical-base":
+            raise Refusal("O ícone pertence à criação de um Environment APX.")
+        environment_creation_icon(icon)
     validate_name(name)
     generation = str(uuid.uuid4())
     if action == "create":
@@ -857,6 +887,8 @@ def make_plan(action: str, name: str, role: str | None = None,
         if role == "graphical-base":
             plan["desktop_preset"] = preset
             plan["desktop_modules"] = list(modules)
+            if icon is not None:
+                plan["icon"] = icon
     identity = digest(plan)
     plan["digest"] = identity
     atomic_json(PLANS / f"{identity}.json", plan)
@@ -962,7 +994,17 @@ def create(plan_identity: str, approval: str) -> None:
         else:
             install_browser_passkey_defaults(root)
         if role == "graphical-base":
+            if "icon" in plan:
+                icon_source = environment_creation_icon(plan["icon"])
+                icon_target = user_home / ".config/quickshell/apx/icons/lucide" / icon_source.name
+                if not icon_target.exists():
+                    with icon_target.open("xb") as stream:
+                        stream.write(icon_source.read_bytes())
+                    icon_target.chmod(0o644)
+                    os.chown(icon_target, 1000, 1000)
             configure_environment_features(root, plan)
+            install_environment_applications(root, user_home, plan["desktop_modules"])
+            verify_shared_storage_reserve()
         if role == "hub":
             (root / "run" / "apx").mkdir(parents=True, exist_ok=True)
         append_event(operation, "create", "configure", "complete", name=name)
@@ -981,6 +1023,8 @@ def create(plan_identity: str, approval: str) -> None:
         if role == "graphical-base":
             record["desktop_preset"] = plan["desktop_preset"]
             record["desktop_modules"] = plan["desktop_modules"]
+            if "icon" in plan:
+                record["icon"] = plan["icon"]
         if plan.get("description"):
             record["description"] = plan["description"]
         append_event(operation, "create", "publish", "started", name=name)
@@ -990,6 +1034,61 @@ def create(plan_identity: str, approval: str) -> None:
     except BaseException:
         append_event(operation, "create", "operation", "uncertain", name=name)
         raise
+
+
+def install_environment_applications(root: Path, user_home: Path, modules: list[str]) -> None:
+    """Provision selected apps before publishing the new Environment."""
+    selected = [module for module in APPLICATION_MODULES if module in modules]
+    if not selected:
+        return
+    if "minecraft" in selected or "hytale" in selected:
+        launcher = user_home / ".local/bin/apx-template-launch-app"
+        with launcher.open("x") as stream:
+            stream.write(APPLICATION_LAUNCH_SCRIPT)
+        launcher.chmod(0o755)
+        os.chown(launcher, 1000, 1000)
+
+    identity = "p" + uuid.uuid4().hex[:7]
+    machine_name = f"apx-{identity}"
+    unit = f"apx-app-setup-{identity}.service"
+    version = host_nvidia_version()
+    if not re.fullmatch(r"[0-9]+(?:\.[0-9]+)+", version):
+        raise Refusal("NVIDIA package version for the template is unavailable")
+    driver = version.replace(".", "-")
+    run([NETWORK_ADAPTER, "apply", "--environment", identity])
+    try:
+        run(["systemd-run", "--unit", unit, "--collect", "--property=Delegate=yes",
+             "--property=KillMode=mixed", "--property=TimeoutStopSec=15s",
+             "--property=RuntimeMaxSec=22min", "--property=MemoryMax=4G",
+             f"--property=ExecStopPost={NETWORK_ADAPTER} remove --environment {identity}", "--",
+             "systemd-nspawn", "--keep-unit", "--boot", "--settings=no", "--console=pipe",
+             "--link-journal=no", f"--machine={machine_name}", f"--directory={root}",
+             "--private-users=pick", "--private-users-ownership=chown",
+             "--network-veth", "--private-network", "--resolv-conf=off",
+             f"--bind={user_home.parent}:/home:idmap"])
+        for _ in range(60):
+            readiness = run(["systemctl", "-M", machine_name, "is-system-running"],
+                            check=False, capture=True)
+            if readiness.stdout.strip() in {"running", "degraded"}:
+                break
+            time.sleep(0.5)
+        else:
+            raise Refusal("O instalador isolado do Environment não arrancou.")
+        run(["timeout", "20m", "systemd-run", "-M", machine_name, "--wait", "--pipe",
+             "--collect", "--uid=apx", "--property=RuntimeDirectory=apx-template-apps",
+             "--property=RuntimeMaxSec=19min", "--setenv=XDG_RUNTIME_DIR=/run/apx-template-apps",
+             "--setenv=FLATPAK_DISABLE_REVOKEFS=1",
+             f"--setenv=FLATPAK_GL_DRIVERS=nvidia-{driver}:default",
+             "/usr/bin/dbus-run-session", "/usr/bin/bash", "-c",
+             APPLICATION_INSTALL_SCRIPT, "apx-template-apps", *selected])
+    except subprocess.CalledProcessError as error:
+        raise Refusal("A instalação das aplicações do modelo falhou. Verifica a ligação e tenta novamente.") from error
+    finally:
+        run(["systemctl", "stop", unit], check=False, capture=True)
+        status = run(["systemctl", "is-active", unit], check=False, capture=True)
+        if status.stdout.strip() not in {"inactive", "failed", "unknown"}:
+            raise Refusal("O instalador do Environment continua ativo.")
+        run([NETWORK_ADAPTER, "remove", "--environment", identity])
 
 
 def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
@@ -1095,9 +1194,10 @@ def validated_local_package_artifact(package: str) -> Path:
         metadata = artifact.lstat()
     except OSError as error:
         raise Refusal("Environment local package artifact is absent") from error
+    max_size = (768 if package == "chatgpt-bin" else 512) * 1024**2
     if artifact.is_symlink() or not stat.S_ISREG(metadata.st_mode) \
             or (metadata.st_uid, metadata.st_gid) != (0, 0) or metadata.st_mode & 0o022 \
-            or metadata.st_size <= 0 or metadata.st_size > 512 * 1024**2:
+            or metadata.st_size <= 0 or metadata.st_size > max_size:
         raise Refusal("Environment local package artifact is not admitted")
     computed = hashlib.sha256()
     with artifact.open("rb") as stream:
@@ -1944,6 +2044,7 @@ def parser() -> argparse.ArgumentParser:
     create_plan.add_argument("--desktop-preset", default="intermediate",
                              choices=("basic", "intermediate", "complete"))
     create_plan.add_argument("--desktop-modules", default="")
+    create_plan.add_argument("--icon")
     create_apply = sub.add_parser("create")
     create_apply.add_argument("--plan", required=True)
     create_apply.add_argument("--approve", required=True)
@@ -1977,7 +2078,7 @@ def main() -> int:
         policy = "excluded" if arguments.exclude_host_updates else "follow-host"
         print(json.dumps(make_plan("create", arguments.name, arguments.role, policy,
                                    arguments.description, arguments.desktop_preset,
-                                   tuple(filter(None, arguments.desktop_modules.split(",")))),
+                                   tuple(filter(None, arguments.desktop_modules.split(","))), arguments.icon),
                          sort_keys=True, indent=2))
     elif arguments.environment_command == "create":
         create(arguments.plan, arguments.approve)

@@ -435,7 +435,7 @@ def authorize_hub_management(peer: HostServicesPeer, *, resume_native_v3: bool =
 
 def start_management(action: str, target: str, generation: str | None = None,
                      description: str = "", preset: str = "intermediate",
-                     modules: list[str] | None = None, system_kind: str = "arch") -> dict[str, object]:
+                     modules: list[str] | None = None, system_kind: str = "arch", icon: str | None = None) -> dict[str, object]:
     unit = "apx-environment-management-" + secrets.token_hex(5)
     descriptor = os.open(MANAGEMENT_LOCK, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
     try:
@@ -453,6 +453,8 @@ def start_management(action: str, target: str, generation: str | None = None,
     if action == "create":
         command.extend(("--description", description, "--desktop-preset", preset,
                         "--desktop-modules", ",".join(modules or []), "--system", system_kind))
+    if action == "create" and icon is not None:
+        command.extend(("--icon", icon))
     result = subprocess.run(command, text=True, capture_output=True, check=False)
     if result.returncode:
         MANAGEMENT_LOCK.unlink(missing_ok=True)
@@ -650,6 +652,9 @@ def selected_environment_icon(identity: dict[str, object]) -> str:
         value = json.loads(raw)
         icon = value.get("icon")
         return icon if value.get("name") == identity["name"] and value.get("generation") == identity["generation"] and isinstance(icon, str) and icon in ENVIRONMENT_ICONS else "box"
+    except FileNotFoundError:
+        icon = identity.get("icon")
+        return icon if isinstance(icon, str) and re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", icon) else "box"
     except (OSError, ValueError, AttributeError):
         return "box"
 
@@ -694,7 +699,7 @@ def apply(operation: str, payload: dict[str, object], peer: HostServicesPeer) ->
             return start_native_management("create", int(payload["size_gib"]), str(uuid.uuid4()))
         return start_management("create", target, description=str(payload["description"]),
                                 preset=str(payload["preset"]), modules=list(payload["modules"]),
-                                system_kind=str(payload["system_kind"]))
+                                system_kind=str(payload["system_kind"]), icon=payload.get("icon"))
     if operation in {"native.retry", "native.discard"}:
         authorize_hub_management(peer)
         if payload.get("target") != "windows":

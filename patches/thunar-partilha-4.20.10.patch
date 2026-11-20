@@ -452,12 +452,16 @@
 +                      g_object_ref (path_entry), g_object_unref);
 --- a/thunar/thunar-action-manager.c
 +++ b/thunar/thunar-action-manager.c
-@@ -2344,0 +2345,8 @@
-+          /* Make the native compression action explicit in the APX menu.
-+           * Keep its provider callback and all format/selection behavior. */
+@@ -2344,0 +2345,12 @@
++          /* APX provides its own compression action. */
 +          gchar *action_name = NULL;
++          gboolean is_create_archive;
 +          g_object_get (lp_item->data, "name", &action_name, NULL);
-+          if (g_strcmp0 (action_name, "Tap::create-archive") == 0)
-+            g_object_set (lp_item->data, "label", "Comprimir… (ZIP, TAR…)", NULL);
++          is_create_archive = g_strcmp0 (action_name, "Tap::create-archive") == 0;
 +          g_free (action_name);
++          if (is_create_archive)
++            {
++              g_object_unref (lp_item->data);
++              continue;
++            }
 +

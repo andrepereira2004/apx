@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+"$HOME/.local/bin/apx-sysinfo" --refresh-cache
+printf 'Informação do computador atualizada. Os terminais passam a mostrar esta recolha.\n'

@@ -1,6 +1,7 @@
 import fcntl
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -10,6 +11,41 @@ from test_apx_environment_switch_v1 import load_runner, load_switch_service
 GEN = '97014bb7-aa82-41fd-aaff-2833e2e41033'
 
 class ReturnRecoveryTests(unittest.TestCase):
+    def test_getty_mask_is_reapplied_unless_systemd_confirms_it_is_masked_and_inactive(self):
+        runner = load_runner()
+        show = ("systemctl", "show", "-p", "LoadState", "-p", "ActiveState", "getty@tty1.service")
+        mask = ("systemctl", "mask", "--runtime", "--now", "getty@tty1.service")
+        with tempfile.TemporaryDirectory() as directory:
+            link = Path(directory) / "getty@tty1.service"
+            with mock.patch.object(runner, "HOST_GETTY_RUNTIME_MASK", link), \
+                 mock.patch.object(runner, "run") as run:
+                runner.hide_host_getty()
+                run.assert_called_once_with(mask, False)
+                run.reset_mock()
+
+                link.symlink_to("/other")
+                runner.hide_host_getty()
+                run.assert_called_once_with(mask, False)
+                link.unlink()
+                link.symlink_to("/dev/null")
+
+                for code, load, active, reapply in (
+                    (0, "masked", "inactive", False),
+                    (0, "masked", "active", True),
+                    (0, "loaded", "inactive", True),
+                    (1, "masked", "inactive", True),
+                ):
+                    with self.subTest(code=code, load=load, active=active):
+                        run.reset_mock()
+                        run.return_value = subprocess.CompletedProcess(
+                            show, code, f"LoadState={load}\nActiveState={active}\n"
+                        )
+                        runner.hide_host_getty()
+                        expected = [mock.call(show, False)]
+                        if reapply:
+                            expected.append(mock.call(mask, False))
+                        self.assertEqual(run.call_args_list, expected)
+
     def test_lock_presence_is_not_supervisor_liveness(self):
         service = load_switch_service()
         with tempfile.TemporaryDirectory() as directory:

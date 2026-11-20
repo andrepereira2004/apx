@@ -1,6 +1,8 @@
 import importlib.machinery
 import importlib.util
 from pathlib import Path
+import io
+from contextlib import redirect_stdout
 import unittest
 from unittest.mock import patch
 import subprocess
@@ -32,11 +34,39 @@ class BatteryNotifications(unittest.TestCase):
         for percent in (11,10,9,10):state,event=m.transition(state,percent,True);self.assertIsNone(event)
 
     def test_alert_only_changes_profile_after_action_click(self):
-        responses = [subprocess.CompletedProcess([],0,'power-save',''),
-                     subprocess.CompletedProcess([],0,'{}',''),subprocess.CompletedProcess([],0)]
-        with patch.object(m.Path,'is_file',return_value=True), patch.object(m.subprocess,'run',side_effect=responses) as run:
-            m.notify(20,19)
-            self.assertEqual(run.call_args_list[1].args[0][-2:],['platform-set','low-power'])
-        with patch.object(m.Path,'is_file',return_value=True), patch.object(m.subprocess,'run',return_value=subprocess.CompletedProcess([],0,'','')) as run:
-            m.notify(10,10)
-            self.assertEqual(run.call_count,1)
+        balanced = subprocess.CompletedProcess(
+            [], 0, '{"platform_profile":"balanced","platform_profiles":["balanced","low-power"]}', '')
+        low_power = subprocess.CompletedProcess(
+            [], 0, '{"platform_profile":"low-power","platform_profiles":["balanced","low-power"]}', '')
+        clicked = subprocess.CompletedProcess([], 0, 'power-save', '')
+        dismissed = subprocess.CompletedProcess([], 0, '', '')
+        for responses, expected_output in (
+            ([balanced, clicked, balanced], 'power-save\n'),
+            ([balanced, clicked, low_power], ''),
+            ([balanced, dismissed], ''),
+        ):
+            output = io.StringIO()
+            with self.subTest(responses=responses), patch.object(m.Path, 'is_file', return_value=True), \
+                    patch.object(m.subprocess, 'run', side_effect=responses) as run, redirect_stdout(output):
+                m.notify(20, 19)
+                commands = [call.args[0] for call in run.call_args_list]
+                self.assertIn('--action=power-save=Ativar baixo consumo', commands[1])
+                self.assertEqual(len(commands), len(responses))
+                self.assertEqual(output.getvalue(), expected_output)
+
+    def test_alert_omits_action_when_low_power_is_active_or_unavailable(self):
+        for status in (
+            '{"platform_profile":"low-power","platform_profiles":["balanced","low-power"]}',
+            '{"platform_profile":"balanced","platform_profiles":["balanced"]}',
+            'invalid JSON',
+        ):
+            for level, percent in ((20, 19), (10, 10)):
+                responses = [subprocess.CompletedProcess([], 0, status, ''),
+                             subprocess.CompletedProcess([], 0, '', '')]
+                with self.subTest(status=status, level=level), patch.object(m.Path, 'is_file', return_value=True), \
+                        patch.object(m.subprocess, 'run', side_effect=responses) as run:
+                    m.notify(level, percent)
+                    command = run.call_args.args[0]
+                    self.assertFalse(any(arg.startswith('--action=') for arg in command))
+                    self.assertNotIn('modo de baixo consumo', command[-1])
+                    self.assertIn(f'{percent}% de bateria.', command[-1])

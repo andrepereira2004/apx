@@ -52,11 +52,13 @@ def run(arguments: tuple[str, ...]) -> subprocess.CompletedProcess[str]:
 
 
 def plan(action: str, target: str, description: str = "", preset: str = "intermediate",
-         modules: str = "") -> dict[str, object]:
+         modules: str = "", icon: str | None = None) -> dict[str, object]:
     arguments = (APX, "environment", action + "-plan", target)
     if action == "create":
         arguments += ("--role", "graphical-base", "--description", description,
                       "--desktop-preset", preset, "--desktop-modules", modules)
+        if icon is not None:
+            arguments += ("--icon", icon)
     value = json.loads(run(arguments).stdout)
     if type(value) is not dict or not re.fullmatch(r"[0-9a-f]{64}", str(value.get("digest", ""))):
         raise RuntimeError("o plano APX devolvido é inválido")
@@ -80,6 +82,7 @@ def main() -> int:
     parser.add_argument("--desktop-preset", default="intermediate",
                         choices=("basic", "intermediate", "complete"))
     parser.add_argument("--desktop-modules", default="")
+    parser.add_argument("--icon")
     parser.add_argument("--system", default="arch", choices=("arch", "windows11", "ubuntu"))
     parser.add_argument("--lock-token", required=True)
     arguments = parser.parse_args()
@@ -110,7 +113,7 @@ def main() -> int:
             else arguments.desktop_preset
         modules = "system" if action == "create" and arguments.system != "arch" \
             else arguments.desktop_modules
-        operation_plan = plan(action, target, arguments.description, preset, modules)
+        operation_plan = plan(action, target, arguments.description, preset, modules, arguments.icon)
         if action == "destroy" and operation_plan.get("generation") != arguments.generation:
             raise RuntimeError("o Environment selecionado mudou; atualiza a lista")
         write_state(action, target, "applying", 28,

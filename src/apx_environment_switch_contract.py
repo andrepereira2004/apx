@@ -35,6 +35,10 @@ SYSTEM_KINDS = ("arch", "windows-native")
 NATIVE_WINDOWS_SIZES_GIB = (120, 180, 250)
 
 
+def valid_icon_name(value: object) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", value) is not None
+
+
 def valid_description(value: object) -> bool:
     return type(value) is str and len(value) <= 120 \
         and value == value.strip() and not any(ord(character) < 32 for character in value)
@@ -54,8 +58,11 @@ def request_bytes(
     display_name: str | None = None,
     icon: str | None = None,
 ) -> bytes:
-    if icon is not None and (operation != "environment.update-metadata"
-            or not isinstance(icon, str) or icon not in ENVIRONMENT_ICONS):
+    if icon is not None and not (
+        (operation == "environment.update-metadata" and isinstance(icon, str) and icon in ENVIRONMENT_ICONS)
+        or (operation == "environment.create" and system_kind in (None, "arch")
+            and valid_icon_name(icon))
+    ):
         raise ValueError("invalid Environment icon")
     if operation not in OPERATIONS:
         raise ValueError("unsupported Environment-switch operation")
@@ -164,6 +171,11 @@ def parse_message(data: bytes) -> dict[str, object]:
     elif operation in {"switch.to-workload", "native.boot", "environment.create"}:
         target = payload.get("target") if type(payload) is dict else None
         expected = {"description", "modules", "preset", "size_gib", "system_kind", "target"} if operation == "environment.create" else {"target"}
+        if operation == "environment.create" and "icon" in payload:
+            expected.add("icon")
+            icon = payload["icon"]
+            if payload.get("system_kind") != "arch" or not valid_icon_name(icon):
+                raise ValueError("invalid Environment icon")
         description = payload.get("description") if type(payload) is dict else None
         if set(payload) != expected or type(target) is not str or NAME.fullmatch(target) is None or target == "hub" \
                 or (operation == "environment.create" and not valid_description(description)):

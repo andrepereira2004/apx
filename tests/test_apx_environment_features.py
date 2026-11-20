@@ -3,6 +3,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -20,16 +21,15 @@ class EnvironmentFeaturesTests(unittest.TestCase):
         module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
         return module
 
-    def test_catalogue_has_three_presets_and_twenty_modules(self):
+    def test_standard_presets_keep_their_default_modules(self):
         self.assertEqual(tuple(subject.PRESETS), ("basic", "intermediate", "complete"))
-        self.assertEqual(len(subject.MODULES), 20)
         self.assertEqual(subject.PRESETS["basic"], ("system", "cli-aur"))
         self.assertEqual(len(subject.PRESETS["intermediate"]), 17)
         for module in ("multimedia", "communication", "printing-scanning"):
             self.assertIn(module, subject.PRESETS["intermediate"])
         for module in ("office", "development"):
             self.assertNotIn(module, subject.PRESETS["intermediate"])
-        self.assertEqual(subject.PRESETS["complete"], tuple(m for m in subject.MODULES if m != "iphone-integration"))
+        self.assertEqual(subject.PRESETS["complete"], tuple(m for m in subject.MODULES if m not in subject.OPTIONAL_MODULES))
         self.assertIn("files", subject.PRESETS["intermediate"])
         self.assertIn("files", subject.PRESETS["complete"])
         self.assertEqual(set(subject.local_packages_for(["office"])), {"brave-bin", "gridcraft", "wordcraft", "deckcraft"})
@@ -73,6 +73,68 @@ class EnvironmentFeaturesTests(unittest.TestCase):
         for values in ([], ["unknown"], "system"):
             with self.assertRaises(ValueError):
                 subject.normalize_modules(values)
+
+    def test_minecraft_backup_tool_is_an_optional_local_package(self):
+        module = "minecraft-backups"
+        self.assertTrue(all(module not in preset for preset in subject.PRESETS.values()))
+        self.assertIn("python-numpy", subject.packages_for([module]))
+        self.assertIn("salvador-de-mundos-apx", subject.local_packages_for([module]))
+        self.assertNotIn("salvador-de-mundos-apx", subject.local_packages_for(["steam", "hytale"]))
+        self.assertEqual(self.runtime().LOCAL_PACKAGE_MANIFESTS["salvador-de-mundos-apx"],
+                         "salvador-de-mundos-apx-v1.json")
+
+    def test_work_template_tools_and_brave_in_all_templates(self):
+        root = Path(__file__).resolve().parents[1]
+        shell = (root / "config/environment-shell-v1/quickshell/apx/shell.qml").read_text()
+        templates = dict(re.findall(r'\{ name: "(\w+)", title: "[^"]+", icon: "[^"]+", extra: (\[[^\]]*\])', shell))
+        self.assertEqual(set(templates), {"minecraft", "steam", "hytale", "faculdade", "trabalho", "financas"})
+        for extras in templates.values():
+            modules = subject.PRESETS["intermediate"] + tuple(json.loads(extras))
+            self.assertIn("brave-bin", subject.local_packages_for(modules))
+            self.assertGreater(subject.estimated_mib(modules), 0)
+        work = json.loads(templates["trabalho"])
+        self.assertTrue({"iphone-integration", "messaging", "chatgpt"} <= set(work))
+        self.assertIn("localsend-bin", subject.local_packages_for(work))
+        self.assertNotIn("study-tools", work)
+        for name in ("faculdade", "trabalho"):
+            self.assertIn("chatgpt-bin", subject.local_packages_for(json.loads(templates[name])))
+
+    def test_template_apps_are_provisioned_before_the_environment_is_published(self):
+        runtime = self.runtime()
+        self.assertNotIn("prismlauncher", subject.packages_for(["minecraft"]))
+        self.assertTrue({"jupyterlab", "texlive-langportuguese"} <= set(subject.packages_for(["study-tools"])))
+        self.assertTrue(all(not (set(preset) & set(subject.APPLICATION_MODULES))
+                            for preset in subject.PRESETS.values()))
+        ready = mock.Mock(stdout="running\n")
+        stopped = mock.Mock(stdout="inactive\n")
+        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(runtime.os, "chown"), \
+                mock.patch.object(runtime, "host_nvidia_version", return_value="610.43.03"), \
+                mock.patch.object(runtime, "run", side_effect=[None, None, ready, None, None, stopped, None]) as run:
+            root = Path(temporary)
+            home = root / "home/apx"
+            (home / ".local/bin").mkdir(parents=True)
+            runtime.install_environment_applications(root, home, list(subject.PRESETS["intermediate"]))
+            run.assert_not_called()
+            runtime.install_environment_applications(root, home, ["hytale", "steam", "minecraft"])
+            calls = [call.args[0] for call in run.call_args_list]
+            self.assertEqual(calls[0][1], "apply")
+            self.assertIn("--private-users-ownership=chown", calls[1])
+            self.assertIn("--private-network", calls[1])
+            self.assertIn(f"--bind={home.parent}:/home:idmap", calls[1])
+            self.assertIn("--uid=apx", calls[3])
+            self.assertIn("--setenv=FLATPAK_GL_DRIVERS=nvidia-610-43-03:default", calls[3])
+            self.assertEqual(calls[3][-3:], ["minecraft", "steam", "hytale"])
+            self.assertEqual(calls[4][:2], ["systemctl", "stop"])
+            self.assertEqual(calls[-1][1], "remove")
+            launcher = home / ".local/bin/apx-template-launch-app"
+            self.assertTrue(os.access(launcher, os.X_OK))
+            self.assertIn("APPIMAGE_EXTRACT_AND_RUN=1", launcher.read_text())
+        self.assertIn("Launcher Minecraft (Java)", subject.APPLICATION_INSTALL_SCRIPT)
+        self.assertIn("Launcher Minecraft (Bedrock)", subject.APPLICATION_INSTALL_SCRIPT)
+        self.assertIn("launcher.mojang.com/download/Minecraft.tar.gz", subject.APPLICATION_INSTALL_SCRIPT)
+        self.assertIn("update.code.visualstudio.com/", subject.APPLICATION_INSTALL_SCRIPT)
+        self.assertIn("flatpak install --user --noninteractive flathub com.valvesoftware.Steam",
+                      subject.APPLICATION_INSTALL_SCRIPT)
 
     def test_graphical_creation_never_restores_retired_face_auth(self):
         runtime = self.runtime()

@@ -1,3 +1,40 @@
+## Encerramento e suspensão pela tampa — 2026-11-18
+
+O proprietário reportou ecrã preto ao voltar a ligar e autorizou a correção.
+Os registos de 18/11 mostram poweroff às 19:21:55 seguido de Lid closed e
+suspensão às 19:21:57–58; status.json guardou recusa de PowerOff por suspensão
+já em curso. Outra tentativa falhou na recuperação de tty1 após suspensão.
+O runner instalado adquire systemd-inhibit sleep:handle-lid-switch antes de
+fechar a sessão e mantém a proteção durante a transição. Suspensão explícita
+conserva a sessão. Em erro após iniciar o encerramento, liberta o lock e pede
+arranque do supervisor do Hub, preservando o estado failed e o erro original.
+Não se relaxaram verificações de identidade, recuperação ou máquinas restantes.
+
+19 testes passaram (10 físicos/fluxo, 9 contrato); aquisição real do inibidor
+verificada sem ação de energia. Fonte e runner instalado idênticos; backup em
+`/var/lib/apx/backups/20261118-power-suspend-race/`. Não foi executado poweroff,
+reboot nem suspensão para preservar a sessão. A confirmação física num ciclo
+completo permanece pendente; não se afirma resolução de todos os ecrãs pretos.
+Sem commit/push.
+
+## Correção do pedido sobre animação — 2026-11-18
+
+O proprietário esclareceu que quer conservar a animação das janelas dos
+terminais. Removida a regra no_anim adicionada nesta tarefa, na fonte, seed
+e cinco homes; pins e recuperação sincronizados. Apenas a animação do texto
+APX permanece removida; recolha de informação continua exclusivamente manual.
+
+# Terminais sem animação e recolha só manual — 2026-11-18
+
+SUPER+Q/SUPER+H têm regra de janela sem animação. Removidas as pausas do
+logótipo/dados; o painel lê apenas a cache, sem renovação no arranque ou por
+idade. `apx-atualizar-info` atualiza manualmente a informação local (não instala
+pacotes). Recuperada a alteração anterior do Minecraft para fonte, seed e cinco
+homes; pins e recuperação sincronizados. Host console já não executava recolha.
+Reload do compositor sem erros; oito testes seed e verificação de cache antiga/
+ausente passaram. Aceitação visual pendente. Evidência e backup:
+`audit/2026-11-18-terminal-startup/README.md`. Sem commit/push.
+
 # Compressão APX, Rofi, bateria e Vanilla - BEJA — concluído, 2026-11-16
 
 O menu «Comprimir» tem agora janela APX própria, com nome/formato/destino,

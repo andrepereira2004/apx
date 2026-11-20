@@ -23,6 +23,7 @@ NEXT_ENVIRONMENT = Path("/run/apx/environment-switch-next-v1.json")
 HUB = "/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py"
 GENERAL = "/usr/lib/apx/apx-graphical-environment-v1.py"
 FAILSAFE_UNIT = "apx-environment-switch-failsafe-v1"
+HOST_GETTY_RUNTIME_MASK = Path("/run/systemd/system/getty@tty1.service")
 
 
 def transition_screen(message: str, progress: int) -> None:
@@ -52,6 +53,17 @@ def hide_host_getty() -> None:
     # immediately pull the prompt back in while a graphical handoff is still
     # running.  A runtime-only mask follows the supervised GUI chain and is
     # removed when APX genuinely returns to the Host console.
+    try:
+        runtime_masked = HOST_GETTY_RUNTIME_MASK.readlink() == Path("/dev/null")
+    except OSError:
+        runtime_masked = False
+    if runtime_masked:
+        # Masking again reloads systemd even when the runtime link is unchanged.
+        state = run(("systemctl", "show", "-p", "LoadState", "-p", "ActiveState", "getty@tty1.service"), False)
+        if state.returncode == 0 and set(state.stdout.splitlines()) == {
+            "LoadState=masked", "ActiveState=inactive"
+        }:
+            return
     run(("systemctl", "mask", "--runtime", "--now", "getty@tty1.service"), False)
 
 

@@ -157,8 +157,6 @@ start_desktop_service '[/]apx-removable-bookmark-v1([[:space:]]|$)' \
     /home/apx/.local/bin/apx-removable-bookmark-v1 --watch
 start_desktop_service '[/]apx-removable-notifications-v1([[:space:]]|$)' \
     /home/apx/.local/bin/apx-removable-notifications-v1
-start_desktop_service '[/]apx-battery-notifications-v1([[:space:]]|$)' \
-    /home/apx/.local/bin/apx-battery-notifications-v1
 
 # Keep the Environment-local file manager ready without blocking shell startup.
 # The existing Thunar daemon exits with this Environment session.

@@ -10,6 +10,9 @@ import threading
 import time
 
 
+LOW_POWER = 'low-power'
+
+
 def transition(state, percent, discharging):
     updated = {'warned20': bool(state.get('warned20', False)), 'warned10': bool(state.get('warned10', False))}
     # Hysteresis rearms after real recovery, not percentage jitter.
@@ -43,27 +46,46 @@ def save_state(path, state):
     finally: Path(temporary).unlink(missing_ok=True)
 
 
+def power_profile(helper):
+    try:
+        result = subprocess.run([str(helper), 'hardware-status'], capture_output=True,
+                                text=True, timeout=12, check=True)
+        status = json.loads(result.stdout)
+        if isinstance(status, dict):
+            return status
+    except (OSError, subprocess.SubprocessError, ValueError) as error:
+        detail = getattr(error, 'stderr', None)
+        print('APX battery profile: ' + (detail.strip() if detail else str(error)), flush=True)
+    return {}
+
+
 def notify(level, percent):
     critical = level == 10
     title = 'Bateria crítica' if critical else 'Bateria fraca'
-    body = (str(percent) + '% de bateria. Liga o carregador para continuar.' if critical else
-            str(percent) + '% de bateria. Podes ativar o modo de baixo consumo.')
     helper = Path.home()/'.local/libexec/apx-system-power-client-v1.py'
+    status = power_profile(helper) if helper.is_file() else {}
+    current = status.get('platform_profile')
+    profiles = status.get('platform_profiles')
+    offer_action = (isinstance(current, str) and bool(current) and current != LOW_POWER
+                    and isinstance(profiles, list) and LOW_POWER in profiles)
+    body = f'{percent}% de bateria.'
+    if critical:
+        body += ' Liga o carregador para continuar.'
+    elif offer_action:
+        body += ' Podes ativar o modo de baixo consumo.'
     command = ['/usr/bin/notify-send', '-a', 'Bateria e Energia', '-i',
                'battery-caution' if critical else 'battery-low', '-u',
-               'critical' if critical else 'normal', '-t', '20000' if critical else '12000', '--wait']
-    if helper.is_file(): command.append('--action=power-save=Ativar baixo consumo')
+               'critical' if critical else 'normal', '-t', '20000' if critical else '12000']
+    if offer_action:
+        command.extend(['--wait', '--action=power-save=Ativar baixo consumo'])
     result = subprocess.run(command + [title, body], capture_output=True, text=True, check=False)
     if result.returncode:
         print('APX battery notification failed: ' + result.stderr.strip(), flush=True)
         return
-    if result.stdout.strip() == 'power-save':
-        # Only a deliberate button click invokes the already authenticated
-        # APX power-profile control; alerts never change the profile themselves.
-        action = subprocess.run([str(helper), 'platform-set', 'low-power'], capture_output=True, text=True, timeout=20, check=False)
-        subprocess.run(['/usr/bin/notify-send', '-a', 'Bateria e Energia', '-i', 'battery-low',
-                        'Baixo consumo ativado' if action.returncode == 0 else 'Não foi possível ativar o baixo consumo',
-                        'Perfil Poupar energia selecionado.' if action.returncode == 0 else 'Abre Bateria e Energia para escolher o perfil.'], check=False)
+    if offer_action and result.stdout.strip() == 'power-save':
+        # The profile may have changed while this notification was on screen.
+        if power_profile(helper).get('platform_profile') != LOW_POWER:
+            print('power-save', flush=True)
 
 
 def main():

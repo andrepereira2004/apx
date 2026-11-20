@@ -10,6 +10,7 @@ import os
 import re
 from pathlib import Path
 import signal
+import sys
 import subprocess
 import time
 
@@ -102,7 +103,20 @@ def recover_active_workload():
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(); parser.add_argument("--action", required=True, choices=("reboot", "poweroff", "suspend")); args = parser.parse_args()
+    parser = argparse.ArgumentParser(); parser.add_argument("--action", required=True, choices=("reboot", "poweroff", "suspend"))
+    parser.add_argument("--sleep-inhibited", action="store_true", help=argparse.SUPPRESS)
+    args = parser.parse_args()
+    if args.action != "suspend" and not args.sleep_inhibited:
+        # Acquire before closing any graphical session. The low-level lid lock
+        # is required because logind normally ignores sleep inhibitors for lids.
+        return subprocess.run((
+            "/usr/bin/systemd-inhibit", "--what=sleep:handle-lid-switch",
+            "--mode=block", "--who=APX power transition",
+            "--why=Finishing coordinated power transition", "--",
+            sys.executable, str(Path(__file__).resolve()), "--action", args.action,
+            "--sleep-inhibited",
+        ), check=False).returncode
+    closing = False
     LOCK.touch(mode=0o600, exist_ok=True); descriptor = os.open(LOCK, os.O_RDWR | os.O_NOFOLLOW)
     try:
         fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB); RESERVATION.unlink(missing_ok=True)
@@ -112,6 +126,7 @@ def main() -> int:
             atomic({"schema": 1, "profile": "apx-system-power-v1", "state": "committed", "action": args.action})
             run(("/usr/bin/loginctl", "suspend")); return 0
         atomic({"schema": 1, "profile": "apx-system-power-v1", "state": "closing-environment", "action": args.action})
+        closing = True
         time.sleep(2); quiesce_hub_launcher(); recover_active_workload(); run((HUB_RECOVERY, "--recover"))
         machines = subprocess.run(("/usr/bin/machinectl", "list", "--no-legend"), text=True, capture_output=True, check=False)
         if machines.returncode or machines.stdout.strip(): raise RuntimeError("an Environment survived coordinated shutdown")
@@ -120,6 +135,15 @@ def main() -> int:
     except Exception as error:
         RESERVATION.unlink(missing_ok=True)
         atomic({"schema": 1, "profile": "apx-system-power-v1", "state": "failed", "action": args.action, "error": str(error)[:500]})
+        if closing:
+            # Release the transition lock before the launcher reconciles any
+            # partially stopped Environment and restores the graphical Hub.
+            fcntl.flock(descriptor, fcntl.LOCK_UN)
+            result = subprocess.run(("/usr/bin/systemctl", "--no-block", "start", HUB_AUTOSTART_UNIT),
+                                    text=True, capture_output=True, check=False)
+            if result.returncode:
+                print("APX power failure: Hub recovery could not be queued: " + result.stderr[-500:],
+                      file=sys.stderr)
         raise
     finally: os.close(descriptor)
 

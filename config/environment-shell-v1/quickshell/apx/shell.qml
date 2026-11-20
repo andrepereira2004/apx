@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Qt.labs.folderlistmodel
 import QtCore
 import QtQuick.Window
 import QtQuick.Effects
@@ -332,7 +333,7 @@ ShellRoot {
     property string environmentEditIcon: "box"
     readonly property var environmentIconChoices: ["box", "monitor", "terminal", "book-open", "swords", "shield-check", "globe", "folder", "cpu", "music", "camera", "paintbrush", "pickaxe", "hexagon", "zap", "satellite-dish", "calculator", "calendar-days", "book-a", "keyboard", "mouse", "touchpad", "gpu", "hard-drive", "usb", "video", "audio-lines", "mic", "leaf", "scale", "ghost", "package", "package-open", "folder-open", "square-stack", "layout-dashboard", "layout-grid", "settings", "lock-keyhole", "plane", "gamepad-2", "joystick", "trophy", "dice-5", "target", "rocket", "puzzle", "medal"]
     function environmentIcon(item) {
-        return item && environmentIconChoices.indexOf(item.icon) >= 0 ? item.icon : "box"
+        return item && typeof item.icon === "string" && /^[a-z0-9-]{1,64}$/.test(item.icon) ? item.icon : "box"
     }
     readonly property string activeEnvironmentIcon: isHub ? "graph-star" : environmentIcon(environmentIdentity)
     property string environmentSystemKind: "arch"
@@ -356,7 +357,41 @@ ShellRoot {
         stderr: StdioCollector { onStreamFinished: { if (text.trim()) root.environmentSwitchError = text.trim() } }
     }
     property string environmentDesktopPreset: "intermediate"
-    property bool environmentCreateCustomizeOpen: false
+    property string environmentCreatePage: ""
+    property string environmentDraftIcon: "box"
+    property string environmentIconSearch: ""
+    property int environmentIconPage: 0
+    onEnvironmentIconSearchChanged: environmentIconPage = 0
+    FolderListModel {
+        id: environmentLucideFiles
+        folder: Qt.resolvedUrl("icons/lucide")
+        nameFilters: ["*.svg"]
+        showDirs: false
+        sortField: FolderListModel.Name
+    }
+    readonly property var environmentMatchingIcons: {
+        var query = environmentIconSearch.toLowerCase().trim()
+        var names = []
+        for (var i = 0; i < environmentLucideFiles.count; ++i) {
+            var name = environmentLucideFiles.get(i, "fileBaseName")
+            if (name && name.indexOf(query) >= 0) names.push(name)
+        }
+        return names
+    }
+    readonly property int environmentCreateIconFocus: environmentCreateModelMenuFocus + 1
+    readonly property int environmentCreateIconChoiceBase: environmentCreateIconFocus + 1
+    property int environmentTemplateIndex: 0
+    property string environmentSuggestedName: ""
+    property string environmentSuggestedDescription: ""
+    readonly property var environmentTemplates: [
+        { name: "", title: "Sem modelo", icon: "square-dashed-plus", extra: [], detail: "" },
+        { name: "minecraft", title: "Minecraft", icon: "pickaxe", extra: ["minecraft", "gaming-chat", "minecraft-backups"], detail: "Launcher Minecraft (Java), Launcher Minecraft (Bedrock), DreNinja Salvador de Mundos, Discord e Brave." },
+        { name: "steam", title: "Steam", icon: "joystick", extra: ["steam", "gaming-chat"], detail: "Steam, suporte gráfico para jogos, Discord e Brave." },
+        { name: "hytale", title: "Hytale", icon: "swords", extra: ["hytale", "gaming-chat"], detail: "Hytale Launcher, Discord e Brave. Usa a NVIDIA ao abrir o jogo se o APX estiver em modo híbrido." },
+        { name: "faculdade", title: "Faculdade", icon: "zap", extra: ["office", "mail", "development", "iphone-integration", "study-tools", "messaging", "chatgpt"], detail: "ArtCraft, Thunderbird, Zotero, JupyterLab, Visual Studio Code, TeX Live, ChatGPT, LocalSend, ZapZap e Brave." },
+        { name: "trabalho", title: "Trabalho", icon: "briefcase-business", extra: ["office", "mail", "iphone-integration", "messaging", "chatgpt"], detail: "ArtCraft, Thunderbird, LocalSend, ZapZap, ChatGPT e Brave. Inclui leitura de PDFs, impressão e ferramentas para videochamadas." },
+        { name: "financas", title: "Finanças", icon: "banknote", extra: [], detail: "Base APX com Brave, pronta para adicionares as tuas aplicações." }
+    ]
     property string environmentFeatureDrawer: ""
     property string environmentFeatureInfo: ""
     property var environmentSelectedModules: ({})
@@ -377,17 +412,27 @@ ShellRoot {
         { key: "multimedia", label: "Vídeo, áudio e codecs", detail: "Reproduzir formatos multimédia comuns.", programs: "INSTALA · MPV, FFmpeg, GStreamer codecs", mib: 240, deps: ["desktop-integration", "audio", "graphics"] },
         { key: "office", label: "Documentos, folhas e apresentações", detail: "Suite ArtCraft nativa para Linux, sem Wine ou login Microsoft.", programs: "INSTALA · WordCraft, GridCraft, DeckCraft", mib: 220, deps: ["desktop-integration", "locale-input"] },
         { key: "communication", label: "Câmara e videochamadas", detail: "Ferramentas de diagnóstico para webcam e vídeo.", programs: "INSTALA · v4l-utils", mib: 55, deps: ["desktop-integration", "network", "audio", "graphics"] },
-        { key: "iphone-integration", label: "Partilha com iPhone e iPad", detail: "LocalSend para ficheiros, fotos e texto. Requer ligar o dispositivo numa rede autorizada.", programs: "INSTALA · LocalSend", mib: 90, deps: ["desktop-integration", "network"] },
+        { key: "iphone-integration", label: "Partilha com iPhone e iPad", detail: "LocalSend para ficheiros, fotos e texto. Requer ligar o dispositivo numa rede autorizada.", programs: "INSTALA · LocalSend", mib: 90, deps: ["desktop-integration", "network"], optional: true },
         { key: "printing-scanning", label: "Impressoras e scanners", detail: "Configurar, imprimir e digitalizar documentos.", programs: "INSTALA · CUPS, SANE, Simple Scan, system-config-printer", mib: 145, deps: ["desktop-integration", "network", "devices-storage"] },
         { key: "development", label: "Programação e containers", detail: "Compilar software, desenvolver em várias linguagens e usar containers.", programs: "INSTALA · CMake, Ninja, Node.js, npm, Podman, pip, Rust", mib: 1150, deps: ["cli-aur"] },
-        { key: "shortcuts", label: "Atalhos APX", detail: "Abrir rapidamente o controlo, calendário, bateria e Environments.", programs: "BASE · ponte de atalhos SUPER+A/B/D/E", mib: 8, deps: ["graphical"] }
+        { key: "shortcuts", label: "Atalhos APX", detail: "Abrir rapidamente o controlo, calendário, bateria e Environments.", programs: "BASE · ponte de atalhos SUPER+A/B/D/E", mib: 8, deps: ["graphical"] },
+        { key: "minecraft", label: "Minecraft", detail: "Launcher oficial Mojang e BedrockOnLinux.", programs: "Launcher Minecraft (Java), Launcher Minecraft (Bedrock)", mib: 200, deps: ["desktop-integration", "network", "audio", "graphics"], optional: true },
+        { key: "steam", label: "Steam", detail: "Cliente Steam e suporte gráfico de 32 e 64 bits fornecido pelo Flatpak.", programs: "Steam (Flatpak)", mib: 4500, deps: ["desktop-integration", "network", "audio", "graphics"], optional: true },
+        { key: "hytale", label: "Hytale", detail: "Launcher com Wayland. Em modo híbrido, abre na NVIDIA.", programs: "Hytale Launcher (Flatpak)", mib: 3000, deps: ["desktop-integration", "network", "audio", "graphics"], optional: true },
+        { key: "mail", label: "Correio eletrónico", detail: "Configura as tuas contas depois de entrar no Environment.", programs: "Thunderbird", mib: 260, deps: ["desktop-integration", "network"], optional: true },
+        { key: "gaming-chat", label: "Discord", detail: "Mensagens e conversas por voz.", programs: "Discord", mib: 300, deps: ["communication"], optional: true },
+        { key: "study-tools", label: "Ferramentas de estudo", detail: "Referências, notebooks, programação e documentos LaTeX.", programs: "Zotero, JupyterLab, Visual Studio Code, TeX Live", mib: 3000, deps: ["desktop-integration", "network"], optional: true },
+        { key: "messaging", label: "ZapZap", detail: "Cliente de WhatsApp para Linux.", programs: "ZapZap (Flatpak)", mib: 800, deps: ["communication"], optional: true },
+        { key: "minecraft-backups", label: "Backups de mundos Minecraft", detail: "Cópias de segurança e recuperação de mundos Java e Bedrock.", programs: "DreNinja Salvador de Mundos", mib: 24, deps: ["desktop-integration"], optional: true },
+        { key: "chatgpt", label: "ChatGPT", detail: "Aplicação de desktop usada na Faculdade.", programs: "ChatGPT Desktop", mib: 1850, deps: ["web-documents"], optional: true }
     ]
     readonly property var environmentModuleGroups: [
         { key: "base", label: "1 · SISTEMA E AMBIENTE DE TRABALHO", description: "Terminal, janelas, idioma e integração do desktop", modules: ["system", "cli-aur", "graphical", "desktop-integration", "locale-input"] },
         { key: "hardware", label: "2 · INTERNET, SOM E DISPOSITIVOS", description: "Rede, Bluetooth, áudio, gráficos, bateria e USB", modules: ["network", "bluetooth", "audio", "graphics", "power", "devices-storage"] },
         { key: "daily", label: "3 · APLICAÇÕES DO DIA A DIA", description: "Ficheiros, browser, PDF, vídeo e codecs", modules: ["files", "web-documents", "multimedia"] },
-        { key: "extras", label: "4 · TRABALHO E FERRAMENTAS AVANÇADAS", description: "ArtCraft, iPhone, câmara, impressão e programação", modules: ["office", "communication", "iphone-integration", "printing-scanning", "development"] },
-        { key: "accessibility", label: "5 · ACESSIBILIDADE E ATALHOS", description: "Atalhos globais para abrir os menus APX", modules: ["shortcuts"] }
+        { key: "extras", label: "4 · TRABALHO E FERRAMENTAS AVANÇADAS", description: "ArtCraft, iPhone, câmara, impressão e programação", modules: ["office", "communication", "iphone-integration", "printing-scanning", "development", "mail", "study-tools", "messaging", "chatgpt"] },
+        { key: "accessibility", label: "5 · ACESSIBILIDADE E ATALHOS", description: "Atalhos globais para abrir os menus APX", modules: ["shortcuts"] },
+        { key: "games", label: "Jogos e Discord", modules: ["minecraft", "steam", "hytale", "gaming-chat", "minecraft-backups"] }
     ]
     property bool environmentKeyboardFocus: false
     property int environmentFocusIndex: -1
@@ -421,7 +466,7 @@ ShellRoot {
     readonly property string environmentClient: "/run/apx/environment-switch-client-v1.py"
     readonly property string environmentLabel: isHub ? "Hub" : String(environmentIdentity.display_name || environmentIdentity.name || "Environment")
     readonly property int environmentPopupHeight: !isHub ? 214
-        : (environmentCreateOpen ? (environmentSystemKind === "windows-native" && nativeCreationPreview.target ? 620 : 540) + (environmentManagementBusy ? 42 : 0)
+        : (environmentCreateOpen ? (environmentSystemKind === "arch" ? (environmentCreatePage === "features" ? 650 : 580) : (nativeCreationPreview.target ? 620 : 540)) + (environmentManagementBusy ? 42 : 0)
            : (environmentEditOpen ? 430
            : 200 + Math.max(1, environmentCatalog.length) * 51
              + (environmentDeleteConfirm ? 88 : 0) + (environmentManagementBusy ? 42 : 0)
@@ -1332,6 +1377,8 @@ ShellRoot {
     readonly property int menuMetaSize: Appearance.metaSize
     readonly property int environmentCreateModuleFocusBase: 9 + environmentModuleGroups.length
     readonly property int environmentCreateSubmitFocusIndex: environmentCreateModuleFocusBase + environmentModuleCatalog.length
+    readonly property int environmentCreateTemplateFocusBase: environmentCreateSubmitFocusIndex + 1
+    readonly property int environmentCreateModelMenuFocus: environmentCreateTemplateFocusBase + environmentTemplates.length
     // Hyprland renders the display at 150%. Present the control centre at a
     // 125% physical compromise: readable on the internal panel while keeping
     // every common 16px icon aligned to an integer 20-device-pixel target.
@@ -2710,7 +2757,15 @@ ShellRoot {
         environmentDraftName = ""
         environmentDraftDescription = ""
         environmentSystemKind = "arch"
-        environmentCreateCustomizeOpen = false
+        environmentCreatePageAnimation.stop()
+        environmentCreatePageProgress = 1
+        environmentCreatePageOffset = 0
+        environmentCreatePage = ""
+        environmentDraftIcon = "box"
+        environmentIconSearch = ""
+        environmentTemplateIndex = 0
+        environmentSuggestedName = ""
+        environmentSuggestedDescription = ""
         applyEnvironmentPreset("intermediate")
         environmentFeatureDrawer = ""
         environmentFeatureInfo = ""
@@ -2789,8 +2844,9 @@ ShellRoot {
                                               "--target", selectedEnvironmentName,
                                               "--generation", selectedEnvironmentGeneration,
                                               "--display-name", title,
-                                              "--description", description,
-                                              "--icon", environmentEditIcon]
+                                              "--description", description]
+        if (environmentEditIcon !== environmentIcon(environmentSelection()))
+            environmentMetadataProcess.command.push("--icon", environmentEditIcon)
         environmentMetadataProcess.running = true
     }
 
@@ -2826,19 +2882,62 @@ ShellRoot {
         return -1
     }
 
+    property string environmentCreateNextPage: ""
+    property real environmentCreatePageProgress: 1
+    property real environmentCreatePageOffset: 0
+    property int environmentCreatePageDirection: 1
+
+    function showEnvironmentCreatePage(page) {
+        if (environmentCreatePageAnimation.running || page === environmentCreatePage) return
+        environmentCreateNextPage = page
+        environmentCreatePageDirection = page ? 1 : -1
+        environmentMenu.forceActiveFocus()
+        environmentCreatePageAnimation.restart()
+    }
+
+    SequentialAnimation {
+        id: environmentCreatePageAnimation
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "environmentCreatePageProgress"; to: 0; duration: 90; easing.type: Easing.InQuad }
+            NumberAnimation { target: root; property: "environmentCreatePageOffset"; to: -root.environmentCreatePageDirection * 10; duration: 90; easing.type: Easing.InQuad }
+        }
+        ScriptAction { script: {
+            var previous = root.environmentCreatePage
+            root.environmentCreatePage = root.environmentCreateNextPage
+            root.environmentCreateFocusIndex = root.environmentCreatePage ? 0 : (previous === "models" ? root.environmentCreateModelMenuFocus : previous === "icons" ? root.environmentCreateIconFocus : 5)
+            menuFlick.contentY = 0
+            root.environmentCreatePageOffset = root.environmentCreatePageDirection * 10
+        } }
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "environmentCreatePageProgress"; to: 1; duration: 190; easing.type: Easing.OutCubic }
+            NumberAnimation { target: root; property: "environmentCreatePageOffset"; to: 0; duration: 190; easing.type: Easing.OutCubic }
+        }
+    }
+
     function environmentCreateVisibleFocusIndices() {
-        var indices = [0, 1, 2, 3, 4]
-        if (environmentSystemKind === "windows-native") indices.push(6, 7, 8)
-        else {
-            indices.push(5)
-            if (environmentCreateCustomizeOpen) environmentModuleGroups.forEach(function(group, groupIndex) {
-                indices.push(9 + groupIndex)
+        if (environmentCreatePage === "icons") {
+            return [0, 1, 2, 3].concat(environmentMatchingIcons.slice(environmentIconPage * 60, (environmentIconPage + 1) * 60).map(function(_icon, index) {
+                return environmentCreateIconChoiceBase + index
+            }))
+        }
+        if (environmentCreatePage === "models") {
+            return [0].concat(environmentTemplates.map(function(_template, index) {
+                return environmentCreateTemplateFocusBase + index
+            }))
+        }
+        if (environmentCreatePage === "features") {
+            var features = [0]
+            environmentModuleGroups.forEach(function(group, groupIndex) {
+                features.push(9 + groupIndex)
                 if (environmentFeatureDrawer === group.key) group.modules.forEach(function(key) {
-                    var moduleIndex = environmentModuleIndex(key)
-                    if (moduleIndex >= 0) indices.push(environmentCreateModuleFocusBase + moduleIndex)
+                    features.push(environmentCreateModuleFocusBase + environmentModuleIndex(key))
                 })
             })
+            return features
         }
+        var indices = [0, 1, 2, 3, 4]
+        if (environmentSystemKind === "windows-native") indices.push(6, 7, 8)
+        else indices.push(environmentCreateModelMenuFocus, environmentCreateIconFocus, 5)
         indices.push(environmentCreateSubmitFocusIndex)
         return indices
     }
@@ -2861,18 +2960,14 @@ ShellRoot {
             environmentCreateFocusIndex = 3 + ((focusIndex - 3 + direction + 2) % 2)
         } else if (focusIndex >= 6 && focusIndex <= 8) {
             environmentCreateFocusIndex = 6 + ((focusIndex - 6 + direction + 3) % 3)
-        } else if (focusIndex >= environmentCreateModuleFocusBase && focusIndex < environmentCreateSubmitFocusIndex) {
-            var moduleIndex = focusIndex - environmentCreateModuleFocusBase
-            for (var groupIndex = 0; groupIndex < environmentModuleGroups.length; ++groupIndex) {
-                var modules = environmentModuleGroups[groupIndex].modules
-                var position = modules.indexOf(environmentModuleCatalog[moduleIndex].key)
-                if (position < 0) continue
-                var neighbour = position + direction
-                if (neighbour >= 0 && neighbour < modules.length
-                        && Math.floor(neighbour / 2) === Math.floor(position / 2))
-                    environmentCreateFocusIndex = environmentCreateModuleFocusBase + environmentModuleIndex(modules[neighbour])
-                break
-            }
+        } else if (environmentCreatePage === "models" && focusIndex >= environmentCreateTemplateFocusBase) {
+            var templateIndex = focusIndex - environmentCreateTemplateFocusBase
+            var neighbourTemplate = templateIndex + direction
+            if (neighbourTemplate >= 0 && neighbourTemplate < environmentTemplates.length
+                    && Math.floor(neighbourTemplate / 2) === Math.floor(templateIndex / 2))
+                environmentCreateFocusIndex = environmentCreateTemplateFocusBase + neighbourTemplate
+        } else if (environmentCreatePage === "features" && focusIndex >= environmentCreateModuleFocusBase && focusIndex < environmentCreateSubmitFocusIndex) {
+            setEnvironmentModule(environmentModuleCatalog[focusIndex - environmentCreateModuleFocusBase].key, direction > 0)
         }
         environmentMenu.forceActiveFocus()
     }
@@ -2884,7 +2979,20 @@ ShellRoot {
     function activateEnvironmentCreateFocus() {
         var focusIndex = environmentCreateFocusIndex
         if (focusIndex < 0) return
-        if (focusIndex === 0) { cancelEnvironmentCreate(); return }
+        if (focusIndex === 0) {
+            if (environmentCreatePage) showEnvironmentCreatePage("")
+            else cancelEnvironmentCreate()
+            return
+        }
+        if (environmentCreatePage === "icons") {
+            if (focusIndex === 1) environmentIconSearchInput.forceActiveFocus()
+            else if (focusIndex === 2) environmentIconPage = Math.max(0, environmentIconPage - 1)
+            else if (focusIndex === 3 && (environmentIconPage + 1) * 60 < environmentMatchingIcons.length) ++environmentIconPage
+            else if (focusIndex >= environmentCreateIconChoiceBase)
+                pickEnvironmentCreationIcon(environmentMatchingIcons[environmentIconPage * 60 + focusIndex - environmentCreateIconChoiceBase])
+            return
+        }
+        if (focusIndex === environmentCreateIconFocus) { showEnvironmentCreatePage("icons"); return }
         if (focusIndex === 1) { environmentNameInput.forceActiveFocus(); return }
         if (focusIndex === 2) { environmentDescriptionInput.forceActiveFocus(); return }
         if (focusIndex >= 3 && focusIndex <= 4) {
@@ -2894,14 +3002,19 @@ ShellRoot {
             return
         }
         if (focusIndex === 5 && environmentSystemKind === "arch") {
-            environmentCreateCustomizeOpen = !environmentCreateCustomizeOpen
+            showEnvironmentCreatePage("features")
             return
         }
         if (focusIndex >= 6 && focusIndex <= 8 && environmentSystemKind === "windows-native") {
             environmentNativeWindowsSizeGib = [120, 180, 250][focusIndex - 6]
             return
         }
-        if (focusIndex >= 9 && focusIndex <= 13) {
+        if (focusIndex === environmentCreateModelMenuFocus) { showEnvironmentCreatePage("models"); return }
+        if (focusIndex >= environmentCreateTemplateFocusBase) {
+            applyEnvironmentTemplate(focusIndex - environmentCreateTemplateFocusBase)
+            return
+        }
+        if (focusIndex >= 9 && focusIndex < environmentCreateModuleFocusBase) {
             var group = environmentModuleGroups[focusIndex - 9]
             environmentFeatureDrawer = environmentFeatureDrawer === group.key ? "" : group.key
             environmentFeatureInfo = ""
@@ -2916,7 +3029,11 @@ ShellRoot {
     }
 
     function handleEnvironmentCreateKey(event) {
-        if (event.key === Qt.Key_Escape) cancelEnvironmentCreate()
+        if (environmentCreatePageAnimation.running) { event.accepted = true; return }
+        if (event.key === Qt.Key_Escape) {
+            if (environmentCreatePage) showEnvironmentCreatePage("")
+            else cancelEnvironmentCreate()
+        }
         else if (event.key === Qt.Key_Up) moveEnvironmentCreateVertical(-1)
         else if (event.key === Qt.Key_Down) moveEnvironmentCreateVertical(1)
         else if (event.key === Qt.Key_Left) moveEnvironmentCreateHorizontal(-1)
@@ -2930,8 +3047,8 @@ ShellRoot {
 
     function environmentPresetKeys(preset) {
         if (preset === "basic") return ["system", "cli-aur"]
-        if (preset === "complete") return environmentModuleCatalog.filter(function(item) { return item.key !== "iphone-integration" }).map(function(item) { return item.key })
-        return environmentModuleCatalog.filter(function(item) { return item.key !== "office" && item.key !== "development" && item.key !== "iphone-integration" }).map(function(item) { return item.key })
+        if (preset === "complete") return environmentModuleCatalog.filter(function(item) { return !item.optional }).map(function(item) { return item.key })
+        return environmentModuleCatalog.filter(function(item) { return !item.optional && item.key !== "office" && item.key !== "development" }).map(function(item) { return item.key })
     }
 
     function applyEnvironmentPreset(preset) {
@@ -2939,6 +3056,33 @@ ShellRoot {
         environmentPresetKeys(preset).forEach(function(key) { next[key] = true })
         environmentDesktopPreset = preset
         environmentSelectedModules = next
+    }
+
+    function pickEnvironmentCreationIcon(name) {
+        if (!name) return
+        environmentDraftIcon = name
+        showEnvironmentCreatePage("")
+    }
+
+    function applyEnvironmentTemplate(index) {
+        if (index === environmentTemplateIndex) return
+        var template = environmentTemplates[index]
+        var suggestion = template.name
+        for (var suffix = 2; suggestion && environmentCatalog.some(function(item) { return item.name === suggestion }); ++suffix)
+            suggestion = template.name + "-" + suffix
+        if (!environmentDraftName || environmentDraftName === environmentSuggestedName)
+            environmentDraftName = suggestion
+        if (!environmentDraftDescription || environmentDraftDescription === environmentSuggestedDescription)
+            environmentDraftDescription = template.name ? template.title : ""
+        environmentSuggestedName = suggestion
+        environmentSuggestedDescription = template.name ? template.title : ""
+        if (environmentDraftIcon === (environmentTemplates[environmentTemplateIndex].name ? environmentTemplates[environmentTemplateIndex].icon : "box"))
+            environmentDraftIcon = template.name ? template.icon : "box"
+        environmentTemplateIndex = index
+        applyEnvironmentPreset("intermediate")
+        template.extra.forEach(function(key) { setEnvironmentModule(key, true) })
+        environmentFeatureDrawer = ""
+        environmentFeatureInfo = ""
     }
 
     function setEnvironmentModule(key, enabled) {
@@ -3084,6 +3228,7 @@ ShellRoot {
             ? selectedEnvironmentModuleKeys()
             : ["system"]
         environmentActionProcess.command = [root.environmentClient, "create", "--target", name,
+                                            "--icon", environmentDraftIcon,
                                             "--description", visibleDescription.trim(),
                                             "--preset", requestedPreset,
                                             "--modules", requestedModules.join(","),
@@ -3373,12 +3518,23 @@ ShellRoot {
         return "Indisponível"
     }
 
-    function setPlatformProfile(profile) {
-        if (hardwareBusy) return
+    function notifyBatteryPowerResult(applied) {
+        Quickshell.execDetached(["/usr/bin/notify-send", "-a", "Bateria e Energia", "-i", "battery-low",
+            applied ? "Baixo consumo ativado" : "Não foi possível ativar o baixo consumo",
+            applied ? "Perfil Poupar energia selecionado." : "Abre Bateria e Energia para escolher o perfil."])
+    }
+
+    function setPlatformProfile(profile, fromBatteryAlert) {
+        if (hardwareBusy) {
+            if (fromBatteryAlert && platformProfileTarget !== profile)
+                notifyBatteryPowerResult(false)
+            return
+        }
         hardwareBusy = true
         platformProfileTarget = profile
         platformProfileError = ""
         hardwareMessage = ""
+        platformProfileProcess.fromBatteryAlert = Boolean(fromBatteryAlert)
         platformProfileProcess.command = ["/home/apx/.local/libexec/apx-system-power-client-v1.py", "platform-set", profile]
         platformProfileProcess.running = true
     }
@@ -3840,6 +3996,18 @@ ShellRoot {
         stdout: StdioCollector { onStreamFinished: root.applyBatteryReport(text) }
     }
 
+    // Keep the power client a direct QuickShell child, including in the Hub.
+    Process {
+        command: ["/home/apx/.local/bin/apx-battery-notifications-v1"]
+        running: true
+        stdout: SplitParser {
+            onRead: function(data) {
+                if (data === "power-save") root.setPlatformProfile("low-power", true)
+                else console.info(data)
+            }
+        }
+    }
+
     Process {
         id: hardwareProfileProcess
         property double readStarted: 0
@@ -3869,11 +4037,13 @@ ShellRoot {
     Process {
         id: platformProfileProcess
         property string response: ""
+        property bool fromBatteryAlert: false
         onStarted: response = ""
         stderr: StdioCollector { onStreamFinished: root.platformProfileError = text.trim() }
         stdout: StdioCollector { onStreamFinished: platformProfileProcess.response = text }
         onExited: (exitCode, exitStatus) => {
             root.hardwareBusy = false
+            let applied = false
             try {
                 if (exitCode !== 0) throw new Error("command failed")
                 var result = JSON.parse(response)
@@ -3881,11 +4051,13 @@ ShellRoot {
                 root.hardwareProfile = Object.assign({}, root.hardwareProfile, result)
                 root.applyHardwareControls(result)
                 root.hardwareMessage = ""
+                applied = true
             } catch (error) {
                 root.platformProfileError = root.platformProfileError || "Não foi possível aplicar o modo de energia."
                 root.hardwareMessage = root.platformProfileError
             }
             root.platformProfileTarget = ""
+            if (fromBatteryAlert) root.notifyBatteryPowerResult(applied)
         }
     }
 
@@ -5002,22 +5174,36 @@ ShellRoot {
         property bool infoVisible: false
         signal activated()
         signal infoRequested()
-        height: infoVisible ? 72 : 34
-        radius: 7
-        color: keyboardFocused ? root.controlButtonActive : ((checked ? root.controlButtonActive : root.controlButtonSurface))
-        border.width: 0
-        Rectangle {
-            anchors.left: parent.left; anchors.leftMargin: 10; anchors.top: parent.top; anchors.topMargin: 8
-            width: 18; height: 18; radius: 5
-            color: featureCard.checked ? root.controlButtonActive : root.controlButtonSurface
-            border.width: 1; border.color: "#52656d"
-            Text { renderType: Text.QtRendering; anchors.centerIn: parent; text: featureCard.checked ? "✓" : ""; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; font.weight: Font.Normal }
+        Accessible.role: Accessible.CheckBox
+        Accessible.name: label
+        Accessible.checkable: true
+        Accessible.checked: checked
+        Accessible.onPressAction: activated()
+        implicitHeight: featureText.implicitHeight + 18
+        height: implicitHeight
+        radius: Appearance.menuActionRadius
+        color: keyboardFocused || featureMouse.containsMouse ? root.controlButtonActive : root.controlButtonSurface
+        Column {
+            id: featureText
+            anchors.left: parent.left; anchors.leftMargin: 14
+            anchors.right: indicator.left; anchors.rightMargin: 14
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 3
+            Text { width: parent.width; text: featureCard.label; color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize; wrapMode: Text.WordWrap }
+            Text { width: parent.width; visible: featureCard.infoVisible; text: featureCard.detail; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; wrapMode: Text.WordWrap }
+            Text { width: parent.width; visible: featureCard.infoVisible; text: featureCard.programs; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; wrapMode: Text.WordWrap }
         }
-        Text { renderType: Text.QtRendering; anchors.left: parent.left; anchors.leftMargin: 36; anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: parent.top; anchors.topMargin: 9; text: featureCard.label; color: featureCard.checked ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; elide: Text.ElideRight }
-        Text { renderType: Text.QtRendering; visible: featureCard.infoVisible; anchors.left: parent.left; anchors.leftMargin: 10; anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: parent.top; anchors.topMargin: 31; text: featureCard.detail; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; elide: Text.ElideRight }
-        Text { renderType: Text.QtRendering; visible: featureCard.infoVisible; anchors.left: parent.left; anchors.leftMargin: 10; anchors.right: parent.right; anchors.rightMargin: 10; anchors.bottom: parent.bottom; anchors.bottomMargin: 8; text: featureCard.programs; color: featureCard.programs.indexOf("INSTALA") === 0 ? root.textMain : "#73929a"; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize; font.weight: Font.Normal; elide: Text.ElideRight }
-        SelectionIndicator { visible: featureCard.checked }
-        BounceMouseArea { id: featureMouse; anchors.fill: parent; acceptedButtons: Qt.LeftButton; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: featureCard.activated() }
+        Rectangle {
+            id: indicator
+            anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
+            width: 20; height: 20; radius: 5
+            color: "transparent"
+            border.width: 1
+            border.color: featureCard.checked ? root.textMain : root.controlButtonOutline
+            LucideIcon { anchors.centerIn: parent; width: 14; height: 14; name: "check"; visible: featureCard.checked }
+
+        }
+        BounceMouseArea { id: featureMouse; anchors.fill: parent; outlineEnabled: false; acceptedButtons: Qt.LeftButton; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: featureCard.activated() }
         MouseArea { anchors.fill: parent; acceptedButtons: Qt.RightButton; cursorShape: Qt.WhatsThisCursor; onClicked: featureCard.infoRequested() }
     }
 
@@ -5032,10 +5218,20 @@ ShellRoot {
     }
 
     Variants {
+        id: wallpaperVariants
         model: Quickshell.screens
 
         PanelWindow {
+            id: background
             required property var modelData
+            property bool firstFrame: false
+            readonly property bool animateArrival: Quickshell.env("APX_ANIMATE_HANDOFF") === "1"
+            readonly property bool arrivalReady: root.startupWallpaperRevealed
+                && (desktopWallpaper.status === Image.Ready || desktopWallpaper.status === Image.Error
+                    || (desktopWallpaper.status === Image.Null && String(desktopWallpaper.source) === ""))
+            property bool arrivalStarted: false
+            onArrivalReadyChanged: if (arrivalReady) arrivalStarted = true
+            Component.onCompleted: if (arrivalReady) arrivalStarted = true
             screen: modelData
             anchors { top: true; bottom: true; left: true; right: true }
             exclusionMode: ExclusionMode.Ignore
@@ -5064,6 +5260,9 @@ ShellRoot {
             }
             Image {
                 id: desktopWallpaper
+                // Decode in parallel, but leave the black surface visible
+                // until the first frame of the existing bar fade.
+                visible: root.startupWallpaperRevealed
                 anchors.fill: parent
                 source: root.currentWallpaper
                 fillMode: Appearance.wallpaperFit === "fit" ? Image.PreserveAspectFit
@@ -5077,47 +5276,7 @@ ShellRoot {
                 asynchronous: true
                 retainWhileLoading: true
                 cache: true
-        id: wallpaperVariants
             }
-        }
-    }
-            id: background
-
-            property bool firstFrame: false
-            readonly property bool animateArrival: Quickshell.env("APX_ANIMATE_HANDOFF") === "1"
-            readonly property bool arrivalReady: root.startupWallpaperRevealed
-                && (desktopWallpaper.status === Image.Ready || desktopWallpaper.status === Image.Error
-                    || (desktopWallpaper.status === Image.Null && String(desktopWallpaper.source) === ""))
-            property bool arrivalStarted: false
-            onArrivalReadyChanged: if (arrivalReady) arrivalStarted = true
-            Component.onCompleted: if (arrivalReady) arrivalStarted = true
-    Variants {
-        id: barVariants
-        model: Quickshell.screens
-        PanelWindow {
-        id: screenBar
-        required property var modelData
-        screen: modelData
-        Component.onDestruction: {
-            if (root.selectedBar === screenBar) {
-                root.closePopup()
-                root.selectedBar = null
-            }
-        }
-                // Decode in parallel, but leave the black surface visible
-                // until the first frame of the existing bar fade.
-                visible: root.startupWallpaperRevealed
-        property alias calendarButton: calendarButton
-        property alias environmentButton: environmentButton
-        property alias batteryButton: batteryButton
-        property alias mediaButton: mediaIsland
-        readonly property real ghostWidth: ghostGreeting.width
-        readonly property real workspaceWidth: workspaceStrip.width
-        property alias appsButton: appsButton
-        property alias filesButton: filesButton
-        property alias controlCenterButton: controlCenterButton
-        anchors { top: true; left: true; right: true }
-        // Share outer edges with tiled application windows.
             Rectangle {
                 id: arrivalCurtain
                 anchors.fill: parent
@@ -5129,17 +5288,17 @@ ShellRoot {
                     NumberAnimation { duration: 420; easing.type: Easing.InOutSine }
                 }
             }
-        margins { left: Appearance.desktopEdgeInset; right: Appearance.desktopEdgeInset }
-        implicitHeight: 46
-        exclusiveZone: 46
-        color: "transparent"
-        // Top panels are covered by fullscreen clients; Overlay is not.
-        WlrLayershell.layer: popup.open || environmentAppsProcess.running ? WlrLayer.Overlay : WlrLayer.Top
-        // APX shared launcher pointer focus: Hyprland hits only exclusive surfaces while Rofi owns focus.
-        WlrLayershell.keyboardFocus: environmentAppsProcess.running ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-        Shortcut {
+        }
+    }
+
+    Variants {
+        id: barVariants
+        model: Quickshell.screens
+        PanelWindow {
+        id: screenBar
+        required property var modelData
         property bool firstFrame: false
-            sequence: "Escape"
+        screen: modelData
         Connections {
             target: screenBar.contentItem.Window.window
             enabled: !screenBar.firstFrame
@@ -5148,11 +5307,42 @@ ShellRoot {
                 else if (!root.startupBarVisible && !startupBarDeadline.running) startupBarDeadline.start()
             }
         }
+        Component.onDestruction: {
+            if (root.selectedBar === screenBar) {
+                root.closePopup()
+                root.selectedBar = null
+            }
+        }
+        property alias calendarButton: calendarButton
+        property alias environmentButton: environmentButton
+        property alias batteryButton: batteryButton
+        property alias mediaButton: mediaIsland
+        readonly property real ghostWidth: ghostGreeting.width
+        readonly property real workspaceWidth: workspaceStrip.width
+        property alias appsButton: appsButton
+        property alias filesButton: filesButton
+        property alias controlCenterButton: controlCenterButton
+        anchors { top: true; left: true; right: true }
+        // Share outer edges with tiled application windows.
+        margins { left: Appearance.desktopEdgeInset; right: Appearance.desktopEdgeInset }
+        implicitHeight: 46
+        exclusiveZone: 46
+        color: "transparent"
+        contentItem.opacity: root.startupBarOpacity
+        mask: root.startupBarOpacity > 0 ? null : startupBarInputMask
+        Region { id: startupBarInputMask }
+        // Top panels are covered by fullscreen clients; Overlay is not.
+        WlrLayershell.layer: popup.open || environmentAppsProcess.running ? WlrLayer.Overlay : WlrLayer.Top
+        // APX shared launcher pointer focus: Hyprland hits only exclusive surfaces while Rofi owns focus.
+        WlrLayershell.keyboardFocus: environmentAppsProcess.running ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+        Shortcut {
+            sequence: "Escape"
             enabled: environmentAppsProcess.running
             onActivated: environmentAppsProcess.running = false
         }
 
         Rectangle {
+            visible: root.startupBarVisible
             anchors.fill: parent
             anchors.topMargin: 5
             anchors.bottomMargin: 5
@@ -5169,9 +5359,6 @@ ShellRoot {
 
             Row {
                 id: leftActions
-        contentItem.opacity: root.startupBarOpacity
-        mask: root.startupBarOpacity > 0 ? null : startupBarInputMask
-        Region { id: startupBarInputMask }
                 Rectangle {
                     parent: leftActions.parent
                     x: leftActions.x; y: leftActions.y; width: leftActions.width; height: leftActions.height
@@ -5183,7 +5370,6 @@ ShellRoot {
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 6
-            visible: root.startupBarVisible
                 BarButton {
                     id: calendarButton
                     outlineHost: screenBar.contentItem
@@ -6545,7 +6731,7 @@ ShellRoot {
                 MenuHeader {
                     id: scrollingMenuHeader
                     visible: root.popupKind !== "calendar" && !popupBackground.splitControls
-                    title: root.popupKind === "media" ? "Reprodução" : root.popupKind === "battery" ? (root.batteryDisplayedDetailsOpen ? "Detalhes e gráficos" : "Bateria e Energia") : (root.popupKind === "controls" ? (root.renderedControls.controlsActivityKind === "notifications" ? "Notificações" : root.renderedControls.shortcutsOpen ? "Lista de Atalhos" : (root.renderedControls.controlsMoreOpen ? (root.renderedControls.controlsAppearanceOpen ? "Personalização" : (root.renderedControls.controlsActivityKind === "trackpad" ? "Trackpad" : (root.renderedControls.controlsActivityKind === "mouse" ? "Rato" : "Mais opções"))) : "Central de Controlo")) : (root.popupKind === "environments" ? (root.environmentCreateOpen ? "Criar environment" : "Environments") : "[ " + root.popupKind.toUpperCase() + " Control ]"))
+                    title: root.popupKind === "media" ? "Reprodução" : root.popupKind === "battery" ? (root.batteryDisplayedDetailsOpen ? "Detalhes e gráficos" : "Bateria e Energia") : (root.popupKind === "controls" ? (root.renderedControls.controlsActivityKind === "notifications" ? "Notificações" : root.renderedControls.shortcutsOpen ? "Lista de Atalhos" : (root.renderedControls.controlsMoreOpen ? (root.renderedControls.controlsAppearanceOpen ? "Personalização" : (root.renderedControls.controlsActivityKind === "trackpad" ? "Trackpad" : (root.renderedControls.controlsActivityKind === "mouse" ? "Rato" : "Mais opções"))) : "Central de Controlo")) : (root.popupKind === "environments" ? (root.environmentCreateOpen ? (root.environmentCreatePage === "models" ? "Modelos predefinidos" : root.environmentCreatePage === "icons" ? "Escolher ícone" : root.environmentCreatePage === "features" ? "Personalizar funcionalidades" : "Criar environment") : "Environments") : "[ " + root.popupKind.toUpperCase() + " Control ]"))
                 }
 
                 Column {
@@ -6906,7 +7092,10 @@ ShellRoot {
                     Column {
                         id: environmentCreationForm
                         width: parent.width; spacing: 10
-                        visible: root.isHub && root.environmentCreateOpen
+                        visible: root.isHub && root.environmentCreateOpen && !root.environmentCreatePage
+                        enabled: !environmentCreatePageAnimation.running
+                        opacity: 0.18 + 0.82 * root.environmentCreatePageProgress
+                        transform: Translate { x: root.environmentCreatePageOffset }
                         MenuButton {
                             width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
                             alignedIcon: true; iconName: "chevron-left"; label: "Voltar aos environments"
@@ -6921,6 +7110,7 @@ ShellRoot {
                                 LucideIcon { anchors.centerIn: parent; width: Appearance.menuGlyphSize; height: width; name: "book-a" }
                             }
                             Text { renderType: Text.QtRendering; x: Appearance.menuLabelInset; anchors.verticalCenter: parent.verticalCenter; text: "Nome"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                            TapHandler { onTapped: environmentNameInput.forceActiveFocus() }
                             TextInput {
                                 id: environmentNameInput
                                 x: Appearance.menuLabelInset + 90; anchors.verticalCenter: parent.verticalCenter; width: parent.width - Appearance.menuLabelInset - 104; height: 22; verticalAlignment: TextInput.AlignVCenter
@@ -6943,6 +7133,7 @@ ShellRoot {
                                 LucideIcon { anchors.centerIn: parent; width: Appearance.menuGlyphSize; height: width; name: "book-open" }
                             }
                             Text { renderType: Text.QtRendering; x: Appearance.menuLabelInset; anchors.verticalCenter: parent.verticalCenter; text: "Descrição"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
+                            TapHandler { onTapped: environmentDescriptionInput.forceActiveFocus() }
                             TextInput {
                                 id: environmentDescriptionInput
                                 x: Appearance.menuLabelInset + 90; anchors.verticalCenter: parent.verticalCenter; width: parent.width - Appearance.menuLabelInset - 104; height: 22; verticalAlignment: TextInput.AlignVCenter
@@ -6976,6 +7167,16 @@ ShellRoot {
                                 onActivated: { root.environmentCreateFocusIndex = 4; root.environmentSystemKind = "windows-native"; if (!root.environmentDraftName.length || root.environmentDraftName === "windows") root.environmentDraftName = "windows-2" }
                             }
                         }
+                        MenuButton {
+                            visible: root.environmentSystemKind === "arch"
+                            width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
+                            alignedIcon: true
+                            iconName: root.environmentTemplates[root.environmentTemplateIndex].icon
+                            label: "Modelo · " + root.environmentTemplates[root.environmentTemplateIndex].title
+                            keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateModelMenuFocus
+                            onActivated: root.showEnvironmentCreatePage("models")
+                            LucideIcon { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter; width: Appearance.menuGlyphSize; height: width; name: "chevron-right"; tint: root.textDim }
+                        }
                         Text { renderType: Text.QtRendering; visible: root.environmentSystemKind === "windows-native"; text: "Espaço para o Windows"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize }
                         Row {
                             visible: root.environmentSystemKind === "windows-native"; height: visible ? 44 : 0
@@ -6995,15 +7196,155 @@ ShellRoot {
                         MenuButton {
                             visible: root.environmentSystemKind === "arch"
                             width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
+                            alignedIcon: true; iconName: "paintbrush"; label: "Escolher ícone"
+                            keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateIconFocus
+                            onActivated: root.showEnvironmentCreatePage("icons")
+                            LucideIcon { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter; width: Appearance.menuGlyphSize; height: width; name: "chevron-right" }
+                        }
+                        MenuButton {
+                            visible: root.environmentSystemKind === "arch"
+                            width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
                             objectName: "createCustomize"
                             alignedIcon: true; iconName: "settings"; label: "Personalizar funcionalidades"
-                            selected: root.environmentCreateCustomizeOpen
                             keyboardFocused: root.environmentCreateFocusIndex === 5
-                            onActivated: { root.environmentCreateFocusIndex = 5; root.environmentCreateCustomizeOpen = !root.environmentCreateCustomizeOpen; environmentMenu.forceActiveFocus() }
-                            LucideIcon { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter; width: Appearance.menuGlyphSize; height: width; name: "chevron-right"; rotation: root.environmentCreateCustomizeOpen ? 90 : 0; tint: root.textDim }
+                            onActivated: root.showEnvironmentCreatePage("features")
+                            LucideIcon { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter; width: Appearance.menuGlyphSize; height: width; name: "chevron-right"; tint: root.textDim }
+                        }
+                        Text { renderType: Text.QtRendering;
+                            width: parent.width; wrapMode: Text.WordWrap; color: root.textDim
+                            font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
+                            visible: root.environmentSystemKind === "windows-native"
+                            text: "O Windows atual é preservado. Verifica o espaço antes de continuar."
+                        }
+                        Text { renderType: Text.QtRendering;
+                            visible: root.environmentSystemKind === "windows-native" && !!root.nativeCreationPreview.target
+                            width: parent.width
+                            text: root.nativeCreationPreview.target ? ("Windows atual: " + root.nativeCreationPreview.existing_windows_gib + " GiB · Novo: " + root.nativeCreationPreview.size_gib + " GiB · APX: " + root.nativeCreationPreview.apx_gib + " GiB\n" + root.nativeCreationPreview.message) : ""
+                            color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; wrapMode: Text.WordWrap
+                        }
+                        MenuButton { objectName: "createSubmit"; width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "check"; label: root.environmentSystemKind === "windows-native" ? (nativeCreationPreviewProcess.running ? "A verificar…" : (root.nativeCreationPreview.can_create === true ? "Preparar Windows" : "Verificar espaço")) : (root.environmentManagementBusy ? "A criar…" : "Criar environment"); accent: true; keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateSubmitFocusIndex; enabled: !root.environmentManagementBusy && !nativeCreationPreviewProcess.running && root.environmentDraftName.trim().length > 0; onActivated: { root.environmentCreateFocusIndex = root.environmentCreateSubmitFocusIndex; root.createEnvironment(environmentNameInput.text, environmentDescriptionInput.text) } }
+                    }
+
+                    Column {
+                        width: parent.width; spacing: 10
+                        visible: root.isHub && root.environmentCreateOpen && !!root.environmentCreatePage
+                        enabled: !environmentCreatePageAnimation.running
+                        opacity: 0.18 + 0.82 * root.environmentCreatePageProgress
+                        transform: Translate { x: root.environmentCreatePageOffset }
+                        MenuButton {
+                            width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
+                            alignedIcon: true; iconName: "chevron-left"; label: "Voltar à criação"
+                            keyboardFocused: root.environmentCreateFocusIndex === 0
+                            onActivated: root.showEnvironmentCreatePage("")
                         }
                         Column {
-                            visible: root.environmentSystemKind === "arch" && root.environmentCreateCustomizeOpen
+                            visible: root.environmentCreatePage === "icons"
+                            width: parent.width; spacing: 8
+                            TextField {
+                                id: environmentIconSearchInput
+                                width: parent.width; height: Appearance.menuActionHeight
+                                leftPadding: 44; rightPadding: 42
+                                placeholderText: "Pesquisar ícones"
+                                placeholderTextColor: root.textDim
+                                color: root.textMain
+                                selectionColor: root.controlButtonActive
+                                selectedTextColor: root.textMain
+                                font.family: Appearance.fontFamily
+                                font.pixelSize: root.menuBodySize
+                                background: Rectangle {
+                                    radius: Appearance.menuActionRadius
+                                    color: root.controlButtonSurface
+                                    border.width: environmentIconSearchInput.activeFocus ? 1 : 0
+                                    border.color: root.cyan
+                                }
+                                LucideIcon {
+                                    anchors.left: parent.left; anchors.leftMargin: 14
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: Appearance.menuGlyphSize; height: width; name: "search"; tint: root.textDim
+                                }
+                                MenuButton {
+                                    visible: environmentIconSearchInput.text.length > 0
+                                    anchors.right: parent.right; anchors.rightMargin: 5
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 32; height: 32; radius: 8
+                                    iconName: "x"; label: ""; Accessible.name: "Limpar pesquisa"
+                                    onActivated: {
+                                        root.environmentIconSearch = ""
+                                        environmentIconSearchInput.forceActiveFocus()
+                                    }
+                                }
+                                text: root.environmentIconSearch
+                                onTextEdited: root.environmentIconSearch = text
+                                onActiveFocusChanged: if (activeFocus) root.environmentCreateFocusIndex = 1
+                                Keys.onEscapePressed: root.showEnvironmentCreatePage("")
+                                Keys.onTabPressed: root.moveEnvironmentCreateFocus(1)
+                            }
+                            Grid {
+                                width: parent.width; columns: 8; spacing: 5
+                                Repeater {
+                                    model: root.environmentMatchingIcons.slice(root.environmentIconPage * 60, (root.environmentIconPage + 1) * 60)
+                                    delegate: MenuButton {
+                                        required property string modelData
+                                        required property int index
+                                        width: (parent.width - 35) / 8; height: Appearance.menuActionHeight
+                                        iconName: modelData; label: ""
+                                        Accessible.name: modelData
+                                        selected: root.environmentDraftIcon === modelData
+                                        keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateIconChoiceBase + index
+                                        onActivated: root.pickEnvironmentCreationIcon(modelData)
+                                    }
+                                }
+                            }
+                            Row {
+                                width: parent.width; spacing: 8
+                                MenuButton {
+                                    width: (parent.width - 8) / 2; height: Appearance.menuActionHeight
+                                    label: "Anterior"; iconName: "chevron-left"; enabled: root.environmentIconPage > 0
+                                    keyboardFocused: root.environmentCreateFocusIndex === 2
+                                    onActivated: --root.environmentIconPage
+                                }
+                                MenuButton {
+                                    width: (parent.width - 8) / 2; height: Appearance.menuActionHeight
+                                    label: "Seguinte"; iconName: "chevron-right"
+                                    enabled: (root.environmentIconPage + 1) * 60 < root.environmentMatchingIcons.length
+                                    keyboardFocused: root.environmentCreateFocusIndex === 3
+                                    onActivated: ++root.environmentIconPage
+                                }
+                            }
+                        }
+                        Column {
+                            visible: root.environmentCreatePage === "models"
+                            width: parent.width; spacing: 6
+                            Grid {
+                                width: parent.width
+                                columns: 2; columnSpacing: 8; rowSpacing: 6
+                                Repeater {
+                                    model: root.environmentTemplates
+                                    CreationChoice {
+                                        required property var modelData
+                                        required property int index
+                                        width: (parent.width - 8) / 2; height: Appearance.menuActionHeight
+                                        title: modelData.title; iconName: modelData.icon
+                                        selected: root.environmentTemplateIndex === index
+                                        keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateTemplateFocusBase + index
+                                        onActivated: {
+                                            root.environmentCreateFocusIndex = root.environmentCreateTemplateFocusBase + index
+                                            root.applyEnvironmentTemplate(index)
+                                            environmentMenu.forceActiveFocus()
+                                        }
+                                    }
+                                }
+                            }
+                            Text {
+                                renderType: Text.QtRendering
+                                width: parent.width; wrapMode: Text.WordWrap; color: root.textDim
+                                font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
+                                visible: root.environmentTemplateIndex > 0
+                                text: root.environmentTemplates[root.environmentTemplateIndex].detail
+                            }
+                        }
+                        Column {
+                            visible: root.environmentCreatePage === "features"
                             width: parent.width; spacing: 5
                             Repeater {
                                 model: root.environmentModuleGroups
@@ -7019,20 +7360,20 @@ ShellRoot {
                                         color: keyboardFocused ? root.controlButtonActive : (root.controlButtonSurface)
                                         border.width: keyboardFocused || root.environmentFeatureDrawer === modelData.key ? 1 : 0
                                         border.color: keyboardFocused ? root.cyan : root.controlButtonOutline
-                                        Text { renderType: Text.QtRendering; anchors.left: parent.left; anchors.leftMargin: 11; anchors.right: parent.right; anchors.rightMargin: 34; anchors.verticalCenter: parent.verticalCenter; text: ["Sistema e desktop", "Internet e dispositivos", "Aplicações do dia a dia", "Trabalho e programação", "Integrações"][featureGroup.index] || modelData.label; color: root.environmentFeatureDrawer === modelData.key ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; elide: Text.ElideRight }
+                                        Text { renderType: Text.QtRendering; anchors.left: parent.left; anchors.leftMargin: 11; anchors.right: parent.right; anchors.rightMargin: 34; anchors.verticalCenter: parent.verticalCenter; text: ["Sistema e desktop", "Internet e dispositivos", "Aplicações do dia a dia", "Trabalho e programação", "Integrações", "Jogos e Discord"][featureGroup.index] || modelData.label; color: root.environmentFeatureDrawer === modelData.key ? root.textMain : root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; elide: Text.ElideRight }
                                         Text { renderType: Text.QtRendering; font.family: Appearance.fontFamily; anchors.right: parent.right; anchors.rightMargin: 11; anchors.verticalCenter: parent.verticalCenter; text: root.environmentFeatureDrawer === modelData.key ? "▴" : "▾"; color: root.textDim; font.pixelSize: root.menuTitleSize }
                                         BounceMouseArea { id: featureDrawerMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.environmentCreateFocusIndex = 9 + featureGroup.index; root.environmentFeatureDrawer = root.environmentFeatureDrawer === modelData.key ? "" : modelData.key; root.environmentFeatureInfo = "" } }
                                     }
                                     Grid {
                                         visible: root.environmentFeatureDrawer === modelData.key
                                         width: parent.width
-                                        columns: 2; columnSpacing: 6; rowSpacing: 4
+                                        columns: 1; rowSpacing: 5
                                         Repeater {
                                             model: modelData.modules
                                             FeatureCard {
                                                 required property string modelData
                                                 property var moduleInfo: root.environmentModuleInfo(modelData)
-                                                width: (environmentMenu.width - 6) / 2
+                                                width: parent.width
                                                 label: moduleInfo.label
                                                 detail: moduleInfo.detail
                                                 programs: moduleInfo.programs
@@ -7047,19 +7388,6 @@ ShellRoot {
                                 }
                             }
                         }
-                        Text { renderType: Text.QtRendering;
-                            width: parent.width; wrapMode: Text.WordWrap; color: root.textDim
-                            font.family: Appearance.fontFamily; font.pixelSize: root.menuMetaSize
-                            visible: root.environmentSystemKind === "windows-native"
-                            text: "O Windows atual é preservado. Verifica o espaço antes de continuar."
-                        }
-                        Text { renderType: Text.QtRendering;
-                            visible: root.environmentSystemKind === "windows-native" && !!root.nativeCreationPreview.target
-                            width: parent.width
-                            text: root.nativeCreationPreview.target ? ("Windows atual: " + root.nativeCreationPreview.existing_windows_gib + " GiB · Novo: " + root.nativeCreationPreview.size_gib + " GiB · APX: " + root.nativeCreationPreview.apx_gib + " GiB\n" + root.nativeCreationPreview.message) : ""
-                            color: root.textMain; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; wrapMode: Text.WordWrap
-                        }
-                        MenuButton { objectName: "createSubmit"; width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; alignedIcon: true; iconName: "check"; label: root.environmentSystemKind === "windows-native" ? (nativeCreationPreviewProcess.running ? "A verificar…" : (root.nativeCreationPreview.can_create === true ? "Preparar Windows" : "Verificar espaço")) : (root.environmentManagementBusy ? "A criar…" : "Criar environment"); accent: true; keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateSubmitFocusIndex; enabled: !root.environmentManagementBusy && !nativeCreationPreviewProcess.running && root.environmentDraftName.trim().length > 0; onActivated: { root.environmentCreateFocusIndex = root.environmentCreateSubmitFocusIndex; root.createEnvironment(environmentNameInput.text, environmentDescriptionInput.text) } }
                     }
 
                     Rectangle {

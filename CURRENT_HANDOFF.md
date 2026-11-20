@@ -1,3 +1,155 @@
+## Acabamentos do seletor Lucide — instalado, 2026-11-20
+
+Escolher ícone usa um pincel fixo. A pesquisa segue a tipografia e a
+superfície do menu, com lupa e ação para limpar. As linhas de funcionalidades
+mostram seleção apenas na checkbox; o foco por teclado usa o fundo.
+QuickShell recarregou e o formulário abriu. QML e oito testes de seed
+passaram. Backup: `/var/lib/apx/backups/20261120T214329Z-icon-search-polish`.
+
+## Seletor Lucide no Hub — ativado, 2026-11-20
+
+Instalados o formulário, a seed, o executor e o serviço de criação.
+A QuickShell reiniciou e abriu o formulário na sessão ativa. O pacote
+Lucide completo está acessível aos menus do Hub. Sem criação real nesta
+ativação. Backup: `/var/lib/apx/backups/20261120T164002Z-environment-icon-picker`.
+
+## Escolha de ícone Lucide na criação APX — preparada, 2026-11-20
+
+Criar APX inclui a opção Escolher ícone, com pesquisa e páginas de 60
+no catálogo local. O nome validado acompanha o plano e fica na inscrição.
+Sem modelo usa square-dashed-plus. As funcionalidades voltaram a linhas
+simples com caixas de seleção; os detalhes ficam recolhidos.
+Verificados 50 testes focados, leitura dos 2 098 nomes pelo Qt,
+persistência no plano e seed. A Faculdade está ativa. Cliente e contrato
+preparados para o próximo Hub; interface e executor aguardam ativação.
+Candidato: `/var/lib/apx/backups/20261120T164002Z-environment-icon-picker`.
+
+## Modelo Finanças, submenus e catálogo Lucide — instalado, 2026-11-20
+
+Finanças usa banknote e a base APX com Brave. Sem modelo usa layout-grid e
+Trabalho usa briefcase-business. As páginas de criação usam a transição
+de saída/entrada (90/190 ms) da Central de Controlo, com movimento na
+direção do submenu e do regresso. As funcionalidades são linhas completas,
+com descrição visível e interruptor. Sintaxe, 20 testes e arranque real
+do formulário passaram. Interação com os submenus ainda por observar.
+
+Lucide 1.77.0 foi descarregado para `/usr/share/apx/icons/lucide-1.77.0`
+com 2 098 SVG e licença. Os ícones adicionais estão também disponíveis
+aos menus do Hub, preservando os seus SVG anteriores. A lista do seletor
+de ícones e a escolha de ícone durante criação continuam pendentes.
+Backup: `/var/lib/apx/backups/20261120T114433Z-finance-and-lucide-catalog`.
+
+## Submenus na criação do Hub — instalado, 2026-11-20
+
+Modelo e Personalizar funcionalidades abrem páginas próprias com regresso
+ao formulário e preservam o rascunho. Nome e Descrição recebem foco ao
+clicar em qualquer parte da linha. Interface e seed instaladas, pin do
+executor atualizado. Sintaxe QML, oito testes de seed e formulário principal
+no ecrã real verificados. Cliques nos campos não foram ensaiados.
+Backup: `/var/lib/apx/backups/20261120T114107Z-environment-create-submenus`.
+
+## Modelos visíveis na sessão ativa do Hub — confirmado, 2026-11-20
+
+A QuickShell anterior continuava a mostrar o formulário antigo. O supervisor
+relançou apenas a QuickShell do Hub. Abrir Criar e a captura do ecrã real
+confirmaram os cinco cartões com os ícones esperados.
+
+## Modelos no menu Criar do Hub — instalado, 2026-11-20
+
+Ativados os cinco modelos no Hub, na seed e no executor. O serviço de
+Environments reiniciou com o Hub ativo. A página de criação abriu através
+da QuickShell ativa. Os cartões usam os ícones atuais de Minecraft, Steam,
+Hytale e Faculdade. Trabalho usa o ícone de pasta escolhido para o modelo.
+Sem criação real nesta verificação. Cópia anterior e manifesto em
+`/var/lib/apx/backups/20261120T112644Z-environment-templates-chatgpt`.
+
+## ChatGPT Desktop nos modelos Faculdade e Trabalho — preparado, 2026-11-20
+
+Ambos os modelos instalam agora o pacote ChatGPT Desktop da Faculdade
+(chatgpt-bin 26.1103.60933-1). Assinatura original verificada e pacote fixado
+por SHA-256 no catálogo local. O catálogo normal de aplicações aplica
+o mesmo lançador de escala nativa. Contas e dados começam limpos.
+23 testes passaram. Ativação no Hub pendente. Candidato: `/var/lib/apx/backups/20261120T112644Z-environment-templates-chatgpt`.
+
+## Trabalho com ZapZap e ChatGPT e Brave nos cinco modelos — preparado, 2026-11-20
+
+Trabalho seleciona LocalSend, ZapZap e o atalho ChatGPT que abre numa janela
+própria do Brave. Faculdade mantém as três opções. Todos os cinco modelos
+incluem Brave através do pacote APX já previsto pelo módulo de sistema.
+Verificados 23 testes, os pacotes locais e a geração do atalho num home
+novo. Atualização preparada em `/var/lib/apx/backups/20261120T112434Z-environment-templates-work`. O Minecraft
+continua ativo e a ativação da página aguarda o regresso ao Hub.
+
+## DreNinja no modelo Minecraft — preparado, 2026-11-20
+
+O modelo Minecraft seleciona DreNinja Salvador de Mundos como funcionalidade
+editável. Usa o pacote local `salvador-de-mundos-apx` com a adaptação Linux
+que o proprietário já usa, mais as dependências do Python 3.14, GTK, NumPy
+e Brave. O empacotamento verifica a impressão digital só dos ficheiros
+necessários ao programa. Não inclui mundos, backups, definições, sessões,
+logs, perfis de navegador nem ficheiros de design. O pacote e o manifesto
+estão no catálogo de artefactos do Host, sem publicar o binário.
+
+A app inicia com um home vazio, cria a pasta de backups habitual e deteta
+a pasta Bedrock quando o jogo a cria. Mantém o caminho Java habitual e o
+monitor desligado por predefinição. Teste com o pacote real em home
+descartável verificou o arranque e a deteção posterior através da interface
+local; foram também verificados o pacote pelo executor, o lançador, a seed
+e 22 testes. Atualização do Hub preparada em `/var/lib/apx/backups/20261120T112008Z-environment-templates-salvador`.
+O Minecraft continua ativo e a ativação da página aguarda o regresso ao Hub.
+
+## Modelos na criação de Environments APX — revisão preparada, 2026-11-20
+
+O proprietário pediu o launcher oficial Mojang, sem Prism, e a instalação
+dos launchers de jogos durante a criação. Minecraft apresenta «Launcher
+Minecraft (Java)» e «Launcher Minecraft (Bedrock)». Steam e Hytale Launcher
+são instalados na criação via Flatpak. Os dois launchers Minecraft vêm de
+downloads oficiais dos respetivos projetos; o AppImage Bedrock é o mesmo
+tipo e versão já usados no piloto. Java, Bedrock e Hytale pedem a RTX no
+modo híbrido. Hytale mantém a opção local de Wayland. O modo gráfico do
+computador não é mudado pelo modelo.
+
+Revisão dos cinco APX ativos/registados (Hub, Minecraft, Steam, Hytale,
+Faculdade) e inventário das duas entradas Windows nativas. Faculdade inclui
+agora Zotero, JupyterLab, Visual Studio Code, TeX Live, ZapZap e um atalho
+ChatGPT independente, além do conjunto de Office, Thunderbird e LocalSend.
+Trabalho baseia-se no conjunto de produtividade. O Salvador de Mundos
+existente é uma adaptação local e não foi incorporado. Os valores atuais
+de Hytale (110 FPS, distância 192), perfis de aplicações, contas, ficheiros
+do utilizador e preferências de monitor não são importados.
+
+A instalação corre como apx num arranque temporário e sem desktop do
+novo Environment, com rede privada, sem dispositivos gráficos ou montagens
+de outros Environments. A instalação termina antes da publicação da
+inscrição. Catálogo revisto preparado no Host. Interface e executor
+preparados em `/var/lib/apx/backups/20261120T103426Z-environment-templates-revised`; ativação aguarda Hub porque o serviço
+tem de recriar o socket que o Minecraft ativo usa para poder regressar.
+A reserva mínima de 96 GiB continua a impedir uma criação normal no Hub
+com o espaço livre atual.
+
+O instalador real percorreu os quatro launchers num clone descartável da
+base: Mojang e BedrockOnLinux (SHA-256 verificados), Steam com os runtimes
+de 32 e 64 bits, e Hytale Launcher. Confirmadas as aplicações no novo home
+e os dois nomes Minecraft. A instalação conjunta demorou 7 min 13 s.
+O clone foi removido. Verificados os cinco modelos em QuickShell isolada,
+a seed, as opções NVIDIA por modo e 50 testes focados. Uma asserção antiga
+do teste de troca continua dependente da forma anterior do duplo clique.
+Não se ensaiou o início de sessão nos jogos nem uma criação completa no Hub.
+
+## Menos espera ao iniciar a troca de Environment — 2026-11-19
+
+Nas últimas trocas observadas antes desta alteração, o destino ficou
+visível em cerca de 8,7 s do Hub para o Minecraft e 7,8 s no regresso.
+Ao iniciar um novo supervisor, voltar a mascarar o login da tty1 provocava
+uma recarga do systemd de 350–352 ms. O supervisor consulta agora o estado
+do login quando já existe uma máscara temporária. Evita a recarga se o
+systemd confirmar que o login está mascarado e inativo. A consulta no
+piloto demorou 9,5 ms de mediana em 25 amostras.
+
+Instalado no supervisor do piloto com o Hub aberto. Passaram os nove
+testes de recuperação. Falta medir uma troca completa com esta versão.
+Backup em `/var/lib/apx/backups/20261119T231710Z-skip-redundant-getty-mask/`.
+
 ## Menos trabalho nos ícones no arranque da Quickshell — 2026-11-19
 
 O proprietário pediu investigação de latência e conservação integral das
@@ -40,6 +192,21 @@ O proprietário confirmou a transição visual e pediu um fade mais longo.
 A duração do fundo passou de 260 para 420 ms nos cinco homes e na seed.
 Os fades da barra e do cursor mantêm os tempos anteriores. Os 8 testes
 da seed passaram. Backup: `/var/lib/apx/backups/20261119T225626Z-longer-desktop-fade/`.
+
+## Ação de baixo consumo nos avisos de bateria — 2026-11-19
+
+O observador de bateria enviava o pedido fora da Quickshell e o serviço
+de energia recusava-o. Agora a Quickshell recebe o clique e usa a mesma
+ação do menu Bateria e Energia. O aviso consulta o perfil antes de
+oferecer «Ativar baixo consumo» e volta a consultá-lo no clique para
+evitar um pedido redundante se «Poupar» já estiver ativo.
+
+Instalado no Hub, Faculdade, Hytale, Minecraft, Steam e na seed.
+O observador arrancou sob a Quickshell no Hytale. Os testes de bateria,
+seed, hardware e contrato passaram. A Quickshell isolada recebeu um
+clique simulado e apresentou as mensagens de sucesso e falha conforme
+a resposta do cliente simulado. O perfil real ficou em «Poupar».
+Backup: `/var/lib/apx/backups/20261119T190051Z-battery-low-power-action/`.
 
 ## Wallpaper junto ao primeiro frame da barra — 2026-11-19
 
@@ -129,6 +296,14 @@ Backup: `/var/lib/apx/backups/20261119T003702Z-cursor-first-desktop-frame/`.
 isolado com janelas ocultas. Falta medir a próxima troca completa e
 identificar a origem dos 3,2 s entre carga da configuração e reposição do
 cursor.
+
+## Uma opção de compressão no Thunar — 2026-11-19
+
+O menu de contexto mantém «Comprimir», a ação personalizada do APX. A entrada
+«Comprimir… (ZIP, TAR…)» foi retirada. O teste com texto e ZIP confirmou o
+menu atualizado e a presença de «Extrair para…» no ZIP. Instalação em
+Faculdade, Hytale, Minecraft e Steam. O processo ativo usa o novo binário.
+Backup: `/var/lib/apx/backups/20261119T003028Z-thunar-compress-menu/`.
 
 ## Cursor transparente no primeiro frame da troca — 2026-11-19
 
@@ -221,6 +396,43 @@ O Minecraft permaneceu ativo e respondeu pela barra e pelo IPC. Passaram
 corresponde ao código em HEAD. Falta medir a troca completa no ecrã físico.
 
 O proprietário confirmou que a troca ficou bem melhor e que o wallpaper já não desaparece depois de aparecer. O estado instalado aceite está guardado em `/var/lib/apx/backups/20261118-accepted-smooth-environment-arrival/`.
+
+## Encerramento e suspensão pela tampa — 2026-11-18
+
+O proprietário reportou ecrã preto ao voltar a ligar e autorizou a correção.
+Os registos de 18/11 mostram poweroff às 19:21:55 seguido de Lid closed e
+suspensão às 19:21:57–58; status.json guardou recusa de PowerOff por suspensão
+já em curso. Outra tentativa falhou na recuperação de tty1 após suspensão.
+O runner instalado adquire systemd-inhibit sleep:handle-lid-switch antes de
+fechar a sessão e mantém a proteção durante a transição. Suspensão explícita
+conserva a sessão. Em erro após iniciar o encerramento, liberta o lock e pede
+arranque do supervisor do Hub, preservando o estado failed e o erro original.
+Não se relaxaram verificações de identidade, recuperação ou máquinas restantes.
+
+19 testes passaram (10 físicos/fluxo, 9 contrato); aquisição real do inibidor
+verificada sem ação de energia. Fonte e runner instalado idênticos; backup em
+`/var/lib/apx/backups/20261118-power-suspend-race/`. Não foi executado poweroff,
+reboot nem suspensão para preservar a sessão. A confirmação física num ciclo
+completo permanece pendente; não se afirma resolução de todos os ecrãs pretos.
+Sem commit/push.
+
+## Correção do pedido sobre animação — 2026-11-18
+
+O proprietário esclareceu que quer conservar a animação das janelas dos
+terminais. Removida a regra no_anim adicionada nesta tarefa, na fonte, seed
+e cinco homes; pins e recuperação sincronizados. Apenas a animação do texto
+APX permanece removida; recolha de informação continua exclusivamente manual.
+
+# Terminais sem animação e recolha só manual — 2026-11-18
+
+SUPER+Q/SUPER+H têm regra de janela sem animação. Removidas as pausas do
+logótipo/dados; o painel lê apenas a cache, sem renovação no arranque ou por
+idade. `apx-atualizar-info` atualiza manualmente a informação local (não instala
+pacotes). Recuperada a alteração anterior do Minecraft para fonte, seed e cinco
+homes; pins e recuperação sincronizados. Host console já não executava recolha.
+Reload do compositor sem erros; oito testes seed e verificação de cache antiga/
+ausente passaram. Aceitação visual pendente. Evidência e backup:
+`audit/2026-11-18-terminal-startup/README.md`. Sem commit/push.
 
 # Comprimir: cantos internos corrigidos — 2026-11-17
 

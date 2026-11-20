@@ -2,6 +2,8 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -67,3 +69,58 @@ class SystemPowerPhysicalSourceTests(unittest.TestCase):
         source = (ROOT / "scripts/physical-pilot/apx-coordinated-update-runner-v1.py").read_text()
         self.assertIn("system-power-v1.reserved", source)
         self.assertIn("machine-transition-v1.lock", source)
+
+
+class SystemPowerRaceTests(unittest.TestCase):
+    def test_poweroff_acquires_lid_and_sleep_inhibitor_before_teardown(self):
+        subject = load_runner()
+        with patch.object(subject.sys, "argv", ["runner", "--action", "poweroff"]), \
+             patch.object(subject.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run, \
+             patch.object(subject, "quiesce_hub_launcher") as close:
+            self.assertEqual(subject.main(), 0)
+        command = run.call_args.args[0]
+        self.assertEqual(command[0], "/usr/bin/systemd-inhibit")
+        self.assertIn("--what=sleep:handle-lid-switch", command)
+        self.assertIn("--mode=block", command)
+        self.assertIn("--sleep-inhibited", command)
+        close.assert_not_called()
+
+    def exercise_transition(self, action, failure=False):
+        subject = load_runner()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subject.LOCK = root / "lock"
+            subject.RESERVATION = root / "reservation"
+            subject.STATUS = root / "status.json"
+            arguments = ["runner", "--action", action, "--sleep-inhibited"]
+            with patch.object(subject.sys, "argv", arguments), \
+                 patch.object(subject, "update_active", return_value=False), \
+                 patch.object(subject, "transition_inhibited", return_value=False), \
+                 patch.object(subject.time, "sleep"), \
+                 patch.object(subject, "quiesce_hub_launcher"), \
+                 patch.object(subject, "recover_active_workload", side_effect=RuntimeError("tty1 failed") if failure else None), \
+                 patch.object(subject, "run") as commands, \
+                 patch.object(subject.subprocess, "run", return_value=SimpleNamespace(returncode=0, stdout="", stderr="")) as processes:
+                if failure:
+                    with self.assertRaisesRegex(RuntimeError, "tty1 failed"):
+                        subject.main()
+                    self.assertIn('"state":"failed"', subject.STATUS.read_text())
+                else:
+                    self.assertEqual(subject.main(), 0)
+                return subject, commands.call_args_list, processes.call_args_list
+
+    def test_failed_teardown_restores_hub_without_requesting_poweroff(self):
+        subject, commands, processes = self.exercise_transition("poweroff", failure=True)
+        self.assertEqual(commands, [])
+        self.assertEqual(processes[-1].args[0],
+                         ("/usr/bin/systemctl", "--no-block", "start", subject.HUB_AUTOSTART_UNIT))
+
+    def test_successful_poweroff_still_checks_machine_residue(self):
+        subject, commands, processes = self.exercise_transition("poweroff")
+        self.assertEqual(processes[0].args[0], ("/usr/bin/machinectl", "list", "--no-legend"))
+        self.assertEqual(commands[-1].args[0], ("/usr/bin/systemctl", "--no-block", "poweroff"))
+
+    def test_suspend_keeps_the_graphical_session(self):
+        subject, commands, processes = self.exercise_transition("suspend")
+        self.assertEqual([c.args[0] for c in commands], [("/usr/bin/loginctl", "suspend")])
+        self.assertEqual(processes, [])

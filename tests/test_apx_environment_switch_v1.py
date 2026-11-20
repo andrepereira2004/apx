@@ -155,6 +155,17 @@ class EnvironmentSwitchV1Tests(unittest.TestCase):
             self.assertNotIn("RuntimeDirectory=apx", source)
             self.assertIn("ReadWritePaths=/run/apx", source)
 
+    def test_apx_creation_accepts_safe_lucide_icon_names(self):
+        contract = load_contract()
+        message = contract.request_bytes("environment.create", "financas", icon="square-dashed-plus")
+        self.assertEqual(contract.parse_message(message)["payload"]["icon"], "square-dashed-plus")
+        for icon in ("../folder", "folder.svg", "/tmp/folder"):
+            with self.assertRaises(ValueError):
+                contract.request_bytes("environment.create", "financas", icon=icon)
+        with self.assertRaises(ValueError):
+            contract.request_bytes("environment.create", "windows", icon="folder",
+                                   system_kind="windows-native", preset="basic", modules=["system"])
+
     def test_contract_accepts_catalog_identity_and_typed_target(self) -> None:
         subject = load_contract()
         for operation in ("catalog.get", "identity.get", "status.get", "management.status",

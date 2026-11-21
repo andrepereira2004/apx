@@ -21,7 +21,7 @@ spec.loader.exec_module(installer)
 if args.profile == 'graphical':
     installer.verify_sources()
     files = sorted(set(installer.source_files()) | {'docs/portable-full-rebuild-v1.md',
-        'docs/portable-feature-parity-v2.md',
+        'docs/portable-feature-parity-v2.md', 'docs/portable-native-v4-development.md',
         'docs/empty-disk-install-v1.md', 'docs/empty-disk-validation-2026-10-18.md',
         'docs/install-apx-from-usb-pt.md'})
 else:

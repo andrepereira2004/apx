@@ -1,0 +1,2 @@
+Bounded Teste KVM proxy and maintenance container ready
+Fresh Arch disk prepared; QEMU remains inside Teste

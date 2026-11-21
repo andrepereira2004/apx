@@ -98,7 +98,9 @@ espaço e modos de firmware específicos continuam ligados ao piloto físico.
 Também falta repetir uma instalação limpa com estas fontes e testar o hardware
 real. As verificações de pacotes e os testes de fontes não substituem esse ensaio.
 
-Consulta a [integração portátil v2 e evidência atual](docs/portable-feature-parity-v2.md).
+Consulta a [integração portátil](docs/portable-feature-parity-v2.md) e o
+[ensaio limpo v3](audit/2026-11-21-portable-v3/README.md): instalação e segundo
+arranque verificados em VM. Windows nativo portátil e aceitação física continuam pendentes.
 A [revisão anterior](docs/github-installation-review-2026-11-21.md) preserva o diagnóstico
 que originou estas alterações.
 

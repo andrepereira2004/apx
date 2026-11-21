@@ -1,3 +1,19 @@
+## Instalador portátil v3 e Unhook — 2026-11-21
+
+Instalação gráfica limpa verificada numa VM isolada: 780 fontes exatas,
+16 verificações iniciais e 15 após novo arranque, mais Partilha e DNS reais.
+Corrigidos dependência facial retirada, cobertura de fontes, permissões/idmap
+do cache de pacotes e DNS privado por gateway. 62 testes portáteis passaram;
+a suite alargada executou 418 testes com sucesso, separando seis falhas antigas.
+Planeamento Windows portátil v4 inclui identidade GPT/disco, estados e reclaim,
+mas continua só de leitura: executor offline, WinPE e ciclo nativo não concluídos.
+A equivalência total num PC novo e aceitação física continuam pendentes.
+Laboratório codex-test-portable-v3 removido; restantes registos intactos,
+reserva de 96 GiB preservada. Nenhuma alteração de partições/boot do Host.
+Unhook removido do Minecraft; Brave aplicou a retirada sem reiniciar.
+Evidência: `audit/2026-11-21-portable-v3/README.md` e
+`audit/2026-11-21-unhook-minecraft/README.md`.
+
 ## Integração do instalador portátil v2 — 2026-11-21
 
 Pedido do proprietário para aproximar o instalador das funcionalidades atuais.

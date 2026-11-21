@@ -1,0 +1,38 @@
+{
+  "name": "codex-test-portable-v3",
+  "generation": "cbaf4598-987c-4ad8-bc67-96698f587345",
+  "role": "development",
+  "plan": {
+    "action": "create",
+    "description": "",
+    "digest": "a9216f7e7fe913b5325af9aec160b897565650af65fad1d79039b4f695dfcdee",
+    "effects": [
+      "root",
+      "home",
+      "configure",
+      "publish"
+    ],
+    "generation": "cbaf4598-987c-4ad8-bc67-96698f587345",
+    "name": "codex-test-portable-v3",
+    "role": "development",
+    "schema": 1,
+    "update_policy": "follow-host"
+  },
+  "registrations_before": {
+    "/var/lib/apx/environments/hub/registration.json": "962c5cb254619ab1d30481e15d3ad06927fb3ad2061d342002ab25c3b07fb2ec",
+    "/var/lib/apx/environments/hytale/registration.json": "8b6d6172d511a7b103f907a37c93f3852673cf899d12e3e1edd3ba99eee0ef16",
+    "/var/lib/apx/environments/steam/registration.json": "ca9a5a62aead94e17ec5c51d363b4f3912fcc04ad3c8d94873697efad8691773",
+    "/var/lib/apx/environments/minecraft/registration.json": "e0fce64bd45112aa5d899ca237116a1040e78fb7e23c98c0f5e5cb0093fa7284",
+    "/var/lib/apx/environments/faculdade/registration.json": "e29b62a4eb9bde2446a6e33e65208e24e95e6a0bd801937a56d1e57d10670d62",
+    "/var/lib/apx/environments/financas/registration.json": "b9231cedbf311b576988ed310d0f0fce05cc996f9603402c2a2c85bd3d6731f3"
+  },
+  "workspace_cap_gib": 24,
+  "host_reserve_gib": 96,
+  "guard_gib": 97,
+  "qgroup": "1/553",
+  "subvolume_ids": [
+    "553",
+    "554"
+  ],
+  "replay": 3
+}

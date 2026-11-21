@@ -4,8 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
+from pathlib import Path
 import re
+import stat
 import subprocess
 import sys
 
@@ -32,11 +35,23 @@ def identities(environment: str) -> tuple[str, str]:
     return "apx_" + environment.replace("-", "_") + "_egress_v1", "ve-apx-" + environment
 
 
-def ruleset(table: str, interface: str) -> str:
+def portable_dns_enabled(path=Path('/usr/share/apx/portable-network-dns-v1.json')) -> bool:
+    if not path.exists():return False
+    info=path.lstat()
+    if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or info.st_mode&0o022 or info.st_size>1024:
+        raise NetworkPolicyError('portable DNS profile is not trusted')
+    if json.loads(path.read_text())!={'schema':1,'profile':'portable-veth-dns-v1'}:
+        raise NetworkPolicyError('portable DNS profile differs')
+    return True
+
+
+def ruleset(table: str, interface: str, *, dns_proxy: bool = False) -> str:
+    dns = f'  iifname "{interface}" udp dport 53 accept\n  iifname "{interface}" tcp dport 53 accept\n' if dns_proxy else ''
     return f"""table inet {table} {{
  chain host_input {{
   type filter hook input priority -5; policy accept;
   iifname "{interface}" udp dport 67 accept
+{dns}\
   iifname "{interface}" drop
  }}
  chain environment_forward {{
@@ -54,14 +69,16 @@ def table_exists(table: str) -> bool:
 
 def apply(environment: str) -> None:
     table, interface = identities(environment)
+    dns_proxy=portable_dns_enabled()
     if table_exists(table):
         observed = run(("/usr/bin/nft", "list", "table", "inet", table)).stdout
-        for required in (interface, "udp dport 67 accept", "ip daddr",
-                         "oifname \"ve-*\" drop"):
+        requirements=(interface, "udp dport 67 accept", "ip daddr", "oifname \"ve-*\" drop")
+        if dns_proxy:requirements+=("udp dport 53 accept","tcp dport 53 accept")
+        for required in requirements:
             if required not in observed:
                 raise NetworkPolicyError("existing APX Hub network policy differs")
         return
-    rendered = ruleset(table, interface)
+    rendered = ruleset(table, interface, dns_proxy=dns_proxy)
     run(("/usr/bin/nft", "-c", "-f", "-"), input_text=rendered)
     run(("/usr/bin/nft", "-f", "-"), input_text=rendered)
     if not table_exists(table):

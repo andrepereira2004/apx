@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "stdout": "\u25cf apx-portable-dns.service - APX bounded per-veth encrypted DNS broker\n     Loaded: loaded (/etc/systemd/system/apx-portable-dns.service; disabled; preset: disabled)\n     Active: active (running) since Sat 2026-11-21 17:24:38 UTC; 9min ago\n Invocation: 84c11998530c406996e3b2e776ea1edb\n   Main PID: 8234 (python)\n      Tasks: 5 (limit: 7045)\n     Memory: 20.5M (peak: 21.4M)\n        CPU: 2.794s\n     CGroup: /system.slice/apx-portable-dns.service\n             \u2514\u25008234 /usr/bin/python /usr/lib/apx/apx-portable-dns.py\n\nNov 21 17:24:38 apx-portable-guest systemd[1]: Started APX bounded per-veth encrypted DNS broker.\n",
+  "stderr": "",
+  "request_id": "90749d17d2af6b45"
+}

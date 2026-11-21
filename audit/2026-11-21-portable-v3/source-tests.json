@@ -1,0 +1,14 @@
+{
+  "selected": 424,
+  "executed": 418,
+  "failures": 0,
+  "errors": 0,
+  "known_baseline_failures": [
+    "test_apx_appearance.AppearanceTests.test_global_default_local_override_and_return_to_inheritance",
+    "test_apx_appearance.AppearanceTests.test_offline_global_cache_and_local_style_survive",
+    "test_apx_appearance.AppearanceTests.test_theme_overrides_preserve_user_css_and_restore_cleanly",
+    "test_apx_appearance_opacity.OpacityTests.test_endpoints_and_repeated_generation",
+    "test_apx_appearance_opacity.OpacityTests.test_partial_changes_preserve_color_and_other_opacities",
+    "test_apx_host_services_v3_physical.HostServicesV3PhysicalTests.test_daemon_uses_peer_auth_typed_operations_and_no_secret_argv_or_tempfile"
+  ]
+}

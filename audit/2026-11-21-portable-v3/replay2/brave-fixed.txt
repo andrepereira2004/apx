@@ -1,0 +1,9 @@
+Create snapshot of '/var/lib/apx/releases/hyprland-base-v2/root' in '/var/lib/apx/environments/vmfixed/root'
+Create subvolume '/var/lib/apx/environments/vmfixed/home'
+Running as unit: apx-package-setup-p6631ec7.service; invocation ID: 65a9ed171fa2439396b3cfada8b6a22b
+Running as unit: run-p23174-i22389.service
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 1.772s
+             CPU time consumed: 8ms
+                   Memory peak: 2.2M (swap: 0B)

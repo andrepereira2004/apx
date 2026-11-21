@@ -1,0 +1,13 @@
+test_changed_identity_never_reaches_mutating_command (test_apx_disk_installer.DiskBoundaryTests.test_changed_identity_never_reaches_mutating_command) ... ok
+test_disk_changed_during_password_prompt_never_formatted (test_apx_disk_installer.DiskBoundaryTests.test_disk_changed_during_password_prompt_never_formatted) ... Switching console keyboard to Portuguese (pt-latin1), matching the APX graphical default.
+ok
+test_firmware_keeps_apx_default_and_recovery_last (test_apx_disk_installer.DiskBoundaryTests.test_firmware_keeps_apx_default_and_recovery_last) ... ok
+test_gpu_hardware_not_computer_model_and_unknown_nvidia_refused (test_apx_disk_installer.DiskBoundaryTests.test_gpu_hardware_not_computer_model_and_unknown_nvidia_refused) ... ok
+test_incorrect_confirmation_never_reaches_mutating_command (test_apx_disk_installer.DiskBoundaryTests.test_incorrect_confirmation_never_reaches_mutating_command) ... ok
+test_only_empty_unused_whole_disks (test_apx_disk_installer.DiskBoundaryTests.test_only_empty_unused_whole_disks) ... ok
+test_partition_names_nvme_sata_and_bios_layout (test_apx_disk_installer.DiskBoundaryTests.test_partition_names_nvme_sata_and_bios_layout) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.003s
+
+OK

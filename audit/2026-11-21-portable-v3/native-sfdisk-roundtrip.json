@@ -1,0 +1,23 @@
+[
+  {
+    "device_spelling": "/dev/sdb",
+    "sector_size": 512,
+    "partitions_verified": 7,
+    "profile": "apx-portable-native-create-v4",
+    "scope": "sfdisk serialization round-trip on sparse repository file; no block device opened"
+  },
+  {
+    "device_spelling": "/dev/vdb",
+    "sector_size": 512,
+    "partitions_verified": 7,
+    "profile": "apx-portable-native-create-v4",
+    "scope": "sfdisk serialization round-trip on sparse repository file; no block device opened"
+  },
+  {
+    "device_spelling": "/dev/nvme1n2",
+    "sector_size": 4096,
+    "partitions_verified": 7,
+    "profile": "apx-portable-native-create-v4",
+    "scope": "sfdisk serialization round-trip on sparse repository file; no block device opened"
+  }
+]

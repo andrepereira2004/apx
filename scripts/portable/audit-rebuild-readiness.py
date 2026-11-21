@@ -162,16 +162,22 @@ def audit(repo: Path = REPO, host: Path = Path("/")) -> dict:
         record = json.loads(active_path.read_text())
         active = {key: record.get(key) for key in ("name", "role", "generation", "unit")}
     vm_core_verified = False
-    evidence = repo / "audit/2026-10-18-portable-rebuild/vm"
-    try:
-        result = json.loads((evidence / "pc-result.json").read_text())
-        source_manifest = json.loads((evidence / "source-manifest.json").read_text())
-        vm_core_verified = result.get("state") == "passed" and len(result.get("checks", [])) >= 15 \
-            and bool(source_manifest) and all(
-                regular(repo / relative) and sha256(repo / relative) == expected
-                for relative, expected in source_manifest.items())
-    except (OSError, ValueError, TypeError, AttributeError):
-        pass
+    evidence = None
+    for directory, result_name in (("audit/2026-11-21-portable-v3/replay3", "result.json"),
+                                   ("audit/2026-10-18-portable-rebuild/vm", "pc-result.json")):
+        candidate_evidence = repo / directory
+        try:
+            result = json.loads((candidate_evidence / result_name).read_text())
+            source_manifest = json.loads((candidate_evidence / "source-manifest.json").read_text())
+            vm_core_verified = result.get("state") == "passed" and len(result.get("checks", [])) >= 15 \
+                and {"scripts/virtual-lab/apx-lab-runtime.py", "scripts/portable/install_apx_full.py"} <= set(source_manifest) \
+                and all(regular(repo / relative) and sha256(repo / relative) == expected
+                        for relative, expected in source_manifest.items())
+            if vm_core_verified:
+                evidence = directory
+                break
+        except (OSError, ValueError, TypeError, AttributeError):
+            pass
     blockers = []
     if not storage["ready"] and not vm_core_verified:
         blockers.append({"code": "test-storage", "detail":
@@ -194,6 +200,7 @@ def audit(repo: Path = REPO, host: Path = Path("/")) -> dict:
         "source_commit": subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip(),
         "scope": "read-only source comparison; no credentials, personal data, installed root images or service bodies exported",
         "full_rebuild_verified": False, "automated_vm_core_verified": vm_core_verified,
+        "matching_vm_evidence": evidence,
         "active_environment": active, "test_storage": storage,
         "requested_test": {"name": "teste", "display_name": "Teste", "role": "graphical-base",
                            "desktop_preset": "intermediate", "vm": "fresh Arch Linux x86_64"},

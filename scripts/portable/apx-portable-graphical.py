@@ -213,7 +213,7 @@ class Session:
         command += ["--property=DeviceAllow=" + item["node"] + " rw" for _, item in self.proxies]
         command += ["systemd-nspawn", "--quiet", "--keep-unit", "--boot", "--settings=no",
                     "--register=yes", "--machine=" + self.machine, "--directory=" + str(self.environment / "root"),
-                    "--private-users=pick", "--private-users-ownership=chown", "--private-network", "--network-veth",
+                    "--private-users=pick", "--private-users-ownership=chown", "--private-network", "--network-veth", "--resolv-conf=off",
                     "--link-journal=no", "--console=pipe", "--bind=" + str(self.environment / "home") + ":/home:idmap",
                     "--bind=/run/seatd.sock:/run/seatd.sock",
                     "--bind-ro=" + str(LEASES / 'udev') + ":/run/udev"]

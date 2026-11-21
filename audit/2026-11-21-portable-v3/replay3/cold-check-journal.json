@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "stdout": "Started [systemd-run] /usr/bin/python /root/full-vm-smoke.py check.\nAPX_FULL_VM_CHECK current-quickshell-and-hyprland-ready\nAPX_FULL_VM_CHECK authenticated-hub-service-identity\nAPX_FULL_VM_CHECK all-current-shell-source-digests-match\nAPX_FULL_VM_CHECK hub-creates-independent-intermediate-workload\nAPX_FULL_VM_CHECK graphical-workload-switch\nAPX_FULL_VM_CHECK workload-management-is-refused\nAPX_FULL_VM_CHECK real-package-and-file-isolation\nAPX_FULL_VM_CHECK authenticated-return-to-hub\nAPX_FULL_VM_CHECK workload-compositor-failure-recovers-to-hub\nAPX_FULL_VM_CHECK stopped-graphical-workload-snapshot\nAPX_FULL_VM_CHECK normal-environment-archive-and-restore\nAPX_FULL_VM_CHECK test-workloads-and-their-copies-destroyed\nAPX_FULL_VM_CHECK authenticated-environment-update-preview\nAPX_FULL_VM_CHECK existing-installation-overwrite-refused\nAPX_FULL_VM_CHECK control-centre-opened-through-real-quickshell-ipc\nAPX_FULL_VM_PASS\ncodex-test-cold-check.service: Deactivated successfully.\ncodex-test-cold-check.service: Consumed 667ms CPU time over 1min 39.296s wall clock time, 80M memory peak.\n",
+  "stderr": "",
+  "request_id": "93838fe641094061"
+}

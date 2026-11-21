@@ -1,0 +1,4 @@
+{
+  "owned_temporary_keyring_agent_pids_stopped": [],
+  "scope": "only temporary apx-full-vm/apx-vm-keys agent homes; no personal keyrings"
+}

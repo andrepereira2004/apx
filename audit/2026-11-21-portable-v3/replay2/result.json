@@ -1,0 +1,10 @@
+{
+  "state": "failed",
+  "checks": [
+    "fresh-generic-graphical-install",
+    "current-quickshell-and-hyprland-ready",
+    "authenticated-hub-service-identity",
+    "all-current-shell-source-digests-match"
+  ],
+  "error": "systemd-run: APX refused: Command '['timeout', '25m', 'systemd-run', '-M', 'apx-p33d5ee8', '--wait', '--pipe', '--collect', '--property=RuntimeMaxSec=24min', '--', '/usr/bin/pacman', '-U', '--needed', '--noconfirm', '/run/apx-packages/brave-bin-1:1.100.58-1-x86_64.pkg.tar.zst']' returned non-zero exit status 1.\n"
+}

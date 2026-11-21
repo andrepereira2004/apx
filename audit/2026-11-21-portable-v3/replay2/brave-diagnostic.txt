@@ -1,0 +1,16 @@
+Create snapshot of '/var/lib/apx/releases/hyprland-base-v2/root' in '/var/lib/apx/environments/vmdiag/root'
+Create subvolume '/var/lib/apx/environments/vmdiag/home'
+Running as unit: apx-package-setup-p447a671.service; invocation ID: b265239f18704477b70e1d0cb72fefac
+Running as unit: run-p19662-i25242.service
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 2.782s
+             CPU time consumed: 10ms
+                   Memory peak: 2.1M (swap: 0B)
+APX refused: A instalação isolada de pacotes falhou: Running as unit: run-p19923-i25304.service
+error: '/run/apx-packages/brave-bin-1:1.100.58-1-x86_64.pkg.tar.zst': permission denied
+          Finished with result: exit-code
+Main processes terminated with: code=exited, status=1/FAILURE
+               Service runtime: 19ms
+             CPU time consumed: 13ms
+                   Memory peak: 2.3M (swap: 0B)

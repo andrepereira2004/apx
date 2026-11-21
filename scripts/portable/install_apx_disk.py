@@ -23,7 +23,7 @@ CODEX_URL = ('https://github.com/openai/codex/releases/download/rust-v0.166.0/'
              'codex-x86_64-unknown-linux-musl.tar.gz')
 CODEX_SHA256 = 'a0bf572d2f93f056c6712a6da348e96078dc84f3885fd7be67807ef389cb3978'
 RECOVERY_PACKAGES = ('base', 'linux', 'mkinitcpio', 'networkmanager', 'cryptsetup',
-                     'btrfs-progs', 'ntfs-3g', 'systemd-ukify')
+                     'btrfs-progs', 'ntfs-3g', 'systemd-ukify', 'python', 'efibootmgr', 'dosfstools')
 
 
 def run(*args, capture=False, input=None):
@@ -180,6 +180,24 @@ def partition_path(disk, number):
     return disk + ('p' if disk[-1].isdigit() else '') + str(number)
 
 
+def record_native_identity(root, plan, disk, esp, recovery, system):
+    """Record exact fresh-host identities; this never enables native disk writes."""
+    spec = importlib.util.spec_from_file_location('portable_native_geometry', REPO / 'src/apx_portable_native.py')
+    native = importlib.util.module_from_spec(spec); spec.loader.exec_module(native)
+    serial, wwn = plan['disk'].get('serial') or '', plan['disk'].get('wwn') or ''
+    if not serial and not wwn:
+        value = {'schema': 4, 'profile': 'apx-portable-native-unavailable-v4',
+                 'native_executor_enabled': False, 'reason': 'disk has no stable serial or WWN'}
+    else:
+        table = json.loads(run('sfdisk', '--json', disk, capture=True))['partitiontable']
+        def field(path, key):
+            return run('blkid', '-s', key, '-o', 'value', path, capture=True).strip()
+        value = native.installation_identity(table, serial=serial, wwn=wwn,
+            root_uuid=field(system, 'UUID'), root_partuuid=field(system, 'PARTUUID'),
+            esp_partuuid=field(esp, 'PARTUUID'), recovery_partuuid=field(recovery, 'PARTUUID'))
+    write(root, 'etc/apx-portable-native-identity-v4.json', json.dumps(value, indent=2)+'\n', 0o600)
+
+
 def write(root, name, text, mode=0o644):
     path = root / name
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -193,6 +211,10 @@ def install_recovery(esp, partition, codex_binary):
         run('mount', partition, str(recovery))
         try:
             run('pacstrap', '-K', str(recovery), *RECOVERY_PACKAGES)
+            native = recovery / 'usr/lib/apx/apx_portable_native.py'
+            native.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(REPO / 'src/apx_portable_native.py', native)
+            native.chmod(0o644)
             destination = recovery / 'usr/local/bin/codex'
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(codex_binary, destination); destination.chmod(0o755)
@@ -303,6 +325,7 @@ def _apply_verified(plan, password, codex_binary):
             else: run('arch-chroot', str(root), 'grub-install', '--target=i386-pc', disk)
             run('arch-chroot', str(root), 'grub-mkconfig', '-o', '/boot/grub/grub.cfg')
             install_recovery(root/'boot', recovery_partition, codex_binary)
+            record_native_identity(root, plan, disk, first, recovery_partition, system)
             full = installer()
             for relative in full.source_files():
                 dest = root/'opt/apx-installer'/relative

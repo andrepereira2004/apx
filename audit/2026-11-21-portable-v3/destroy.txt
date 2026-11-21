@@ -1,0 +1,2 @@
+Delete subvolume 554 (no-commit): '/var/lib/apx/environments/codex-test-portable-v3/home'
+Delete subvolume 553 (no-commit): '/var/lib/apx/environments/codex-test-portable-v3/root'

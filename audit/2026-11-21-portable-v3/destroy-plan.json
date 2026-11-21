@@ -1,0 +1,20 @@
+{
+  "action": "destroy",
+  "digest": "4bdedd7a3f521e1062e4055378a9ec7ee90709a72871787320a7731d4eaed8e8",
+  "effects": [
+    "stop",
+    "purge-update-rollbacks",
+    "purge-snapshots",
+    "purge-archives",
+    "purge-backups",
+    "purge-local-recovery",
+    "remove-home",
+    "remove-root",
+    "purge-metadata",
+    "unpublish",
+    "purge-plans"
+  ],
+  "generation": "cbaf4598-987c-4ad8-bc67-96698f587345",
+  "name": "codex-test-portable-v3",
+  "schema": 1
+}

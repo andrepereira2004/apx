@@ -31,6 +31,7 @@ ADAPTERS = (
     "apx-portable-full-runtime.py", "apx-portable-services.py", "apx-portable-graphical.py",
     "apx-portable-session.sh", "apx-portable-compositor.sh", "apx-portable-power.py",
     "apx-portable-media.py",
+    "apx-portable-native-plan.py",
 )
 SERVICES = ("host-services-v1", "host-services-v2", "host-services-v3", "audio-state-v1",
             "environment-switch-v1", "system-power-v1", "environment-hardware-v1", "coordinated-update-v1")
@@ -83,6 +84,10 @@ def verify_sources():
         if path.is_symlink() or not path.is_file():
             raise ValueError("missing/unsafe source: " + relative)
         hashes[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+    base = module(REPO / 'scripts/portable/install_apx_arch.py', 'apx_portable_base_source_check')
+    for relative in base.SOURCES:
+        if relative not in hashes:
+            raise ValueError('missing base-installer dependency: ' + relative)
     for group, prefix in (("ENVIRONMENT_SHELL_ASSETS", "config/environment-shell-v1/"),
                           ("DESKTOP_CONFIG_ASSETS", "config/waybar-ascii-v1/"),
                           ("GRAPHICAL_CONFIG_ASSETS", "config/hyprland-base/")):
@@ -109,8 +114,9 @@ def feature_manifest():
         'presets': {name: list(values) for name, values in features.PRESETS.items()},
         'native_applications': ['brave-bin', 'localsend-bin', 'gridcraft', 'wordcraft',
                                 'deckcraft', 'chatgpt-bin', 'salvador-de-mundos-apx'],
-        'services': list(SERVICES) + ['transfer', 'passkeys', 'media', 'localsend'],
+        'services': list(SERVICES) + ['transfer', 'passkeys', 'media', 'localsend', 'dns'],
         'native_windows': False,
+        'native_preview': 'identity-pinned-portable-v4',
         'firmware_gpu_switch': False,
         'external_model_store': False,
         'validation': 'source-tested; latest clean installation and physical acceptance pending',

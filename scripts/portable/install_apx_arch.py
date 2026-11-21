@@ -21,13 +21,13 @@ SOURCES = {
     'scripts/virtual-lab/apx-lab-executor.py': 'apx-lab-executor.py',
     'scripts/physical-pilot/apx-environment-network-v1.py': 'apx-environment-network-v1.py',
     'src/apx_environment_features.py': 'apx_environment_features.py',
-    'src/apx_face_auth.py': 'apx_face_auth.py',
     'src/apx_environment_desktop_defaults.py': 'apx_environment_desktop_defaults.py',
+    'src/apx_portable_dns.py': 'apx-portable-dns.py',
     'config/environment-flatpak-v1/49-apx-flatpak-environment.rules': '/usr/share/apx/config-seeds/environment-flatpak-v1/49-apx-flatpak-environment.rules',
     'config/environment-flatpak-v1/apx-flatpak-nesting-v1': '/usr/share/apx/config-seeds/environment-flatpak-v1/apx-flatpak-nesting-v1',
     'config/environment-flatpak-v1/apx-flatpak-nesting-v1.service': '/usr/share/apx/config-seeds/environment-flatpak-v1/apx-flatpak-nesting-v1.service',
 }
-PACKAGES = ['python', 'btrfs-progs', 'systemd', 'nftables', 'arch-install-scripts']
+PACKAGES = ['python', 'btrfs-progs', 'systemd', 'nftables', 'arch-install-scripts', 'iproute2', 'ca-certificates']
 RELEASES = {'minimal': 'minimal-headless-v1', 'development': 'development-headless-v1', 'hub': 'hub-headless-v4'}
 
 
@@ -181,13 +181,16 @@ IPMasquerade=ipv4
 LinkLocalAddressing=no
 
 [DHCPServer]
-DNS=1.1.1.1 9.9.9.9
+DNS=_server_address
 ''')
+    write(Path('/usr/share/apx/portable-network-dns-v1.json'), '{"schema":1,"profile":"portable-veth-dns-v1"}\n')
     # Closed input and private-network egress boundary for ALL APX headless roles.
     write(library / 'portable-network.nft', '''table inet apx_portable {
  chain input {
   type filter hook input priority -10; policy accept;
   iifname "ve-apx-*" udp dport 67 accept
+  iifname "ve-apx-*" udp dport 53 accept
+  iifname "ve-apx-*" tcp dport 53 accept
   iifname "ve-apx-*" drop
  }
  chain forward {
@@ -209,10 +212,28 @@ ExecStart=/usr/bin/nft -f /usr/lib/apx/portable-network.nft
 ExecStop=/usr/bin/nft delete table inet apx_portable
 RemainAfterExit=yes
 ''')
+    write(Path('/etc/systemd/system/apx-portable-dns.service'), '''[Unit]
+Description=APX bounded per-veth encrypted DNS broker
+Requires=apx-portable-network.service
+After=apx-portable-network.service systemd-networkd.service
+
+[Service]
+ExecStart=/usr/bin/python /usr/lib/apx/apx-portable-dns.py
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target
+''')
     write(Path('/etc/systemd/system/apx-lab-executor.service'), '''[Unit]
 Description=APX authenticated headless Hub executor
-Requires=apx-portable-network.service
-After=apx-portable-network.service systemd-machined.service
+Requires=apx-portable-network.service apx-portable-dns.service
+After=apx-portable-network.service apx-portable-dns.service systemd-machined.service
 RequiresMountsFor=/var/lib/apx
 
 [Service]

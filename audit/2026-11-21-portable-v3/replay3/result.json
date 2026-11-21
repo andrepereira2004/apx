@@ -1,0 +1,29 @@
+{
+  "state": "passed",
+  "checks": [
+    "current-quickshell-and-hyprland-ready",
+    "authenticated-hub-service-identity",
+    "all-current-shell-source-digests-match",
+    "hub-creates-independent-intermediate-workload",
+    "graphical-workload-switch",
+    "workload-management-is-refused",
+    "real-package-and-file-isolation",
+    "authenticated-return-to-hub",
+    "workload-compositor-failure-recovers-to-hub",
+    "stopped-graphical-workload-snapshot",
+    "normal-environment-archive-and-restore",
+    "test-workloads-and-their-copies-destroyed",
+    "authenticated-environment-update-preview",
+    "existing-installation-overwrite-refused",
+    "control-centre-opened-through-real-quickshell-ipc"
+  ],
+  "active": {
+    "generation": "8ad4431e-b439-4bd8-bade-eda6dc4e8b5f",
+    "name": "hub",
+    "pid": 6738,
+    "profile": "apx-active-graphical-environment-v1",
+    "role": "hub",
+    "schema": 1,
+    "unit": "apx-portable-hub-8ad4431e.service"
+  }
+}

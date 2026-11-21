@@ -1,0 +1,1 @@
+Fresh Arch disk prepared; QEMU remains inside Teste

@@ -82,6 +82,12 @@ def configure_switch(module, peer):
     module.authorize_hub_management = hub_management
     original = module.apply
     def apply(operation, payload, credentials):
+        if operation == 'native.plan':
+            hub_management(credentials)
+            planner = load('apx-portable-native-plan.py', 'apx_portable_native_preview')
+            value = planner.preview(str(payload['target']), int(payload['size_gib']))
+            value.update(target=payload['target'], description=payload['description'], size_gib=payload['size_gib'])
+            return value
         if operation.startswith("native.") or (operation == "environment.create" and payload.get("system_kind") != "arch"):
             raise RuntimeError("A instalação de Windows não está disponível nesta versão.")
         if operation == "switch.to-workload":

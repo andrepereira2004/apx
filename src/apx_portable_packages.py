@@ -74,6 +74,9 @@ def resolve(package, directory, seed=SEED):
     directory.mkdir(parents=True, exist_ok=True, mode=0o755)
     if directory.is_symlink() or directory.stat().st_uid != 0 or directory.stat().st_mode & 0o022:
         raise upstream.FreshnessError('Diretório de pacotes não confiável')
+    # The executor runs with umask 0077. Packages contain public distribution
+    # data; the namespace's root and alpm reader need traversal of this cache.
+    directory.chmod(0o755)
     with (directory / '.portable-packages.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         manifest = directory / (package + '-v1.json')

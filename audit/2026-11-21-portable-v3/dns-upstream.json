@@ -1,0 +1,8 @@
+{
+  "upstream": "https://1.1.1.1/dns-query",
+  "request_id_preserved": true,
+  "response_bytes": 47,
+  "rcode": 0,
+  "seconds": 0.21,
+  "scope": "one public fixture query; no gateway socket opened on Host"
+}

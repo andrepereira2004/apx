@@ -39,6 +39,16 @@ class PortablePackagesTests(unittest.TestCase):
             self.assertEqual(packages.upstream.package_info(artifact)['pkgname'], 'salvador-de-mundos-apx')
             self.assertEqual(packages.resolve('salvador-de-mundos-apx', artifact.parent, SEED), artifact)
 
+    def test_restrictive_executor_umask_does_not_make_public_packages_unreadable(self):
+        import os
+        with tempfile.TemporaryDirectory() as temp:
+            previous=os.umask(0o077)
+            try:
+                artifact=packages.resolve('salvador-de-mundos-apx',Path(temp)/'cache',SEED)
+                self.assertEqual(artifact.parent.stat().st_mode&0o777,0o755)
+                self.assertEqual(artifact.stat().st_mode&0o777,0o644)
+            finally:os.umask(previous)
+
     def test_modified_or_missing_seed_refused_before_network(self):
         for operation in ('change', 'delete', 'link'):
             with self.subTest(operation=operation), tempfile.TemporaryDirectory() as temp:
@@ -144,7 +154,7 @@ class PrivateProvisionTests(unittest.TestCase):
         boot=next(c for c in calls if 'systemd-nspawn' in c)
         for flag in ('--private-users=pick','--network-veth','--private-network','--settings=no'):
             self.assertIn(flag,boot)
-        self.assertIn('--bind-ro=/var/lib/apx/package-artifacts:/run/apx-packages',boot)
+        self.assertIn('--bind-ro=/var/lib/apx/package-artifacts:/run/apx-packages:idmap',boot)
         transactions=[c for c in calls if '/usr/bin/pacman' in c]
         self.assertEqual(len(transactions),2)
         for c in transactions:

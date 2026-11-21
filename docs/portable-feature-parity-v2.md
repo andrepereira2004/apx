@@ -1,3 +1,7 @@
+> Atualização: instalação limpa e segundo arranque concluídos em 2026-11-21.
+> Ver [evidência v3](../audit/2026-11-21-portable-v3/README.md);
+> Windows nativo portátil continua por implementar e validar.
+
 # Portable feature integration v2 — 2026-11-21
 
 Experimental extension of the fresh Arch graphical installer. Sources remain

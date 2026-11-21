@@ -1,0 +1,10 @@
+{
+  "environment_absent": true,
+  "lease_absent": true,
+  "maintenance_container_absent": true,
+  "owned_units_inactive": true,
+  "other_registrations_unchanged": true,
+  "owned_mounts_absent": true,
+  "qgroup_absent": true,
+  "free_bytes": 132864090112
+}

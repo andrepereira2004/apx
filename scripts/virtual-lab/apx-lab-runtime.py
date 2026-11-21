@@ -1329,6 +1329,7 @@ def start(name: str) -> None:
         f"--machine={machine(name)}", f"--directory={target / 'root'}",
         "--private-users=pick", "--private-users-ownership=chown",
         "--private-network", "--network-veth", "--link-journal=no", "--settings=no",
+        "--resolv-conf=off",
         f"--bind={target / 'home'}:/home:idmap",
     ]
     command[6:6] = [

@@ -1,0 +1,13 @@
+{
+  "verified_sources": 780,
+  "manifest_sha256": "46fe6d87a4ba85eb82f39bded3ab43d75b5037a7fdbe149fdddeb8efe29b95c9",
+  "overlaid_sources": [
+    "scripts/physical-pilot/apx-environment-network-v1.py",
+    "scripts/portable/apx-portable-native-plan.py",
+    "scripts/portable/install_apx_full.py",
+    "src/apx_portable_native.py",
+    "src/apx_portable_packages.py",
+    "src/apx_portable_provision.py"
+  ],
+  "guest_had_no_apx_before_install": true
+}

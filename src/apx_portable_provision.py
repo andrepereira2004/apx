@@ -1,6 +1,7 @@
 """Execute new-Environment package transactions inside a private nspawn root."""
 import time
 import uuid
+import subprocess
 
 
 def install(runtime, root, packages, artifacts):
@@ -20,7 +21,7 @@ def install(runtime, root, packages, artifacts):
                    '--network-veth', '--private-network', '--resolv-conf=off',
                    f'--bind={root.parent / "home"}:/home:idmap']
         if artifacts:
-            command.append(f'--bind-ro={runtime.LOCAL_PACKAGE_ARTIFACTS}:/run/apx-packages')
+            command.append(f'--bind-ro={runtime.LOCAL_PACKAGE_ARTIFACTS}:/run/apx-packages:idmap')
         runtime.run(command)
         for _ in range(120):
             status = runtime.run(['systemctl', '-M', machine, 'is-system-running'], check=False, capture=True)
@@ -35,9 +36,14 @@ def install(runtime, root, packages, artifacts):
         prefix = ['timeout', '25m', 'systemd-run', '-M', machine, '--wait', '--pipe',
                   '--collect', '--property=RuntimeMaxSec=24min', '--', '/usr/bin/pacman']
         ignored = ['--ignore', 'nvidia-utils,lib32-nvidia-utils,opencl-nvidia'] if runtime.host_nvidia_version() else []
-        runtime.run(prefix + ['-Syu', '--needed', '--noconfirm', *ignored, *packages])
+        def transaction(command):
+            try:runtime.run(command,capture=True)
+            except subprocess.CalledProcessError as error:
+                detail=(error.stderr or error.stdout or str(error))[-2400:]
+                raise runtime.Refusal('A instalação isolada de pacotes falhou: '+detail) from error
+        transaction(prefix + ['-Syu', '--needed', '--noconfirm', *ignored, *packages])
         if artifacts:
-            runtime.run(prefix + ['-U', '--needed', '--noconfirm',
+            transaction(prefix + ['-U', '--needed', '--noconfirm',
                                   *['/run/apx-packages/' + p.name for p in artifacts]])
     finally:
         runtime.run(['systemctl', 'stop', unit], check=False, capture=True)

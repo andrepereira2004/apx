@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only portable Windows preview against the exact fresh-install checkpoint."""
+"""Portable Windows geometry preview; persist approval metadata, never write disks."""
 import argparse
 import json
 import os
@@ -18,7 +18,7 @@ IDENTITY=Path('/etc/apx-portable-native-identity-v4.json')
 
 def read_identity():
     info=IDENTITY.lstat()
-    if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or stat.S_IMODE(info.st_mode)!=0o600 or info.st_size>16384:
+    if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or stat.S_IMODE(info.st_mode)!=0o600 or info.st_size>2**20:
         raise ValueError('untrusted native installation identity')
     value=json.loads(IDENTITY.read_text())
     if value.get('profile')!='apx-portable-native-identity-v4':
@@ -26,11 +26,11 @@ def read_identity():
     return value
 
 
-def preview(name,size_gib,generation=None):
+def preview(name,size_gib,generation=None,description=""):
     if os.geteuid():raise PermissionError('Host root required')
     if type(name) is not str or not NAME.fullmatch(name) or name=='hub':
         raise ValueError('invalid native Environment name')
-    if any((base/name).exists() for base in [Path('/var/lib/apx/environments'),Path('/var/lib/apx/native-environments/instances-v4')]):
+    if any(((base/name).exists() or (base/(name+'.json')).exists()) for base in [Path('/var/lib/apx/environments'),Path('/var/lib/apx/native-environments/portable-v4/instances')]):
         raise ValueError('an Environment with that name already exists')
     identity=read_identity()
     def output(*args):
@@ -54,9 +54,9 @@ def preview(name,size_gib,generation=None):
     match=re.search(r'^\s*Device allocated:\s*([0-9]+)\s*$',usage,re.M)
     if not match:raise ValueError('Btrfs allocated capacity unavailable')
     plan=plan_create(identity,table,serial=identity['serial'],wwn=identity['wwn'],
-        name=name,generation=generation or str(uuid.uuid4()),size_gib=size_gib,used_bytes=int(match[1]))
-    return dict(schema=4,profile='apx-portable-native-preview-v4',can_create=False,plan=plan,
-                reason='offline, WinPE and native boot/reclaim validation pending')
+        name=name,generation=generation or str(uuid.uuid4()),size_gib=size_gib,used_bytes=int(match[1])+24*1024**3)
+    from apx_portable_native_hub import persist_preview
+    return persist_preview(plan,description)
 
 
 if __name__=='__main__':

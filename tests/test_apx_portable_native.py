@@ -35,7 +35,7 @@ class PortableNativeTests(unittest.TestCase):
                 with self.subTest(disk=disk,sector=sector):
                     identity,table=fixture(disk,sector)
                     plan=create(identity,table)
-                    self.assertFalse(plan['executable'])
+                    self.assertTrue(plan['executable'])
                     self.assertEqual(native.validate_plan(plan),plan)
                     self.assertEqual(plan['after']['partitions'][:2],table['partitions'][:2])
                     self.assertEqual(plan['slots'][0]['size']*sector,120*native.GIB)
@@ -75,11 +75,11 @@ class PortableNativeTests(unittest.TestCase):
 
     def test_rehashed_modified_plan_does_not_authorize_changed_geometry(self):
         identity,table=fixture();plan=create(identity,table)
-        for field in ['slots','after','protected','remaining_gates','executable']:
+        for field in ['slots','after','protected','runtime_requirements','executable']:
             altered=deepcopy(plan)
             if field=='slots':altered[field][0]['uuid']=str(uuid4())
             elif field=='after':altered[field]['partitions'][0]['size']-=2048
-            elif field=='executable':altered[field]=True
+            elif field=='executable':altered[field]=False
             else:altered[field]=[]
             altered['sha256']=native.digest({k:v for k,v in altered.items() if k!='sha256'})
             with self.subTest(field=field),self.assertRaises(ValueError):native.validate_plan(altered)
@@ -151,7 +151,7 @@ class PortableNativeDeletionTests(unittest.TestCase):
         plan=native.plan_delete(identity,current,first,self.retirement(first,current),serial=identity['serial'],wwn=identity['wwn'])
         self.assertEqual(plan['mode'],'add-btrfs-member')
         self.assertEqual(plan['boot_dependency'],'/dev/disk/by-partuuid/'+first['slots'][0]['uuid'])
-        self.assertFalse(plan['executable'])
+        self.assertTrue(plan['executable'])
         for part in second['slots']:self.assertIn(part,plan['after']['partitions'])
         oldroot=next(p for p in current['partitions'] if p['uuid']==identity['root_partuuid'])
         self.assertIn(oldroot,plan['after']['partitions'])
@@ -175,7 +175,7 @@ class PortableNativeDeletionTests(unittest.TestCase):
 
 
 class NativeIdentityInstallerTests(unittest.TestCase):
-    def test_empty_disk_installer_records_actual_partition_uuids_without_enabling_native(self):
+    def test_empty_disk_installer_records_actual_partition_uuids_for_explicit_native_actions(self):
         import importlib.util,json,tempfile
         from unittest.mock import patch
         spec=importlib.util.spec_from_file_location('native_disk_identity_test',Path(__file__).resolve().parents[1]/'scripts/portable/install_apx_disk.py')
@@ -190,7 +190,7 @@ class NativeIdentityInstallerTests(unittest.TestCase):
             installer.record_native_identity(root,{'disk':{'serial':identity['serial'],'wwn':identity['wwn']}},table['device'],parts[0]['node'],parts[1]['node'],parts[2]['node'])
             record=root/'etc/apx-portable-native-identity-v4.json';value=json.loads(record.read_text())
             self.assertEqual(value,identity);self.assertEqual(record.stat().st_mode&0o777,0o600)
-            self.assertFalse(value['native_executor_enabled'])
+            self.assertTrue(value['native_executor_enabled'])
 
     def test_disk_without_stable_identity_keeps_linux_installation_and_disables_native(self):
         import importlib.util,json,tempfile

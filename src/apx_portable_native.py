@@ -1,7 +1,7 @@
 """Hardware-independent native Windows geometry and transaction contracts.
 
 Pure calculations only. No block I/O, firmware calls, mounts or credentials.
-The portable executor remains disabled until offline/WinPE/reboot validation.
+Execution is implemented by the independent Recovery worker, never on import.
 """
 from copy import deepcopy
 import hashlib
@@ -75,16 +75,22 @@ def installation_identity(table,*,serial,wwn,root_uuid,root_partuuid,esp_partuui
     record=dict(schema=4,profile='apx-portable-native-identity-v4',disk_id=table['id'],
         serial=serial,wwn=wwn,sector_size=table['sectorsize'],root_uuid=guid(root_uuid),
         root_partuuid=keys[0],esp_partuuid=keys[1],recovery_partuuid=keys[2],
-        layout_sha256=digest(table),native_executor_enabled=False)
+        layout_sha256=digest(table),layout_checkpoint=deepcopy(table),native_executor_enabled=True)
     record['sha256']=digest(record)
     return record
 
 
 def validate_identity(identity,table,serial,wwn):
     table=canonical_layout(table)
-    regenerated=installation_identity(table,serial=serial,wwn=wwn,root_uuid=identity['root_uuid'],
+    checkpoint=canonical_layout(identity['layout_checkpoint'])
+    regenerated=installation_identity(checkpoint,serial=serial,wwn=wwn,root_uuid=identity['root_uuid'],
         root_partuuid=identity['root_partuuid'],esp_partuuid=identity['esp_partuuid'],recovery_partuuid=identity['recovery_partuuid'])
-    if identity!=regenerated:raise ValueError('disk identity or exact GPT checkpoint changed')
+    observed=deepcopy(table);old=observed['device'];observed['device']=checkpoint['device']
+    for p in observed['partitions']:
+        number=next(n for n in range(1,129) if partition_node(old,n)==p['node'])
+        p['node']=partition_node(checkpoint['device'],number)
+    if identity!=regenerated or canonical_layout(observed)!=checkpoint:
+        raise ValueError('disk identity or exact GPT checkpoint changed')
     return table
 
 
@@ -114,13 +120,12 @@ def plan_create(identity,table,*,serial,wwn,name,generation,size_gib,used_bytes)
                uuid=str(uuid5(UUID(generation),purpose)),name='APX_'+purpose.upper())
         slots.append(p);after['partitions'].append(p);cursor+=size
     after=canonical_layout(after)
-    plan=dict(schema=4,profile='apx-portable-native-create-v4',executable=False,
+    plan=dict(schema=4,profile='apx-portable-native-create-v4',executable=True,
         identity=deepcopy(identity),before=table,after=after,name=name,generation=generation,
         size_gib=size_gib,used_bytes=used_bytes,retained_root_bytes=retained,
         slots=slots,root_partuuid=root['uuid'],reserve_bytes=RESERVE,
         protected=[p['uuid'] for p in table['partitions'] if p['uuid']!=root['uuid']],
-        remaining_gates=['offline-shrink-rollback','verified-WinPE-image','EFI-BCD-identity',
-                         'native-install-and-return','delete-and-reclaim-reboot'])
+        runtime_requirements=['offline-Recovery-root','verified-Windows-media','exact-GPT-checkpoint','explicit-Hub-activation'])
     plan['sha256']=digest(plan)
     return plan
 
@@ -197,12 +202,12 @@ def plan_delete(identity,table,instance_plan,retired,*,serial,wwn):
         after['partitions'].append(reclaimed)
         dependency='/dev/disk/by-partuuid/'+reclaimed['uuid']
     after=canonical_layout(after)
-    plan=dict(schema=4,profile='apx-portable-native-delete-v4',executable=False,
+    plan=dict(schema=4,profile='apx-portable-native-delete-v4',executable=True,
               identity=deepcopy(identity),before=table,after=after,source_plan=source,
               retirement=deepcopy(retired),mode=mode,reclaimed_bytes=size*table['sectorsize'],
               boot_dependency=dependency,
               protected=[p['uuid'] for p in table['partitions'] if p['uuid'] not in selected and (mode!='grow-root' or p['uuid']!=root['uuid'])],
-              remaining_gates=['exact-slot-wipe','GPT-change-and-recovery','Linux-reclaim-second-boot'])
+              runtime_requirements=['offline-Recovery-root','exact-slot-wipe','durable-reclaim-journal'])
     plan['sha256']=digest(plan)
     return plan
 

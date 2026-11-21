@@ -79,6 +79,21 @@ def create(plan_identity, approval):
 runtime.configure_environment_features = configure_features
 runtime.host_nvidia_version = nvidia_version
 runtime.create = create
+
+
+def native_storage_guard(function,operation):
+    def guarded(*args,**kwargs):
+        pending=Path('/var/lib/apx/native-environments/portable-v4/pending.json')
+        if pending.exists() and not (operation=='start' and args and args[0]=='hub'):
+            raise runtime.Refusal('Conclui ou recupera a operação Windows antes de alterar Environments.')
+        return function(*args,**kwargs)
+    return guarded
+
+
+# The authenticated executor imports these actual lifecycle functions. This
+# protects console/typed requests independently of the graphical menu.
+for operation in ('create','start','snapshot','archive','destroy','restore','recover_unpublished'):
+    setattr(runtime,operation,native_storage_guard(getattr(runtime,operation),operation))
 if __name__ == "__main__":
     try:
         raise SystemExit(runtime.main())

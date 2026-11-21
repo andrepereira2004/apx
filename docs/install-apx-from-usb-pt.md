@@ -62,3 +62,13 @@ Um GPU NVIDIA ausente da lista oficial da versão do driver é recusado antes de
 alterar o disco. Os testes em VM não substituem uma instalação de validação em
 cada família de hardware real. Limites técnicos e evidência datada:
 `empty-disk-install-v1.md` e `empty-disk-validation-2026-10-18.md`.
+
+
+## Windows nativo num futuro PC
+
+O instalador inclui o ciclo portátil v4: preparação, instalação pela recuperação,
+arranque, retorno ao Hub e remoção com recuperação do espaço. Depois de instalar
+APX nesse PC, regista uma ISO oficial Windows x64 e, se necessário, os drivers
+desse hardware. O Hub pede uma confirmação separada antes de instalar/reiniciar.
+Ver [instruções e âmbito do Windows portátil](portable-native-v4-development.md#using-it-on-the-future-pc).
+Esta implementação não instalou Windows nem alterou o PC de desenvolvimento.

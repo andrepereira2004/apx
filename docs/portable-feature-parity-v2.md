@@ -1,6 +1,7 @@
 > Atualização: instalação limpa e segundo arranque concluídos em 2026-11-21.
 > Ver [evidência v3](../audit/2026-11-21-portable-v3/README.md);
-> Windows nativo portátil continua por implementar e validar.
+> Windows nativo portátil v4 agora está [implementado nas fontes](portable-native-v4-development.md);
+> sem nova instalação Windows/aceitação física neste computador.
 
 # Portable feature integration v2 — 2026-11-21
 

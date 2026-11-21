@@ -229,7 +229,7 @@ class PortableRuntimeIntegrationTests(unittest.TestCase):
         self.assertIn('passkeys',manifest['services'])
         self.assertIn('media',manifest['services'])
         self.assertIn('chatgpt-bin',manifest['native_applications'])
-        self.assertFalse(manifest['native_windows'])
+        self.assertTrue(manifest['native_windows'])
         self.assertIn('config/portable-packages-v2/SHA256SUMS.json',module.verify_sources())
 
 

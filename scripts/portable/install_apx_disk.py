@@ -23,7 +23,7 @@ CODEX_URL = ('https://github.com/openai/codex/releases/download/rust-v0.166.0/'
              'codex-x86_64-unknown-linux-musl.tar.gz')
 CODEX_SHA256 = 'a0bf572d2f93f056c6712a6da348e96078dc84f3885fd7be67807ef389cb3978'
 RECOVERY_PACKAGES = ('base', 'linux', 'mkinitcpio', 'networkmanager', 'cryptsetup',
-                     'btrfs-progs', 'ntfs-3g', 'systemd-ukify', 'python', 'efibootmgr', 'dosfstools')
+                     'btrfs-progs', 'ntfs-3g', 'systemd-ukify', 'python', 'efibootmgr', 'dosfstools', 'arch-install-scripts')
 
 
 def run(*args, capture=False, input=None):
@@ -181,7 +181,7 @@ def partition_path(disk, number):
 
 
 def record_native_identity(root, plan, disk, esp, recovery, system):
-    """Record exact fresh-host identities; this never enables native disk writes."""
+    """Record fresh-host identity for explicit future native transactions."""
     spec = importlib.util.spec_from_file_location('portable_native_geometry', REPO / 'src/apx_portable_native.py')
     native = importlib.util.module_from_spec(spec); spec.loader.exec_module(native)
     serial, wwn = plan['disk'].get('serial') or '', plan['disk'].get('wwn') or ''
@@ -211,10 +211,9 @@ def install_recovery(esp, partition, codex_binary):
         run('mount', partition, str(recovery))
         try:
             run('pacstrap', '-K', str(recovery), *RECOVERY_PACKAGES)
-            native = recovery / 'usr/lib/apx/apx_portable_native.py'
-            native.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(REPO / 'src/apx_portable_native.py', native)
-            native.chmod(0o644)
+            spec = importlib.util.spec_from_file_location('portable_native_install', REPO / 'scripts/portable/install_native_v4.py')
+            native = importlib.util.module_from_spec(spec); spec.loader.exec_module(native)
+            native.recovery(recovery, write)
             destination = recovery / 'usr/local/bin/codex'
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(codex_binary, destination); destination.chmod(0o755)
@@ -225,8 +224,8 @@ def install_recovery(esp, partition, codex_binary):
                   '[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear %I $TERM\n')
             write(recovery, 'root/RECOVERY.txt',
                   'APX Recovery: connect with nmcli, then run codex login --device-auth '
-                  'on first use. Run codex to start. Unlock the APX disk with cryptsetup.\n', 0o600)
-            run('systemctl', '--root', str(recovery), 'enable', 'NetworkManager', 'getty@tty1.service')
+                  'on first use. Run codex to start. Portable APX uses an unencrypted Btrfs root. Native transaction history: /var/lib/apx-native-v4/.\n', 0o600)
+            run('systemctl', '--root', str(recovery), 'enable', 'NetworkManager', 'getty@tty1.service', 'apx-portable-native-offline.service')
             run('arch-chroot', str(recovery), 'mkinitcpio', '-P')
             run('arch-chroot', str(recovery), 'ukify', 'build', '--linux=/boot/vmlinuz-linux',
                 '--initrd=/boot/initramfs-linux.img', '--os-release=@/etc/os-release',

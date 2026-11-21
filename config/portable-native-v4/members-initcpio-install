@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+build() {
+    add_module btrfs
+    add_binary /usr/bin/btrfs
+    add_binary /usr/bin/bash
+    add_binary /usr/bin/sleep
+    add_binary /usr/bin/udevadm
+    add_file /etc/apx-portable-btrfs-members-v4
+    add_file /usr/lib/apx/apx-portable-members-v4.sh /usr/bin/apx-portable-members-v4
+    add_runscript
+    if in_array systemd "${HOOKS[@]}"; then
+        add_systemd_unit apx-portable-members-v4.service
+        add_symlink /usr/lib/systemd/system/initrd-root-fs.target.requires/apx-portable-members-v4.service ../apx-portable-members-v4.service
+    fi
+}
+help() { echo 'Wait for exact APX reclaimed Btrfs members before mounting Linux.'; }

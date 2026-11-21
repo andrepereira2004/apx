@@ -31,7 +31,7 @@ ADAPTERS = (
     "apx-portable-full-runtime.py", "apx-portable-services.py", "apx-portable-graphical.py",
     "apx-portable-session.sh", "apx-portable-compositor.sh", "apx-portable-power.py",
     "apx-portable-media.py",
-    "apx-portable-native-plan.py",
+    "apx-portable-native-plan.py", "apx-portable-native.py", "install_native_v4.py",
 )
 SERVICES = ("host-services-v1", "host-services-v2", "host-services-v3", "audio-state-v1",
             "environment-switch-v1", "system-power-v1", "environment-hardware-v1", "coordinated-update-v1")
@@ -74,6 +74,7 @@ def source_files():
         files.add("config/waybar-ascii-v1/" + relative)
     files.update(str(path.relative_to(REPO)) for path in (REPO / "config/environment-flatpak-v1").iterdir() if path.is_file())
     files.update(str(path.relative_to(REPO)) for path in (REPO / "config/portable-packages-v2").iterdir() if path.is_file())
+    files.update(str(path.relative_to(REPO)) for path in (REPO / "config/portable-native-v4").iterdir() if path.is_file())
     return sorted(files)
 
 
@@ -115,11 +116,12 @@ def feature_manifest():
         'native_applications': ['brave-bin', 'localsend-bin', 'gridcraft', 'wordcraft',
                                 'deckcraft', 'chatgpt-bin', 'salvador-de-mundos-apx'],
         'services': list(SERVICES) + ['transfer', 'passkeys', 'media', 'localsend', 'dns'],
-        'native_windows': False,
+        'native_windows': True,
+        'native_implementation': 'portable-v4-source-implemented-not-installation-tested',
         'native_preview': 'identity-pinned-portable-v4',
         'firmware_gpu_switch': False,
         'external_model_store': False,
-        'validation': 'source-tested; latest clean installation and physical acceptance pending',
+        'validation': 'portable core previously VM-verified; native v4 source-only, no new installation test',
     }
 
 
@@ -145,6 +147,7 @@ def full_install(base, record, password, hardware):
     for filename in ADAPTERS:
         shutil.copyfile(REPO / "scripts/portable" / filename, LIBRARY / filename)
         (LIBRARY / filename).chmod(0o755)
+    module(REPO / 'scripts/portable/install_native_v4.py', 'apx_native_portable_install').host(base)
     package_seed = Path('/usr/share/apx/config-seeds/portable-packages-v2')
     shutil.copytree(REPO / 'config/portable-packages-v2', package_seed)
     shutil.copyfile(package_seed / 'chatgpt-release-keyring.gpg', Path('/usr/share/apx/chatgpt-release-keyring.gpg'))
@@ -340,7 +343,7 @@ def main():
     parser.add_argument("--password-stdin", action="store_true", help="read a new APX password from a private pipe")
     args = parser.parse_args()
     base = module(Path(__file__).with_name("install_apx_arch.py"), "apx_portable_base_installer")
-    base.PACKAGES += ["seatd", "bluez", "bluez-utils", "iwd", "kbd", "gnupg", "libarchive", "xdg-dbus-proxy", "exfatprogs", "ntfs-3g"]
+    base.PACKAGES += ["seatd", "bluez", "bluez-utils", "iwd", "kbd", "gnupg", "libarchive", "xdg-dbus-proxy", "exfatprogs", "ntfs-3g", "wimlib", "efibootmgr", "dosfstools"]
     hashes = verify_sources()
     record = base.preflight()
     base.run("busctl", "--system", "--no-pager", "status", capture=True)

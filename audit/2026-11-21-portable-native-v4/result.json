@@ -1,0 +1,17 @@
+{
+  "schema": 4,
+  "scope": "source implementation for a future fresh portable installation",
+  "parent_commit": "33f90c3f5a43e8bfc4498ae703d9fc1bde79f3bb",
+  "python_sources_parsed": 33,
+  "installer_sources": 794,
+  "shell_pins_match": true,
+  "portable_unit_contracts_passed": 71,
+  "native_unit_contracts_included": 24,
+  "hardware_commands_in_executor_contracts": "mocked",
+  "host_deployed": false,
+  "host_packages_installed": false,
+  "disk_or_firmware_writes": false,
+  "windows_or_vm_launched": false,
+  "windows_helper_compiled_here": false,
+  "source_manifest_sha256": "051c383e7581e8a894826811b6dca1f0a0f26593f3cf86dda32e8105c4a3deb8"
+}

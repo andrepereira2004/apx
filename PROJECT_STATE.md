@@ -1,3 +1,18 @@
+## Windows nativo portátil v4 implementado nas fontes — 2026-11-21
+
+Proprietário pediu apenas implementação para outro PC, sem instalar Windows nem
+novos ensaios de instalação. Incluídos executor Recovery independente, geração
+de WinPE/compilação isolada, ISO/hash/índice registados, criação e arranque pelo
+Hub, retorno Windows→Hub, retoma limitada, remoção e reclaim por instância.
+O instalador de disco novo provisiona código/serviços/identidade desse PC;
+nenhum serviço, pacote, partição ou arranque deste Host foi alterado.
+Perfil UEFI x64/GPT/Btrfs portátil; mantém reserva de 96 GiB e margem de 16 GiB, mais
+24 GiB temporários para a preparação. Multi-device impede nova criação por shrink;
+Windows OOBE/licença/BitLocker não são automatizados. Native-v3 físico intacto.
+Ver `docs/portable-native-v4-development.md`. Só verificações de fontes/contratos
+com comandos simulados, sem ISO/VM/Windows/blocos reais; helper C não compilado
+neste PC. Os resultados VM da v3 abaixo são históricos, não validação da v4.
+
 ## Instalador portátil v3 e Unhook — 2026-11-21
 
 Instalação gráfica limpa verificada numa VM isolada: 780 fontes exatas,

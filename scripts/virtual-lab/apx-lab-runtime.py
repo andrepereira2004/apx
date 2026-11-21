@@ -408,7 +408,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "quickshell/apx/BounceMouseArea.qml": "d7238c10c969db951526f6ae34cee38502ba829f0267cb6c1cdb8a1bdb28aa7f",
     "quickshell/apx/ControlIcon.qml": "1d52d19f86582e5e476e85d8b5a6533cb3ce87c866aa33d3812848d51a44a606",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
-    "quickshell/apx/shell.qml": "aee3ff12435346ad9783d2963c379a1369f726b22b75a3f8421042b2d1d74bc5",
+    "quickshell/apx/shell.qml": "cd87a354bbafad8f75b1ca4760d598046bb4eae6f57597fa22ba217c54d07a1c",
     "rofi/config.rasi": "8d8589b53c46c76292fbe0045a9eee8cbd19357efd7472bb6a0d765c60947ce0",
     "xdg-desktop-portal/portals.conf": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
     "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "a6cbd2d09507270cd3cfb449542e0bd7ec6254019703359854b36e476a2d468e",

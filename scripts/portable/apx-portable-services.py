@@ -81,15 +81,55 @@ def configure_switch(module, peer):
             raise RuntimeError("Já existe uma operação de Environment em curso.")
     module.authorize_hub_management = hub_management
     original = module.apply
+    import apx_portable_native_hub as native
+    module.native_v3.control = lambda: None
     def apply(operation, payload, credentials):
         if operation == 'native.plan':
             hub_management(credentials)
             planner = load('apx-portable-native-plan.py', 'apx_portable_native_preview')
-            value = planner.preview(str(payload['target']), int(payload['size_gib']))
+            value = planner.preview(str(payload['target']), int(payload['size_gib']), description=payload['description'])
             value.update(target=payload['target'], description=payload['description'], size_gib=payload['size_gib'])
             return value
-        if operation.startswith("native.") or (operation == "environment.create" and payload.get("system_kind") != "arch"):
-            raise RuntimeError("A instalação de Windows não está disponível nesta versão.")
+        if operation == 'storage.get':
+            peer.authorize_active_environment_peer(credentials)
+            return native.storage_status(module.trusted_environment)
+        if operation == 'catalog.get':
+            peer.authorize_active_environment_peer(credentials)
+            # Do not invoke pilot catalogue probes on a portable installation.
+            values=[]
+            for directory in sorted(module.ENVIRONMENTS.iterdir()):
+                if not directory.is_dir() or directory.name=='hub': continue
+                try:values.append(module.environment_view(module.trusted_environment(directory.name)))
+                except (OSError,ValueError,KeyError,PermissionError):continue
+                if len(values)>=64:break
+            return values+native.catalogue()
+        if operation == 'management.status':
+            peer.authorize_official_hub_peer(credentials)
+            value=module.management_state()
+            pending=native.control()
+            if pending:value.update(pending)
+            return value
+        if operation in {'native.prepare-v3','native.activate-v3','native.rollback-v3','native.retry-v3','native.delete-v3','native.boot-v3'}:
+            hub_management(credentials)
+            action=operation.removeprefix('native.').removesuffix('-v3')
+            return native.dispatch(action,str(payload['target']),str(payload['generation']),module.MANAGEMENT_LOCK)
+        if operation == 'environment.destroy' and any(r['target']==payload['target'] for r in native.records()):
+            hub_management(credentials)
+            return native.dispatch('delete',str(payload['target']),str(payload['generation']),module.MANAGEMENT_LOCK)
+        if operation == 'environment.update-metadata' and any(r['target']==payload['target'] for r in native.records()):
+            hub_management(credentials)
+            from apx_portable_native_worker import load_instance
+            from apx_portable_native_io import STATE,atomic
+            if native.control():raise RuntimeError('Conclui a operação Windows antes de alterar os metadados.')
+            record=load_instance(str(payload['target']),str(payload['generation']))
+            if record['state']!='ready':raise ValueError('Windows is not ready')
+            record.update({k:payload[k] for k in ['display_name','description','icon'] if k in payload})
+            atomic(STATE/'instances'/(record['target']+'.json'),record)
+            return {'accepted':True,'target':record['target']}
+        if operation.startswith('native.') or (operation=='environment.create' and payload.get('system_kind')!='arch'):
+            raise RuntimeError('Usa a preparação de Windows e confirma a instalação no Hub.')
+        if native.control() and operation in {'environment.create','environment.destroy','environment.update-metadata','switch.to-workload'}:
+            raise RuntimeError('Conclui ou recupera a operação Windows antes de alterar Environments.')
         if operation == "switch.to-workload":
             hub_management(credentials)
             target = graphical.registration(payload["target"])

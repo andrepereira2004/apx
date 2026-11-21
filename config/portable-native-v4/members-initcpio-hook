@@ -1,0 +1,2 @@
+#!/usr/bin/ash
+run_hook() { /usr/bin/apx-portable-members-v4; }

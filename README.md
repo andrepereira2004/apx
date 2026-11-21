@@ -100,7 +100,9 @@ real. As verificações de pacotes e os testes de fontes não substituem esse en
 
 Consulta a [integração portátil](docs/portable-feature-parity-v2.md) e o
 [ensaio limpo v3](audit/2026-11-21-portable-v3/README.md): instalação e segundo
-arranque verificados em VM. Windows nativo portátil e aceitação física continuam pendentes.
+arranque verificados em VM. O [Windows nativo portátil v4](docs/portable-native-v4-development.md)
+está implementado para novas instalações; este ciclo novo não foi instalado nem
+validado em Windows neste computador.
 A [revisão anterior](docs/github-installation-review-2026-11-21.md) preserva o diagnóstico
 que originou estas alterações.
 

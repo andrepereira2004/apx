@@ -1,0 +1,150 @@
+test_global_default_local_override_and_return_to_inheritance (test_apx_appearance.AppearanceTests.test_global_default_local_override_and_return_to_inheritance) ... FAIL
+test_offline_global_cache_and_local_style_survive (test_apx_appearance.AppearanceTests.test_offline_global_cache_and_local_style_survive) ... FAIL
+test_theme_overrides_preserve_user_css_and_restore_cleanly (test_apx_appearance.AppearanceTests.test_theme_overrides_preserve_user_css_and_restore_cleanly) ... ERROR
+test_endpoints_and_repeated_generation (test_apx_appearance_opacity.OpacityTests.test_endpoints_and_repeated_generation) ... ERROR
+test_partial_changes_preserve_color_and_other_opacities (test_apx_appearance_opacity.OpacityTests.test_partial_changes_preserve_color_and_other_opacities) ... ERROR
+test_daemon_uses_peer_auth_typed_operations_and_no_secret_argv_or_tempfile (test_apx_host_services_v3_physical.HostServicesV3PhysicalTests.test_daemon_uses_peer_auth_typed_operations_and_no_secret_argv_or_tempfile) ... FAIL
+
+======================================================================
+ERROR: test_theme_overrides_preserve_user_css_and_restore_cleanly (test_apx_appearance.AppearanceTests.test_theme_overrides_preserve_user_css_and_restore_cleanly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_appearance.py", line 103, in test_theme_overrides_preserve_user_css_and_restore_cleanly
+    app.apply_theme(style);first=css.read_text();app.apply_theme(style)
+    ~~~~~~~~~~~~~~~^^^^^^^
+TypeError: apply_theme() missing 1 required positional argument: 'opacity'
+
+======================================================================
+ERROR: test_endpoints_and_repeated_generation (test_apx_appearance_opacity.OpacityTests.test_endpoints_and_repeated_generation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_appearance_opacity.py", line 41, in test_endpoints_and_repeated_generation
+    m.status()
+    ~~~~~~~~^^
+  File "/root/apx-host-development-mode-v1/apx/tmp/tmpp1rm2w_k/config/environment-shell-v1/local/bin/apx-appearance-v1", line 154, in status
+    apply_theme(effective, opacity)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/root/apx-host-development-mode-v1/apx/tmp/tmpp1rm2w_k/config/environment-shell-v1/local/bin/apx-appearance-v1", line 135, in apply_theme
+    subprocess.run(['/home/apx/.local/bin/apx-lock-wallpaper-v1',
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    json.dumps({'style': style, 'wallpaper': local()})],
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   check=True, timeout=12)
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1875, in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      p2cread, p2cwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      c2pread, c2pwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      errread, errwrite)
+                      ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1819, in _posix_spawn
+    self.pid = os.posix_spawn(executable, args, env, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/apx/.local/bin/apx-lock-wallpaper-v1'
+
+======================================================================
+ERROR: test_partial_changes_preserve_color_and_other_opacities (test_apx_appearance_opacity.OpacityTests.test_partial_changes_preserve_color_and_other_opacities)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_appearance_opacity.py", line 28, in test_partial_changes_preserve_color_and_other_opacities
+    m.main(['opacity', '{"terminal":40}'])
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/apx-host-development-mode-v1/apx/tmp/tmpp1rm2w_k/config/environment-shell-v1/local/bin/apx-appearance-v1", line 266, in main
+    print(json.dumps(status()))
+                     ~~~~~~^^
+  File "/root/apx-host-development-mode-v1/apx/tmp/tmpp1rm2w_k/config/environment-shell-v1/local/bin/apx-appearance-v1", line 154, in status
+    apply_theme(effective, opacity)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/root/apx-host-development-mode-v1/apx/tmp/tmpp1rm2w_k/config/environment-shell-v1/local/bin/apx-appearance-v1", line 135, in apply_theme
+    subprocess.run(['/home/apx/.local/bin/apx-lock-wallpaper-v1',
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    json.dumps({'style': style, 'wallpaper': local()})],
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   check=True, timeout=12)
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1875, in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      p2cread, p2cwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      c2pread, c2pwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      errread, errwrite)
+                      ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1819, in _posix_spawn
+    self.pid = os.posix_spawn(executable, args, env, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/apx/.local/bin/apx-lock-wallpaper-v1'
+
+======================================================================
+FAIL: test_global_default_local_override_and_return_to_inheritance (test_apx_appearance.AppearanceTests.test_global_default_local_override_and_return_to_inheritance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_appearance.py", line 80, in test_global_default_local_override_and_return_to_inheritance
+    state=app.status();self.assertEqual(state['effective_style'],own)
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'color': '#ee8866', 'icons': True, 'buttons': False, 'windows': False} != {'color': '#ee8866', 'icons': False, 'buttons': True, 'windows': True}
+- {'buttons': False, 'color': '#ee8866', 'icons': True, 'windows': False}
+?             ^^^^                                ^^^              ^^^^
+
++ {'buttons': True, 'color': '#ee8866', 'icons': False, 'windows': True}
+?             ^^^                                ^^^^              ^^^
+
+
+======================================================================
+FAIL: test_offline_global_cache_and_local_style_survive (test_apx_appearance.AppearanceTests.test_offline_global_cache_and_local_style_survive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_appearance.py", line 92, in test_offline_global_cache_and_local_style_survive
+    self.assertEqual(app.status()['effective_style'],shared)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'color': '#9988aa', 'icons': True, 'buttons': False, 'windows': False} != {'color': '#9988aa', 'icons': True, 'buttons': False, 'windows': True}
+- {'buttons': False, 'color': '#9988aa', 'icons': True, 'windows': False}
+?                                                                  ^^^^
+
++ {'buttons': False, 'color': '#9988aa', 'icons': True, 'windows': True}
+?                                                                  ^^^
+
+
+======================================================================
+FAIL: test_daemon_uses_peer_auth_typed_operations_and_no_secret_argv_or_tempfile (test_apx_host_services_v3_physical.HostServicesV3PhysicalTests.test_daemon_uses_peer_auth_typed_operations_and_no_secret_argv_or_tempfile)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_host_services_v3_physical.py", line 55, in test_daemon_uses_peer_auth_typed_operations_and_no_secret_argv_or_tempfile
+    self.assertNotIn(forbidden, source)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: 'mkstemp' unexpectedly found in '#!/usr/bin/env python3\n"""Authenticated Host backend for APX shared services v3."""\n\nfrom __future__ import annotations\n\nimport argparse\nimport hashlib\nimport importlib.util\nimport json\nimport os\nimport tempfile\nfrom pathlib import Path\nimport pty\nimport re\nimport select\nimport socket\nimport stat\nimport struct\nimport subprocess\nimport sys\nimport termios\nimport threading\nimport time\nimport uuid\n\nsys.path.insert(0, "/usr/lib/apx")\nfrom apx_host_services_peer import HostServicesPeer, authorize_shared_service_peer  # noqa: E402\nfrom apx_host_services_v3_contract import (  # noqa: E402\n    MAX_MESSAGE_BYTES, error_bytes, parse_request, response_bytes,\n)\nfrom apx_captive_portal import (  # noqa: E402\n    capport_uri_from_networkctl, check as check_connectivity, result as connectivity_result,\n    unknown as unknown_connectivity,\n)\n\nSOCKET = Path("/run/apx/host-services-v3.sock")\nLOCALSEND_CONFIG = Path("/var/lib/apx/localsend-network-v1/config.json")\nLOCALSEND_HELPER = Path("/usr/lib/apx/apx-localsend-network-v1.py")\nRFKILL_ROOT = Path("/sys/class/rfkill")\nRFKILL = "/usr/bin/rfkill"\nWIFI_INTERFACE = "wlan0"\nIWD_STATE = Path("/var/lib/iwd")\nANSI = re.compile(r"\\x1b\\[[0-9;]*m")\nMAX_CLIENTS = 16\nCAPABILITIES = {\n    "events": ["bluetooth.changed", "bluetooth.scan_completed", "network.changed", "network.scan_completed", "network.connectivity_changed",\n               "host.service_restarted"],\n    "operations": ["bluetooth.device.connect", "bluetooth.device.disconnect", "bluetooth.device.remove",\n                   "bluetooth.pair.begin", "bluetooth.pair.respond", "bluetooth.pair.status",\n                   "bluetooth.power", "bluetooth.scan", "bluetooth.status",\n
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.071s
+
+FAILED (failures=3, errors=3)

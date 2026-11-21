@@ -87,15 +87,20 @@ O `install.sh` do `master` obtém agora o instalador gráfico atual por predefin
 para um Arch novo já instalado. Não é um atualizador de instalações APX existentes.
 O percurso pela pen acima continua a ser o indicado para um disco vazio.
 
-**Ainda não existe equivalência completa com este piloto físico.** O instalador
-inclui o shell e módulos atuais do repositório, mas o perfil portátil não ativa
-as mesmas integrações de aplicações do piloto, Windows nativo/recuperação de
-espaço, nem todos os serviços de partilha e hardware. Copiar o código dessas
-funcionalidades não demonstra que funcionem num PC novo. Os testes antigos de VM
-não validam automaticamente as alterações posteriores.
+O instalador inclui agora as aplicações selecionadas nos modelos (Brave,
+LocalSend, ArtCraft, ChatGPT, jogos e ferramentas), Partilha/wallpaper, passkeys
+Bluetooth filtradas, pens USB com remoção segura, deteção de câmaras e o percurso
+de atualização dos Environments. As aplicações vêm de fornecedores verificados;
+perfis pessoais e credenciais não são copiados. O Hub mantém-se mínimo.
 
-Consulta a [verificação de branches e instalação de 21/11/2026](docs/github-installation-review-2026-11-21.md)
-para evidência, limites e passos que faltam.
+**A equivalência completa ainda está pendente:** Windows nativo/recuperação de
+espaço e modos de firmware específicos continuam ligados ao piloto físico.
+Também falta repetir uma instalação limpa com estas fontes e testar o hardware
+real. As verificações de pacotes e os testes de fontes não substituem esse ensaio.
+
+Consulta a [integração portátil v2 e evidência atual](docs/portable-feature-parity-v2.md).
+A [revisão anterior](docs/github-installation-review-2026-11-21.md) preserva o diagnóstico
+que originou estas alterações.
 
 ## Arquitetura e documentação histórica
 

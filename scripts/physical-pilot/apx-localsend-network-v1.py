@@ -65,7 +65,7 @@ def selection(config: dict, active: dict, record: dict) -> tuple[str, str, str]:
             != (name, generation, 'graphical-base', 'running'):
         raise ValueError('LocalSend generation is not the active workload')
     short = generation.replace('-', '')[:8]
-    if active.get('unit') != f'apx-graphical-{name}-{short}.service':
+    if active.get('unit') not in {f'apx-graphical-{name}-{short}.service', f'apx-portable-{name}-{short}.service'}:
         raise ValueError('LocalSend active unit differs')
     return name, generation, str(address)
 

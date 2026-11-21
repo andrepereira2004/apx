@@ -12,6 +12,15 @@ candidate, not complete physical-pilot feature parity or complete validation of 
 GitHub entry point selects this graphical installer; the VM results below remain
 historical. See [the current review](github-installation-review-2026-11-21.md).
 
+## Source integration update — 2026-11-21
+
+The current portable installer now provisions selected native/vendor applications
+and installs the shared-folder, filtered passkey, removable USB and LocalSend
+services. Portable camera discovery and Environment-update Hub recovery were
+also integrated. See [portable integration v2](portable-feature-parity-v2.md)
+for current source/package checks and remaining native-Windows/physical gates.
+The October VM results below do not validate these later changes.
+
 ## Measured result and completed cleanup
 
 - Fresh Arch x86_64, kernel 7.2.11-arch1-1, QEMU q35: installer completed and the
@@ -72,8 +81,9 @@ power mutations retain the existing shell-bound confirmation mechanism.
 Switching retires one private graphical session before activating another;
 workloads may return to Hub but cannot directly switch/manage other workloads.
 
-This is a fresh platform profile without personal/third-party applications or
-biometric credentials. It does **not** enable the pilot's native Windows disk
+This is a fresh platform profile without personal application data or
+biometric credentials. Selected third-party applications are now obtained from
+reviewed distribution sources by the v2 creator. It does **not** enable the pilot's native Windows disk
 planner, Legion GPU-firmware switch, external model-store setup or privileged
 Host-console exception. These are explicit remaining portability boundaries,
 not features proved by copying their source into an installation. Hardware

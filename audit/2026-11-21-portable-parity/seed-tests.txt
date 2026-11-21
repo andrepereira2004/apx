@@ -1,0 +1,13 @@
+test_admitted_xdph_helper_has_a_bounded_binary_allowance (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_admitted_xdph_helper_has_a_bounded_binary_allowance) ... ok
+test_changed_extra_or_linked_seed_is_refused (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_changed_extra_or_linked_seed_is_refused) ... ok
+test_changed_or_extra_environment_shell_asset_is_refused (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_changed_or_extra_environment_shell_asset_is_refused) ... ok
+test_environment_shell_hashes_match_reviewed_profile (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_environment_shell_hashes_match_reviewed_profile) ... ok
+test_environment_shell_is_an_independent_exact_copy (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_environment_shell_is_an_independent_exact_copy) ... ok
+test_graphical_hub_gets_profile_without_workspace_selector (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_graphical_hub_gets_profile_without_workspace_selector) ... ok
+test_normal_environment_gets_workspace_profile_and_independent_copy (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_normal_environment_gets_workspace_profile_and_independent_copy) ... ok
+test_runtime_hashes_match_reviewed_profile (test_apx_lab_runtime_desktop_seed.RuntimeDesktopSeedTests.test_runtime_hashes_match_reviewed_profile) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.388s
+
+OK

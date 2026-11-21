@@ -167,10 +167,14 @@ def execute(operation, *, resume_hub=False, host_digest=None):
             assets = runtime_assets()
             if hashlib.sha256(SEED.read_bytes()).hexdigest() != assets['local/bin/apx-environment-update-v1']:
                 raise RuntimeError('Update helper digest differs')
-            sudoers = directory / 'sudoers'; sudoers.mkdir(mode=0o755); os.chmod(sudoers, 0o755)
+            sudoers = directory / 'sudoers'
+            if sudoers.is_symlink(): raise RuntimeError('Untrusted update policy directory')
+            sudoers.mkdir(mode=0o755, exist_ok=True); os.chmod(sudoers, 0o755)
             policy = sudoers / 'apx-update'; policy.write_text('apx ALL=(root) NOPASSWD: /usr/bin/pacman, /usr/bin/flatpak\n')
             os.chmod(policy, 0o440)
-            rollback = directory / 'rollback'; rollback.mkdir(mode=0o700)
+            rollback = directory / 'rollback'
+            if rollback.is_symlink(): raise RuntimeError('Untrusted rollback directory')
+            rollback.mkdir(mode=0o700, exist_ok=True)
             atomic(directory / 'status.json', status)
             with (directory / 'update.log').open('a') as log:
                 def run(args, timeout=120):
@@ -187,7 +191,8 @@ def execute(operation, *, resume_hub=False, host_digest=None):
                     require_update_space()
                     name = target['name']; status['current'] = name; atomic(directory / 'status.json', status)
                     if resume_hub:
-                        run(['/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py', '--recover'], timeout=180)
+                        from apx_portable_profile import stop_hub_command
+                        run(stop_hub_command(), timeout=180)
                     record = read_json(ENVIRONMENTS / name / 'registration.json')
                     if record['generation'] != target['generation'] or record['state'] != 'stopped':
                         raise RuntimeError('Target generation or state changed')

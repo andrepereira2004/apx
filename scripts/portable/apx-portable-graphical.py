@@ -218,6 +218,13 @@ class Session:
                     "--bind=/run/seatd.sock:/run/seatd.sock",
                     "--bind-ro=" + str(LEASES / 'udev') + ":/run/udev"]
         command += [f"--bind={proxy}:{item['node']}" for proxy, item in self.proxies]
+        # The common folder is read-only. Only its bounded copy/rename socket
+        # accepts writes, retaining independent private homes and package roots.
+        shared = STATE / 'transfer-v1'
+        if shared.is_symlink() or not shared.is_dir() or not (shared / '.apx-transfer.sock').is_socket():
+            raise RuntimeError('shared-folder broker is unavailable')
+        command.append(f'--bind-ro={shared}:/home/apx/Partilha')
+        command.append('--bind=/run/apx/removable-media-v1:/media/apx-usb')
         bound_services = [service for service in SERVICES if service !=
                           ("environment-hardware-v1" if self.name == "hub" else "system-power-v1")]
         if self.name != "hub": bound_services.remove("coordinated-update-v1")

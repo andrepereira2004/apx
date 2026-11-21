@@ -95,6 +95,11 @@ def discover() -> dict:
     for node in sorted(Path("/dev/snd").glob("*")):
         if re.fullmatch(PATTERNS["audio"][0], str(node)):
             nodes.append(validate_node(str(node), "audio")); audio.append(str(node))
+    cameras = []
+    for node in sorted(Path('/dev').glob('video*')):
+        props = properties(node)
+        if props.get('ID_SEAT', 'seat0') == 'seat0' and ':capture:' in props.get('ID_V4L_CAPABILITIES', ''):
+            nodes.append(validate_node(str(node), 'video')); cameras.append(str(node))
     if graphics["driver"] == "nvidia":
         # Only already-published character nodes. No modprobe, firmware write,
         # GPU mode switch or VFIO passthrough is part of generic seat discovery.
@@ -106,5 +111,5 @@ def discover() -> dict:
         raise ValueError("graphical device set is oversized or ambiguous")
     wireless = sorted(p.name for p in Path("/sys/class/net").iterdir() if (p / "wireless").exists())
     return {"schema": 1, "seat": "seat0", "graphics": graphics, "inputs": inputs,
-            "audio": audio, "wifi_interface": wireless[0] if len(wireless) == 1 else None,
+            "audio": audio, "cameras": cameras, "wifi_interface": wireless[0] if len(wireless) == 1 else None,
             "nodes": nodes}

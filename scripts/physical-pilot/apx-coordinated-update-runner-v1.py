@@ -85,7 +85,8 @@ def resolve_and_stage(directory: Path, repository: Path, name: str) -> list[Path
 def stop_environments(names: list[str]) -> None:
     if "hub" in names:
         time.sleep(2)
-        run(("/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py", "--recover"))
+        from apx_portable_profile import stop_hub_command
+        run(tuple(stop_hub_command()))
     for name in names:
         if name == "hub": continue
         subprocess.run(("/usr/bin/apx", "environment", "stop", name),
@@ -96,6 +97,12 @@ def stop_environments(names: list[str]) -> None:
 
 def schedule_hub_return(operation: str) -> None:
     """Start a fresh graphical Hub after this update runner releases its lock."""
+    from apx_portable_profile import installed
+    if installed():
+        run(('/usr/bin/systemd-run', '--unit=apx-hub-after-update-' + operation.lower(),
+             '--collect', '--on-active=5s', '--property=Type=oneshot',
+             '/usr/bin/systemctl', 'start', 'apx-portable-graphical.service'))
+        return
     launcher = "/var/lib/apx/official-hub-v1/apx-official-hub-graphical-v1.py"
     run(("/usr/bin/systemd-run", "--unit=apx-hub-after-update-" + operation.lower(), "--collect",
          "--on-active=5s", "--property=Type=exec", "--property=Restart=on-failure",

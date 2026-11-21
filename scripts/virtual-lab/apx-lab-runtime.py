@@ -97,8 +97,8 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/share/apx/compress.css": "071fb4a048b414a786617bf0101a5d411363b2b1fe193e1f1cd84beb1a0d35d4",
     "local/lib/apx/apx_compression.py": "dee326867621c1ec0fec7d0ef5ed34e9041fbdd5cbeca23a595004eb66a87a46",
     "local/bin/apx-compress-v1": "df4ff3f92f73667cf2557b9265f00ac2a5e4d2a5973d872f5bf73b03968f4fda",
-    "local/bin/apx-removable-notifications-v1": "5fdf68ad3127ebef023e2e7d32300ad84361f7e665a851550a25c646d7ba1ac6",
-    "local/bin/apx-removable-action-v1": "a050c57add6ec47925ee00921efcbffae3cadeb2c4909e0096f0310a9707271b",
+    "local/bin/apx-removable-notifications-v1": "fe4b4d8ce1110895ebbd1e9391109d57663d17939b1f9c93b24f51545e2ef501",
+    "local/bin/apx-removable-action-v1": "c33a8258b043163398d7a6c6aef2f4a8c34f239565049deff8afacbf317de7a8",
     "quickshell/apx/icons/lucide/bot.svg": "1d0d51e0285b2bee45445c991c36a3f9ff3211e56a74b55364e8ed33ae5b0596",
     "quickshell/apx/icons/lucide/scan.svg": "c77f0e634b2451a14a262a59b61d75bbcea3994b16eeba1f5753e86b33282a4d",
     "quickshell/apx/icons/lucide/triangle-alert.svg": "96a3181a77e7e113d5958d11d33a9d445d8cca53cda0104abae0a764e7004377",
@@ -238,7 +238,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/bin/apx-audio-categories-v1": "85047e37ce18dcc117bc1c3ecd0bced7d7a71af36721d125c60aec264e1e068b",
     "local/bin/apx-desktop-activity-v1": "566b010f9364a6cee1de4fb8a3e5c38ded4164e57157d7ab0c30bb124dacfbaf",
     "local/bin/apx-lock-wallpaper-v1": "96b921e715299447fceeea0eb3ca29de62df2a9af189adb827e638a3bd1bc898",
-    "local/bin/apx-appearance-v1": "b9efa7f55a07d8db6e55810ff37f7f1ce48fa25d66ff04abef31809a3cfdf31b",
+    "local/bin/apx-appearance-v1": "13b8b862338eec51c7367817910916a251c616c1d36e5ec51fcd133c21b6b7b0",
     "quickshell/apx/qmldir": "9ee40837d8c1c3f751f682ecbdd45c3b522664306520cc56721bd66af6422bb9",
     "quickshell/apx/ActivityPanel.qml": "bf183445f3146291fa5e427df85b962f49a00469e2c04bf03868fbb695000db8",
     "quickshell/apx/ControlDashboard.qml": "32ce02276742ab13290f056c03518b51f5622b6b2f6dff98313a77a678600941",
@@ -315,7 +315,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/lib/apx/chooser-places.c": "d730c9ae8006639e7002a97f95843ea663e5a6b8aa19951f88669f43c4cd7fe5",
     "local/bin/apx-document-templates-v1": "6d300ad6f33d8119dd950a0d1dad73708a64059c2dd920b353af2530d2cd6d84",
     "local/share/icons/APX-Graphite/scalable/places/apx-folder-tagged.svg": "bca05a5e9a3691fd586fde133f2414ac82d738b4953b997e5c64859540b3aad4",
-    "local/bin/apx-removable-bookmark-v1": "f1c9e1d45d8d26d05c223d7508398a68780bb7daa9d5143c701a743431f979d3",
+    "local/bin/apx-removable-bookmark-v1": "43eee49eb70c66ece16c52fb0cced79ca08391df2cd91022a5a6c3b2c674b935",
     "environment.d/80-apx-locale.conf": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
     "apx/locale.env": "fdc040d098a158c677e344df5cb62a9be9e4f9d52f5caa0e5087f158726f5586",
     "local/share/thumbnailers/apx-folder-color.thumbnailer": "f8306feca643786465607ca5e38dac042b3e8557ff868350131370d08fe18e0f",
@@ -1053,9 +1053,9 @@ def install_environment_applications(root: Path, user_home: Path, modules: list[
     machine_name = f"apx-{identity}"
     unit = f"apx-app-setup-{identity}.service"
     version = host_nvidia_version()
-    if not re.fullmatch(r"[0-9]+(?:\.[0-9]+)+", version):
+    if version and not re.fullmatch(r"[0-9]+(?:\.[0-9]+)+", version):
         raise Refusal("NVIDIA package version for the template is unavailable")
-    driver = version.replace(".", "-")
+    drivers = "nvidia-" + version.replace(".", "-") + ":default" if version else "default"
     run([NETWORK_ADAPTER, "apply", "--environment", identity])
     try:
         run(["systemd-run", "--unit", unit, "--collect", "--property=Delegate=yes",
@@ -1079,7 +1079,7 @@ def install_environment_applications(root: Path, user_home: Path, modules: list[
              "--collect", "--uid=apx", "--property=RuntimeDirectory=apx-template-apps",
              "--property=RuntimeMaxSec=19min", "--setenv=XDG_RUNTIME_DIR=/run/apx-template-apps",
              "--setenv=FLATPAK_DISABLE_REVOKEFS=1",
-             f"--setenv=FLATPAK_GL_DRIVERS=nvidia-{driver}:default",
+             f"--setenv=FLATPAK_GL_DRIVERS={drivers}",
              "/usr/bin/dbus-run-session", "/usr/bin/bash", "-c",
              APPLICATION_INSTALL_SCRIPT, "apx-template-apps", *selected])
     except subprocess.CalledProcessError as error:

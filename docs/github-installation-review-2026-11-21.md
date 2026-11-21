@@ -1,5 +1,10 @@
 # GitHub e instalação num PC novo — 2026-11-21
 
+> Diagnóstico anterior à integração portátil v2. As lacunas de aplicações,
+> Partilha, passkeys, USB e câmaras foram entretanto trabalhadas; estado e
+> evidência atuais em [portable-feature-parity-v2.md](portable-feature-parity-v2.md).
+> A equivalência total, sobretudo Windows nativo e validação limpa, permanece pendente.
+
 ## Conclusão
 
 O branch `agent/defer-local-model-phase10` era o mais avançado: 112 commits à

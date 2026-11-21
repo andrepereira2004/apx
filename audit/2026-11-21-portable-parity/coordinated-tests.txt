@@ -1,0 +1,11 @@
+test_new_environment_follows_host_by_default (test_apx_coordinated_update_creation_policy.CoordinatedUpdateCreationPolicyTests.test_new_environment_follows_host_by_default) ... ok
+test_owner_can_exclude_environment_during_creation_plan (test_apx_coordinated_update_creation_policy.CoordinatedUpdateCreationPolicyTests.test_owner_can_exclude_environment_during_creation_plan) ... ok
+test_unknown_policy_is_refused (test_apx_coordinated_update_creation_policy.CoordinatedUpdateCreationPolicyTests.test_unknown_policy_is_refused) ... ok
+test_hub_return_is_detached_and_delayed (test_apx_coordinated_update_physical.CoordinatedUpdatePhysicalTests.test_hub_return_is_detached_and_delayed) ... ok
+test_requires_preview_digest_and_literal_confirmation (test_apx_coordinated_update_physical.CoordinatedUpdatePhysicalTests.test_requires_preview_digest_and_literal_confirmation) ... ok
+test_runner_stages_before_snapshots_and_stops_on_failure (test_apx_coordinated_update_physical.CoordinatedUpdatePhysicalTests.test_runner_stages_before_snapshots_and_stops_on_failure) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.035s
+
+OK

@@ -24,10 +24,13 @@ GRAPHICAL_PACKAGES = (
     "xdg-desktop-portal", "xdg-desktop-portal-gtk", "xdg-desktop-portal-hyprland", "xdg-user-dirs",
     "polkit", "libsecret", "jq", "curl", "fastfetch", "grim", "flatpak", "noto-fonts", "noto-fonts-emoji",
     "ttf-liberation", "papirus-icon-theme", "adwaita-icon-theme", "playerctl", "procps-ng",
+    "thunar", "gvfs", "gvfs-mtp", "gvfs-gphoto2", "gvfs-smb", "tumbler",
+    "xdg-dbus-proxy", "base-devel", "git", "gnupg", "libarchive",
 )
 ADAPTERS = (
     "apx-portable-full-runtime.py", "apx-portable-services.py", "apx-portable-graphical.py",
     "apx-portable-session.sh", "apx-portable-compositor.sh", "apx-portable-power.py",
+    "apx-portable-media.py",
 )
 SERVICES = ("host-services-v1", "host-services-v2", "host-services-v3", "audio-state-v1",
             "environment-switch-v1", "system-power-v1", "environment-hardware-v1", "coordinated-update-v1")
@@ -69,6 +72,7 @@ def source_files():
     for relative in manifests()["DESKTOP_CONFIG_ASSETS"]:
         files.add("config/waybar-ascii-v1/" + relative)
     files.update(str(path.relative_to(REPO)) for path in (REPO / "config/environment-flatpak-v1").iterdir() if path.is_file())
+    files.update(str(path.relative_to(REPO)) for path in (REPO / "config/portable-packages-v2").iterdir() if path.is_file())
     return sorted(files)
 
 
@@ -86,7 +90,31 @@ def verify_sources():
             relative = prefix + ("hyprland.conf" if group == "GRAPHICAL_CONFIG_ASSETS" and name == "hyprland/hyprland.conf" else name)
             if hashes[relative] != expected:
                 raise ValueError("source does not match its admitted digest: " + relative)
+    package_seed = REPO / 'config/portable-packages-v2'
+    expected = json.loads((package_seed / 'SHA256SUMS.json').read_text())
+    if {p.name for p in package_seed.iterdir()} != set(expected) | {'SHA256SUMS.json'}:
+        raise ValueError('portable application recipes differ')
+    for name, digest in expected.items():
+        if Path(name).name != name or hashes.get('config/portable-packages-v2/' + name) != digest:
+            raise ValueError('portable application recipe digest differs: ' + name)
     return hashes
+
+
+def feature_manifest():
+    features = module(REPO / 'src/apx_environment_features.py', 'apx_portable_feature_manifest')
+    return {
+        'schema': 2,
+        'profile': 'portable-feature-integration-v2',
+        'environment_modules': list(features.MODULES),
+        'presets': {name: list(values) for name, values in features.PRESETS.items()},
+        'native_applications': ['brave-bin', 'localsend-bin', 'gridcraft', 'wordcraft',
+                                'deckcraft', 'chatgpt-bin', 'salvador-de-mundos-apx'],
+        'services': list(SERVICES) + ['transfer', 'passkeys', 'media', 'localsend'],
+        'native_windows': False,
+        'firmware_gpu_switch': False,
+        'external_model_store': False,
+        'validation': 'source-tested; latest clean installation and physical acceptance pending',
+    }
 
 
 def full_install(base, record, password, hardware):
@@ -97,6 +125,7 @@ def full_install(base, record, password, hardware):
         progress["phase"] = phase
         base.write(STATE / "portable-graphical-install.json", json.dumps(progress, indent=2) + "\n", 0o600)
     checkpoint("base-installed")
+    base.write(Path('/usr/share/apx/portable-features-v2.json'), json.dumps(feature_manifest(), indent=2) + '\n')
     base.run("systemctl", "disable", "--now", "apx-portable-hub.service")
     # The initial headless Hub has no owner data or enrolled identity. Replace
     # only this installer's newly created stopped instance, using its lifecycle.
@@ -110,6 +139,12 @@ def full_install(base, record, password, hardware):
     for filename in ADAPTERS:
         shutil.copyfile(REPO / "scripts/portable" / filename, LIBRARY / filename)
         (LIBRARY / filename).chmod(0o755)
+    package_seed = Path('/usr/share/apx/config-seeds/portable-packages-v2')
+    shutil.copytree(REPO / 'config/portable-packages-v2', package_seed)
+    shutil.copyfile(package_seed / 'chatgpt-release-keyring.gpg', Path('/usr/share/apx/chatgpt-release-keyring.gpg'))
+    transfer = STATE / 'transfer-v1'
+    transfer.mkdir(mode=0o755)
+    (transfer / 'wallpaper').mkdir(mode=0o755)
     # All helper imports in each private root resolve to these source modules.
     seeds = Path("/usr/share/apx/config-seeds")
     for group, target, prefix in (
@@ -190,6 +225,63 @@ def full_install(base, record, password, hardware):
     bridge.mkdir(mode=0o700)
     (STATE / "native-environments").mkdir(mode=0o700, exist_ok=True)
     checkpoint("graphical-release-and-new-identity-created")
+    base.write(Path('/etc/systemd/system/apx-portable-transfer.service'), '''[Unit]
+Description=APX bounded shared-folder copy and rename broker
+RequiresMountsFor=/var/lib/apx
+Before=apx-portable-graphical.service
+
+[Service]
+ExecStart=/usr/bin/python /usr/lib/apx/apx-transfer-v1.py
+Restart=on-failure
+UMask=0022
+
+[Install]
+WantedBy=multi-user.target
+''')
+    base.write(Path('/etc/systemd/system/apx-portable-passkeys.service'), '''[Unit]
+Description=APX filtered active-desktop Bluetooth passkeys
+After=dbus.service bluetooth.service
+Wants=bluetooth.service
+
+[Service]
+Environment=APX_PASSKEYS_PROXY=/usr/bin/xdg-dbus-proxy
+ExecStart=/usr/bin/python /usr/lib/apx/apx-passkeys-bluetooth-v1.py
+Restart=on-failure
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX
+
+[Install]
+WantedBy=multi-user.target
+''')
+    base.write(Path('/etc/systemd/system/apx-portable-media.service'), '''[Unit]
+Description=APX removable USB file bridge
+After=systemd-udevd.service
+Before=apx-portable-graphical.service
+
+[Service]
+ExecStart=/usr/bin/python /usr/lib/apx/apx-portable-media.py
+Restart=on-failure
+RestartSec=2
+UMask=0022
+
+[Install]
+WantedBy=multi-user.target
+''')
+    base.write(Path('/etc/systemd/system/apx-portable-localsend.service'), '''[Unit]
+Description=APX generation-bound LocalSend peer forwarding
+After=systemd-networkd.service
+
+[Service]
+ExecStart=/usr/bin/python /usr/lib/apx/apx-localsend-network-v1.py --watch
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+''')
     for service in SERVICES:
         base.write(Path("/etc/systemd/system/apx-portable-" + service + ".service"), f'''[Unit]
 Description=APX generic authenticated {service}
@@ -205,7 +297,7 @@ UMask=0077
 [Install]
 WantedBy=multi-user.target
 ''')
-    dependencies = " ".join("apx-portable-" + s + ".service" for s in SERVICES)
+    dependencies = " ".join("apx-portable-" + s + ".service" for s in SERVICES) + ' apx-portable-transfer.service apx-portable-passkeys.service apx-portable-media.service'
     base.write(Path("/etc/systemd/system/apx-portable-graphical.service"), f'''[Unit]
 Description=APX generic graphical Hub and workload supervisor
 Requires={dependencies} apx-lab-executor.service
@@ -228,6 +320,7 @@ WantedBy=multi-user.target
     # conflict with the graphical supervisor shortly after chvt activates it.
     base.run("systemctl", "mask", "getty@tty2.service", "autovt@tty2.service")
     base.run("systemctl", "enable", "--now", *("apx-portable-" + s + ".service" for s in SERVICES))
+    base.run('systemctl', 'enable', '--now', 'bluetooth.service', 'apx-portable-transfer.service', 'apx-portable-passkeys.service', 'apx-portable-media.service', 'apx-portable-localsend.service')
     base.run("systemctl", "enable", "apx-portable-graphical.service")
     checkpoint("installed-awaiting-graphical-acceptance")
     print("APX graphical candidate installed. Start with: systemctl start apx-portable-graphical.service", flush=True)
@@ -241,13 +334,14 @@ def main():
     parser.add_argument("--password-stdin", action="store_true", help="read a new APX password from a private pipe")
     args = parser.parse_args()
     base = module(Path(__file__).with_name("install_apx_arch.py"), "apx_portable_base_installer")
-    base.PACKAGES += ["seatd", "bluez", "bluez-utils", "iwd", "kbd"]
+    base.PACKAGES += ["seatd", "bluez", "bluez-utils", "iwd", "kbd", "gnupg", "libarchive", "xdg-dbus-proxy", "exfatprogs", "ntfs-3g"]
     hashes = verify_sources()
     record = base.preflight()
     base.run("busctl", "--system", "--no-pager", "status", capture=True)
     hardware = module(REPO / "src/apx_portable_hardware.py", "apx_portable_hardware_probe").discover()
     if not args.apply:
         print(json.dumps({"base": record, "sources": len(hashes), "hardware": hardware,
+                          "features": feature_manifest(),
                           "status": "experimental graphical candidate; acceptance not yet established"}, indent=2))
         return 0
     password = sys.stdin.readline().rstrip("\n") if args.password_stdin else getpass.getpass("New APX password: ")

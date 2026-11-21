@@ -1,0 +1,15 @@
+test_arbitrary_commands_extra_fields_and_bad_ssids_fail_closed (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_arbitrary_commands_extra_fields_and_bad_ssids_fail_closed) ... ok
+test_bluetooth_pairing_is_typed_and_pin_stays_in_the_socket_body (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_bluetooth_pairing_is_typed_and_pin_stays_in_the_socket_body) ... ok
+test_connectivity_and_portal_operations_accept_no_caller_url (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_connectivity_and_portal_operations_accept_no_caller_url) ... ok
+test_enterprise_credentials_require_server_identity_and_ca (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_enterprise_credentials_require_server_identity_and_ca) ... ok
+test_localsend_peer_accepts_one_private_ipv4_address (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_localsend_peer_accepts_one_private_ipv4_address) ... ok
+test_protected_wifi_secret_exists_only_in_socket_body (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_protected_wifi_secret_exists_only_in_socket_body) ... ok
+test_radio_status_is_read_only_and_takes_no_payload (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_radio_status_is_read_only_and_takes_no_payload) ... ok
+test_redaction_is_recursive_and_does_not_mutate_input (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_redaction_is_recursive_and_does_not_mutate_input) ... ok
+test_unmount_only_admits_fixed_pilot_usb_identities (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_unmount_only_admits_fixed_pilot_usb_identities) ... ok
+test_versioned_requests_and_structured_responses_round_trip (test_apx_host_services_v3_contract.HostServicesV3ContractTests.test_versioned_requests_and_structured_responses_round_trip) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.003s
+
+OK

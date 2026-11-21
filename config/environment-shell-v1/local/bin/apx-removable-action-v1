@@ -3,6 +3,7 @@
 import importlib.util
 import subprocess
 import sys
+sys.path.insert(0, '/usr/lib/apx')
 
 VOLUMES = {
     'file:///media/apx-usb/Ventoy': '4E21-0000',
@@ -10,6 +11,12 @@ VOLUMES = {
 }
 
 def main():
+    try:
+        from apx_removable_catalog import read
+        VOLUMES.update({'file:///media/apx-usb/' + name: identity
+                        for identity, (name, _) in read().items()})
+    except ModuleNotFoundError:
+        pass
     if len(sys.argv) != 2 or sys.argv[1] not in VOLUMES:
         raise ValueError('Dispositivo não autorizado')
     spec = importlib.util.spec_from_file_location('apx_media_client', '/run/apx/host-services-client-v3.py')

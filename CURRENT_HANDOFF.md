@@ -1,3 +1,22 @@
+## Integração do instalador portátil v2 — 2026-11-21
+
+Pedido do proprietário para aproximar o instalador das funcionalidades atuais.
+Criador portátil instala os pacotes locais selecionados a partir de receitas e
+fornecedores verificados, sem cache do piloto; transações em nspawn temporário
+privado. Corrigida exigência NVIDIA para Flatpak em Intel/AMD. Sete aplicações
+preparadas/verificadas de fontes reais, incluindo assinaturas ChatGPT. Instalador
+liga Partilha, passkeys filtradas, USB por identidade detetada/remoção segura e
+LocalSend; câmaras de captura descobertas e retorno do Hub após update portátil
+corrigido. Fix do seletor wallpaper incluído; mantidas fontes já mais recentes.
+777 fontes verificadas em bundle independente; 385 testes focados passaram,
+39 portáteis incluídos. Seis falhas antigas reproduzidas com HEAD inalterado e
+registadas separadamente. Sem instalação, alteração de sistema ou reboot do Host.
+A equivalência total NÃO está concluída: Windows nativo/reclaim mantém desenho
+específico LUKS/UKI/SSD do piloto; perfil genérico usa Arch/GRUB não cifrado.
+Falta implementação portátil desse ciclo e novo ensaio limpo/aceitação física.
+Detalhes: `docs/portable-feature-parity-v2.md` e
+`audit/2026-11-21-portable-parity/`. Não remover guardas de identidade de discos.
+
 ## Consolidação GitHub e revisão do instalador — 2026-11-21
 
 Pedido explícito do proprietário para commit/push e tornar master o estado mais

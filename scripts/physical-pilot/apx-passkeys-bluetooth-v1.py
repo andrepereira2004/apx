@@ -87,7 +87,7 @@ async def main():
     with contextlib.suppress(FileNotFoundError):
         os.unlink(UPSTREAM)
     proxy = await asyncio.create_subprocess_exec(
-        '/usr/local/lib/apx-passkeys/xdg-dbus-proxy',
+        os.environ.get('APX_PASSKEYS_PROXY', '/usr/local/lib/apx-passkeys/xdg-dbus-proxy'),
         'unix:path=/run/dbus/system_bus_socket', UPSTREAM, '--filter', '--talk=org.bluez')
     server = None
     identity = None

@@ -1,0 +1,36 @@
+{
+  "bundle_sha256": "ce3998c096e4dd6ca29517eb0d272dbce106b3df533fb17780578be0cbf5b107",
+  "bytes": 10885472,
+  "verified_sources": 777,
+  "required_assets": [
+    "src/apx_portable_packages.py",
+    "src/apx_portable_provision.py",
+    "src/apx_portable_profile.py",
+    "src/apx_removable_catalog.py",
+    "scripts/portable/apx-portable-media.py",
+    "config/portable-packages-v2/chatgpt-release-keyring.gpg",
+    "config/portable-packages-v2/salvador-de-mundos-apx-1.0-1-x86_64.pkg.tar.zst"
+  ],
+  "existing_install_refusals": [
+    {
+      "command": [
+        "bash",
+        "install.sh",
+        "--check"
+      ],
+      "exit_code": 2,
+      "message": "Existing APX path: /var/lib/apx. Installation refused."
+    },
+    {
+      "command": [
+        "python",
+        "scripts/portable/install_apx_full.py",
+        "--check"
+      ],
+      "exit_code": 2,
+      "message": "APX full installation refused/failed: existing APX state or destination: /var/lib/apx; installation refused"
+    }
+  ],
+  "artifact": "dist/apx-portable-graphical-v2-20261121.tar.gz",
+  "bundle_files": 782
+}

@@ -86,7 +86,9 @@ def validate_payload(operation: str, payload: object) -> dict[str, object]:
             raise HostServicesV3ContractError("operation takes no payload")
         return {}
     if operation == "media.unmount":
-        if set(payload) != {"uuid"} or type(payload["uuid"]) is not str or payload["uuid"] not in {"4E21-0000", "4079-3F8D"}:
+        # Syntax is portable; the root media broker separately requires an
+        # admitted live USB identity and verifies it again before unmounting.
+        if set(payload) != {"uuid"} or type(payload["uuid"]) is not str or re.fullmatch(r'(?:[0-9A-Fa-f]{16}|[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}|[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}|[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12})', payload["uuid"]) is None:
             raise HostServicesV3ContractError("removable volume is not admitted")
         return dict(payload)
     if operation == "localsend.peer.set":

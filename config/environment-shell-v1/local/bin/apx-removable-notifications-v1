@@ -5,6 +5,8 @@ import html
 import os
 from pathlib import Path
 import subprocess
+import sys
+sys.path.insert(0, '/usr/lib/apx')
 
 VOLUMES = {
     '4E21-0000': ('Ventoy', 'PEN USB'),
@@ -73,6 +75,11 @@ def main():
         tracker = NotificationTracker()
         monitor = Gio.VolumeMonitor.get()
         def sample(*args):
+            try:
+                from apx_removable_catalog import read
+                VOLUMES.update(read())
+            except (ModuleNotFoundError, OSError, ValueError):
+                pass
             volumes = {}
             for volume in monitor.get_volumes():
                 drive = volume.get_drive()

@@ -1,0 +1,51 @@
+{
+  "brave-bin": {
+    "state": "verified",
+    "version": "1:1.100.58-1",
+    "bytes": 217833078,
+    "sha256": "f5bb62b25629af074254e2b10af123046305a080ed2851bfe4a97b865c4f5033",
+    "seconds": 16.74
+  },
+  "localsend-bin": {
+    "state": "verified",
+    "version": "1.18.2-1",
+    "bytes": 30112245,
+    "sha256": "b6b8b531a5ee974efc46b14de76af9fea9856934a82944d19379303c2bafed9a",
+    "seconds": 4.61
+  },
+  "gridcraft": {
+    "state": "verified",
+    "version": "0.19.1-1",
+    "bytes": 50691725,
+    "sha256": "69de767123855b40c820d628cb55229519c7384eb904a2b3c0c2a2888d9b17c3",
+    "seconds": 4.9
+  },
+  "wordcraft": {
+    "state": "verified",
+    "version": "0.18.1-1",
+    "bytes": 112059482,
+    "sha256": "43901247f96c28affa17ff6cd878fcc63cd11a914276e2acfe2c5cba100a1e06",
+    "seconds": 9.0
+  },
+  "deckcraft": {
+    "state": "verified",
+    "version": "0.18.1-1",
+    "bytes": 98153172,
+    "sha256": "87e3af222b89af8f7547adbeef7874006ac7a5f1d0ab2b3791a8cb513880af56",
+    "seconds": 8.18
+  },
+  "chatgpt-bin": {
+    "state": "verified",
+    "version": "26.1117.41037-1",
+    "bytes": 554805146,
+    "sha256": "be1cdf31d4111bc233f237b11670bca8e415cad07ec096c0b9d83529e35eaeb0",
+    "seconds": 26.19
+  },
+  "salvador-de-mundos-apx": {
+    "state": "verified",
+    "version": "1.0-1",
+    "bytes": 355827,
+    "sha256": "b55ca68805c8b345f0368b3fc34ebeccb0dcc2a2b20083d2b56143ef082ec492",
+    "seconds": 0.02
+  }
+}

@@ -10,4 +10,3 @@ ações. Na sessão Finanças, prepareShutdown permaneceu preparado à espera e
 cancelShutdown fechou o pedido; nenhum desligar/reiniciar foi executado.
 Backup: /var/lib/apx/backups/20261121T161209Z-power-confirmation.
 Native continua enabled, sem erros. Sem commit/push.
-

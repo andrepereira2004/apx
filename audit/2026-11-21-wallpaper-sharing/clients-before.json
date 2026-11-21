@@ -5,12 +5,12 @@
                                 -vv will show DEBUG level internal logs.
 [Option Group: Debugging]
   Options for QML debugging.
-  
+
 
   OPTIONS:
-            --debug INT:INT in [0 - 65535] 
+            --debug INT:INT in [0 - 65535]
                                 Open the given port for a QML debugger connection.
-            --waitfordebug Needs: --debug 
+            --waitfordebug Needs: --debug
                                 Wait for a QML debugger to connect before executing the
                                 configuration.
 
@@ -21,4 +21,3 @@ SUBCOMMANDS:
   ipc                         Communicate with other Quickshell instances.
   msg                         [DEPRECATED] Moved to `ipc call`.
 HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)
-

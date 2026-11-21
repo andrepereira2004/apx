@@ -178,7 +178,7 @@ test_shared_runtime_directory_is_not_owned_by_one_service (test_apx_environment_
 test_storage_runner_sums_root_and_home_qgroups_only (test_apx_environment_switch_v1.EnvironmentSwitchV1Tests.test_storage_runner_sums_root_and_home_qgroups_only) ... ok
 test_work_shortcuts_use_super_e_for_menu_and_super_m_for_escape (test_apx_environment_switch_v1.EnvironmentSwitchV1Tests.test_work_shortcuts_use_super_e_for_menu_and_super_m_for_escape) ... ok
 test_workload_does_not_receive_hub_only_services (test_apx_environment_switch_v1.EnvironmentSwitchV1Tests.test_workload_does_not_receive_hub_only_services) ... ok
-test_workload_shell_surfaces_return_failure (test_apx_environment_switch_v1.EnvironmentSwitchV1Tests.test_workload_shell_surfaces_return_failure) ... FAIL
+test_workload_shell_surfaces_return_failure (test_apx_environment_switch_v1.EnvironmentSwitchV1Tests.test_workload_shell_surfaces_return_failure) ... ok
 test_assets_require_digest_and_supplier_url (test_apx_package_freshness.FreshnessTests.test_assets_require_digest_and_supplier_url) ... ok
 test_brave_archive_refuses_parent_traversal (test_apx_package_freshness.FreshnessTests.test_brave_archive_refuses_parent_traversal) ... ok
 test_current_brave_is_not_rebuilt (test_apx_package_freshness.FreshnessTests.test_current_brave_is_not_rebuilt) ... ok
@@ -210,8 +210,13 @@ test_failed_teardown_restores_hub_without_requesting_poweroff (test_apx_system_p
 test_poweroff_acquires_lid_and_sleep_inhibitor_before_teardown (test_apx_system_power_physical.SystemPowerRaceTests.test_poweroff_acquires_lid_and_sleep_inhibitor_before_teardown) ... ok
 test_successful_poweroff_still_checks_machine_residue (test_apx_system_power_physical.SystemPowerRaceTests.test_successful_poweroff_still_checks_machine_residue) ... ok
 test_suspend_keeps_the_graphical_session (test_apx_system_power_physical.SystemPowerRaceTests.test_suspend_keeps_the_graphical_session) ... ok
+test_development_nspawn_uses_uplink_dns_not_host_stub (test_physical_bootstrap.PhysicalBootstrapRecoveryTests.test_development_nspawn_uses_uplink_dns_not_host_stub) ... ok
+test_existing_release_must_be_explicitly_complete (test_physical_bootstrap.PhysicalBootstrapRecoveryTests.test_existing_release_must_be_explicitly_complete) ... ok
+test_handoff_documents_new_tag_and_exact_recovery_path (test_physical_bootstrap.PhysicalBootstrapRecoveryTests.test_handoff_documents_new_tag_and_exact_recovery_path) ... ok
+test_recovery_is_limited_to_known_partial_development_release (test_physical_bootstrap.PhysicalBootstrapRecoveryTests.test_recovery_is_limited_to_known_partial_development_release) ... ok
 test_bootstrap_sources_are_valid_and_do_not_use_the_obsolete_grep (test_apx_lab_runtime_quotas.BootstrapQuotaTests.test_bootstrap_sources_are_valid_and_do_not_use_the_obsolete_grep) ... ok
 test_bootstrap_sources_fail_closed_and_recheck_after_enabling_quotas (test_apx_lab_runtime_quotas.BootstrapQuotaTests.test_bootstrap_sources_fail_closed_and_recheck_after_enabling_quotas) ... ok
+test_qgroup_filter_regression_for_top_level_mount (test_apx_lab_runtime_quotas.PhysicalRecoveryTests.test_qgroup_filter_regression_for_top_level_mount) ... ok
 test_quota_status_accepts_both_supported_btrfs_formats (test_apx_lab_runtime_quotas.PhysicalRecoveryTests.test_quota_status_accepts_both_supported_btrfs_formats) ... ok
 test_quota_status_refuses_disabled_non_qgroup_and_inconsistent (test_apx_lab_runtime_quotas.PhysicalRecoveryTests.test_quota_status_refuses_disabled_non_qgroup_and_inconsistent) ... ok
 test_recovery_requires_identity_inactivity_old_limits_and_approval (test_apx_lab_runtime_quotas.PhysicalRecoveryTests.test_recovery_requires_identity_inactivity_old_limits_and_approval) ... ok
@@ -237,17 +242,20 @@ test_shared_reserve_refuses_new_growth_below_96_gib (test_apx_lab_runtime_quotas
 test_storage_is_bounded_with_a_global_host_reserve (test_apx_lab_runtime_quotas.RuntimeQuotaTests.test_storage_is_bounded_with_a_global_host_reserve) ... ok
 test_subvolume_limits_bound_referenced_and_exclusive_growth (test_apx_lab_runtime_quotas.RuntimeQuotaTests.test_subvolume_limits_bound_referenced_and_exclusive_growth) ... ok
 test_terminal_boundary_is_explicit_on_entry_and_return_to_host (test_apx_lab_runtime_quotas.RuntimeQuotaTests.test_terminal_boundary_is_explicit_on_entry_and_return_to_host) ... ok
+test_alternate_private_root_uses_a_complete_arch_upgrade (test_apx_environment_features.EnvironmentFeaturesTests.test_alternate_private_root_uses_a_complete_arch_upgrade) ... ok
+test_brave_artifact_is_host_owned_and_digest_pinned (test_apx_environment_features.EnvironmentFeaturesTests.test_brave_artifact_is_host_owned_and_digest_pinned) ... ok
+test_creation_inherits_only_hub_password_hash_and_records_features (test_apx_environment_features.EnvironmentFeaturesTests.test_creation_inherits_only_hub_password_hash_and_records_features) ... ok
+test_dependencies_are_closed_and_package_plan_is_fixed (test_apx_environment_features.EnvironmentFeaturesTests.test_dependencies_are_closed_and_package_plan_is_fixed) ... ok
+test_graphical_creation_never_restores_retired_face_auth (test_apx_environment_features.EnvironmentFeaturesTests.test_graphical_creation_never_restores_retired_face_auth) ... ok
+test_iphone_integration_is_opt_in_and_does_not_grant_lan_authority (test_apx_environment_features.EnvironmentFeaturesTests.test_iphone_integration_is_opt_in_and_does_not_grant_lan_authority) ... ok
+test_minecraft_backup_tool_is_an_optional_local_package (test_apx_environment_features.EnvironmentFeaturesTests.test_minecraft_backup_tool_is_an_optional_local_package) ... ok
+test_running_private_user_hub_shadow_owner_is_admitted (test_apx_environment_features.EnvironmentFeaturesTests.test_running_private_user_hub_shadow_owner_is_admitted) ... ok
+test_standard_presets_keep_their_default_modules (test_apx_environment_features.EnvironmentFeaturesTests.test_standard_presets_keep_their_default_modules) ... ok
+test_template_apps_are_provisioned_before_the_environment_is_published (test_apx_environment_features.EnvironmentFeaturesTests.test_template_apps_are_provisioned_before_the_environment_is_published) ... ok
+test_unknown_and_empty_selections_fail_closed (test_apx_environment_features.EnvironmentFeaturesTests.test_unknown_and_empty_selections_fail_closed) ... ok
+test_work_template_tools_and_brave_in_all_templates (test_apx_environment_features.EnvironmentFeaturesTests.test_work_template_tools_and_brave_in_all_templates) ... ok
 
-======================================================================
-FAIL: test_workload_shell_surfaces_return_failure (test_apx_environment_switch_v1.EnvironmentSwitchV1Tests.test_workload_shell_surfaces_return_failure)
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_environment_switch_v1.py", line 620, in test_workload_shell_surfaces_return_failure
-    self.assertIn('onDoubleClicked: { root.environmentFocusIndex = index; root.selectEnvironment(modelData); root.openSelectedEnvironment() }', source)
-    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: 'onDoubleClicked: { root.environmentFocusIndex = index; root.selectEnvironment(modelData); root.openSelectedEnvironment() }' not found in 'pragma ComponentBehavior: Bound\n\nimport QtQuick\nimport Qt.labs.folderlistmodel\nimport QtCore\nimport QtQuick.Window\nimport QtQuick.Effects\nimport QtQuick.Controls\nimport Quickshell\nimport Quickshell.Io\nimport Quickshell.Wayland\nimport Quickshell.Hyprland\nimport Quickshell.Widgets\nimport "GhostLines.js" as GhostLines\n\nShellRoot {\n    id: root\n\n    Settings {\n        id: environmentErrorSettings\n        location: "file:///home/apx/.config/apx/environment-error-ack.ini"\n        category: "APXEnvironmentErrorAcknowledgements"\n        property string acknowledgedBackendErrorKey: ""\n    }\n\n    Settings {\n        id: environmentOrderSettings\n        location: "file:///home/apx/.config/apx/environment-order.ini"\n        category: "APXEnvironmentOrder"\n        property string names: "[]"\n    }\n\n    NotificationToasts { id: notificationToasts }\n\n    // One bar per output; a single shared menu/service state follows its trigger.\n    property var selectedBar: null\n    readonly property var bar: selectedBar || (barVariants.instances.length ? barVariants.instances[0] : null)\n    readonly property var calendarButton: bar ? bar.calendarButton : null\n    readonly property var environmentButton: bar ? bar.en
+Ran 256 tests in 3.539s
 
-----------------------------------------------------------------------
-Ran 239 tests in 3.370s
-
-FAILED (failures=1)
+OK

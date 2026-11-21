@@ -1,3 +1,18 @@
+## Consolidação GitHub e revisão do instalador — 2026-11-21
+
+Pedido explícito do proprietário para commit/push e tornar master o estado mais
+completo. Comparados seis branches; consolidados o branch atual (112 commits
+à frente do antigo master) e os dois fixes exclusivos de DNS/recovery e quotas.
+install.sh agora seleciona master e instalação gráfica; README acompanha.
+256 testes focados passaram; 765 fontes verificadas e 335 assets com pins válidos.
+Release nativa instalada enabled sem erros. Sem alterações de sistema nesta revisão.
+Equivalência completa para PC novo continua NÃO demonstrada: diferenças de
+fontes instaladas, aplicações/brokers/Windows específicos do piloto e falta de
+novo ensaio limpo. Evidência e limites em
+`docs/github-installation-review-2026-11-21.md` e
+`audit/2026-11-21-github-installation/`. Entradas antigas «sem commit/push»
+registam o momento original; esta consolidação publica essas alterações.
+
 ## Aplicações atuais nas novas instalações e texto Wi-Fi — 2026-11-21
 
 Novo runtime consulta versões estáveis dos fornecedores antes de instalar

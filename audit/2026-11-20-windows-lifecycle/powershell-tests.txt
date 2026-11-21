@@ -1,0 +1,1 @@
+PASS: PowerShell parser, target selection, scoped writes, ambiguity and failed readback

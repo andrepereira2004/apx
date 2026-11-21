@@ -1,3 +1,156 @@
+## Aplicações atuais nas novas instalações e texto Wi-Fi — 2026-11-21
+
+Novo runtime consulta versões estáveis dos fornecedores antes de instalar
+Brave, ChatGPT, LocalSend e ArtCraft; falhas de verificação não usam cache antigo.
+Brave 1.100.58, ChatGPT 26.1117.41037, GridCraft 0.19.1, WordCraft/DeckCraft 0.18.1
+preparados/verificados; LocalSend 1.18.2 continua atual. VS Code e Bedrock deixam
+de ter versão fixa no script; Minecraft usa URL atual. Pacotes Arch mantêm -Syu
+e Flatpak remoto estável. NVIDIA conserva compatibilidade com o Host.
+Regra instalada no criador, sem atualizar/reiniciar aplicações existentes.
+Sete testes novos, 12 features, cinco defaults e oito seed passaram, além das
+resoluções reais de fornecedores e execução --version do Brave num fixture.
+Criação completa e testes gráficos de cada nova aplicação ainda não exercitados.
+Detalhes, recuperação e mudanças de empacotamento ArtCraft:
+`audit/2026-11-21-fresh-app-installs/README.md`.
+
+Retirada a frase «As credenciais guardadas serão usadas para ligar» do Wi-Fi
+na fonte, seed e seis homes, com recarga automática da sessão. Texto de rede
+aberta permanece apenas nas redes abertas não guardadas. Backup específico:
+/var/lib/apx/backups/20261121T161808Z-wifi-copy. Sem commit/push.
+
+## Confirmação de desligar/reiniciar — 2026-11-21
+
+Removida a confirmação automática de poweroff/reboot no shell. A preparação
+abre o cartão Cancelar/Desligar ou Cancelar/Reiniciar e só a confirmação
+explícita inicia a transição. Suspensão automática por inatividade preservada.
+Instaladas apenas as alterações revistas em seis homes/seed, preservando as
+outras diferenças; pins sincronizados. 19 testes de energia e oito seed passaram;
+teste JS executou os callbacks reais de preparação e confirmação para ambas as
+ações. Na sessão Finanças, prepareShutdown permaneceu preparado à espera e
+cancelShutdown fechou o pedido; nenhum desligar/reiniciar foi executado.
+Backup: /var/lib/apx/backups/20261121T161209Z-power-confirmation.
+Native continua enabled, sem erros. Sem commit/push.
+
+## Partilha wallpaper e zoom — 2026-11-21
+
+Fotografias renomeada para wallpaper, nove fotos preservadas. Ação Thunar
+«Mudar nome na Partilha…» instalada via broker, sem substituir destinos ou
+abrir escrita direta. Coluna com ✓ e nomes dos Environments na lista detalhada
+e no seletor GTK desta pasta; cinco fotos em uso verificadas, uma já repetida
+entre Finanças e Hub. Environments desligados contam. Zoom/posição conservam
+escolhas durante a gravação e respostas antigas não apagam escolhas posteriores.
+Teste Qt de alterações rápidas passou, além de dois testes broker e oito seed.
+Instalado em seis homes/seed, pins sincronizados e native enabled sem erros.
+Falhas antigas das baterias de aparência documentadas; aceitação física do gesto
+pelo proprietário pendente. Evidência, limites e backups em
+`audit/2026-11-21-wallpaper-sharing/README.md`. Sem commit/push.
+
+## Arranque físico com espaço recuperado validado — 2026-11-21
+
+O proprietário confirmou que arrancou. Verificação pós-reboot passou com
+boot_id 9b7bfea0-5153-4389-914f-a64288aa8122, diferente do anterior. Os dois
+volumes cifrados estão disponíveis no Btrfs raiz, com 294 GiB totais e cerca de
+129 GiB livres. Windows Pessoal conserva partição exata e NTFS. Assinaturas
+instaladas válidas, configuração de desbloqueio correta, manifesto enabled,
+sem novos erros de dispositivos e sem unidades systemd falhadas. Hub gráfico
+ativo (geração 6f63f9a9). A verificação foi iniciada manualmente antes de vencer
+o timer de 90 s. O coletor/timer temporários foram retirados após guardar
+resultado em audit/2026-11-21-windows-linux-reclaim/boot-validation/post-reboot-result.json.
+Está validado este arranque real do desenho atual, não todos os futuros casos
+de remoção Windows. Sem commit/push.
+
+## Validação de arranque autorizada — 2026-11-21
+
+O proprietário autorizou validar o próximo arranque real. A pré-verificação
+encontrou e corrigiu invalidacão de assinaturas PE: objcopy --dump-section sem
+OUTPUT reescrevia o INPUT, incluindo nas inspeções. extract() agora usa OUTPUT
+descartável explícito. As três UKIs foram reconstruídas, verificadas antes e
+após instalação e a inspeção foi provada sem alterar o hash. install_boot()
+agora verifica assinatura e igualdade após cópia. 126 testes native passaram,
+incluindo regressão. Renovado apenas o hash revisto do helper; enabled=true.
+Backup: /var/lib/apx/backups/20261121T153604Z-reclaim-signed-boot-fix.
+
+Preparado coletor pós-reboot, timer de 90 s, ligado ao boot_id anterior
+f627f889-d40b-4398-a35c-e6b39eb032a7. Não aceita o mesmo boot como validação.
+Resultado esperado: /var/lib/apx/native-environments/reboot-validation-result-v3.json.
+Verifica os dois membros Btrfs, configuração de desbloqueio, partição Windows
+Pessoal exata, assinaturas, contadores iguais e release; regista estado gráfico.
+Reinício normal será agendado para realizar o teste autorizado. Introdução da
+palavra-passe no computador permanece necessária. Ainda não afirmar reboot
+validado antes de ler o resultado de um boot_id diferente. Sem commit/push.
+
+## Windows Faculdade: espaço integrado no Linux — 2026-11-21
+
+Depois do passo local de palavra-passe, a operação terminou com recibo
+state=integrated e progresso 100%. Verificação independente: Btrfs APX_ROOT
+com dois dispositivos, novo membro cifrado com 83 214 991 360 bytes úteis;
+Linux apresenta cerca de 294 GiB totais e 130 GiB disponíveis. p5 consolidada
+(77,5 GiB), p6/p7 removidas, p3 Windows Pessoal mantém 170 GiB NTFS e p8 Recovery
+mantém 2 GiB. Marcadores pending/free-slot foram retirados. Contadores Btrfs
+inalterados no membro antigo e todos zero no novo. Manifesto Windows enabled.
+As três UKIs/configurações de desbloqueio foram instaladas pelo helper local.
+O próximo arranque físico ainda NÃO foi validado; não houve reboot nesta
+verificação. Recibo: /var/lib/apx/native-environments/linux-storage-v3.json.
+Sem commit/push.
+
+## Correção do bloqueio de saúde na integração Windows — 2026-11-21
+
+O proprietário reportou erro no comando local. Reproduzido bloqueio anterior
+a qualquer pedido de palavra-passe ou alteração: `btrfs device stats -c /`
+recusava o contador cumulativo corruption_errs=79, já documentado historicamente.
+Executado scrub só de leitura: 159,18 GiB, 78 segundos, zero erros atuais.
+Corrigido o gate para aceitar apenas contadores históricos exatamente iguais
+à prova root-owned de scrub limpo recente (24 h), da mesma raiz e mesmo último
+scrub; aumentos, I/O, geração, prova antiga ou de outra raiz continuam bloqueados.
+Nenhum contador foi apagado/reposto. Instalados dois ficheiros revistos e
+renovados apenas os hashes correspondentes; enabled=true. O comando real em
+PTY chega agora ao pedido da palavra-passe; teste interrompido por EOF sem
+fornecer credenciais. GPT permanece igual e integração física ainda pendente.
+125 testes native passaram. A mensagem exata observada pelo proprietário foi
+pedida; este é um bloqueio reproduzido, não prova de exclusividade da causa.
+Evidência: audit/2026-11-21-windows-linux-reclaim/health-fix.log e
+scrub-readonly.log. Sem commit/push.
+
+## Apagar Windows deve devolver o espaço ao Linux — 2026-11-21
+
+Instalado o fluxo secundário no Host, seed e cinco homes. Manifesto Windows
+revisto e enabled=true; serviço reiniciado e ponte da sessão Hytale reposta.
+Fila atual: awaiting-linux-auth, progresso 75%; GPT, firmware e UKIs físicas
+inalterados. Backup: /var/lib/apx/backups/20261121T145633Z-windows-linux-reclaim.
+Passaram 122 testes native e 8 seed; parser QML passou. A falha preexistente de
+asserção de duplo clique no teste de troca permanece (30/31 passam).
+
+O proprietário esclareceu que apenas Windows Faculdade/windows-testes foi
+removido; Windows Pessoal fica preservado. Apagar Windows deve integrar o
+espaço no Linux atual, em vez de reservar outro Windows. Preparado adaptador
+experimental para consolidar apenas p5/p6/p7 e acrescentar um membro LUKS2 ao
+Btrfs existente. O fluxo secundário fica pendente até autenticação num terminal
+local (`apx-concluir-remocao-windows`) e só conclui após integração verificada.
+Não enviar palavras-passe pelo chat. A remoção do Windows original permanece
+recusada; não se afirma suporte genérico a todos os desenhos de disco.
+
+Planos, testes e build assinado das três UKIs validados sem tocar nas partições
+físicas. A integração dos 77,5 GiB reais e a validação de arranque continuam
+pendentes da palavra-passe local. Detalhes, recuperação e limites:
+`docs/windows-delete-return-to-linux-2026-11-21.md`. Sem commit/push.
+
+## Windows: remoção no desenho atual e regresso automático — 2026-11-20
+
+O proprietário autorizou a correção após diagnóstico. Instalado no piloto um
+checkpoint root-owned do desenho atual para remoção/reutilização do slot
+secundário, preservando Recovery e o Windows Pessoal. Mantêm-se plano histórico,
+validação exata da GPT, autorização exclusiva do Hub e confirmação de apagar.
+Corrigida a consulta de UUID no probe de limpeza e renovados apenas os hashes
+revistos do manifesto. O módulo Windows está habilitado.
+
+A autorização atual permite substituir os helpers antigos por uma tarefa
+Windows SYSTEM de seleção do Linux no startup/logon. Não repõe o atalho WIN+E
+revogado em outubro. Payloads copiados nos dois Windows limpos; instalação da
+tarefa requer uma aceitação UAC na primeira sessão de cada um. Registo efetivo
+da tarefa e regresso físico ainda por confirmar. Sem reboot, alteração GPT ou
+remoção real. A UI de criação ainda não oferece o slot de 77 GiB para substituição.
+Detalhes e limites: docs/native-windows-return-and-current-slot-2026-11-20.md.
+
 ## Encerramento e suspensão pela tampa — 2026-11-18
 
 O proprietário reportou ecrã preto ao voltar a ligar e autorizou a correção.

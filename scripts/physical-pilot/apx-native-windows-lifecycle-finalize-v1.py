@@ -31,11 +31,7 @@ GENERATION = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}
 TERMINAL_STAGES = {"failed", "recovery-required"}
 MAX_EXPLICIT_INSTALL_ATTEMPTS = 2
 MAX_EXPLICIT_BOOT_ATTEMPTS = 8
-EXPECTED_RETURN_HASHES = {
-    "ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1": "1a13748584a58cce28f416e6b42b48d34adf5ed56e8683f4b9a7af6ed8af2318",
-    "ProgramData/APX/ReturnToHub/README.txt": "472fcfa8bd89bdbe2396202fbcd31b50cf290ff0bee26cf4424ed180bad1f170",
-    "ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs": "9f0fc5b0f66f1e4564a3c355a89bc776052ffeff805bb27e16a271e662d2586c",
-}
+EXPECTED_RETURN_HASHES = {'ProgramData/APX/ReturnToHub/APX-ReturnToHub.ps1': '9424f7f4c1a066e924a6ca542249028934a2ae71fb8a305f9c954c00853f305b', 'ProgramData/APX/ReturnToHub/README.txt': '2315c6164acf4ecddc47ea4d841b48b9c53ae1c72df513cc8655733180ab6131', 'ProgramData/Microsoft/Windows/Start Menu/Programs/Startup/APX-ReturnToHub.vbs': '6b363184dbaf7db470f94a2d478b1807695fff061a18821ad063ebee1dd4a35d'}
 
 
 def run(arguments: tuple[str, ...]) -> subprocess.CompletedProcess[str]:

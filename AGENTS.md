@@ -179,4 +179,12 @@ Do not commit or push unless the user explicitly asks for it.
 
 Before editing, inspect repository state. After editing, report changed files and relevant diffs when requested.
 
+After deploying a Host file listed in `/usr/share/apx/native-v3-enabled.json`,
+review the changed artifact, run relevant tests, and update only its reviewed
+manifest entries with a backup. Run
+`python3 scripts/physical-pilot/check-native-release-v3.py` before reporting a
+successful deployment. Do not silently leave native Windows operations disabled
+by a shared client/service/contract update, or renew unrelated mismatched hashes.
+
+
 Preserve useful technical information when restructuring documentation. Do not delete existing documentation until its relevant content has been mapped into the new structure.

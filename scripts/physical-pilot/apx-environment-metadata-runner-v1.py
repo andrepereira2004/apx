@@ -115,7 +115,7 @@ def atomic_write(path: Path, value: dict[str, object], mode: int) -> None:
 
 
 def update_metadata(target: str, generation: str, display_name: str, description: str, icon: str | None = None) -> None:
-    if icon is not None and (not isinstance(icon, str) or icon not in ENVIRONMENT_ICONS):
+    if icon is not None and (not isinstance(icon, str) or re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", icon) is None):
         raise RuntimeError("o ícone pedido não é válido")
     if os.geteuid() != 0 or NAME.fullmatch(target) is None or target == "hub" \
             or GENERATION.fullmatch(generation) is None \
@@ -130,6 +130,20 @@ def update_metadata(target: str, generation: str, display_name: str, description
     value["display_name"] = display_name
     value["description"] = description
     if icon is not None:
+        source = Path("/usr/share/apx/icons/lucide-1.77.0") / (icon + ".svg")
+        info = source.lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o022 or not 0 < info.st_size < 65536:
+            raise RuntimeError("o ícone Lucide não é confiável")
+        if not (NATIVE_ENVIRONMENTS / "instances-v3" / f"{target}.json").exists() and target != "windows":
+            destination = ENVIRONMENTS / target / "home/apx/.config/quickshell/apx/icons/lucide" / source.name
+            if not destination.exists():
+                descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+                try:
+                    os.write(descriptor, source.read_bytes())
+                    os.fchown(descriptor, 1000, 1000)
+                    os.fsync(descriptor)
+                finally:
+                    os.close(descriptor)
         trusted_parent(ENVIRONMENTS)
         atomic_write(ENVIRONMENTS / f".icon-{target}-{generation}.json",
                      {"name": target, "generation": generation, "icon": icon}, 0o600)

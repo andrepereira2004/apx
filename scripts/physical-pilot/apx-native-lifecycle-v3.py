@@ -8,9 +8,11 @@ from contextlib import contextmanager
 import argparse,hashlib,importlib.util,json,os,re,shutil,stat,subprocess,sys,tempfile,time
 from pathlib import Path
 sys.path.insert(0,'/usr/lib/apx');sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'src'))
-from apx_native_instances_v3 import validate_plan,validate_windows_install_plan,canonical_layout,validate_instances,free_slot_record,offline_rollback_allowed,validate_install_status,validate_failed_install_status
+from apx_native_instances_v3 import validate_plan,validate_windows_install_plan,canonical_layout,validate_instances,free_slot_record,validate_slot_layout,digest,offline_rollback_allowed,validate_install_status,validate_failed_install_status
 from apx_native_backup_v3 import prepare_images,image_hash,source_fingerprint
 from apx_native_slot_wipe_v3 import wipe_block_partition
+from apx_native_linux_reclaim_v3 import plan_reclaim
+from uuid import uuid4
 from apx_native_winpe_v3 import render
 
 ROOT=Path('/var/lib/apx/native-environments')
@@ -21,10 +23,10 @@ DISK='/dev/nvme0n1'
 SOURCE=Path(__file__).parent
 RETURN_SOURCE=Path('/usr/share/apx/native-windows-lifecycle-v1/return')
 RETURN_HASHES={
-    'APX-ReturnToHub.ps1':'1a13748584a58cce28f416e6b42b48d34adf5ed56e8683f4b9a7af6ed8af2318',
-    'README.txt':'472fcfa8bd89bdbe2396202fbcd31b50cf290ff0bee26cf4424ed180bad1f170',
-    'APX-ReturnToHub.vbs':'9f0fc5b0f66f1e4564a3c355a89bc776052ffeff805bb27e16a271e662d2586c',
-    'APX-ProvisionHardware.cmd':'d6a29f7ca03d07bbfb3affe06825870c66dc9a2f6e5cf4e11e331b047a80785d',
+    'APX-ReturnToHub.ps1':'9424f7f4c1a066e924a6ca542249028934a2ae71fb8a305f9c954c00853f305b',
+    'README.txt':'2315c6164acf4ecddc47ea4d841b48b9c53ae1c72df513cc8655733180ab6131',
+    'APX-ReturnToHub.vbs':'6b363184dbaf7db470f94a2d478b1807695fff061a18821ad063ebee1dd4a35d',
+    'APX-ProvisionHardware.cmd':'01b026e1aa17f7831c45fbe58857c1a93a5ae359aac18046053ac5e81868bba6',
 }
 
 
@@ -480,15 +482,24 @@ def retry_install(generation,token):
 
 
 def delete_instance(generation,token):
-    """Clear only the selected new p5/p6 instance, retaining its 80 GiB slot."""
+    """Clear selected Windows, then require integration into encrypted Linux.
+
+    A cleared reusable slot is only an internal recovery checkpoint. It is no
+    longer a successful final result of the owner's Delete action.
+    """
     target()
     if LOCK.read_text().strip()!=token:raise ValueError('Hub management token differs')
     job=job_path(generation);plan=validate_windows_install_plan(trusted(job/'plan.json'))
     source=plan if plan['profile']=='apx-native-migration-plan-v3' else plan['source_plan']
     table=layout()
-    if canonical_layout(table)!=canonical_layout(source['after']) or canonical_layout(table)!=canonical_layout(plan['after']):
-        raise ValueError('native slot GPT changed before deletion')
+    checkpoint_path=ROOT/'slot-layout-v3.json'
+    checkpoint=trusted(checkpoint_path) if checkpoint_path.exists() else None
+    validate_slot_layout(source,table,checkpoint)
+    if plan['profile']!='apx-native-migration-plan-v3' and canonical_layout(table)!=canonical_layout(plan['after']):
+        raise ValueError('replacement slot GPT changed before deletion')
     original=trusted(ROOT/'instances-v3/windows.json')
+    # Validate all post-wipe metadata before touching firmware or data.
+    marker=free_slot_record(source,table,[original],generation,checkpoint=checkpoint)
     selected_path=ROOT/'instances-v3'/(plan['new']['name']+'.json')
     archive=ROOT/'retired-v3'/(plan['new']['name']+'-'+generation+'.json')
     if PENDING.exists():
@@ -497,6 +508,8 @@ def delete_instance(generation,token):
                 pending.get('generation')!=generation or pending.get('target')!=plan['new']['name'] or \
                 pending.get('plan_sha256')!=plan['plan_sha256']:
             raise ValueError('selected native deletion differs')
+        if pending.get('layout_sha256')!=digest(canonical_layout(table)):
+            raise ValueError('native deletion layout changed after interruption')
         selected=pending.get('selected_record')
         if type(selected) is not dict:
             raise ValueError('native deletion record missing')
@@ -508,7 +521,8 @@ def delete_instance(generation,token):
             raise ValueError('selected Windows changed before deletion')
         validate_instances([original,selected],table,plan['disk_serial'])
         pending=dict(schema=3,profile='apx-native-job-v3',generation=generation,target=selected['name'],
-                     stage='deleting',action='native-delete-v3',plan_sha256=plan['plan_sha256'],selected_record=selected)
+                     stage='deleting',action='native-delete-v3',plan_sha256=plan['plan_sha256'],selected_record=selected,
+                     layout_sha256=digest(canonical_layout(table)))
         write(PENDING,pending)
         write(selected_path,dict(selected,state='deleting'))
     if selected.get('generation')!=generation or selected.get('name')!=plan['new']['name'] or \
@@ -518,6 +532,8 @@ def delete_instance(generation,token):
         raise ValueError('native deletion partition or firmware identity differs')
     if selected.get('state')!='ready':raise ValueError('native deletion source was not ready')
     validate_instances([original,selected],table,plan['disk_serial'])
+    # Refuse unsupported layouts before deleting firmware or Windows bytes.
+    plan_reclaim(table,marker,dict(selected,state='deleting'),original,str(uuid4()))
     if selected_path.exists():
         current=trusted(selected_path)
         if current==selected and PENDING.exists():
@@ -547,14 +563,20 @@ def delete_instance(generation,token):
     if selected_path.exists():
         archive.parent.mkdir(parents=True,exist_ok=True,mode=0o700)
         os.replace(selected_path,archive)
-    marker=free_slot_record(source,table,[original],generation)
     write(ROOT/'free-slot-v3.json',marker)
-    PENDING.unlink()
-    state(pending,'complete',100,'Windows de teste apagado. O espaço fica disponível para outro Windows.')
+    pending.update(stage='awaiting-linux-auth',mode='linux-reclaim')
+    pending.pop('error',None)
+    write(PENDING,pending)
+    state(pending,'awaiting-local-auth',75,
+          'Windows removido; falta confirmar localmente a cifragem para integrar o espaço no Linux. A operação ainda não terminou.')
 
 
 def finalize():
     target();record=trusted(PENDING);generation=record['generation'];job=job_path(generation);plan=validate_windows_install_plan(trusted(job/'plan.json'))
+    if record['stage']=='awaiting-linux-auth':
+        state(record,'awaiting-local-auth',75,
+              'Falta concluir a integração no Linux no terminal local do Host, com a palavra-passe de cifragem.')
+        return
     if record['stage'] in {'prepared','prepared-reuse'}:
         state(record,'prepared',45,'Preparação concluída. Confirma a migração e o reinício no Hub.');return
     if record['stage']=='offline':

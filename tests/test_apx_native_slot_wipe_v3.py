@@ -10,6 +10,14 @@ import apx_native_slot_wipe_v3 as wipe
 
 
 class SlotWipeTests(unittest.TestCase):
+    def test_low_level_probe_uses_gpt_entry_tag_and_rejects_missing_identity(self):
+        value = '11111111-2222-4333-8444-AAAAAAAAAAAA'
+        with mock.patch.object(wipe.subprocess, 'run', return_value=mock.Mock(stdout=value)) as run:
+            self.assertEqual(wipe.probe_partition_uuid('/dev/nvme0n1p5'), value.lower())
+        self.assertEqual(run.call_args.args[0], ['/usr/bin/blkid', '-p', '-s', 'PART_ENTRY_UUID', '-o', 'value', '/dev/nvme0n1p5'])
+        with mock.patch.object(wipe.subprocess, 'run', return_value=mock.Mock(stdout='')):
+            with self.assertRaises(ValueError):wipe.probe_partition_uuid('/dev/nvme0n1p5')
+
     def test_exact_regular_file_wipe_preserves_neighbor_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'disk'

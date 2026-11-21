@@ -1,0 +1,39 @@
+{
+  "tag": "v1.100.58",
+  "asset": {
+    "url": "https://api.github.com/repos/brave/brave-browser/releases/assets/762130387",
+    "id": 762130387,
+    "node_id": "RA_kwDOBpEyT84tbS_T",
+    "name": "brave-browser-1.100.58-linux-amd64.zip",
+    "label": "",
+    "uploader": {
+      "login": "brave-builds",
+      "id": 45370463,
+      "node_id": "MDQ6VXNlcjQ1MzcwNDYz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45370463?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brave-builds",
+      "html_url": "https://github.com/brave-builds",
+      "followers_url": "https://api.github.com/users/brave-builds/followers",
+      "following_url": "https://api.github.com/users/brave-builds/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brave-builds/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brave-builds/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brave-builds/subscriptions",
+      "organizations_url": "https://api.github.com/users/brave-builds/orgs",
+      "repos_url": "https://api.github.com/users/brave-builds/repos",
+      "events_url": "https://api.github.com/users/brave-builds/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brave-builds/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "content_type": "application/zip",
+    "state": "uploaded",
+    "size": 221885966,
+    "digest": "sha256:6365ab54e89dc3e887097adcf7afd18ea897e6c5546dc77212a896cfa4c6677e",
+    "download_count": 15728,
+    "created_at": "2026-11-18T05:59:12Z",
+    "updated_at": "2026-11-18T05:59:26Z",
+    "browser_download_url": "https://github.com/brave/brave-browser/releases/download/v1.100.58/brave-browser-1.100.58-linux-amd64.zip"
+  }
+}

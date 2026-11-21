@@ -1,0 +1,24 @@
+            --log-times         Log timestamps with each message.
+            --log-rules TEXT    Log rules to apply, in the format of QT_LOGGING_RULES.
+    -v,     --verbose           Increases log verbosity.
+                                -v will show INFO level internal logs.
+                                -vv will show DEBUG level internal logs.
+[Option Group: Debugging]
+  Options for QML debugging.
+  
+
+  OPTIONS:
+            --debug INT:INT in [0 - 65535] 
+                                Open the given port for a QML debugger connection.
+            --waitfordebug Needs: --debug 
+                                Wait for a QML debugger to connect before executing the
+                                configuration.
+
+SUBCOMMANDS:
+  log                         Print quickshell logs.
+  list                        List running quickshell instances.
+  kill                        Kill quickshell instances.
+  ipc                         Communicate with other Quickshell instances.
+  msg                         [DEPRECATED] Moved to `ipc call`.
+HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)
+

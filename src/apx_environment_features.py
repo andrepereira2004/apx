@@ -182,11 +182,19 @@ for module in "$@"; do
     case $module in
         minecraft)
             echo 'A instalar Launcher Minecraft (Java) e Launcher Minecraft (Bedrock)…'
-            download Minecraft.tar.gz https://launcher.mojang.com/download/Minecraft.tar.gz \
-                695269281547bbbcf47fe74633027a0e4ddc13a61060c686a7217e85d314e45e
-            download BedrockOnLinux.AppImage \
-                https://github.com/Wyze3306/BedrockOnLinux/releases/download/v2.3.1/BedrockOnLinux-2.3.1-x86_64.AppImage \
-                15a4a978b711f268f34c5761c68b93e852701c133586a8f188748b6e8972fedb
+            download Minecraft.tar.gz https://launcher.mojang.com/download/Minecraft.tar.gz
+            python3 - "$scratch/bedrock-release" <<'LATEST'
+import json,pathlib,re,sys,urllib.request
+request=urllib.request.Request('https://api.github.com/repos/Wyze3306/BedrockOnLinux/releases/latest',headers={'User-Agent':'APX-stable-install/1'})
+with urllib.request.urlopen(request,timeout=30) as response: release=json.load(response)
+if release.get('draft') or release.get('prerelease'): raise RuntimeError('O launcher não tem versão estável disponível')
+asset=next(a for a in release['assets'] if a['name'].endswith('-x86_64.AppImage'))
+url=asset['browser_download_url'];digest=asset.get('digest') or ''
+if not url.startswith('https://github.com/Wyze3306/BedrockOnLinux/releases/download/') or not re.fullmatch('sha256:[a-f0-9]{64}',digest): raise RuntimeError('O launcher não publicou checksum verificável')
+pathlib.Path(sys.argv[1]).write_text(url+'\n'+digest[7:]+'\n')
+LATEST
+            mapfile -t bedrock_release < "$scratch/bedrock-release"
+            download BedrockOnLinux.AppImage "${bedrock_release[0]}" "${bedrock_release[1]}"
             launchers=$XDG_DATA_HOME/apx-launchers
             mkdir -p -- "$launchers"
             tar -xzf "$scratch/Minecraft.tar.gz" -O minecraft-launcher/minecraft-launcher > "$launchers/minecraft-launcher"
@@ -211,9 +219,15 @@ for module in "$@"; do
         study-tools)
             echo 'A instalar Zotero e Visual Studio Code…'
             flatpak install --user --noninteractive flathub org.zotero.Zotero
-            download VSCode.tar.gz \
-                https://update.code.visualstudio.com/1.147.0/linux-x64/stable \
-                6fd8b14600f2a8ddb8b4833d8bf288f3dc4c34b2878d2c6c3fec7e16c81023bc
+            python3 - "$scratch/vscode-release" <<'LATEST'
+import json,pathlib,re,sys,urllib.request
+with urllib.request.urlopen('https://update.code.visualstudio.com/api/update/linux-x64/stable/latest',timeout=30) as response: release=json.load(response)
+url=release['url'];digest=release.get('sha256hash') or ''
+if not url.startswith('https://vscode.download.prss.microsoft.com/') or not re.fullmatch('[a-f0-9]{64}',digest): raise RuntimeError('O VS Code não publicou checksum verificável')
+pathlib.Path(sys.argv[1]).write_text(url+'\n'+digest+'\n')
+LATEST
+            mapfile -t vscode_release < "$scratch/vscode-release"
+            download VSCode.tar.gz "${vscode_release[0]}" "${vscode_release[1]}"
             launchers=$XDG_DATA_HOME/apx-launchers
             mkdir -p -- "$launchers"
             tar -xzf "$scratch/VSCode.tar.gz" --no-same-owner -C "$launchers"

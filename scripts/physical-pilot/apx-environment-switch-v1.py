@@ -263,7 +263,7 @@ def request_metadata_update(target: str, generation: str, display_name: str,
         f"--unit={unit}", "--property=Type=exec", "--property=NoNewPrivileges=yes",
         "--property=ProtectSystem=strict", "--property=ProtectHome=yes",
         "--property=PrivateTmp=yes", "--property=PrivateDevices=yes",
-        "--property=CapabilityBoundingSet=",
+        "--property=CapabilityBoundingSet=CAP_DAC_OVERRIDE CAP_CHOWN",
         "--property=ReadWritePaths=/var/lib/apx/environments",
         "--property=ReadWritePaths=/var/lib/apx/native-environments",
         METADATA_RUNNER, "--target", target, "--generation", generation,
@@ -327,7 +327,7 @@ def management_state() -> dict[str, object]:
         value = json.loads(data)
         if type(value) is not dict or value.get("profile") != "apx-environment-management-v1" \
                 or value.get("phase") not in {"planning", "applying", "prepared",
-                                                "recovery-required", "complete", "failed"}:
+                                                "recovery-required", "awaiting-local-auth", "complete", "failed"}:
             raise PermissionError("o estado de gestão difere")
         # A failed presentation state does not cancel a durable native-Windows
         # lifecycle. Keep the menu locked while its authenticated pending
@@ -651,7 +651,7 @@ def selected_environment_icon(identity: dict[str, object]) -> str:
             return "box"
         value = json.loads(raw)
         icon = value.get("icon")
-        return icon if value.get("name") == identity["name"] and value.get("generation") == identity["generation"] and isinstance(icon, str) and icon in ENVIRONMENT_ICONS else "box"
+        return icon if value.get("name") == identity["name"] and value.get("generation") == identity["generation"] and isinstance(icon, str) and re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", icon) is not None else "box"
     except FileNotFoundError:
         icon = identity.get("icon")
         return icon if isinstance(icon, str) and re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", icon) else "box"

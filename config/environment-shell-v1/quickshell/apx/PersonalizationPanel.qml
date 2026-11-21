@@ -18,6 +18,18 @@ Column {
     signal back()
     signal chooseImage()
     property int pendingWallpaperZoom: -1
+    property int savingWallpaperZoom: -1
+    property int savingWallpaperX: 999
+    property int savingWallpaperY: 999
+    Connections {
+        target: Appearance
+        function onBusyChanged() {
+            if (Appearance.busy) return
+            if (panel.pendingWallpaperZoom === panel.savingWallpaperZoom) panel.pendingWallpaperZoom = -1
+            if (panel.pendingWallpaperX === panel.savingWallpaperX && panel.pendingWallpaperY === panel.savingWallpaperY) { panel.pendingWallpaperX = 999; panel.pendingWallpaperY = 999 }
+            panel.savingWallpaperZoom = -1; panel.savingWallpaperX = 999; panel.savingWallpaperY = 999
+        }
+    }
     property int pendingWallpaperX: 999
     property int pendingWallpaperY: 999
     function wallpaperX() { return pendingWallpaperX === 999 ? Appearance.wallpaperOffsetX : pendingWallpaperX }
@@ -29,8 +41,8 @@ Column {
         onTriggered: {
             if (Appearance.busy) { restart(); return }
             if (panel.pendingWallpaperX !== 999) {
+                panel.savingWallpaperX = panel.pendingWallpaperX; panel.savingWallpaperY = panel.pendingWallpaperY
                 Appearance.change("wallpaper-position", JSON.stringify({x: panel.pendingWallpaperX, y: panel.pendingWallpaperY}))
-                panel.pendingWallpaperX = 999; panel.pendingWallpaperY = 999
             }
         }
     }
@@ -40,8 +52,8 @@ Column {
         onTriggered: {
             if (Appearance.busy) { restart(); return }
             if (panel.pendingWallpaperZoom >= 0) {
+                panel.savingWallpaperZoom = panel.pendingWallpaperZoom
                 Appearance.change("wallpaper-zoom", String(panel.pendingWallpaperZoom))
-                panel.pendingWallpaperZoom = -1
             }
         }
     }

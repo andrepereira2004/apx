@@ -311,15 +311,57 @@ def canonical_layout(table):
     return result
 
 
-def free_slot_record(source_plan, table, records, previous_generation):
+def validate_slot_layout(source_plan, table, checkpoint=None):
+    """Require the original layout or an explicitly reconciled, exact checkpoint.
+
+    The executor reads checkpoints only from root-owned lifecycle metadata.
+    This never authorizes arbitrary GPT drift at operation time.
+    """
+    source = validate_plan(source_plan)
+    expected = source['after']
+    if checkpoint is not None:
+        fields = {'schema', 'profile', 'source_plan_sha256', 'layout', 'sha256'}
+        if set(checkpoint) != fields or checkpoint['schema'] != 3 or \
+                checkpoint['profile'] != 'apx-native-slot-layout-v3' or \
+                checkpoint['source_plan_sha256'] != source['plan_sha256'] or \
+                checkpoint['sha256'] != digest({k: v for k, v in checkpoint.items() if k != 'sha256'}):
+            raise ValueError('native slot layout checkpoint differs')
+        expected = canonical_layout(checkpoint['layout'])
+        source_layout = canonical_layout(source['after'])
+        if {k: v for k, v in expected.items() if k != 'partitions'} != \
+                {k: v for k, v in source_layout.items() if k != 'partitions'}:
+            raise ValueError('native slot disk identity changed')
+        old = {p['node']: p for p in source_layout['partitions']}
+        new = {p['node']: p for p in expected['partitions']}
+        # Reconciliation preserves the exact slot identity and its start. A
+        # smaller Windows extent may leave room for an independent Recovery.
+        for number in (1, 4, 6, 7):
+            node = expected['device'] + 'p' + str(number)
+            if new.get(node) != old[node]:
+                raise ValueError('protected native slot partition changed')
+        for number in (2, 3, 5):
+            node = expected['device'] + 'p' + str(number)
+            before, after = old[node], new.get(node, {})
+            if {k: v for k, v in before.items() if k not in {'start', 'size'}} != \
+                    {k: v for k, v in after.items() if k not in {'start', 'size'}}:
+                raise ValueError('native slot partition identity changed')
+        node = expected['device'] + 'p5'
+        if new[node]['start'] != old[node]['start'] or new[node]['size'] > old[node]['size'] or \
+                new[node]['size'] * expected['sectorsize'] < 64 * GIB:
+            raise ValueError('native slot extent changed')
+    if canonical_layout(table) != canonical_layout(expected):
+        raise ValueError('native slot GPT differs from the approved layout')
+    return deepcopy(expected)
+
+
+def free_slot_record(source_plan, table, records, previous_generation, *, checkpoint=None):
     """Describe a cleared p5/p6 slot; the caller must first prove deletion.
 
     This calculation cannot itself prove that Windows data or firmware was
     retired. The durable marker must be written only after those operations.
     """
     plan = validate_plan(source_plan)
-    if canonical_layout(table) != canonical_layout(plan['after']):
-        raise ValueError('native slot GPT differs from the migration plan')
+    validate_slot_layout(plan, table, checkpoint)
     validate_instances(records, table, plan['disk_serial'])
     if len(records) != 1 or records[0]['name'] != 'windows' or records[0]['state'] != 'ready' or \
             records[0]['generation'] != plan['existing']['generation'] or \
@@ -330,7 +372,7 @@ def free_slot_record(source_plan, table, records, previous_generation):
     if previous == guid(records[0]['generation']):
         raise ValueError('the original Windows cannot become a free slot')
     parts = {int(p['node'].rsplit('p', 1)[1]): p for p in table['partitions']}
-    if set(parts) != set(range(1, 8)) or \
+    if not set(range(1, 8)).issubset(parts) or \
             [parts[n]['uuid'].lower() for n in (5, 6, 7)] != \
             [plan['after']['partitions'][n - 1]['uuid'].lower() for n in (5, 6, 7)]:
         raise ValueError('new Windows slot partitions differ')
@@ -344,20 +386,20 @@ def free_slot_record(source_plan, table, records, previous_generation):
             'msr_partuuid': parts[7]['uuid'], 'size_sectors': parts[5]['size']}
 
 
-def validate_free_slot(marker, source_plan, table, records):
+def validate_free_slot(marker, source_plan, table, records, *, checkpoint=None):
     """Reject a stale or forged reusable-slot marker before new installation."""
     if type(marker) is not dict or marker.get('profile') != 'apx-native-free-slot-v3':
         raise ValueError('invalid native free-slot marker')
-    expected = free_slot_record(source_plan, table, records, marker.get('previous_generation'))
+    expected = free_slot_record(source_plan, table, records, marker.get('previous_generation'), checkpoint=checkpoint)
     if marker != expected:
         raise ValueError('native free-slot marker differs from the exact layout')
     return deepcopy(marker)
 
 
-def plan_slot_reuse(source_plan, marker, table, records, *, new_name, new_generation):
+def plan_slot_reuse(source_plan, marker, table, records, *, new_name, new_generation, checkpoint=None):
     """Plan installation in the cleared p5/p6 slot without another GPT change."""
     source = validate_plan(source_plan)
-    slot = validate_free_slot(marker, source, table, records)
+    slot = validate_free_slot(marker, source, table, records, checkpoint=checkpoint)
     if type(new_name) is not str or not NAME.fullmatch(new_name) or new_name in {'hub', 'windows'}:
         raise ValueError('replacement Windows needs an independent name')
     generation = guid(new_generation)
@@ -378,6 +420,11 @@ def plan_slot_reuse(source_plan, marker, table, records, *, new_name, new_genera
                     'efi_path': '/EFI/Microsoft/Boot/bootmgfw.efi'},
             'remaining_gates': ['slot-clear-verified', 'replacement-installer-tested',
                                 'owner-new-install-confirmation']}
+    if checkpoint is not None:
+        plan['slot_layout'] = deepcopy(checkpoint)
+        plan['existing']['size_gib'] = records[0]['size_sectors'] * table['sectorsize'] // GIB
+        linux = next(p for p in table['partitions'] if p['node'] == table['device'] + 'p2')
+        plan['apx_payload_bytes'] = linux['size'] * table['sectorsize'] - source['measurements']['luks_header_bytes']
     plan['plan_sha256'] = digest(plan)
     return plan
 
@@ -390,7 +437,7 @@ def validate_slot_reuse_plan(plan):
         raise ValueError('native slot-reuse plan digest differs')
     expected = plan_slot_reuse(plan['source_plan'], plan['slot_marker'], plan['before'],
                                [plan['original_record']], new_name=plan['new']['name'],
-                               new_generation=plan['new']['generation'])
+                               new_generation=plan['new']['generation'], checkpoint=plan.get('slot_layout'))
     if expected != plan:
         raise ValueError('native slot-reuse plan differs from independent calculation')
     return deepcopy(plan)

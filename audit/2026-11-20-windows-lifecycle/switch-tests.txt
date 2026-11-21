@@ -1,0 +1,6 @@
+FAIL: test_workload_shell_surfaces_return_failure (test_apx_environment_switch_v1.EnvironmentSwitchV1Tests.test_workload_shell_surfaces_return_failure)
+Traceback (most recent call last):
+  File "/root/apx-host-development-mode-v1/apx/tests/test_apx_environment_switch_v1.py", line 620, in test_workload_shell_surfaces_return_failure
+    self.assertIn('onDoubleClicked: { root.environmentFocusIndex = index; root.selectEnvironment(modelData); root.openSelectedEnvironment() }', source)
+Ran 31 tests in 0.053s
+FAILED (failures=1)

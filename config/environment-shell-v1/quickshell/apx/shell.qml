@@ -358,6 +358,7 @@ ShellRoot {
     }
     property string environmentDesktopPreset: "intermediate"
     property string environmentCreatePage: ""
+    property bool environmentEditingIcon: false
     property string environmentDraftIcon: "box"
     property string environmentIconSearch: ""
     property int environmentIconPage: 0
@@ -467,7 +468,7 @@ ShellRoot {
     readonly property string environmentLabel: isHub ? "Hub" : String(environmentIdentity.display_name || environmentIdentity.name || "Environment")
     readonly property int environmentPopupHeight: !isHub ? 214
         : (environmentCreateOpen ? (environmentSystemKind === "arch" ? (environmentCreatePage === "features" ? 650 : 580) : (nativeCreationPreview.target ? 620 : 540)) + (environmentManagementBusy ? 42 : 0)
-           : (environmentEditOpen ? 430
+           : (environmentEditOpen ? (environmentEditingIcon ? 580 : 430)
            : 200 + Math.max(1, environmentCatalog.length) * 51
              + (environmentDeleteConfirm ? 88 : 0) + (environmentManagementBusy ? 42 : 0)
              + (nativeWindowsRecoveryAvailable() ? 100 : 0) + (environmentManagementState.native_v3 ? (environmentManagementState.native_v3_delete_retry ? 180 : 130) : 0)))
@@ -2802,6 +2803,8 @@ ShellRoot {
     }
 
     function beginEnvironmentEdit() {
+        environmentEditingIcon = false
+        environmentCreatePage = ""
         var selected = environmentSelection()
         if (!selected || environmentManagementBusy || environmentMetadataBusy) return
         environmentCreateOpen = false
@@ -2851,6 +2854,7 @@ ShellRoot {
     }
 
     function handleEnvironmentEditKey(event) {
+        if (environmentEditingIcon) { handleEnvironmentCreateKey(event); return }
         if (event.key === Qt.Key_Escape) cancelEnvironmentEdit()
         else if (event.key === Qt.Key_Up)
             environmentEditFocusIndex = Math.max(0, environmentEditFocusIndex - 1)
@@ -2868,7 +2872,7 @@ ShellRoot {
             if (environmentEditFocusIndex === 0) cancelEnvironmentEdit()
             else if (environmentEditFocusIndex === 1) environmentEditTitleInput.forceActiveFocus()
             else if (environmentEditFocusIndex === 2) environmentEditDescriptionInput.forceActiveFocus()
-            else if (environmentEditFocusIndex === 3) { environmentEditFocusIndex = 4 }
+            else if (environmentEditFocusIndex === 3) openEnvironmentEditIcons()
             else saveEnvironmentMetadata()
         } else return
         if (environmentEditFocusIndex === 0 || environmentEditFocusIndex >= 3)
@@ -2887,6 +2891,13 @@ ShellRoot {
     property real environmentCreatePageOffset: 0
     property int environmentCreatePageDirection: 1
 
+    function openEnvironmentEditIcons() {
+        environmentEditingIcon = true
+        environmentIconSearch = ""
+        environmentIconPage = 0
+        showEnvironmentCreatePage("icons")
+    }
+
     function showEnvironmentCreatePage(page) {
         if (environmentCreatePageAnimation.running || page === environmentCreatePage) return
         environmentCreateNextPage = page
@@ -2904,6 +2915,10 @@ ShellRoot {
         ScriptAction { script: {
             var previous = root.environmentCreatePage
             root.environmentCreatePage = root.environmentCreateNextPage
+            if (!root.environmentCreatePage && root.environmentEditingIcon) {
+                root.environmentEditingIcon = false
+                root.environmentEditFocusIndex = 3
+            }
             root.environmentCreateFocusIndex = root.environmentCreatePage ? 0 : (previous === "models" ? root.environmentCreateModelMenuFocus : previous === "icons" ? root.environmentCreateIconFocus : 5)
             menuFlick.contentY = 0
             root.environmentCreatePageOffset = root.environmentCreatePageDirection * 10
@@ -3060,22 +3075,23 @@ ShellRoot {
 
     function pickEnvironmentCreationIcon(name) {
         if (!name) return
-        environmentDraftIcon = name
+        if (environmentEditingIcon) environmentEditIcon = name
+        else environmentDraftIcon = name
         showEnvironmentCreatePage("")
     }
 
     function applyEnvironmentTemplate(index) {
         if (index === environmentTemplateIndex) return
         var template = environmentTemplates[index]
-        var suggestion = template.name
-        for (var suffix = 2; suggestion && environmentCatalog.some(function(item) { return item.name === suggestion }); ++suffix)
-            suggestion = template.name + "-" + suffix
+        var suggestion = template.name ? template.title : ""
+        for (var suffix = 2; suggestion && environmentCatalog.some(function(item) { return item.name === template.name + (suffix === 2 ? "" : "-" + (suffix - 1)) }); ++suffix)
+            suggestion = template.title + "-" + suffix
         if (!environmentDraftName || environmentDraftName === environmentSuggestedName)
             environmentDraftName = suggestion
         if (!environmentDraftDescription || environmentDraftDescription === environmentSuggestedDescription)
-            environmentDraftDescription = template.name ? template.title : ""
+            environmentDraftDescription = ""
         environmentSuggestedName = suggestion
-        environmentSuggestedDescription = template.name ? template.title : ""
+        environmentSuggestedDescription = ""
         if (environmentDraftIcon === (environmentTemplates[environmentTemplateIndex].name ? environmentTemplates[environmentTemplateIndex].icon : "box"))
             environmentDraftIcon = template.name ? template.icon : "box"
         environmentTemplateIndex = index
@@ -3495,7 +3511,7 @@ ShellRoot {
         powerToken = ""
         powerMessage = "A verificar o Host..."
         powerConfirmOpen = true
-        powerTransitionActive = action === "reboot" || action === "poweroff"
+        powerTransitionActive = false
         powerPrepareProcess.command = ["/home/apx/.local/libexec/apx-system-power-client-v1.py", "prepare", action]
         powerPrepareProcess.running = true
     }
@@ -3597,6 +3613,7 @@ ShellRoot {
             if (!lockProcess.running) lockProcess.running = true
             suspendLockDelay.restart()
         } else {
+            powerTransitionActive = powerAction === "reboot" || powerAction === "poweroff"
             powerMessage = "A fechar o Environment de forma segura..."
             powerConfirmProcess.running = true
         }
@@ -4688,7 +4705,7 @@ ShellRoot {
                                                ? " a máquina física? O Environment continuará aberto."
                                                : " a máquina física? O Environment atual será fechado.")
                         if (result.reboot_required) root.powerMessage += " A atualização pede reinício."
-                        if (root.powerAction !== "suspend" || root.idleSuspendRequested) root.confirmPower()
+                        if (root.powerAction === "suspend" && root.idleSuspendRequested) root.confirmPower()
                         root.idleSuspendRequested = false
                     } else {
                         root.powerTransitionActive = false
@@ -6731,7 +6748,7 @@ ShellRoot {
                 MenuHeader {
                     id: scrollingMenuHeader
                     visible: root.popupKind !== "calendar" && !popupBackground.splitControls
-                    title: root.popupKind === "media" ? "Reprodução" : root.popupKind === "battery" ? (root.batteryDisplayedDetailsOpen ? "Detalhes e gráficos" : "Bateria e Energia") : (root.popupKind === "controls" ? (root.renderedControls.controlsActivityKind === "notifications" ? "Notificações" : root.renderedControls.shortcutsOpen ? "Lista de Atalhos" : (root.renderedControls.controlsMoreOpen ? (root.renderedControls.controlsAppearanceOpen ? "Personalização" : (root.renderedControls.controlsActivityKind === "trackpad" ? "Trackpad" : (root.renderedControls.controlsActivityKind === "mouse" ? "Rato" : "Mais opções"))) : "Central de Controlo")) : (root.popupKind === "environments" ? (root.environmentCreateOpen ? (root.environmentCreatePage === "models" ? "Modelos predefinidos" : root.environmentCreatePage === "icons" ? "Escolher ícone" : root.environmentCreatePage === "features" ? "Personalizar funcionalidades" : "Criar environment") : "Environments") : "[ " + root.popupKind.toUpperCase() + " Control ]"))
+                    title: root.popupKind === "media" ? "Reprodução" : root.popupKind === "battery" ? (root.batteryDisplayedDetailsOpen ? "Detalhes e gráficos" : "Bateria e Energia") : (root.popupKind === "controls" ? (root.renderedControls.controlsActivityKind === "notifications" ? "Notificações" : root.renderedControls.shortcutsOpen ? "Lista de Atalhos" : (root.renderedControls.controlsMoreOpen ? (root.renderedControls.controlsAppearanceOpen ? "Personalização" : (root.renderedControls.controlsActivityKind === "trackpad" ? "Trackpad" : (root.renderedControls.controlsActivityKind === "mouse" ? "Rato" : "Mais opções"))) : "Central de Controlo")) : (root.popupKind === "environments" ? (root.environmentEditingIcon ? "Escolher ícone" : root.environmentCreateOpen ? (root.environmentCreatePage === "models" ? "Modelos predefinidos" : root.environmentCreatePage === "icons" ? "Escolher ícone" : root.environmentCreatePage === "features" ? "Personalizar funcionalidades" : "Criar environment") : "Environments") : "[ " + root.popupKind.toUpperCase() + " Control ]"))
                 }
 
                 Column {
@@ -6993,7 +7010,7 @@ ShellRoot {
                             width: parent.width; height: visible ? 80 : 0; radius: 8; color: "#29181d"; border.width: 1; border.color: "#7d3947"
                             Column { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 162; spacing: 2
                                 Text { renderType: Text.QtRendering; width: parent.width; text: "Apagar " + root.selectedEnvironmentName + "?"; color: "#ffb2bf"; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; font.weight: Font.Normal; elide: Text.ElideRight }
-                                Text { renderType: Text.QtRendering; width: parent.width; text: root.environmentSelection() && root.environmentSelection().native_version === 3 ? "Apaga só este Windows e o seu EFI. Os 80 GiB ficam reservados para outro Windows; não é apagamento seguro." : (root.environmentIsNative(root.environmentSelection()) ? "Apaga a partição e devolve todo o espaço ao APX após reiniciar." : "Purga total: dados, VM, cópias e metadados."); color: "#b98992"; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; wrapMode: Text.WordWrap }
+                                Text { renderType: Text.QtRendering; width: parent.width; text: root.environmentSelection() && root.environmentSelection().native_version === 3 ? "Remove este Windows e integra o espaço no Linux. Requer a palavra-passe de cifragem num terminal local; os outros Windows são preservados." : (root.environmentIsNative(root.environmentSelection()) ? "Apaga a partição e devolve todo o espaço ao APX após reiniciar." : "Purga total: dados, VM, cópias e metadados."); color: "#b98992"; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize; wrapMode: Text.WordWrap }
                             }
                             Row { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; spacing: 5
                                 Rectangle { width: 62; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius; color: root.environmentDeleteFocusIndex === 0 ? root.controlButtonActive : "#21161a"; border.width: root.environmentDeleteFocusIndex === 0 ? 1 : 0; border.color: root.cyan
@@ -7010,7 +7027,7 @@ ShellRoot {
 
                     Column {
                         width: parent.width; spacing: 9
-                        visible: root.isHub && root.environmentEditOpen
+                        visible: root.isHub && root.environmentEditOpen && !root.environmentEditingIcon
                         Row {
                             width: parent.width; height: Appearance.menuActionHeight; spacing: 8
                             Rectangle {
@@ -7057,27 +7074,12 @@ ShellRoot {
                             }
                             Text { renderType: Text.QtRendering; anchors.left: parent.left; anchors.leftMargin: 11; anchors.verticalCenter: parent.verticalCenter; visible: !environmentEditDescriptionInput.text.length; text: "Legenda (opcional)"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuBodySize }
                         }
-                        Text { renderType: Text.QtRendering; text: "Ícone"; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize }
-                        Grid {
-                            width: parent.width; columns: 8; spacing: 5
-                            Repeater {
-                                model: root.environmentIconChoices
-                                delegate: MenuButton {
-                                    required property string modelData
-                                    width: (parent.width - 35) / 8; height: Appearance.menuActionHeight
-                                    iconName: modelData
-                                    label: ""
-                                    Accessible.name: "Ícone " + modelData
-                                    selected: root.environmentEditIcon === modelData
-                                    keyboardFocused: root.environmentEditFocusIndex === 3 && selected
-                                    enabled: !root.environmentMetadataBusy
-                                    onActivated: {
-                                        root.environmentEditIcon = modelData
-                                        root.environmentEditFocusIndex = 3
-                                        environmentMenu.forceActiveFocus()
-                                    }
-                                }
-                            }
+                        MenuButton {
+                            width: parent.width; height: Appearance.menuActionHeight
+                            alignedIcon: true; iconName: environmentEditIcon; label: "Escolher ícone"
+                            keyboardFocused: root.environmentEditFocusIndex === 3
+                            enabled: !root.environmentMetadataBusy
+                            onActivated: root.openEnvironmentEditIcons()
                         }
                         MenuButton {
                             width: parent.width; height: Appearance.menuActionHeight
@@ -7227,13 +7229,13 @@ ShellRoot {
 
                     Column {
                         width: parent.width; spacing: 10
-                        visible: root.isHub && root.environmentCreateOpen && !!root.environmentCreatePage
+                        visible: root.isHub && (root.environmentCreateOpen || root.environmentEditingIcon) && !!root.environmentCreatePage
                         enabled: !environmentCreatePageAnimation.running
                         opacity: 0.18 + 0.82 * root.environmentCreatePageProgress
                         transform: Translate { x: root.environmentCreatePageOffset }
                         MenuButton {
                             width: parent.width; height: Appearance.menuActionHeight; radius: Appearance.menuActionRadius
-                            alignedIcon: true; iconName: "chevron-left"; label: "Voltar à criação"
+                            alignedIcon: true; iconName: "chevron-left"; label: root.environmentEditingIcon ? "Voltar à edição" : "Voltar à criação"
                             keyboardFocused: root.environmentCreateFocusIndex === 0
                             onActivated: root.showEnvironmentCreatePage("")
                         }
@@ -7289,7 +7291,7 @@ ShellRoot {
                                         width: (parent.width - 35) / 8; height: Appearance.menuActionHeight
                                         iconName: modelData; label: ""
                                         Accessible.name: modelData
-                                        selected: root.environmentDraftIcon === modelData
+                                        selected: (root.environmentEditingIcon ? root.environmentEditIcon : root.environmentDraftIcon) === modelData
                                         keyboardFocused: root.environmentCreateFocusIndex === root.environmentCreateIconChoiceBase + index
                                         onActivated: root.pickEnvironmentCreationIcon(modelData)
                                     }
@@ -7401,8 +7403,14 @@ ShellRoot {
                         visible: root.isHub && root.environmentManagementState.native_v3 === true
                         width: parent.width; spacing: 6
                         Text { renderType: Text.QtRendering; width: parent.width; wrapMode: Text.WordWrap; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
-                            text: root.environmentManagementState.pending_stage === "deleting" ? "A eliminar apenas o Windows novo. Se a operação parou, podes continuá-la sem tocar no Windows atual." : (root.environmentManagementState.native_v3_activate ? (root.environmentManagementState.pending_mode === "slot-reuse" ? "O espaço reservado de " + root.environmentManagementState.new_size_gib + " GiB está pronto para receber outro Windows. A instalação reinicia o computador automaticamente e regressa ao Hub." : "A cópia está verificada. O Windows atual ficará com " + root.environmentManagementState.existing_size_gib + " GiB e o novo terá " + root.environmentManagementState.new_size_gib + " GiB. A instalação reinicia o computador automaticamente e regressa ao Hub.") : (root.environmentManagementState.native_v3_rollback ? "Podes repor o Windows anterior a partir da cópia guardada. A instalação nova incompleta será removida." : (root.environmentManagementState.native_v3_retry ? "A instalação nova falhou. Podes recomeçá-la; isso apaga apenas o Windows novo incompleto. O Windows atual e o APX ficam preservados." : (root.environmentManagementState.native_v3_manual_recovery ? "A instalação parou. Os dados e as partições foram preservados; é necessária uma recuperação assistida antes de tentar novamente." : "A preparar Windows. Acompanha o progresso acima."))))
+                            text: root.environmentManagementState.native_v3_local_auth === true ? "Windows removido. Falta confirmar a cifragem num terminal local do Host para integrar o espaço no Linux. A operação ainda não terminou." : root.environmentManagementState.pending_stage === "deleting" ? "A eliminar apenas o Windows novo. Se a operação parou, podes continuá-la sem tocar no Windows atual." : (root.environmentManagementState.native_v3_activate ? (root.environmentManagementState.pending_mode === "slot-reuse" ? "O espaço reservado de " + root.environmentManagementState.new_size_gib + " GiB está pronto para receber outro Windows. A instalação reinicia o computador automaticamente e regressa ao Hub." : "A cópia está verificada. O Windows atual ficará com " + root.environmentManagementState.existing_size_gib + " GiB e o novo terá " + root.environmentManagementState.new_size_gib + " GiB. A instalação reinicia o computador automaticamente e regressa ao Hub.") : (root.environmentManagementState.native_v3_rollback ? "Podes repor o Windows anterior a partir da cópia guardada. A instalação nova incompleta será removida." : (root.environmentManagementState.native_v3_retry ? "A instalação nova falhou. Podes recomeçá-la; isso apaga apenas o Windows novo incompleto. O Windows atual e o APX ficam preservados." : (root.environmentManagementState.native_v3_manual_recovery ? "A instalação parou. Os dados e as partições foram preservados; é necessária uma recuperação assistida antes de tentar novamente." : "A preparar Windows. Acompanha o progresso acima."))))
                         }
+                        Text { renderType: Text.QtRendering; visible: root.environmentManagementState.native_v3_local_auth === true
+                            width: parent.width; wrapMode: Text.WordWrap; color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
+                            text: "No Terminal do Host, executa: apx-concluir-remocao-windows" }
+                        MenuButton { visible: root.environmentManagementState.native_v3_local_auth === true
+                            width: parent.width; height: visible ? Appearance.menuActionHeight : 0; label: "Abrir Terminal do Host"
+                            enabled: !hostConsoleProcess.running; onActivated: { root.closePopup(); hostConsoleProcess.running = true } }
                         MenuButton { visible: root.environmentManagementState.native_v3_activate === true; width: parent.width; height: visible ? Appearance.menuActionHeight : 0
                             label: root.nativeV3Confirmation === "activate:" + root.environmentManagementState.pending_generation ? "Confirmar instalação e reinício" : "Instalar e reiniciar"
                             enabled: !environmentActionProcess.running; accent: true; onActivated: root.nativeV3Action("activate") }
@@ -7723,9 +7731,9 @@ ShellRoot {
                                     }
                                 }
                                 Text { renderType: Text.QtRendering;
-                                    visible: root.wifiIsKnown(root.wifiSelectedSsid) || root.wifiIsOpen(root.wifiSelectedSsid)
+                                    visible: !root.wifiIsKnown(root.wifiSelectedSsid) && root.wifiIsOpen(root.wifiSelectedSsid)
                                     width: parent.width; wrapMode: Text.Wrap
-                                    text: root.wifiIsKnown(root.wifiSelectedSsid) ? "As credenciais guardadas serão usadas para ligar." : "Esta rede não pede palavra-passe."
+                                    text: "Esta rede não pede palavra-passe."
                                     color: root.textDim; font.family: Appearance.fontFamily; font.pixelSize: root.menuSmallSize
                                 }
                                 Row {
@@ -8493,12 +8501,13 @@ ShellRoot {
                     Rectangle {
                         visible: root.renderedControlsAllClosed() && root.renderedControls.powerConfirmOpen
                         width: parent.width
-                        height: visible ? 104 : 0
+                        height: visible ? powerConfirmationContent.implicitHeight + 18 : 0
                         radius: 7
                         color: root.controlButtonSurface
                         border.width: 1
                         border.color: root.powerToken.length ? "#ffb15a" : root.controlButtonOutline
                         Column {
+                            id: powerConfirmationContent
                             anchors.fill: parent
                             anchors.margins: 9
                             spacing: 8
@@ -8522,7 +8531,8 @@ ShellRoot {
                                 MenuButton {
                                     visible: root.powerToken.length > 0
                                     width: (parent.width - 6) / 2
-                                    label: root.powerBusy ? "A processar..." : "Confirmar"
+                                    label: root.powerBusy ? "A processar..." : root.powerAction === "reboot" ? "Reiniciar" : root.powerAction === "poweroff" ? "Desligar" : "Suspender"
+                                    enabled: !root.powerBusy
                                     accent: true
                                     onActivated: root.confirmPower()
                                 }

@@ -1,0 +1,24 @@
+{
+  "installed_delete_dry_run": true,
+  "block_writes_performed": false,
+  "firmware_writes_performed": false,
+  "live_registration_preserved": true,
+  "ac_power_present": false,
+  "physical_delete_requires_ac": true,
+  "target_entry": "0000",
+  "simulated_wipes": [
+    {
+      "partition": 5,
+      "bytes": 82678120448,
+      "partuuid": "eddf4dba-7748-5ad6-a640-c9af195f5e1e"
+    },
+    {
+      "partition": 6,
+      "bytes": 536870912,
+      "partuuid": "10783707-92f8-5f8a-9407-1c4fb92ab0ea"
+    }
+  ],
+  "free_slot_gib": 77,
+  "gpt_unchanged": true,
+  "firmware_unchanged": true
+}

@@ -9,7 +9,7 @@ import stat
 import struct
 import sys
 
-SOCKET = '/run/apx/transfer-v1.sock'
+SOCKET = '/home/apx/Partilha/.apx-transfer.sock'
 SHARED = Path('/home/apx/Partilha')
 
 
@@ -97,9 +97,29 @@ def mkdir_dialog(parent):
         popup.destroy()
 
 
+def rename_dialog(path):
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    if path.is_symlink() or path == SHARED or SHARED not in path.resolve(strict=True).parents:
+        raise RuntimeError('Seleciona um ficheiro ou pasta dentro da Partilha')
+    popup = Gtk.Dialog(title='Mudar nome na Partilha')
+    popup.add_button('Cancelar', Gtk.ResponseType.CANCEL)
+    popup.add_button('Mudar nome', Gtk.ResponseType.OK)
+    entry = Gtk.Entry(text=path.name); entry.set_activates_default(True)
+    popup.get_content_area().add(entry); popup.set_default_response(Gtk.ResponseType.OK)
+    popup.show_all(); entry.grab_focus(); entry.select_region(0, -1)
+    try:
+        if popup.run() == Gtk.ResponseType.OK:
+            request({'type': 'rename', 'path': str(path.relative_to(SHARED)), 'name': entry.get_text()})
+    finally: popup.destroy()
+
+
 def main():
     try:
-        if len(sys.argv) >= 3 and sys.argv[1] == 'mkdir':
+        if len(sys.argv) == 3 and sys.argv[1] == 'rename':
+            rename_dialog(Path(sys.argv[2]))
+        elif len(sys.argv) >= 3 and sys.argv[1] == 'mkdir':
             parent = Path(sys.argv[2]).resolve(strict=True)
             if parent != SHARED and SHARED not in parent.parents:
                 raise RuntimeError('Seleciona uma pasta dentro da Partilha')

@@ -8,8 +8,9 @@ below remain historical evidence; they are not the latest final-source replay.
 
 Status: **fresh Arch graphical installation and the enhanced automated core
 checks passed in a disposable VM**. This is still an experimental local-source
-candidate, not complete physical-pilot feature parity or a published GitHub
-reinstallation path. The public entry point remains the older headless installer.
+candidate, not complete physical-pilot feature parity or complete validation of the latest sources. As of 2026-11-21, the `master`
+GitHub entry point selects this graphical installer; the VM results below remain
+historical. See [the current review](github-installation-review-2026-11-21.md).
 
 ## Measured result and completed cleanup
 
@@ -53,8 +54,7 @@ roots, credentials or VM disks are retained. No new commit/push was performed.
 requires a fresh already-installed Arch x86_64 Host, Btrfs, an admitted graphical
 seat and new APX identity enrollment. It does not partition disks, migrate
 Windows, configure a bootloader or copy live Hub data. The normal Arch package
-upgrade may update the Host kernel; no physical disk formatting is performed. This new command is
-not yet a published GitHub entry point.
+upgrade may update the Host kernel; no physical disk formatting is performed. The `master` GitHub entry point now selects this command by default.
 
 The candidate reuses the current lifecycle and signed Arch bootstrap, then builds
 one fresh graphical release and an independent immutable Hub release. Installed

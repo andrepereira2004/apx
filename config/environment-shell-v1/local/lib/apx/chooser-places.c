@@ -1,5 +1,6 @@
 /* APX GTK3 portal adaptation. Folder history stays inside this Environment. */
 #include <gtk/gtk.h>
+#include "wallpaper-used.h"
 #include <gmodule.h>
 #include <glib/gstdio.h>
 #include <string.h>
@@ -607,6 +608,7 @@ static void adapt_file_list(GtkWidget *widget) {
          parent = gtk_widget_get_parent(parent))
         if (GTK_IS_FILE_CHOOSER(parent)) { chooser = TRUE; break; }
     if (!chooser) return;
+    apx_usage_adapt(widget);
     GList *columns = gtk_tree_view_get_columns(GTK_TREE_VIEW(widget));
     for (GList *entry = columns; entry; entry = entry->next) {
         GtkTreeViewColumn *column = entry->data;

@@ -11,6 +11,8 @@ ENABLE=Path('/usr/share/apx/native-v3-enabled.json')
 LIFECYCLE='/usr/lib/apx/apx-native-lifecycle-v3.py'
 BOOT='/usr/lib/apx/apx-native-boot-runner-v3.py'
 CRITICAL={LIFECYCLE,BOOT,'/usr/lib/apx/apx_native_instances_v3.py','/usr/lib/apx/apx_native_offline_v3.py',
+    '/usr/lib/apx/apx_native_linux_reclaim_v3.py','/usr/lib/apx/apx-reclaim-windows-linux-v3.py',
+    '/usr/local/sbin/apx-concluir-remocao-windows',
     '/usr/lib/apx/apx_native_backup_v3.py','/usr/lib/apx/apx_native_winpe_v3.py',
     '/usr/lib/apx/apx_native_slot_wipe_v3.py',
     '/usr/lib/apx/build-native-windows-uki-v3.py','/usr/lib/apx/apx-native-offline-layout-v3.py',
@@ -28,16 +30,23 @@ def trusted(path,limit=32768):
     return json.loads(path.read_bytes())
 
 
-def enabled():
+def release_errors():
     try:
         record=trusted(ENABLE)
-        if record.get('profile')!='apx-native-validated-release-v3' or set(record.get('files',{}))!=CRITICAL:return False
+        if record.get('profile')!='apx-native-validated-release-v3' or set(record.get('files',{}))!=CRITICAL:
+            return ['manifesto Windows inválido']
+        errors=[]
         for name,expected in record['files'].items():
             path=Path(name);info=path.lstat()
-            if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or info.st_mode&0o022:return False
-            if hashlib.sha256(path.read_bytes()).hexdigest()!=expected:return False
-        return True
-    except (OSError,ValueError,KeyError):return False
+            if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or info.st_mode&0o022 or \
+                    hashlib.sha256(path.read_bytes()).hexdigest()!=expected:
+                errors.append(path.name)
+        return errors
+    except (OSError,ValueError,KeyError):return ['manifesto Windows indisponível']
+
+
+def enabled():
+    return not release_errors()
 
 
 def persist_preview(value):
@@ -90,6 +99,7 @@ def control():
     retry=stage=='installing' and pending.get('install_failure_kind')=='winpe-failed' and bool(pending.get('error')) and type(attempts) is int and 0<=attempts<2
     delete_retry=stage=='deleting' and bool(pending.get('error'))
     return dict(busy=True,native_v3=True,pending_generation=pending['generation'],pending_target=pending['target'],
+        native_v3_local_auth=stage=='awaiting-linux-auth',
         existing_size_gib=pending.get('existing_size_gib'),new_size_gib=pending.get('new_size_gib'),
         pending_stage=stage,pending_mode=pending.get('mode','migration'),native_v3_activate=stage in {'prepared','prepared-reuse'},native_v3_rollback=rollback,
         native_v3_retry=retry,native_v3_delete_retry=delete_retry,
@@ -110,7 +120,7 @@ def validate_boot(target,generation):
 
 
 def dispatch(action,target,generation,lock):
-    if not enabled():raise ValueError('A criação de Windows ainda está em validação.')
+    if not enabled():raise ValueError('A integração Windows precisa de validar os ficheiros atualizados: '+', '.join(release_errors()))
     if action not in {'prepare','activate','rollback','retry','delete','boot'} or not re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}',generation):raise ValueError('invalid native operation')
     if action=='prepare':
         if PENDING.exists():raise ValueError('Existe uma operação Windows pendente.')

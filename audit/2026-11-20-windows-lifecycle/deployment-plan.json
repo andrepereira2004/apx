@@ -1,0 +1,285 @@
+{
+  "checkpoint": {
+    "layout": {
+      "device": "/dev/nvme0n1",
+      "firstlba": 34,
+      "id": "AC9FC0BD-2162-43A9-AAE6-3F654FF6F275",
+      "label": "gpt",
+      "lastlba": 1000215182,
+      "partitions": [
+        {
+          "name": "APX_EFI",
+          "node": "/dev/nvme0n1p1",
+          "size": 2097152,
+          "start": 2048,
+          "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+          "uuid": "9625F250-9ACC-453A-AE63-0C863ADE440F"
+        },
+        {
+          "name": "APX_CRYPT",
+          "node": "/dev/nvme0n1p2",
+          "size": 453871616,
+          "start": 2099200,
+          "type": "CA7D7CCB-63ED-4C53-861C-1742536059CC",
+          "uuid": "8835C8F0-F02F-4FC2-9035-5DBBC191DF9E"
+        },
+        {
+          "name": "APX_WINDOWS_TARGET",
+          "node": "/dev/nvme0n1p3",
+          "size": 356515840,
+          "start": 455970816,
+          "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+          "uuid": "099C31D8-313A-4ABA-B0E0-2B59502C9674"
+        },
+        {
+          "name": "APX_WINSETUP",
+          "node": "/dev/nvme0n1p4",
+          "size": 18874368,
+          "start": 981340160,
+          "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+          "uuid": "309BEBB6-5C32-4E21-9C92-6D758E51389D"
+        },
+        {
+          "name": "APX_WINDOWS_TESTES",
+          "node": "/dev/nvme0n1p5",
+          "size": 161480704,
+          "start": 813568000,
+          "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+          "uuid": "EDDF4DBA-7748-5AD6-A640-C9AF195F5E1E"
+        },
+        {
+          "name": "APX_NATIVE_EFI",
+          "node": "/dev/nvme0n1p6",
+          "size": 1048576,
+          "start": 812486656,
+          "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+          "uuid": "10783707-92F8-5F8A-9407-1C4FB92AB0EA"
+        },
+        {
+          "name": "APX_NATIVE_MSR",
+          "node": "/dev/nvme0n1p7",
+          "size": 32768,
+          "start": 813535232,
+          "type": "E3C9E316-0B5C-4DB8-817D-F92DF00215AE",
+          "uuid": "B6BEBAB8-76CF-5A5E-9C07-FA54650AB638"
+        },
+        {
+          "name": "APX_RECOVERY",
+          "node": "/dev/nvme0n1p8",
+          "size": 4194304,
+          "start": 975048704,
+          "type": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+          "uuid": "B9ACEEF4-C85B-4EC5-8250-815DC69DF0EE"
+        }
+      ],
+      "sectorsize": 512,
+      "unit": "sectors"
+    },
+    "profile": "apx-native-slot-layout-v3",
+    "schema": 3,
+    "sha256": "cdcb25559575b6c680d86ef076ec250ed22b41e1a9246e02f461017b7279e98e",
+    "source_plan_sha256": "0845553fee01f4e1f9f08ea7f2aac455bd74f60ce876223fdafb682a9418782a"
+  },
+  "guest_sources": {
+    "APX-ReturnToHub.ps1": "9424f7f4c1a066e924a6ca542249028934a2ae71fb8a305f9c954c00853f305b",
+    "APX-ReturnToHub.vbs": "6b363184dbaf7db470f94a2d478b1807695fff061a18821ad063ebee1dd4a35d",
+    "README.txt": "2315c6164acf4ecddc47ea4d841b48b9c53ae1c72df513cc8655733180ab6131"
+  },
+  "guests": {
+    "3": {
+      "files": {
+        "APX-ReturnToHub.ps1": "ce989977480a9e711274b4bd7948a8ef51d369461cac6a31ee9c9396d1ee8db1",
+        "APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
+        "README.txt": "08fbd9a963b9c8ed7e67cafc3ef2e5fce106e519476053b7a2df49105b09f19b"
+      },
+      "partuuid": "099c31d8-313a-4aba-b0e0-2b59502c9674"
+    },
+    "5": {
+      "files": {
+        "APX-ReturnToHub.ps1": "1def9b82d24f05a3b92fb3a48c7ca651c5832d796a066459d6e765d8ea45a499",
+        "APX-ReturnToHub.vbs": "504a32302dbfc5590e6059dde1ec563e6e04371bfac6c8e352b20b10f044757f",
+        "README.txt": "08fbd9a963b9c8ed7e67cafc3ef2e5fce106e519476053b7a2df49105b09f19b"
+      },
+      "partuuid": "eddf4dba-7748-5ad6-a640-c9af195f5e1e"
+    }
+  },
+  "host": [
+    {
+      "after": "c2a02e988c0a4e98e34c4045561a6813295b02ef3f496b03ad0107bb765676a5",
+      "before": "1daf9086a54e9f396b8fa4c9b4ad874e173f163302219b133ea98d3830c07939",
+      "source": "scripts/physical-pilot/apx-native-lifecycle-v3.py",
+      "target": "/usr/lib/apx/apx-native-lifecycle-v3.py"
+    },
+    {
+      "after": "850e6336d01137281a10ac1da70be0ffde2302b9b394a8f001e0bf38c16c52d9",
+      "before": "5fb1e25633d1121cadf3b0bd93a4cd2a00d9de344461ab13a44e3321d526cb54",
+      "source": "scripts/physical-pilot/apx-native-windows-plan-v3.py",
+      "target": "/usr/lib/apx/apx-native-windows-plan-v3.py"
+    },
+    {
+      "after": "688461fccac960d69731c6abf6ec6ef900605b03f80e7ccd572b28b71e7820eb",
+      "before": "2feb8d5c14d87d2c487beb38fa0ac561cfe28d4d5c5592f350697c8e585f6301",
+      "source": "scripts/physical-pilot/apx-native-boot-runner-v1.py",
+      "target": "/usr/lib/apx/apx-native-boot-runner-v1.py"
+    },
+    {
+      "after": "b67797bb4d6ff893850451bf06d602f634559acfe8f4d75c4bacbacbcdd7b79e",
+      "before": "4f1bdef3c0d6647c5d0aae25a153acdf7705b5abf87461b27b34c68a26de6271",
+      "source": "scripts/physical-pilot/apx-native-windows-lifecycle-finalize-v1.py",
+      "target": "/usr/lib/apx/apx-native-windows-lifecycle-finalize-v1.py"
+    },
+    {
+      "after": "ba35e5ccdbd3d296eaf3f4b59b78258120a855fb293016468bd4621f8302d904",
+      "before": "ef218a4136d9d8e4d7e69167a4442cd8214f1266abb6e7522db057e285b690e5",
+      "source": "src/apx_native_instances_v3.py",
+      "target": "/usr/lib/apx/apx_native_instances_v3.py"
+    },
+    {
+      "after": "ba61b388963d71825de8ea7426924d8272fb9e1a3e7756d1719c8d8bd4ed4249",
+      "before": "a2995dc584d65a9c408302100575950291779a4d19f41667d12ea2aba4532855",
+      "source": "src/apx_native_hub_v3.py",
+      "target": "/usr/lib/apx/apx_native_hub_v3.py"
+    },
+    {
+      "after": "b6dfc8d4ba6f8633b829a244105c79f4f9526b512ab83d2cae7a5c50dd2463d0",
+      "before": "6679827da5f351316553948c5d1d2012771e432a05802089ef57c415401fc189",
+      "source": "src/apx_native_slot_wipe_v3.py",
+      "target": "/usr/lib/apx/apx_native_slot_wipe_v3.py"
+    },
+    {
+      "after": "9424f7f4c1a066e924a6ca542249028934a2ae71fb8a305f9c954c00853f305b",
+      "before": "1a13748584a58cce28f416e6b42b48d34adf5ed56e8683f4b9a7af6ed8af2318",
+      "source": "config/native-windows-return-v1/APX-ReturnToHub.ps1",
+      "target": "/usr/share/apx/native-windows-lifecycle-v1/return/APX-ReturnToHub.ps1"
+    },
+    {
+      "after": "6b363184dbaf7db470f94a2d478b1807695fff061a18821ad063ebee1dd4a35d",
+      "before": "9f0fc5b0f66f1e4564a3c355a89bc776052ffeff805bb27e16a271e662d2586c",
+      "source": "config/native-windows-return-v1/APX-ReturnToHub.vbs",
+      "target": "/usr/share/apx/native-windows-lifecycle-v1/return/APX-ReturnToHub.vbs"
+    },
+    {
+      "after": "2315c6164acf4ecddc47ea4d841b48b9c53ae1c72df513cc8655733180ab6131",
+      "before": "472fcfa8bd89bdbe2396202fbcd31b50cf290ff0bee26cf4424ed180bad1f170",
+      "source": "config/native-windows-return-v1/README.txt",
+      "target": "/usr/share/apx/native-windows-lifecycle-v1/return/README.txt"
+    },
+    {
+      "after": "01b026e1aa17f7831c45fbe58857c1a93a5ae359aac18046053ac5e81868bba6",
+      "before": "d6a29f7ca03d07bbfb3affe06825870c66dc9a2f6e5cf4e11e331b047a80785d",
+      "source": "config/native-windows-return-v1/APX-ProvisionHardware.cmd",
+      "target": "/usr/share/apx/native-windows-lifecycle-v1/return/APX-ProvisionHardware.cmd"
+    }
+  ],
+  "layout": {
+    "device": "/dev/nvme0n1",
+    "firstlba": 34,
+    "id": "AC9FC0BD-2162-43A9-AAE6-3F654FF6F275",
+    "label": "gpt",
+    "lastlba": 1000215182,
+    "partitions": [
+      {
+        "name": "APX_EFI",
+        "node": "/dev/nvme0n1p1",
+        "size": 2097152,
+        "start": 2048,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "9625F250-9ACC-453A-AE63-0C863ADE440F"
+      },
+      {
+        "name": "APX_CRYPT",
+        "node": "/dev/nvme0n1p2",
+        "size": 453871616,
+        "start": 2099200,
+        "type": "CA7D7CCB-63ED-4C53-861C-1742536059CC",
+        "uuid": "8835C8F0-F02F-4FC2-9035-5DBBC191DF9E"
+      },
+      {
+        "name": "APX_WINDOWS_TARGET",
+        "node": "/dev/nvme0n1p3",
+        "size": 356515840,
+        "start": 455970816,
+        "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+        "uuid": "099C31D8-313A-4ABA-B0E0-2B59502C9674"
+      },
+      {
+        "name": "APX_WINSETUP",
+        "node": "/dev/nvme0n1p4",
+        "size": 18874368,
+        "start": 981340160,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "309BEBB6-5C32-4E21-9C92-6D758E51389D"
+      },
+      {
+        "name": "APX_WINDOWS_TESTES",
+        "node": "/dev/nvme0n1p5",
+        "size": 161480704,
+        "start": 813568000,
+        "type": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+        "uuid": "EDDF4DBA-7748-5AD6-A640-C9AF195F5E1E"
+      },
+      {
+        "name": "APX_NATIVE_EFI",
+        "node": "/dev/nvme0n1p6",
+        "size": 1048576,
+        "start": 812486656,
+        "type": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+        "uuid": "10783707-92F8-5F8A-9407-1C4FB92AB0EA"
+      },
+      {
+        "name": "APX_NATIVE_MSR",
+        "node": "/dev/nvme0n1p7",
+        "size": 32768,
+        "start": 813535232,
+        "type": "E3C9E316-0B5C-4DB8-817D-F92DF00215AE",
+        "uuid": "B6BEBAB8-76CF-5A5E-9C07-FA54650AB638"
+      },
+      {
+        "name": "APX_RECOVERY",
+        "node": "/dev/nvme0n1p8",
+        "size": 4194304,
+        "start": 975048704,
+        "type": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+        "uuid": "B9ACEEF4-C85B-4EC5-8250-815DC69DF0EE"
+      }
+    ],
+    "sectorsize": 512,
+    "unit": "sectors"
+  },
+  "manifest_before": "7134707620763294d564215f7718db1bb3131753e9d9c9ccfdee9fed66c9afee",
+  "release_after": {
+    "/etc/systemd/system/apx-native-finalize-v3.service": "179f414e5ff1cb6c7fd68cd22268d2a1be2545918c65fae5a8aa380d0c1e4736",
+    "/usr/lib/apx/apx-environment-switch-client-v1.py": "277ce258523b7cf20fb366ed876407e89d7e24f63c099d2ce78cf0ad8f4aea8c",
+    "/usr/lib/apx/apx-environment-switch-v1.py": "f301a1b8ebc2f6e2526c3a0b996ec1c34fe6f5538054f14134160c69837b40b1",
+    "/usr/lib/apx/apx-native-boot-runner-v3.py": "d7b1e8212fc19e9f4b6bbe6794e649062e38cd844852de71fe9aa9c553f53542",
+    "/usr/lib/apx/apx-native-lifecycle-v3.py": "c2a02e988c0a4e98e34c4045561a6813295b02ef3f496b03ad0107bb765676a5",
+    "/usr/lib/apx/apx-native-offline-layout-v3.py": "2ebe501e91412259b7e2d8ebd4bc44674bbf1a1bb38bd7dbd969282e690ad380",
+    "/usr/lib/apx/apx-native-windows-plan-v3.py": "850e6336d01137281a10ac1da70be0ffde2302b9b394a8f001e0bf38c16c52d9",
+    "/usr/lib/apx/apx_environment_switch_contract.py": "93884db5eacc8d4484f891e9eb992dadf5f7027076280a307eadebe58187459f",
+    "/usr/lib/apx/apx_native_backup_v3.py": "800fa9993cb14db3fdba0f297196b262a0ace1feccc2dadabb20349e64d144cd",
+    "/usr/lib/apx/apx_native_hub_v3.py": "ba61b388963d71825de8ea7426924d8272fb9e1a3e7756d1719c8d8bd4ed4249",
+    "/usr/lib/apx/apx_native_instances_v3.py": "ba35e5ccdbd3d296eaf3f4b59b78258120a855fb293016468bd4621f8302d904",
+    "/usr/lib/apx/apx_native_offline_v3.py": "0c0262766ed3b2d390d01438b4feb79086378e78f46c27772141090a377011e3",
+    "/usr/lib/apx/apx_native_slot_wipe_v3.py": "b6dfc8d4ba6f8633b829a244105c79f4f9526b512ab83d2cae7a5c50dd2463d0",
+    "/usr/lib/apx/apx_native_winpe_v3.py": "d9a09594d1599de0cecf4772d43a4d1960c0e02df9b8baf19abffeaabcef8d9f",
+    "/usr/lib/apx/build-native-windows-uki-v3.py": "7d34c1c72f515442d44dd5ece0a0bc139ef1cc3d183f1db824e2e80cb071a7dc"
+  },
+  "release_before": {
+    "/etc/systemd/system/apx-native-finalize-v3.service": "179f414e5ff1cb6c7fd68cd22268d2a1be2545918c65fae5a8aa380d0c1e4736",
+    "/usr/lib/apx/apx-environment-switch-client-v1.py": "277ce258523b7cf20fb366ed876407e89d7e24f63c099d2ce78cf0ad8f4aea8c",
+    "/usr/lib/apx/apx-environment-switch-v1.py": "f301a1b8ebc2f6e2526c3a0b996ec1c34fe6f5538054f14134160c69837b40b1",
+    "/usr/lib/apx/apx-native-boot-runner-v3.py": "d7b1e8212fc19e9f4b6bbe6794e649062e38cd844852de71fe9aa9c553f53542",
+    "/usr/lib/apx/apx-native-lifecycle-v3.py": "1daf9086a54e9f396b8fa4c9b4ad874e173f163302219b133ea98d3830c07939",
+    "/usr/lib/apx/apx-native-offline-layout-v3.py": "2ebe501e91412259b7e2d8ebd4bc44674bbf1a1bb38bd7dbd969282e690ad380",
+    "/usr/lib/apx/apx-native-windows-plan-v3.py": "5fb1e25633d1121cadf3b0bd93a4cd2a00d9de344461ab13a44e3321d526cb54",
+    "/usr/lib/apx/apx_environment_switch_contract.py": "93884db5eacc8d4484f891e9eb992dadf5f7027076280a307eadebe58187459f",
+    "/usr/lib/apx/apx_native_backup_v3.py": "800fa9993cb14db3fdba0f297196b262a0ace1feccc2dadabb20349e64d144cd",
+    "/usr/lib/apx/apx_native_hub_v3.py": "a2995dc584d65a9c408302100575950291779a4d19f41667d12ea2aba4532855",
+    "/usr/lib/apx/apx_native_instances_v3.py": "ef218a4136d9d8e4d7e69167a4442cd8214f1266abb6e7522db057e285b690e5",
+    "/usr/lib/apx/apx_native_offline_v3.py": "0c0262766ed3b2d390d01438b4feb79086378e78f46c27772141090a377011e3",
+    "/usr/lib/apx/apx_native_slot_wipe_v3.py": "6679827da5f351316553948c5d1d2012771e432a05802089ef57c415401fc189",
+    "/usr/lib/apx/apx_native_winpe_v3.py": "d9a09594d1599de0cecf4772d43a4d1960c0e02df9b8baf19abffeaabcef8d9f",
+    "/usr/lib/apx/build-native-windows-uki-v3.py": "7d34c1c72f515442d44dd5ece0a0bc139ef1cc3d183f1db824e2e80cb071a7dc"
+  },
+  "schema": 1
+}

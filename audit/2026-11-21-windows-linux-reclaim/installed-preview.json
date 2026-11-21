@@ -1,0 +1,153 @@
+{
+  "schema": 3,
+  "profile": "apx-native-linux-reclaim-v3",
+  "generation": "2770478b-480f-4aea-8910-e3201d5334c5",
+  "target": "windows-testes",
+  "disk_serial": "S4DYNX0R253702",
+  "before": {
+    "label": "gpt",
+    "id": "ac9fc0bd-2162-43a9-aae6-3f654ff6f275",
+    "device": "/dev/nvme0n1",
+    "unit": "sectors",
+    "firstlba": 34,
+    "lastlba": 1000215182,
+    "sectorsize": 512,
+    "partitions": [
+      {
+        "node": "/dev/nvme0n1p1",
+        "start": 2048,
+        "size": 2097152,
+        "type": "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
+        "uuid": "9625f250-9acc-453a-ae63-0c863ade440f",
+        "name": "APX_EFI"
+      },
+      {
+        "node": "/dev/nvme0n1p2",
+        "start": 2099200,
+        "size": 453871616,
+        "type": "ca7d7ccb-63ed-4c53-861c-1742536059cc",
+        "uuid": "8835c8f0-f02f-4fc2-9035-5dbbc191df9e",
+        "name": "APX_CRYPT"
+      },
+      {
+        "node": "/dev/nvme0n1p3",
+        "start": 455970816,
+        "size": 356515840,
+        "type": "ebd0a0a2-b9e5-4433-87c0-68b6b72699c7",
+        "uuid": "099c31d8-313a-4aba-b0e0-2b59502c9674",
+        "name": "APX_WINDOWS_TARGET"
+      },
+      {
+        "node": "/dev/nvme0n1p4",
+        "start": 981340160,
+        "size": 18874368,
+        "type": "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
+        "uuid": "309bebb6-5c32-4e21-9c92-6d758e51389d",
+        "name": "APX_WINSETUP"
+      },
+      {
+        "node": "/dev/nvme0n1p5",
+        "start": 813568000,
+        "size": 161480704,
+        "type": "ebd0a0a2-b9e5-4433-87c0-68b6b72699c7",
+        "uuid": "eddf4dba-7748-5ad6-a640-c9af195f5e1e",
+        "name": "APX_WINDOWS_TESTES"
+      },
+      {
+        "node": "/dev/nvme0n1p6",
+        "start": 812486656,
+        "size": 1048576,
+        "type": "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
+        "uuid": "10783707-92f8-5f8a-9407-1c4fb92ab0ea",
+        "name": "APX_NATIVE_EFI"
+      },
+      {
+        "node": "/dev/nvme0n1p7",
+        "start": 813535232,
+        "size": 32768,
+        "type": "e3c9e316-0b5c-4db8-817d-f92df00215ae",
+        "uuid": "b6bebab8-76cf-5a5e-9c07-fa54650ab638",
+        "name": "APX_NATIVE_MSR"
+      },
+      {
+        "node": "/dev/nvme0n1p8",
+        "start": 975048704,
+        "size": 4194304,
+        "type": "0fc63daf-8483-4772-8e79-3d69d8477de4",
+        "uuid": "b9aceef4-c85b-4ec5-8250-815dc69df0ee",
+        "name": "APX_RECOVERY"
+      }
+    ]
+  },
+  "after": {
+    "label": "gpt",
+    "id": "ac9fc0bd-2162-43a9-aae6-3f654ff6f275",
+    "device": "/dev/nvme0n1",
+    "unit": "sectors",
+    "firstlba": 34,
+    "lastlba": 1000215182,
+    "sectorsize": 512,
+    "partitions": [
+      {
+        "node": "/dev/nvme0n1p1",
+        "start": 2048,
+        "size": 2097152,
+        "type": "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
+        "uuid": "9625f250-9acc-453a-ae63-0c863ade440f",
+        "name": "APX_EFI"
+      },
+      {
+        "node": "/dev/nvme0n1p2",
+        "start": 2099200,
+        "size": 453871616,
+        "type": "ca7d7ccb-63ed-4c53-861c-1742536059cc",
+        "uuid": "8835c8f0-f02f-4fc2-9035-5dbbc191df9e",
+        "name": "APX_CRYPT"
+      },
+      {
+        "node": "/dev/nvme0n1p3",
+        "start": 455970816,
+        "size": 356515840,
+        "type": "ebd0a0a2-b9e5-4433-87c0-68b6b72699c7",
+        "uuid": "099c31d8-313a-4aba-b0e0-2b59502c9674",
+        "name": "APX_WINDOWS_TARGET"
+      },
+      {
+        "node": "/dev/nvme0n1p4",
+        "start": 981340160,
+        "size": 18874368,
+        "type": "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
+        "uuid": "309bebb6-5c32-4e21-9c92-6d758e51389d",
+        "name": "APX_WINSETUP"
+      },
+      {
+        "node": "/dev/nvme0n1p5",
+        "start": 812486656,
+        "size": 162562048,
+        "type": "ca7d7ccb-63ed-4c53-861c-1742536059cc",
+        "uuid": "eddf4dba-7748-5ad6-a640-c9af195f5e1e",
+        "name": "APX_LINUX_RECLAIMED"
+      },
+      {
+        "node": "/dev/nvme0n1p8",
+        "start": 975048704,
+        "size": 4194304,
+        "type": "0fc63daf-8483-4772-8e79-3d69d8477de4",
+        "uuid": "b9aceef4-c85b-4ec5-8250-815dc69df0ee",
+        "name": "APX_RECOVERY"
+      }
+    ]
+  },
+  "reclaimed": {
+    "node": "/dev/nvme0n1p5",
+    "start": 812486656,
+    "size": 162562048,
+    "type": "ca7d7ccb-63ed-4c53-861c-1742536059cc",
+    "uuid": "eddf4dba-7748-5ad6-a640-c9af195f5e1e",
+    "name": "APX_LINUX_RECLAIMED"
+  },
+  "luks_uuid": "9d7bcd68-e90d-4717-91d7-deb3c35f52eb",
+  "mapper": "cryptreclaimed",
+  "bytes": 83231768576,
+  "sha256": "c17d8d5ff0100a0c54c6c61a9cc46ee492130742cddf5d8d0cccacd1d715ee5b"
+}

@@ -16,6 +16,17 @@ CHUNK = 8 * 1024**2
 BLKGETSIZE64_X86_64 = 0x80081272
 
 
+def probe_partition_uuid(path):
+    # Low-level blkid probing exposes GPT identity as PART_ENTRY_UUID.
+    # PARTUUID is the high-level/cache tag and is empty with -p.
+    result = subprocess.run(['/usr/bin/blkid', '-p', '-s', 'PART_ENTRY_UUID', '-o', 'value', str(path)],
+                            check=True, text=True, capture_output=True, timeout=15)
+    value = result.stdout.strip().lower()
+    if str(UUID(value)) != value:
+        raise ValueError('native slot partition probe returned invalid identity')
+    return value
+
+
 def zero_exact_fd(fd, length):
     if type(length) is not int or length <= 0 or length % 4096:
         raise ValueError('invalid native slot wipe length')
@@ -59,9 +70,7 @@ def wipe_block_partition(path, expected_bytes, expected_partuuid, number):
             sysfs.joinpath('partition').read_text().strip() != str(number) or \
             sysfs.joinpath('dev').read_text().strip() != f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}':
         raise ValueError('native slot block identity differs')
-    result = subprocess.run(['/usr/bin/blkid', '-p', '-s', 'PARTUUID', '-o', 'value', str(expected)],
-                            check=True, text=True, capture_output=True, timeout=15)
-    if result.stdout.strip().lower() != expected_partuuid:
+    if probe_partition_uuid(expected) != expected_partuuid:
         raise ValueError('native slot PARTUUID differs')
     fd = os.open(expected, os.O_RDWR | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC)
     try:

@@ -59,7 +59,7 @@ def request_bytes(
     icon: str | None = None,
 ) -> bytes:
     if icon is not None and not (
-        (operation == "environment.update-metadata" and isinstance(icon, str) and icon in ENVIRONMENT_ICONS)
+        (operation == "environment.update-metadata" and valid_icon_name(icon))
         or (operation == "environment.create" and system_kind in (None, "arch")
             and valid_icon_name(icon))
     ):
@@ -212,7 +212,7 @@ def parse_message(data: bytes) -> dict[str, object]:
                 or not valid_display_name(payload.get("display_name")) \
                 or not valid_description(payload.get("description")):
             raise ValueError("invalid Environment metadata update")
-        if "icon" in payload and (not isinstance(payload["icon"], str) or payload["icon"] not in ENVIRONMENT_ICONS):
+        if "icon" in payload and (not valid_icon_name(payload["icon"])):
             raise ValueError("invalid Environment icon")
     elif operation == "environment.destroy":
         target = payload.get("target") if type(payload) is dict else None

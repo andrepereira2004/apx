@@ -2,7 +2,7 @@
 # GitHub entry point for a FRESH, already installed Arch host.
 set -euo pipefail
 readonly repository=https://github.com/andrepereira2004/apx.git
-readonly revision=${APX_REF:-apx-arch-base-v1}
+readonly revision=${APX_REF:-master}
 mode=${1:---check}
 [[ $# -le 1 && ( $mode == --check || $mode == --apply ) ]] || { echo 'Usage: install.sh [--check|--apply]' >&2; exit 2; }
 [[ $revision =~ ^[a-zA-Z0-9][a-zA-Z0-9._/-]*$ ]] || { echo 'Invalid APX_REF' >&2; exit 2; }
@@ -25,4 +25,4 @@ trap 'rm -rf -- "$checkout"' EXIT
 git clone --depth 1 --single-branch --branch "$revision" "$repository" "$checkout/source"
 printf 'Installing APX from GitHub commit: '
 git -C "$checkout/source" rev-parse HEAD
-bash "$checkout/source/scripts/portable/install-apx-arch.sh" "$mode"
+bash "$checkout/source/scripts/portable/install-apx-full.sh" "$mode"

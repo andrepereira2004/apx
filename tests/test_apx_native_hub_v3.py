@@ -10,6 +10,24 @@ import apx_native_hub_v3 as hub
 
 
 class NativeHubRecoveryTests(unittest.TestCase):
+    def test_release_changes_stay_blocked_and_identify_the_changed_file(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            runtime = Path(directory)/'native-runtime.py'
+            runtime.write_text('reviewed')
+            manifest = Path(directory)/'release.json'
+            manifest.write_text(json.dumps({'profile':'apx-native-validated-release-v3',
+                'files':{str(runtime):hashlib.sha256(runtime.read_bytes()).hexdigest()}}))
+            manifest.chmod(0o400)
+            with mock.patch.object(hub, 'ENABLE', manifest), mock.patch.object(hub, 'CRITICAL', {str(runtime)}):
+                self.assertTrue(hub.enabled())
+                runtime.write_text('changed')
+                self.assertFalse(hub.enabled())
+                self.assertEqual(hub.release_errors(), ['native-runtime.py'])
+                with self.assertRaisesRegex(ValueError, 'native-runtime.py'):
+                    hub.dispatch('delete', 'windows-testes', 'a'*36, Path(directory)/'lock')
+                self.assertFalse((Path(directory)/'lock').exists())
+
     def test_boot_preflight_runs_outside_restricted_switch_daemon(self):
         completed=mock.Mock(returncode=0,stdout='Validated selected native Windows',stderr='')
         with mock.patch.object(hub.subprocess,'run',return_value=completed) as run:
@@ -49,6 +67,18 @@ class NativeHubRecoveryTests(unittest.TestCase):
             self.assertTrue(state['native_v3_delete_retry'])
             self.assertFalse(state['native_v3_manual_recovery'])
             self.assertFalse(state['native_v3_rollback'])
+
+    def test_deleted_windows_stays_pending_until_local_linux_authentication(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'pending.json'
+            path.write_text(json.dumps({'profile':'apx-native-job-v3',
+                'generation':'a'*36,'target':'windows-testes','stage':'awaiting-linux-auth'}))
+            path.chmod(0o400)
+            with mock.patch.object(hub,'PENDING',path): state=hub.control()
+            self.assertTrue(state['busy'])
+            self.assertTrue(state['native_v3_local_auth'])
+            self.assertFalse(state['native_v3_delete_retry'])
+            self.assertFalse(state['native_v3_activate'])
 
     def test_installation_failure_offers_bounded_explicit_retry(self):
         with tempfile.TemporaryDirectory() as directory:

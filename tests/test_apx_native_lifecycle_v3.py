@@ -69,10 +69,22 @@ class NativeLifecycleTests(unittest.TestCase):
                                           1, partuuid, label, loader)
 
     def test_delete_only_new_slot_and_resume_after_interrupted_wipe(self):
+        self.exercise_delete(False)
+
+    def test_delete_current_layout_preserves_recovery_and_resumes(self):
+        self.exercise_delete(True)
+
+    def exercise_delete(self, reconciled):
         table, legacy, args = fixture()
         plan = plan_second_windows(table, legacy, **args)
+        checkpoint = None
+        current = plan['after']
+        if reconciled:
+            from test_apx_native_slot_checkpoint_v3 import reconciled_fixture
+            plan, current, checkpoint, _ = reconciled_fixture()
+            legacy['generation'] = plan['existing']['generation']
         generation = plan['new']['generation']
-        after = plan['after']['partitions']
+        after = current['partitions']
         def record(name, gen, windows, esp, entry):
             return {'schema': 3, 'profile': 'apx-native-instance-v3', 'name': name,
                     'generation': gen, 'state': 'ready', 'system_kind': 'windows-native',
@@ -85,6 +97,8 @@ class NativeLifecycleTests(unittest.TestCase):
         selected = record(plan['new']['name'], generation, after[4], after[5], '0007')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
+            if checkpoint is not None:
+                LIFECYCLE.write(root/'slot-layout-v3.json', checkpoint)
             instances = root / 'instances-v3'; instances.mkdir()
             LIFECYCLE.write(instances / 'windows.json', original)
             LIFECYCLE.write(instances / (selected['name']+'.json'), selected)
@@ -111,7 +125,7 @@ class NativeLifecycleTests(unittest.TestCase):
                  mock.patch.object(LIFECYCLE, 'PENDING', pending), \
                  mock.patch.object(LIFECYCLE, 'LOCK', lock), \
                  mock.patch.object(LIFECYCLE, 'job_path', return_value=job), \
-                 mock.patch.object(LIFECYCLE, 'layout', return_value=plan['after']), \
+                 mock.patch.object(LIFECYCLE, 'layout', return_value=current), \
                  mock.patch.object(LIFECYCLE, 'command', side_effect=command), \
                  mock.patch.object(LIFECYCLE, 'wipe_block_partition', side_effect=interrupted), \
                  mock.patch.object(LIFECYCLE, 'state'):
@@ -122,7 +136,10 @@ class NativeLifecycleTests(unittest.TestCase):
                 self.assertFalse((root/'free-slot-v3.json').exists())
                 LIFECYCLE.delete_instance(generation, 'owned-token')
             self.assertEqual(calls, [5, 6, 5, 6])
-            self.assertFalse(pending.exists())
+            if checkpoint is not None:
+                self.assertEqual(LIFECYCLE.trusted(root/'slot-layout-v3.json'), checkpoint)
+            self.assertTrue(pending.exists())
+            self.assertEqual(LIFECYCLE.trusted(pending)['stage'], 'awaiting-linux-auth')
             self.assertFalse((instances/(selected['name']+'.json')).exists())
             self.assertTrue((root/'retired-v3'/(selected['name']+'-'+generation+'.json')).exists())
             self.assertEqual(json.loads((root/'free-slot-v3.json').read_text())['state'], 'free')

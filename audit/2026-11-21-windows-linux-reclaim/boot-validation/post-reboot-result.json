@@ -1,0 +1,46 @@
+{
+  "profile": "apx-reclaimed-root-boot-validation-v3",
+  "before_boot_id": "f627f889-d40b-4398-a35c-e6b39eb032a7",
+  "boot_id": "9b7bfea0-5153-4389-914f-a64288aa8122",
+  "checked_at": 1795275594.3940315,
+  "status": "passed",
+  "checks": {
+    "both_root_members": "Label: 'APX_ROOT'  uuid: 0ab135e1-1d10-4580-8fca-f4c6ac25ad1c\n\tTotal devices 2 FS bytes used 170022199296\n\tdevid    1 size 232365490176 used 186906574848 path /dev/mapper/cryptroot\n\tdevid    2 size 83214991360 used 0 path /dev/mapper/cryptreclaimed\n",
+    "encrypted_boot_configuration": true,
+    "windows_personal_preserved": true,
+    "installed_signatures": true,
+    "device_error_counters_unchanged": {
+      "__header": {
+        "version": "1"
+      },
+      "device-stats": [
+        {
+          "device": "/dev/mapper/cryptroot",
+          "devid": 1,
+          "write_io_errs": 0,
+          "read_io_errs": 0,
+          "flush_io_errs": 0,
+          "corruption_errs": 79,
+          "generation_errs": 0
+        },
+        {
+          "device": "/dev/mapper/cryptreclaimed",
+          "devid": 2,
+          "write_io_errs": 0,
+          "read_io_errs": 0,
+          "flush_io_errs": 0,
+          "corruption_errs": 0,
+          "generation_errs": 0
+        }
+      ]
+    },
+    "native_release": {
+      "enabled": true,
+      "validation_errors": []
+    }
+  },
+  "errors": [],
+  "capacity": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/dm-1       294G  163G  129G  56% /\n",
+  "failed_units": "  UNIT LOAD ACTIVE SUB DESCRIPTION\n\n0 loaded units listed.\n",
+  "graphical_state": "{\"generation\":\"6f63f9a9-daea-40d1-969f-e25ff0752f4d\",\"pid\":1507,\"profile\":\"apx-official-hub-graphical-v1\",\"unit\":\"apx-official-hub-graphical-6f63f9a9.service\"}\n"
+}

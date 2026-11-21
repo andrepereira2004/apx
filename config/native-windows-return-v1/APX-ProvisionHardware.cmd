@@ -14,5 +14,10 @@ if not "%APX_PNP_EXIT%"=="0" (
     )
     echo Driver package was already present; pnputil exit=%APX_PNP_EXIT%>"%APX_LOG%\hardware.warning"
 )
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%ProgramData%\APX\ReturnToHub\APX-ReturnToHub.ps1" -Install >>"%APX_LOG%\hardware.log" 2>&1
+if errorlevel 1 (
+    echo Linux return task installation failed>"%APX_LOG%\hardware.failed"
+    exit /b 1
+)
 echo Driver provisioning complete>"%APX_LOG%\hardware.complete"
 exit /b 0

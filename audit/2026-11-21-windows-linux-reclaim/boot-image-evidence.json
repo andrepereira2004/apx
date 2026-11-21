@@ -1,0 +1,22 @@
+[
+  {
+    "name": "apx-system-v1.efi",
+    "size": 176532480,
+    "sha256": "d915e43e8c72762204d19318ea420b5652bede569327e6788c43bfe6681f81e2"
+  },
+  {
+    "name": "apx-nouveau-recovery-v1.efi",
+    "size": 185821184,
+    "sha256": "87ebee379161b4ab90ba467fa577bfdda152139b2c107b2fb4deeffdd18df79e"
+  },
+  {
+    "name": "apx-iommu-audit-v1.efi",
+    "size": 176532480,
+    "sha256": "e3b12ff316e76b344aad7a3b8df27892035d0d1b489d6db7bd4ed7a66cfe1908"
+  },
+  {
+    "name": "apx-system-v1.efi",
+    "size": 176532480,
+    "sha256": "17f313f5945a0a15febbd61d229afafbec72cd3600406c9ca4de484311eea5da"
+  }
+]

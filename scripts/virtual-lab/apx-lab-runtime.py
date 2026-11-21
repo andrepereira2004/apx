@@ -84,6 +84,7 @@ LOCAL_PACKAGE_MANIFESTS = {
     "nvidia-utils": "nvidia-utils-v1.json",
 }
 ENVIRONMENT_SHELL_ASSETS = {
+    "local/lib/apx/wallpaper-used.h": "478ef7f0bed7f419241f1ba88221bb388daa9f4914a1a6ee4eb38067b9e26213",
     "quickshell/apx/icons/lucide/square-dashed-plus.svg": "3eb66ccd73b86b40805f590f7d504c28723db22d8f878cf251be051609e132ae",
     "quickshell/apx/icons/lucide/banknote.svg": "212d628014554424ec0041ab56e8869149d255b7077cfd6977d4ab2be32e8cb1",
     "quickshell/apx/icons/lucide/briefcase-business.svg": "98388a2bf7b9d102d77772d125d26f59ea3bed0d8573a5fc8907003099ae9a54",
@@ -123,7 +124,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/share/dbus-1/services/org.xfce.FileManager.service": "5c135fca5e08036c583b9ac31efe397dec88c2e3183ea6a2f7eaa6c42e93945b",
     "local/share/dbus-1/services/org.xfce.Thunar.service": "ab31ef71663e94dc3382e667ec07fba585c403bf7f0240696a97c2b70a04fb01",
     "local/bin/thunar": "e37cf858a0d1ab114fe09d68a0ef884422eebfe7a9d7465e775038a6fafed19d",
-    "local/libexec/apx-thunar-chrome-v1.so": "4c10ad82bcd23ce767d71056ed7bbf65fb70bc50290b656acf5d4012706aebc0",
+    "local/libexec/apx-thunar-chrome-v1.so": "3bdda5766c077402cc13ffa82d53157a491ec3d3b34856ab5a24526a646476d2",
     "local/share/icons/APX-Graphite/scalable/actions/open-menu-symbolic.svg": "e00bee534fa9a84369e089f932aac9f01f84915943a2774e929b77593afdd437",
     "local/share/icons/APX-Graphite/scalable/actions/go-home-symbolic.svg": "393bc919c498e43a245ca502933186af4cf417791c9719a8ded0cf31ba24cd84",
     "local/share/icons/APX-Graphite/scalable/actions/go-up-symbolic.svg": "ad9dfd6f48c6cf1a7f472e0afd9e905b5f8ff6a3b600a4098c65d0c4091c944d",
@@ -243,7 +244,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "quickshell/apx/ControlDashboard.qml": "32ce02276742ab13290f056c03518b51f5622b6b2f6dff98313a77a678600941",
     "quickshell/apx/ControlTile.qml": "783d89a15917018d5fc4cb12806d6ee466e63315599e6f65e6956600bea72681",
     "quickshell/apx/DesktopActivity.qml": "248d6d6c2b6b8412611e6d2740d38320e19b11bf10ee647fcd231af1a0fc30f1",
-    "quickshell/apx/PersonalizationPanel.qml": "a247187459d2286ecf4fd2e0487b498a6acd10326863fcf8855213b263d6bf4f",
+    "quickshell/apx/PersonalizationPanel.qml": "6cf6a1a610cb8f1a23419291c9986a5b6d421d79b6b9e1da801b1607b4411168",
     "quickshell/apx/Appearance.qml": "3e212bfaa342afee3c4565d2d29185852d650fa1afbbd0eaff8acb7a9265306a",
     "local/share/fonts/jetbrains-mono/OFL.txt": "a76abf002c49097d146e86740a3105a5d00450b1592e820a1109a8c5680cd697",
     "local/share/fonts/jetbrains-mono/JetBrainsMono-Regular.ttf": "e6fd0d7e91550b3ed2b735d4312474362c4716edc4fc0577a0f61ed782d5aed1",
@@ -310,8 +311,8 @@ ENVIRONMENT_SHELL_ASSETS = {
     "quickshell/apx/WorkspacePreview.qml": "4bff13365e224ebcd86a277be85eb42e69d70ffb8cb84ee7d16d8d1fb7699cf8",
     "quickshell/apx/WorkspaceStrip.qml": "baec81c2213474140dca93a92a1c95c909f1e4031693034f550628fb59dabbbe",
     "local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service": "d1f568f71a2961404fb7cea035c1d524d0a811749f5a7499a0dd12515d387446",
-    "local/lib/apx/libchooser-places.so": "0e491a8b32be744ab18fd4cd300e65b48ba6853a24daf78c0d52c2fae8c82c9a",
-    "local/lib/apx/chooser-places.c": "9a808161ce25bb9cb05f56fae574aa97cf7112d4c6dc5f6d541ca0f385d295c8",
+    "local/lib/apx/libchooser-places.so": "a398567ccd5c4511dfa3fdae1aba9f5d93b99c020ab25048951617501d2ed0b9",
+    "local/lib/apx/chooser-places.c": "d730c9ae8006639e7002a97f95843ea663e5a6b8aa19951f88669f43c4cd7fe5",
     "local/bin/apx-document-templates-v1": "6d300ad6f33d8119dd950a0d1dad73708a64059c2dd920b353af2530d2cd6d84",
     "local/share/icons/APX-Graphite/scalable/places/apx-folder-tagged.svg": "bca05a5e9a3691fd586fde133f2414ac82d738b4953b997e5c64859540b3aad4",
     "local/bin/apx-removable-bookmark-v1": "f1c9e1d45d8d26d05c223d7508398a68780bb7daa9d5143c701a743431f979d3",
@@ -324,7 +325,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "local/share/icons/APX-Graphite/scalable/places/go-up.svg": "1a4dd9f99a622c3b7382d0365776f915fb751fa09c8138634e89f2945973da12",
     "local/share/applications/apx-browser-redirect.desktop": "b800a6301a593037dcb80d7bd9140be5cb7f30d05d94f93b23f6dc8a5b395d81",
     "local/bin/apx-browser-redirect-v1": "12848fee38e1b8dd84d4aec32fbbc17cafb297d61395a959745d1e079b8e8cdf",
-    "local/bin/apx-share-copy-v1": "cdb3febb863f8a266766c073a2437a4735667d87f6ab35d3a7c35181489ea33c",
+    "local/bin/apx-share-copy-v1": "926646d297d0c9a6486eafafef0fbea820139e0da0bbaed0cb847b4df17b41c3",
     "local/bin/apx-sendto-local-v1": "9f107c4749401e00138b87926d18989ee6c47f658149d7a6207c290f5dcd5dc8",
     "Thunar/sendto/apx-10-home.desktop": "b3a84727fc7d5b99617fcc03213139f57fb973ecd4494377250a12f7a3085185",
     "Thunar/sendto/apx-20-desktop.desktop": "217004e3a6158cc9d1a71d24bb1efc9fd7bd4e25f55429138d94465fe0cfa7ff",
@@ -335,7 +336,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "Thunar/sendto/apx-70-music.desktop": "da960ab11319b55facd3c467506587a92a725baafb150b560c24320211022e42",
     "Thunar/sendto/apx-80-applications.desktop": "f3ba0454b9fd8b1bbfdf4b007b6a97676dc0215a3651a1d9d83231330003096d",
     "Thunar/sendto/apx-90-share.desktop": "9b71a516a2a6d2ca3e3e0d88a0cba3835b053e94bdff19f9a7b8be24a50978cb",
-    "Thunar/uca.xml": "22877567e91b08aec5453ee5f6095795a9af09f2d62da0b343d08d920ee8583b",
+    "Thunar/uca.xml": "4c2b14f391df93595b655a624c3421bc3f8a57791ed24081d4fbd6540deb24a7",
     "apx/bashrc": "962737f9f96ffb2753bd3ccc521f69527e38554cffd64703103d2cbf30131113",
     "apx/wallpapers/alpine-lake.png": "dd5794c56ac03f3befb28b48554222da3a44f8f695fb4f1e9f8ac8c3f14ff09d",
     "apx/wallpapers/atlantic-coast.png": "2204c16ad3f3cea13c2b0af0179800262a0a282685bcea13e2d94d1da7cf1411",
@@ -407,7 +408,7 @@ ENVIRONMENT_SHELL_ASSETS = {
     "quickshell/apx/BounceMouseArea.qml": "d7238c10c969db951526f6ae34cee38502ba829f0267cb6c1cdb8a1bdb28aa7f",
     "quickshell/apx/ControlIcon.qml": "1d52d19f86582e5e476e85d8b5a6533cb3ce87c866aa33d3812848d51a44a606",
     "quickshell/apx/calendar_store.py": "e23e6d4121f8b96647e2c0d8a8d1263e4d51f8f6d60dabebc9d3a6fce5379136",
-    "quickshell/apx/shell.qml": "dafa0ad4751bfef6a67b440585ab5cf44394a052f8950acfcb1a0f61559a5fd6",
+    "quickshell/apx/shell.qml": "aee3ff12435346ad9783d2963c379a1369f726b22b75a3f8421042b2d1d74bc5",
     "rofi/config.rasi": "8d8589b53c46c76292fbe0045a9eee8cbd19357efd7472bb6a0d765c60947ce0",
     "xdg-desktop-portal/portals.conf": "eb738862539c32c2515a70db6578c94734bdbecde111968c7d8151e3ac3aefd9",
     "xfce4/xfconf/xfce-perchannel-xml/thunar.xml": "a6cbd2d09507270cd3cfb449542e0bd7ec6254019703359854b36e476a2d468e",
@@ -1147,6 +1148,11 @@ def configure_environment_features(root: Path, plan: dict[str, object]) -> None:
     local_packages = set(local_packages_for(modules)) | {"nvidia-utils"}
     for package in sorted(local_packages):
         artifact = validated_local_package_artifact(package)
+        from apx_package_freshness import ensure_current_package
+        try:
+            artifact = ensure_current_package(package, artifact, LOCAL_PACKAGE_ARTIFACTS)
+        except Exception as error:
+            raise Refusal("Não foi possível obter a versão atual de " + package + ": " + str(error)) from error
         if package == "nvidia-utils":
             module_version = host_nvidia_version()
             if not module_version or not artifact.name.startswith(f"nvidia-utils-{module_version}-"):

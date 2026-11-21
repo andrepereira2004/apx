@@ -1,0 +1,38 @@
+[
+  {
+    "package": "brave-bin",
+    "version": "1:1.100.58-1",
+    "sha256": "4e2bd7b0a8d6d4f4808af544b3e6be3111cea9572eaf10f6b6fec5dea74de261",
+    "checked_at": "2026-11-21T16:24:18.261665+00:00"
+  },
+  {
+    "package": "localsend-bin",
+    "version": "1.18.2-4",
+    "sha256": "b7c71d19d7cb80084f815a8f5a942d77e52570d5a60874201e0a260438e80762",
+    "checked_at": "2026-11-21T16:24:19.129730+00:00"
+  },
+  {
+    "package": "gridcraft",
+    "version": "0.19.1-1",
+    "sha256": "69de767123855b40c820d628cb55229519c7384eb904a2b3c0c2a2888d9b17c3",
+    "checked_at": "2026-11-21T16:24:20.339605+00:00"
+  },
+  {
+    "package": "wordcraft",
+    "version": "0.18.1-1",
+    "sha256": "43901247f96c28affa17ff6cd878fcc63cd11a914276e2acfe2c5cba100a1e06",
+    "checked_at": "2026-11-21T16:24:22.012632+00:00"
+  },
+  {
+    "package": "deckcraft",
+    "version": "0.18.1-1",
+    "sha256": "4bf70ef82a4928a08d9e47dcadab7633fb1264f37a755bb88c8245e29bab4900",
+    "checked_at": "2026-11-21T16:24:23.699817+00:00"
+  },
+  {
+    "package": "chatgpt-bin",
+    "version": "26.1117.41037-1",
+    "sha256": "be1cdf31d4111bc233f237b11670bca8e415cad07ec096c0b9d83529e35eaeb0",
+    "checked_at": "2026-11-21T16:24:31.341241+00:00"
+  }
+]

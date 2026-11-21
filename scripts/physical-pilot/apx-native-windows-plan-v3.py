@@ -33,7 +33,7 @@ def preview(target, description, size_gib, *, generation=None):
         raise ValueError("Escolhe um nome diferente para o novo Windows.")
     if len(description) > 120 or description != description.strip() or any(ord(c) < 32 for c in description):
         raise ValueError("Descrição inválida.")
-    if size_gib not in {120, 180, 250}:
+    if size_gib not in {77, 80, 120, 180, 250}:
         raise ValueError("Tamanho Windows inválido.")
     if Path("/var/lib/apx/environments", target).exists() or Path("/var/lib/apx/native-environments", target + ".json").exists():
         raise ValueError("Já existe um Environment com esse nome.")
@@ -53,7 +53,7 @@ def preview(target, description, size_gib, *, generation=None):
         raise ValueError("O SSD selecionado mudou.")
     table = json.loads(read_command("/usr/bin/sfdisk", "--json", "/dev/nvme0n1"))["partitiontable"]
     slot_path=Path('/var/lib/apx/native-environments/free-slot-v3.json')
-    if slot_path.exists() or len(table['partitions'])==7:
+    if slot_path.exists() or len(table['partitions'])>=7:
         if not slot_path.exists():raise ValueError('O espaço Windows existente precisa de recuperação antes de nova instalação.')
         slot=trusted_json(slot_path)
         if not re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}',slot.get('source_generation','')):
@@ -70,13 +70,15 @@ def preview(target, description, size_gib, *, generation=None):
         expected_size=slot['size_sectors']*table['sectorsize']//1024**3
         if size_gib!=expected_size:
             raise ValueError('O espaço Windows reutilizável tem '+str(expected_size)+' GiB; escolhe esse tamanho.')
+        checkpoint_path=Path('/var/lib/apx/native-environments/slot-layout-v3.json')
+        checkpoint=trusted_json(checkpoint_path) if checkpoint_path.exists() else None
         plan=plan_slot_reuse(source,slot,table,[original],new_name=target,
-                             new_generation=generation or str(uuid.uuid4()))
+                             new_generation=generation or str(uuid.uuid4()),checkpoint=checkpoint)
         return {'schema':3,'profile':'apx-native-creation-preview-v3','target':target,
                 'description':description,'size_gib':size_gib,'can_create':False,
                 'existing_windows_gib':plan['existing']['size_gib'],
-                'apx_gib':round(source['apx_payload_bytes']/1024**3,1),
-                'message':'O espaço de 80 GiB está reservado para outro Windows. A instalação de substituição ainda está em validação; esta verificação não altera o disco.',
+                'apx_gib':round(plan['apx_payload_bytes']/1024**3,1),
+                'message':'O espaço de '+str(expected_size)+' GiB está reservado para outro Windows. A instalação de substituição ainda está em validação; esta verificação não altera o disco.',
                 'plan':plan}
     ntfs = read_command("/usr/bin/ntfsresize", "--info", "--no-action", "/dev/nvme0n1p3")
     minimum = re.search(r"You might resize at (\d+) bytes", ntfs)

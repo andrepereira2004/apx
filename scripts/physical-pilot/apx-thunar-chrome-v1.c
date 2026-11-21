@@ -1,5 +1,10 @@
 /* Thunar GTK presentation and selection navigation. Does not change file operations. */
 #include <gtk/gtk.h>
+#if __has_include("wallpaper-used.h")
+#include "wallpaper-used.h"
+#else
+#include "../../config/environment-shell-v1/local/lib/apx/wallpaper-used.h"
+#endif
 
 static gboolean is_type(GtkWidget *w, const char *name) {
     return g_strcmp0(G_OBJECT_TYPE_NAME(w), name) == 0;
@@ -287,6 +292,7 @@ static gboolean on_map(GSignalInvocationHint *hint, guint n, const GValue *value
         gtk_widget_hide(widget);
     }
     if (is_type(top, "ThunarWindow")) {
+        if (file_view(widget)) apx_usage_adapt(widget);
         disable_tooltip(widget);
         adapt_toolbar_button(widget);
         if (is_type(widget, "ThunarLocationButton"))

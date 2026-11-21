@@ -59,4 +59,12 @@
     <patterns>*</patterns>
     <directories /><audio-files /><image-files /><other-files /><text-files /><video-files />
   </action>
+  <action>
+    <icon>edit-rename</icon><name>Mudar nome na Partilha…</name>
+    <unique-id>1795270000000000-1</unique-id>
+    <command>/home/apx/.local/bin/apx-share-copy-v1 rename %f</command>
+    <description>Mudar o nome de um ficheiro ou pasta partilhada</description>
+    <patterns>*</patterns><range>1</range>
+    <directories/><audio-files/><image-files/><other-files/><text-files/><video-files/>
+  </action>
 </actions>

@@ -19,12 +19,11 @@ encriptação nem instala Windows. Discos com partições ou dados são recusado
 
    ```sh
    pacman -Sy --needed git
-   git clone --single-branch --branch agent/defer-local-model-phase10 https://github.com/andrepereira2004/apx.git
+   git clone --single-branch --branch master https://github.com/andrepereira2004/apx.git
    cd apx
    ```
 
-   Usa explicitamente este branch: o branch predefinido pode conter uma versão
-   anterior. Se o GitHub pedir autenticação, utiliza o teu acesso ao repositório.
+   O `master` é o branch principal com o estado atual do projeto. Se o GitHub pedir autenticação, utiliza o teu acesso ao repositório.
 
 2. Lista os discos e consulta o plano sem instalar:
 
@@ -81,6 +80,22 @@ Este percurso não particiona o disco nem substitui a preparação do Arch. Para
 instalar só a base sem interface, consulta o [guia headless](docs/portable-arch-base-v1.md).
 Os adaptadores em `scripts/physical-pilot/` destinam-se ao piloto físico específico;
 para outro PC usa os instaladores em `scripts/portable/` descritos acima.
+
+## Cobertura atual para um PC novo
+
+O `install.sh` do `master` obtém agora o instalador gráfico atual por predefinição,
+para um Arch novo já instalado. Não é um atualizador de instalações APX existentes.
+O percurso pela pen acima continua a ser o indicado para um disco vazio.
+
+**Ainda não existe equivalência completa com este piloto físico.** O instalador
+inclui o shell e módulos atuais do repositório, mas o perfil portátil não ativa
+as mesmas integrações de aplicações do piloto, Windows nativo/recuperação de
+espaço, nem todos os serviços de partilha e hardware. Copiar o código dessas
+funcionalidades não demonstra que funcionem num PC novo. Os testes antigos de VM
+não validam automaticamente as alterações posteriores.
+
+Consulta a [verificação de branches e instalação de 21/11/2026](docs/github-installation-review-2026-11-21.md)
+para evidência, limites e passos que faltam.
 
 ## Arquitetura e documentação histórica
 

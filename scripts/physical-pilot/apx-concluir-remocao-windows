@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+"""Console entry point; never accepts a password through arguments or files."""
+import json
+import os
+from pathlib import Path
+import stat
+import subprocess
+import sys
+
+if os.geteuid() != 0 or not sys.stdin.isatty():
+    raise SystemExit('Abre o Terminal do Host no menu APX e executa este comando aí.')
+root = Path('/var/lib/apx/native-environments')
+pending = root/'pending-v3.json'
+marker = pending if pending.exists() else root/'free-slot-v3.json'
+info = marker.lstat()
+if not stat.S_ISREG(info.st_mode) or info.st_uid or info.st_gid or stat.S_IMODE(info.st_mode) not in {0o400,0o600}:
+    raise SystemExit('O pedido de remoção não é confiável.')
+value = json.loads(marker.read_bytes())
+if pending.exists():
+    if value.get('stage') != 'awaiting-linux-auth':
+        raise SystemExit('Existe outra operação Windows em curso.')
+    generation = value['generation']
+else:
+    if value.get('state') != 'free':
+        raise SystemExit('Não existe espaço de um Windows removido para integrar.')
+    generation = value['previous_generation']
+raise SystemExit(subprocess.call(['/usr/bin/python3','/usr/lib/apx/apx-reclaim-windows-linux-v3.py',
+                                 '--generation',generation]))
